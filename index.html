@@ -2524,7 +2524,25 @@ window.migrateImagesToCloud = async function() {
         .createSignedUrl(path, IMG_SIGNED_URL_SECONDS);
       if (signErr) throw signErr;
 
-      updates.push({ id: t.id, user_id: uid, img: signedData.signedUrl });
+      const p = DB.products.find(x => x.id === t.id) || {};
+      updates.push({
+        id: t.id,
+        user_id: uid,
+        name: p.name || '',
+        sku: p.sku || '',
+        type: p.type || '',
+        size: p.size || '',
+        cost: p.cost || 0,
+        price: p.price || 0,
+        stock: p.stock || 0,
+        min_stock: p.minStock ?? 5,
+        defect_stock: p.defectStock || 0,
+        display_stock: p.displayStock || 0,
+        note: p.note || '',
+        status: p.status || 'ok',
+        img: signedData.signedUrl,
+        updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString()
+      });
       done++;
     } catch (e) {
       console.error(`圖片遷移失敗 (${t.id}):`, e);
