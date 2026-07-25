@@ -232,6 +232,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,
       <button onclick="document.getElementById('importFile').click();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">⬆️ 還原備份</button>
       <div style="height:1px;background:var(--cream3);margin:4px 6px;"></div>
       <button onclick="syncToSupabase();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">☁️ 同步到雲端</button>
+      <button onclick="migrateImagesToCloud();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">🖼️ 遷移圖片到雲端</button>
     </div>
   </div>
   <input type="file" id="importFile" accept=".json,application/json" style="display:none;" onchange="importBackup(this)">
@@ -2373,6 +2374,11 @@ function adjVariantStock(productId,variantId,delta){
     </div>
   </div>
 </div>
+<div id="migrate-progress" style="display:none;position:fixed;bottom:20px;right:20px;background:var(--cream);border:1px solid var(--cream4);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow-lg);z-index:9999;font-size:13px;color:var(--text);min-width:220px;">
+  <div style="font-weight:700;margin-bottom:6px;">🖼️ 遷移圖片中...</div>
+  <div id="migrate-progress-text">準備中...</div>
+</div>
+
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -2454,7 +2460,97 @@ window.syncToSupabase = async function(silent) {
   }
 };
 
-// ---- 開啟 App 時自動同步一次(僅在已登入的情況下,不會強制跳登入) ----
+// ---- 圖片遷移到雲端(一次性工具) ----
+const IMG_SIGNED_URL_SECONDS = 315360000; // 約 10 年,私有 bucket 用長效簽名網址
+
+function base64ToBlob(dataUrl) {
+  return fetch(dataUrl).then(r => r.blob());
+}
+
+function extFromMime(mime) {
+  if (!mime) return 'jpg';
+  if (mime.includes('png')) return 'png';
+  if (mime.includes('webp')) return 'webp';
+  if (mime.includes('gif')) return 'gif';
+  return 'jpg';
+}
+
+window.migrateImagesToCloud = async function() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    toast('請先用 Google 登入 🔑', 'error');
+    await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
+    });
+    return;
+  }
+  const uid = session.user.id;
+
+  // 收集所有有圖片的商品(base64 才需要搬,已經是網址的跳過)
+  const targets = DB.products
+    .map(p => {
+      const src = (window.PATCH_IMGS && window.PATCH_IMGS[p.id]) || p.img || '';
+      return { id: p.id, src };
+    })
+    .filter(t => t.src && t.src.startsWith('data:'));
+
+  if (targets.length === 0) {
+    toast('沒有需要遷移的圖片(可能都已經是網址了)', 'success');
+    return;
+  }
+
+  const progressBox = document.getElementById('migrate-progress');
+  const progressText = document.getElementById('migrate-progress-text');
+  progressBox.style.display = 'block';
+
+  let done = 0, failed = 0;
+  const updates = [];
+
+  for (const t of targets) {
+    progressText.textContent = `${done + failed + 1} / ${targets.length}（成功 ${done}、失敗 ${failed}）`;
+    try {
+      const blob = await base64ToBlob(t.src);
+      const ext = extFromMime(blob.type);
+      const path = `${uid}/${t.id}.${ext}`;
+
+      const { error: upErr } = await sb.storage
+        .from('product-images')
+        .upload(path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
+      if (upErr) throw upErr;
+
+      const { data: signedData, error: signErr } = await sb.storage
+        .from('product-images')
+        .createSignedUrl(path, IMG_SIGNED_URL_SECONDS);
+      if (signErr) throw signErr;
+
+      updates.push({ id: t.id, user_id: uid, img: signedData.signedUrl });
+      done++;
+    } catch (e) {
+      console.error(`圖片遷移失敗 (${t.id}):`, e);
+      failed++;
+    }
+  }
+
+  progressText.textContent = `寫入資料庫中...`;
+
+  if (updates.length) {
+    try {
+      const { error: updErr } = await sb.from('products').upsert(updates);
+      if (updErr) throw updErr;
+    } catch (e) {
+      console.error('寫回 products 失敗:', e);
+      toast('圖片上傳成功，但寫回資料庫失敗：' + e.message, 'error');
+      progressBox.style.display = 'none';
+      return;
+    }
+  }
+
+  progressBox.style.display = 'none';
+  toast(`圖片遷移完成 🖼️ 成功 ${done} 張、失敗 ${failed} 張`, failed > 0 ? 'error' : 'success');
+};
+
+
 window.addEventListener('load', () => {
   setTimeout(() => { syncToSupabase(true); }, 1500);
 });
