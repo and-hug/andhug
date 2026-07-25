@@ -960,7 +960,7 @@ function autoFillEditPriceBySize(id){
     if(cur===0) priceInput.value=sug;
   }
 }
-function saveProduct(){const name=document.getElementById('p-name').value.trim();if(!name){toast('請輸入商品名稱 🌸','error');return;}const p={id:editingId||uid(),name,sku:document.getElementById('p-sku').value.trim(),type:document.getElementById('p-type').value,size:document.getElementById('p-size').value,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:pendingImg||null,updatedAt:Date.now()};if(editingId){const i=DB.products.findIndex(x=>x.id===editingId);if(i!==-1)DB.products[i]=p;}else DB.products.push(p);saveDB();closeModal('modal-product');renderProducts();toast(editingId?'商品已更新 ✨':'商品已新增 🎉','success');}
+async function saveProduct(){const name=document.getElementById('p-name').value.trim();if(!name){toast('請輸入商品名稱 🌸','error');return;}const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const p={id,name,sku:document.getElementById('p-sku').value.trim(),type:document.getElementById('p-type').value,size:document.getElementById('p-size').value,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:finalImg,updatedAt:Date.now()};if(editingId){const i=DB.products.findIndex(x=>x.id===editingId);if(i!==-1)DB.products[i]=p;}else DB.products.push(p);saveDB();closeModal('modal-product');renderProducts();toast(editingId?'商品已更新 ✨':'商品已新增 🎉','success');}
 function deleteProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;if(!DB.productTrash)DB.productTrash=[];const trashEntry={...p,deletedAt:Date.now()};DB.productTrash.push(trashEntry);DB.products=DB.products.filter(x=>x.id!==id);pushUndo({label:'刪除 '+p.name,undo:()=>{DB.products.push(p);DB.productTrash=DB.productTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);},redo:()=>{DB.products=DB.products.filter(x=>x.id!==p.id);if(!DB.productTrash)DB.productTrash=[];DB.productTrash.push(trashEntry);}});saveDB();closeModal('modal-stock');renderProducts();toast('🗑 已刪除（⌘Z 撤銷）','success');}
 function openStockModal(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
@@ -2568,6 +2568,35 @@ window.migrateImagesToCloud = async function() {
   toast(`圖片遷移完成 🖼️ 成功 ${done} 張、失敗 ${failed} 張`, failed > 0 ? 'error' : 'success');
 };
 
+
+// ---- 新增/編輯商品時,圖片直接上傳到雲端(取代存 base64) ----
+// 失敗或未登入時，安全退回 base64（離線仍可正常使用）
+window.uploadImageIfNeeded = async function(productId, dataUrl) {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return dataUrl; // 未登入，先用 base64，之後同步時再補救
+
+    const uid = session.user.id;
+    const blob = await base64ToBlob(dataUrl);
+    const ext = extFromMime(blob.type);
+    const path = `${uid}/${productId}.${ext}`;
+
+    const { error: upErr } = await sb.storage
+      .from('product-images')
+      .upload(path, blob, { upsert: true, contentType: blob.type || 'image/jpeg' });
+    if (upErr) throw upErr;
+
+    const { data: signedData, error: signErr } = await sb.storage
+      .from('product-images')
+      .createSignedUrl(path, IMG_SIGNED_URL_SECONDS);
+    if (signErr) throw signErr;
+
+    return signedData.signedUrl;
+  } catch (e) {
+    console.error('圖片上傳失敗，改存本機:', e);
+    return dataUrl; // 失敗時退回 base64，不擋住存檔
+  }
+};
 
 window.addEventListener('load', () => {
   setTimeout(() => { syncToSupabase(true); }, 1500);
