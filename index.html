@@ -2381,22 +2381,24 @@ const SUPABASE_KEY = 'sb_publishable_cY4ATOMAMThdZ4oQ5cxdXw_OP7Bjwub';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.__sb = sb;
 
-window.syncToSupabase = async function() {
+window.syncToSupabase = async function(silent) {
   const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
-    toast('請先用 Google 登入 🔑', 'error');
-    await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.href }
-    });
+    if (!silent) {
+      toast('請先用 Google 登入 🔑', 'error');
+      await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href }
+      });
+    }
     return;
   }
 
   const uid = session.user.id;
 
   try {
-    toast('同步中，請稍候...', 'success');
+    if (!silent) toast('同步中，請稍候...', 'success');
 
     const products = DB.products.map(p => ({
       id: p.id,
@@ -2440,12 +2442,22 @@ window.syncToSupabase = async function() {
       if (oErr) throw oErr;
     }
 
-    toast(`同步完成 ✨ 商品 ${products.length} 筆、採購單 ${orders.length} 筆`, 'success');
+    toast(
+      silent
+        ? `☁️ 自動同步完成(商品 ${products.length}、採購單 ${orders.length})`
+        : `同步完成 ✨ 商品 ${products.length} 筆、採購單 ${orders.length} 筆`,
+      'success'
+    );
   } catch (e) {
     toast('同步失敗：' + e.message, 'error');
     console.error(e);
   }
 };
+
+// ---- 開啟 App 時自動同步一次(僅在已登入的情況下,不會強制跳登入) ----
+window.addEventListener('load', () => {
+  setTimeout(() => { syncToSupabase(true); }, 1500);
+});
 </script>
 </body>
 </html>
