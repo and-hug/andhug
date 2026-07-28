@@ -2642,16 +2642,21 @@ window.repairImageUrls = async function() {
 
     const updates = [];
     let done = 0;
+    let skipped = 0;
     for (const f of realFiles) {
-      progressText.textContent = `${++done} / ${realFiles.length}`;
+      progressText.textContent = `${++done} / ${realFiles.length}（略過 ${skipped}）`;
+      const id = f.name.replace(/\.[^.]+$/, ''); // 去掉副檔名，還原商品 id
+
+      const p = DB.products.find(x => x.id === id);
+      if (!p) { skipped++; continue; } // 本機找不到對應商品，跳過（可能是舊測試資料）
+
       const path = `${uid}/${f.name}`;
       const { data: signedData, error: signErr } = await sb.storage
         .from('product-images')
         .createSignedUrl(path, IMG_SIGNED_URL_SECONDS);
       if (signErr) { console.error('簽名網址失敗:', f.name, signErr); continue; }
 
-      const id = f.name.replace(/\.[^.]+$/, ''); // 去掉副檔名，還原商品 id
-      updates.push({ id, user_id: uid, img: signedData.signedUrl });
+      updates.push({ id, user_id: uid, name: p.name || '', img: signedData.signedUrl });
     }
 
     progressText.textContent = '寫入資料庫中...';
@@ -2661,7 +2666,7 @@ window.repairImageUrls = async function() {
     }
 
     progressBox.style.display = 'none';
-    toast(`圖片網址修復完成 🔧 共 ${updates.length} 張`, 'success');
+    toast(`圖片網址修復完成 🔧 共 ${updates.length} 張（略過 ${skipped} 張找不到對應商品的舊檔案）`, 'success');
 
     // 修復完，順便拉回本機顯示
     await pullImagesFromCloud();
