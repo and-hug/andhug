@@ -234,6 +234,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,247,242,
       <button onclick="syncToSupabase();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">☁️ 同步到雲端</button>
       <button onclick="migrateImagesToCloud();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">🖼️ 遷移圖片到雲端</button>
       <button onclick="repairImageUrls();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">🔧 修復圖片網址</button>
+      <button onclick="document.getElementById('batch-img-input').click();closeBackupMenu();" style="display:block;width:100%;text-align:left;padding:9px 14px;border:none;background:none;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:8px;font-family:inherit;" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='none'">📦 批量上傳圖片</button>
+      <input type="file" id="batch-img-input" accept="image/*" multiple style="display:none;" onchange="handleBatchUpload(this)">
     </div>
   </div>
   <input type="file" id="importFile" accept=".json,application/json" style="display:none;" onchange="importBackup(this)">
@@ -2674,6 +2676,88 @@ window.repairImageUrls = async function() {
     progressBox.style.display = 'none';
     toast('修復失敗：' + e.message, 'error');
     console.error(e);
+  }
+};
+
+// ---- 批量上傳圖片(檔名需為商品 id，例如 p012.jpg) ----
+window.handleBatchUpload = async function(input) {
+  const files = Array.from(input.files || []);
+  input.value = ''; // 清空，讓下次選同一批檔案也能觸發
+  if (files.length === 0) return;
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    toast('請先用 Google 登入 🔑', 'error');
+    await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
+    });
+    return;
+  }
+  const uid = session.user.id;
+
+  const progressBox = document.getElementById('migrate-progress');
+  const progressText = document.getElementById('migrate-progress-text');
+  progressBox.style.display = 'block';
+
+  const updates = [];
+  const unmatched = [];
+  let done = 0;
+
+  for (const file of files) {
+    progressText.textContent = `${++done} / ${files.length}（找不到 ${unmatched.length}）`;
+
+    const id = file.name.replace(/\.[^.]+$/, '').trim(); // 去掉副檔名，當作商品 id
+    const p = DB.products.find(x => x.id === id);
+    if (!p) { unmatched.push(file.name); continue; }
+
+    try {
+      const ext = extFromMime(file.type) || 'jpg';
+      const path = `${uid}/${id}.${ext}`;
+
+      const { error: upErr } = await sb.storage
+        .from('product-images')
+        .upload(path, file, { upsert: true, contentType: file.type || 'image/jpeg' });
+      if (upErr) throw upErr;
+
+      const { data: signedData, error: signErr } = await sb.storage
+        .from('product-images')
+        .createSignedUrl(path, IMG_SIGNED_URL_SECONDS);
+      if (signErr) throw signErr;
+
+      p.img = signedData.signedUrl; // 立刻更新本機，畫面馬上看得到
+      updates.push({ id, user_id: uid, name: p.name || '', img: signedData.signedUrl });
+    } catch (e) {
+      console.error(`批量上傳失敗 (${file.name}):`, e);
+      unmatched.push(file.name + '（上傳失敗）');
+    }
+  }
+
+  progressText.textContent = '寫入資料庫中...';
+
+  if (updates.length) {
+    try {
+      const { error: updErr } = await sb.from('products').upsert(updates);
+      if (updErr) throw updErr;
+    } catch (e) {
+      progressBox.style.display = 'none';
+      toast('圖片上傳成功，但寫回資料庫失敗：' + e.message, 'error');
+      return;
+    }
+  }
+
+  saveDB();
+  if (typeof renderProducts === 'function') renderProducts();
+  if (typeof renderCatSidebar === 'function') renderCatSidebar();
+
+  progressBox.style.display = 'none';
+
+  const summary = `批量上傳完成 📦 成功 ${updates.length} 張`;
+  if (unmatched.length) {
+    toast(`${summary}，${unmatched.length} 張找不到對應商品（檔名需等於商品 id）`, 'error');
+    console.log('找不到對應商品的檔案：', unmatched);
+  } else {
+    toast(summary, 'success');
   }
 };
 
