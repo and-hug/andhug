@@ -5307,9 +5307,27 @@ window.syncToSupabase = async function(silent) {
     }));
 
     // 本機真的有圖片網址（來自雲端回填、或剛上傳成功）的商品，另外單獨補寫 img 欄位
+    // 帶上完整欄位（而不只是 id/img），避免雲端該筆資料還不存在時，upsert 變成 insert 卻缺少 name 等必填欄位而報錯
     const productsWithImg = DB.products
       .filter(p => p.img)
-      .map(p => ({ id: p.id, user_id: uid, img: p.img }));
+      .map(p => ({
+        id: p.id,
+        user_id: uid,
+        name: p.name || '',
+        sku: p.sku || '',
+        type: p.type || '',
+        size: p.size || '',
+        cost: p.cost || 0,
+        price: p.price || 0,
+        stock: p.stock || 0,
+        min_stock: p.minStock ?? 5,
+        defect_stock: p.defectStock || 0,
+        display_stock: p.displayStock || 0,
+        note: p.note || '',
+        status: p.status || 'ok',
+        updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString(),
+        img: p.img
+      }));
 
     const orders = DB.orders.map(o => ({
       id: o.id,
