@@ -1239,6 +1239,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
       <div class="settings-divider"></div>
 
       <div class="settings-section-title">☁️ 雲端同步</div>
+      <div id="auth-status-card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--surface,#fff);border:1px solid var(--peach);border-radius:12px;padding:10px 14px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          <span id="auth-status-dot" style="flex-shrink:0;width:9px;height:9px;border-radius:50%;background:#c9c0b3;"></span>
+          <span id="auth-status-text" style="font-size:12px;color:var(--text2,var(--brown));font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">登入狀態載入中...</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button class="btn btn-secondary btn-sm" id="google-login-btn" onclick="signInWithGoogle()" style="display:none;">🔑 使用 Google 登入</button>
+          <button class="btn btn-secondary btn-sm" id="logout-btn" onclick="signOutSupabase()" style="display:none;">🚪 登出</button>
+        </div>
+      </div>
       <div class="settings-btn-row">
         <button class="btn btn-secondary btn-sm" onclick="syncToSupabase()">☁️ 同步到雲端</button>
         <button class="btn btn-secondary btn-sm" onclick="migrateImagesToCloud()">🖼️ 遷移圖片到雲端</button>
@@ -5218,6 +5228,44 @@ const SUPABASE_URL = 'https://oeqypydrmztuibrjtesq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_cY4ATOMAMThdZ4oQ5cxdXw_OP7Bjwub';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.__sb = sb;
+
+window.signInWithGoogle = async function() {
+  await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+};
+
+window.signOutSupabase = async function() {
+  await sb.auth.signOut();
+  toast('已登出', 'success');
+  await updateAuthStatusUI();
+};
+
+window.updateAuthStatusUI = async function() {
+  const { data: { session } } = await sb.auth.getSession();
+  const statusEl = document.getElementById('auth-status-text');
+  const dotEl = document.getElementById('auth-status-dot');
+  const loginBtn = document.getElementById('google-login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  if (!statusEl) return;
+  if (session && session.user) {
+    statusEl.textContent = session.user.email || '已登入(無email)';
+    if (dotEl) dotEl.style.background = '#6fae7d';
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = '';
+  } else {
+    statusEl.textContent = '尚未登入，雲端同步功能無法使用';
+    if (dotEl) dotEl.style.background = '#c9c0b3';
+    if (loginBtn) loginBtn.style.display = '';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+  }
+};
+
+sb.auth.onAuthStateChange((_event, _session) => {
+  updateAuthStatusUI();
+});
+updateAuthStatusUI();
 
 window.syncToSupabase = async function(silent) {
   const { data: { session } } = await sb.auth.getSession();
