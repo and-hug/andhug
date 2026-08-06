@@ -715,7 +715,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
 
 <!-- ORDERS -->
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openSmartImport()">📥 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:0 5px;min-width:14px;text-align:center;line-height:1.5;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">📥 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-list"></div>
   <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
@@ -1106,6 +1106,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
       <button class="modal-close" onclick="closeModal('modal-customer-detail')">×</button>
     </div>
     <div class="modal-body" id="customer-detail-body"></div>
+  </div>
+</div>
+
+
+<div class="modal-overlay hidden" id="modal-import-drafts">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div class="modal-title">📋 匯入草稿</div>
+      <button class="modal-close" onclick="closeModal('modal-import-drafts')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="import-drafts-list" style="max-height:60vh;overflow-y:auto"></div>
+    </div>
   </div>
 </div>
 
@@ -1815,7 +1828,7 @@ function importBackup(input){
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 async function fetchRate(){document.getElementById('rate-time').textContent='更新中...';try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');const d=await r.json();if(d.rates?.USD){DB.rate=d.rates.USD;DB.rateTime=new Date().toLocaleTimeString('zh-TW');saveDB();}}catch(e){}document.getElementById('rate-display').textContent=`¥1 = $${DB.rate.toFixed(4)}`;document.getElementById('rate-time').textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';}
-function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
+function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
 function renderOverview(){const ps=DB.products,ok=ps.filter(p=>p.status==='ok'),low=ok.filter(p=>p.stock<=(p.minStock||5)&&p.stock>0),today=DB.todaySales?.[todayStr()];document.getElementById('stat-total').textContent=ps.length;document.getElementById('stat-stock').textContent=ok.reduce((s,p)=>s+(p.stock||0),0);document.getElementById('stat-low').textContent=low.length;document.getElementById('stat-today').textContent=`$${(today?.revenue||0).toFixed(0)}`;const invValueCny=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);document.getElementById('stat-inventory-value').textContent=`$${(invValueCny*DB.rate).toFixed(0)}`;const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);if(!recent.length){ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';}else{ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="${o.status==='received'?'':`event.stopPropagation();quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'已到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:${o.status==='received'?'default':'pointer'}">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).length}件</div></div></div>`).join('');}const ls=document.getElementById('low-stock-list');if(!low.length){ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';}else{ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');}}
 function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
 const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',ST:'襪子',GT:'服飾',ZZ:'組合'};
@@ -3372,9 +3385,11 @@ function toggleAccordion(id){
 // ---- 智慧匯入：Excel/CSV 直接讀表格，截圖用瀏覽器免費 OCR 辨識 ----
 let smartImportItems=[]; // {name,cost,qty}
 let smartImportMeta=null; // 從 PDF 額外抓到的店名/訂單編號/日期/運費等，只有 PDF 匯入才會有值
+let currentImportDraftId=null; // 目前是不是從某份既有草稿繼續編輯，是的話存那份草稿的 id
 function openSmartImport(){
   smartImportItems=[];
   smartImportMeta=null;
+  currentImportDraftId=null;
   document.getElementById('smart-import-step-upload').classList.remove('hidden');
   document.getElementById('smart-import-step-review').classList.add('hidden');
   document.getElementById('smart-import-progress').classList.add('hidden');
@@ -3383,27 +3398,78 @@ function openSmartImport(){
   document.getElementById('smart-import-any-input').value='';
   initSmartImportDropzone();
   openModal('modal-smart-import');
-  // 如果有存過草稿，問一下要不要繼續編輯
-  const draft=DB.smartImportDraft;
-  if(draft&&draft.items&&draft.items.length){
-    const d=new Date(draft.savedAt||Date.now());
-    const dateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    customConfirm(`你有一份還沒匯入的草稿（${draft.items.length} 筆商品，${dateStr} 儲存），要繼續編輯嗎？`,()=>{
-      smartImportItems=JSON.parse(JSON.stringify(draft.items));
-      smartImportMeta=draft.meta?JSON.parse(JSON.stringify(draft.meta)):null;
-      renderSmartImportReview();
-    },()=>{
-      delete DB.smartImportDraft;
-      saveDB();
-    });
-  }
 }
 function saveSmartImportDraft(){
   if(!smartImportItems||!smartImportItems.length){toast('沒有可以儲存的內容','error');return;}
-  DB.smartImportDraft={items:JSON.parse(JSON.stringify(smartImportItems)),meta:smartImportMeta?JSON.parse(JSON.stringify(smartImportMeta)):null,savedAt:Date.now()};
+  if(!DB.smartImportDrafts)DB.smartImportDrafts=[];
+  const draftData={items:JSON.parse(JSON.stringify(smartImportItems)),meta:smartImportMeta?JSON.parse(JSON.stringify(smartImportMeta)):null,savedAt:Date.now()};
+  if(currentImportDraftId){
+    // 正在編輯某份既有草稿，更新回原本那筆，不會多開一份新的
+    const idx=DB.smartImportDrafts.findIndex(d=>d.id===currentImportDraftId);
+    if(idx>=0)DB.smartImportDrafts[idx]={...DB.smartImportDrafts[idx],...draftData};
+    else DB.smartImportDrafts.push({id:currentImportDraftId,...draftData});
+  }else{
+    DB.smartImportDrafts.push({id:uid(),...draftData});
+  }
   saveDB();
   _actuallyCloseModal('modal-smart-import');
-  toast('📝 已儲存草稿，下次「智慧匯入」時可以繼續編輯','success');
+  updateImportDraftsBadge();
+  toast('📝 已儲存草稿，可以在「草稿」按鈕裡繼續編輯','success');
+}
+function updateImportDraftsBadge(){
+  const badge=document.getElementById('import-drafts-badge');
+  if(!badge)return;
+  const n=(DB.smartImportDrafts||[]).length;
+  badge.textContent=n;
+  badge.classList.toggle('hidden',n===0);
+}
+function openImportDrafts(){
+  renderImportDraftsList();
+  openModal('modal-import-drafts');
+}
+function renderImportDraftsList(){
+  const wrap=document.getElementById('import-drafts-list');
+  const drafts=[...(DB.smartImportDrafts||[])].sort((a,b)=>(b.savedAt||0)-(a.savedAt||0));
+  if(!drafts.length){
+    wrap.innerHTML='<div class="empty" style="padding:24px"><div class="empty-icon">📋</div><div class="empty-text">還沒有儲存的草稿</div></div>';
+    return;
+  }
+  wrap.innerHTML=drafts.map(d=>{
+    const dt=new Date(d.savedAt||0);
+    const dateStr=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+    const shopName=d.meta&&d.meta.shopName?d.meta.shopName:'未命名草稿';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--cream3);border-radius:12px;margin-bottom:10px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px">${shopName}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${(d.items||[]).length} 筆商品 · ${dateStr}</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="resumeImportDraft('${d.id}')">繼續編輯</button>
+      <button class="remove-btn" onclick="deleteImportDraft('${d.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+function resumeImportDraft(id){
+  const d=(DB.smartImportDrafts||[]).find(x=>x.id===id);
+  if(!d)return;
+  closeModal('modal-import-drafts');
+  smartImportItems=JSON.parse(JSON.stringify(d.items||[]));
+  smartImportMeta=d.meta?JSON.parse(JSON.stringify(d.meta)):null;
+  currentImportDraftId=id;
+  document.getElementById('smart-import-excel-input').value='';
+  document.getElementById('smart-import-image-input').value='';
+  document.getElementById('smart-import-any-input').value='';
+  initSmartImportDropzone();
+  openModal('modal-smart-import');
+  renderSmartImportReview();
+}
+function deleteImportDraft(id){
+  customConfirm('確定刪除這份草稿？',()=>{
+    DB.smartImportDrafts=(DB.smartImportDrafts||[]).filter(d=>d.id!==id);
+    saveDB();
+    renderImportDraftsList();
+    updateImportDraftsBadge();
+    toast('🗑 已刪除草稿','success');
+  });
 }
 // 拖曳上傳：把 Excel 或圖片拖進虛線框裡即可，自動判斷檔案類型分派給對應的處理流程
 function initSmartImportDropzone(){
@@ -3809,7 +3875,10 @@ function smartImportRemoveRow(i){
 function confirmSmartImport(){
   const valid=smartImportItems.filter(it=>it.name&&it.name.trim());
   if(!valid.length){toast('沒有可以匯入的商品資料','error');return;}
-  delete DB.smartImportDraft;
+  if(currentImportDraftId){
+    DB.smartImportDrafts=(DB.smartImportDrafts||[]).filter(d=>d.id!==currentImportDraftId);
+    updateImportDraftsBadge();
+  }
   saveDB();
   _actuallyCloseModal('modal-smart-import');
   openAddOrder();
