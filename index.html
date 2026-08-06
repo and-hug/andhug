@@ -1008,7 +1008,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
     <div class="modal-body">
       <div id="confirm-message" style="font-size:14px;color:var(--text2);line-height:1.7;white-space:pre-line;margin-bottom:20px"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">取消</button>
+        <button class="btn btn-secondary" id="confirm-cancel-btn" onclick="closeModal('modal-confirm')">取消</button>
         <button class="btn btn-danger" id="confirm-ok-btn">確定</button>
       </div>
     </div>
@@ -1142,8 +1142,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
         <div style="font-size:12px;color:var(--text3);margin-bottom:10px">辨識結果如下，請檢查一下有沒有抓錯，可以直接修改或刪除：</div>
         <div id="smart-import-list" style="max-height:45vh;overflow-y:auto"></div>
         <button class="btn btn-secondary btn-sm" onclick="smartImportAddRow()" style="margin-top:8px">+ 手動新增一列</button>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
           <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')">取消</button>
+          <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
           <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入成採購單</button>
         </div>
       </div>
@@ -3382,6 +3383,27 @@ function openSmartImport(){
   document.getElementById('smart-import-any-input').value='';
   initSmartImportDropzone();
   openModal('modal-smart-import');
+  // 如果有存過草稿，問一下要不要繼續編輯
+  const draft=DB.smartImportDraft;
+  if(draft&&draft.items&&draft.items.length){
+    const d=new Date(draft.savedAt||Date.now());
+    const dateStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    customConfirm(`你有一份還沒匯入的草稿（${draft.items.length} 筆商品，${dateStr} 儲存），要繼續編輯嗎？`,()=>{
+      smartImportItems=JSON.parse(JSON.stringify(draft.items));
+      smartImportMeta=draft.meta?JSON.parse(JSON.stringify(draft.meta)):null;
+      renderSmartImportReview();
+    },()=>{
+      delete DB.smartImportDraft;
+      saveDB();
+    });
+  }
+}
+function saveSmartImportDraft(){
+  if(!smartImportItems||!smartImportItems.length){toast('沒有可以儲存的內容','error');return;}
+  DB.smartImportDraft={items:JSON.parse(JSON.stringify(smartImportItems)),meta:smartImportMeta?JSON.parse(JSON.stringify(smartImportMeta)):null,savedAt:Date.now()};
+  saveDB();
+  _actuallyCloseModal('modal-smart-import');
+  toast('📝 已儲存草稿，下次「智慧匯入」時可以繼續編輯','success');
 }
 // 拖曳上傳：把 Excel 或圖片拖進虛線框裡即可，自動判斷檔案類型分派給對應的處理流程
 function initSmartImportDropzone(){
@@ -3787,7 +3809,9 @@ function smartImportRemoveRow(i){
 function confirmSmartImport(){
   const valid=smartImportItems.filter(it=>it.name&&it.name.trim());
   if(!valid.length){toast('沒有可以匯入的商品資料','error');return;}
-  closeModal('modal-smart-import');
+  delete DB.smartImportDraft;
+  saveDB();
+  _actuallyCloseModal('modal-smart-import');
   openAddOrder();
   document.getElementById('order-items-list').innerHTML='';
   valid.forEach(it=>{
@@ -4618,10 +4642,12 @@ function closeScanModal(){
   closeModal('modal-scan');
 }
 // 自製確認視窗，取代原生 confirm()（在某些瀏覽器/預覽環境會被擋掉、完全沒反應）
-function customConfirm(message,onConfirm){
+function customConfirm(message,onConfirm,onCancel){
   document.getElementById('confirm-message').textContent=message;
   const btn=document.getElementById('confirm-ok-btn');
   btn.onclick=()=>{closeModal('modal-confirm');onConfirm&&onConfirm();};
+  const cancelBtn=document.getElementById('confirm-cancel-btn');
+  cancelBtn.onclick=()=>{closeModal('modal-confirm');onCancel&&onCancel();};
   openModal('modal-confirm');
 }
 function closeModal(id){
