@@ -3266,8 +3266,10 @@ function toggleAccordion(id){
 }
 // ---- 智慧匯入：Excel/CSV 直接讀表格，截圖用瀏覽器免費 OCR 辨識 ----
 let smartImportItems=[]; // {name,cost,qty}
+let smartImportMeta=null; // 從 PDF 額外抓到的店名/訂單編號/日期/運費等，只有 PDF 匯入才會有值
 function openSmartImport(){
   smartImportItems=[];
+  smartImportMeta=null;
   document.getElementById('smart-import-step-upload').classList.remove('hidden');
   document.getElementById('smart-import-step-review').classList.add('hidden');
   document.getElementById('smart-import-progress').classList.add('hidden');
@@ -3397,21 +3399,51 @@ async function handleSmartImportImage(input){
   }
 }
 // 把 pdf.js 抓到的文字片段依照座標分行：Y 座標相近的算同一行，X 座標由左到右排序
+// (中文 PDF 常常一個字一個片段，這裡連 width 一起存起來，才能判斷哪些片段其實是同一個詞)
 function pdfTextContentToRows(textContent){
-  const items=(textContent.items||[]).filter(it=>it.str&&it.str.trim()!=='');
+  const items=(textContent.items||[]).filter(it=>it.str&&it.str.length>0);
   const rows=[];
   items.forEach(it=>{
     const x=it.transform[4],y=it.transform[5];
     let row=rows.find(r=>Math.abs(r.y-y)<4);
     if(!row){row={y,items:[]};rows.push(row);}
-    row.items.push({x,str:it.str});
+    row.items.push({x,w:it.width||0,str:it.str});
   });
   rows.sort((a,b)=>b.y-a.y); // PDF 座標 Y 越大越靠近頁面上方
   return rows;
 }
+// 把同一列裡 X 座標緊鄰的文字片段合併成一個「詞」——避免中文被逐字拆開（每個字單獨一個片段是常態），
+// 片段之間間距明顯變大時，才視為換到下一個詞/欄位
+function pdfRowToTokens(rowItems){
+  const sorted=[...rowItems].sort((a,b)=>a.x-b.x);
+  const tokens=[];
+  let cur='',lastEnd=null;
+  sorted.forEach(it=>{
+    // 有些 PDF（例如淘寶訂單詳情）用一個很寬的空白字元來分隔「標籤」跟「值」兩欄，
+    // 這種寬空白一定代表換欄位，比單純比較間距更準
+    const isWideSpace=it.str===' '&&it.w>15;
+    if(isWideSpace){
+      if(cur.trim())tokens.push(cur.trim());
+      cur='';
+      lastEnd=it.x+it.w;
+      return;
+    }
+    const gap=lastEnd===null?0:(it.x-lastEnd);
+    if(lastEnd!==null&&gap>4){
+      if(cur.trim())tokens.push(cur.trim());
+      cur='';
+    }
+    cur+=it.str;
+    lastEnd=it.x+(it.w||it.str.length*8.6);
+  });
+  if(cur.trim())tokens.push(cur.trim());
+  return tokens;
+}
 // 專門處理「淘寶/電商訂單詳情」這種表格：左邊商品資訊常常分成好幾行（標題／款式／備註），
 // 右邊對應的現價／原價／數量也各自分成好幾行、對齊在同樣的高度。
-// 用「遇到 x數字（數量）就結算一筆商品」的方式抓取，不管左邊分幾行都能正確配對
+// 用「遇到 x數字（數量）就結算一筆商品」的方式抓取，不管左邊分幾行都能正確配對；
+// 商品名稱一律取結算前緊鄰的那一行（通常是款式/變體，比重複的商品標題更具辨識度），
+// 這樣不管前面混進多少雜訊行（頁首、地址等），都不會抓錯
 function parsePdfRowsToItems(rows){
   const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
   const qtyRe=/^[xX×]\s*([\d]+)$/;
@@ -3419,29 +3451,55 @@ function parsePdfRowsToItems(rows){
   let leftBuf=[],firstPrice=null,stop=false;
   for(const row of rows){
     if(stop)break;
+    const tokens=pdfRowToTokens(row.items);
     const left=[];let rowQty=null;
-    [...row.items].sort((a,b)=>a.x-b.x).forEach(it=>{
-      const s=it.str.trim();
-      if(!s||stop)return;
-      if(s.includes('付款详情')||s.includes('付款詳情')){stop=true;return;}
-      const pm=s.match(priceRe);
-      const qm=s.match(qtyRe);
+    for(const tok of tokens){
+      if(tok.includes('付款详情')||tok.includes('付款詳情')){stop=true;break;}
+      const pm=tok.match(priceRe);
+      const qm=tok.match(qtyRe);
       if(pm){if(firstPrice===null)firstPrice=parseFloat(pm[1]);}
       else if(qm){rowQty=parseInt(qm[1]);}
-      else left.push(s);
-    });
+      else left.push(tok);
+    }
     if(stop)break;
     if(left.length)leftBuf.push(left.join(''));
     if(rowQty!==null){
-      // 左邊有多行時，優先用第二行（通常是款式/變體，比標題更具辨識度），沒有就用第一行（標題）
-      const name=(leftBuf[1]||leftBuf[0]||'').trim();
+      const name=(leftBuf[leftBuf.length-2]||leftBuf[leftBuf.length-1]||'').trim();
       if(name)items.push({name,rawName:name,cost:firstPrice||0,qty:rowQty||1});
       leftBuf=[];firstPrice=null;
     }
   }
   return items;
 }
-// 從 OCR 純文字裡，用「每行找 ¥金額 跟 x數量」的方式，盡量猜出品名/單價/數量
+// 額外把「淘寶訂單詳情」PDF 裡的店名、訂單編號、付款日期、運費/折扣/總金額也一併抓出來，
+// 匯入時可以直接幫你把採購單上方的欄位填好，不用再手動抄一次
+function parseTaobaoOrderMeta(rows){
+  const meta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null};
+  const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
+  let prevPlainRow=null;
+  rows.forEach(row=>{
+    const tokens=pdfRowToTokens(row.items);
+    if(!meta.shopName){
+      const hasPrice=tokens.some(t=>priceRe.test(t));
+      if(hasPrice&&prevPlainRow){
+        meta.shopName=prevPlainRow;
+      }else if(!hasPrice&&tokens.length===1&&tokens[0].length<=12&&!/退货|运输|签收|物流|详情|宝贝|付款|发货|收货|广东|东莞|镇|路|号|楼|室|\d/.test(tokens[0])){
+        prevPlainRow=tokens[0];
+      }
+    }
+    for(let i=0;i<tokens.length;i++){
+      const tok=tokens[i];
+      if(tok==='订单编号'&&tokens[i+1])meta.orderNo=tokens[i+1];
+      if(tok==='付款时间'&&tokens[i+1])meta.payDate=tokens[i+1].split(' ')[0];
+      if(!meta.payDate&&tok==='创建时间'&&tokens[i+1])meta.payDate=tokens[i+1].split(' ')[0];
+      if(tok==='商品总价'){const m=(tokens[i+1]||'').match(priceRe);if(m)meta.totalProduct=parseFloat(m[1]);}
+      if(tok==='运费'){const m=(tokens[i+1]||'').match(priceRe);if(m)meta.shipping=parseFloat(m[1]);}
+      if(tok==='店铺优惠'){const raw=(tokens[i+1]||'').replace(/^-\s*/,'').trim();const m=raw.match(priceRe);if(m)meta.discount=parseFloat(m[1]);}
+      if(tok==='实付款'){const m=(tokens[i+1]||'').match(priceRe);if(m)meta.totalPaid=parseFloat(m[1]);}
+    }
+  });
+  return meta;
+}
 function parseOcrTextToItems(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
   const items=[];
@@ -3479,6 +3537,7 @@ async function handleSmartImportPDF(input){
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     const allItems=[];
+    smartImportMeta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null};
     for(let pageNum=1;pageNum<=pdf.numPages;pageNum++){
       progress.textContent=`讀取第 ${pageNum}/${pdf.numPages} 頁...`;
       const page=await pdf.getPage(pageNum);
@@ -3489,10 +3548,17 @@ async function handleSmartImportPDF(input){
         const rows=pdfTextContentToRows(textContent);
         let pageItems=parsePdfRowsToItems(rows);
         if(!pageItems.length){
-          const pageText=rows.map(r=>r.items.sort((a,b)=>a.x-b.x).map(i=>i.str).join(' ')).join('\n');
+          const pageText=rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n');
           pageItems=parseOcrTextToItems(pageText);
         }
         allItems.push(...pageItems);
+        // 順便抓店名／訂單編號／付款日期／運費等資訊，多頁的話只取第一次抓到的值
+        const pageMeta=parseTaobaoOrderMeta(rows);
+        Object.keys(pageMeta).forEach(k=>{
+          const v=pageMeta[k];
+          const empty=smartImportMeta[k]===null||smartImportMeta[k]==='';
+          if(v!==null&&v!==''&&empty)smartImportMeta[k]=v;
+        });
       }else{
         // 這頁沒有文字層（掃描圖檔），畫成圖片後用 OCR 辨識
         progress.textContent=`第 ${pageNum} 頁沒有文字層，改用文字辨識（OCR）中...`;
@@ -3623,7 +3689,22 @@ function confirmSmartImport(){
   valid.forEach(it=>{
     addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId);
   });
-  toast(`已帶入 ${valid.length} 筆商品，確認店家/日期後儲存即可`,'success');
+  // 如果是從 PDF 讀到店名/訂單編號/日期/運費，順便幫忙填好上方欄位
+  let filledMeta=[];
+  if(smartImportMeta){
+    if(smartImportMeta.shopName){document.getElementById('o-supplier').value=smartImportMeta.shopName;filledMeta.push('店家');}
+    if(smartImportMeta.payDate){document.getElementById('o-date').value=smartImportMeta.payDate;filledMeta.push('日期');}
+    if(smartImportMeta.shipping!==null){document.getElementById('o-shipping').value=smartImportMeta.shipping;filledMeta.push('運費');}
+    const noteParts=[];
+    if(smartImportMeta.orderNo)noteParts.push('訂單號 '+smartImportMeta.orderNo);
+    if(smartImportMeta.totalProduct!==null)noteParts.push('商品總價 ¥'+smartImportMeta.totalProduct.toFixed(2));
+    if(smartImportMeta.discount)noteParts.push('優惠 -¥'+smartImportMeta.discount.toFixed(2));
+    if(smartImportMeta.totalPaid!==null)noteParts.push('實付 ¥'+smartImportMeta.totalPaid.toFixed(2));
+    if(noteParts.length){document.getElementById('o-note').value=noteParts.join(' | ');filledMeta.push('備註');}
+    updateOrderTotalPreview();
+  }
+  const metaMsg=filledMeta.length?`，已自動帶入${filledMeta.join('/')}`:'';
+  toast(`已帶入 ${valid.length} 筆商品${metaMsg}，確認後儲存即可`,'success');
 }
 
 function openAddOrder(){
@@ -3812,6 +3893,7 @@ function undoReceive(id){
   customConfirm('取消到貨會把這張單的庫存減回去、成本反向還原。\n如果期間已經賣出商品,可能造成負庫存。\n\n確定要取消到貨?',()=>{
   applyOrderItemsWAC(o.items,reverseWAC);
   o.status='ordered';
+  delete o.receivedAt;
   saveDB();
   renderOrders();
   renderOverview();
@@ -3940,7 +4022,7 @@ function saveOrder(){
   saveDB();closeModal('modal-order');renderOrders();
   toast(`✅ 採購單已建立！按「確認到貨」才會更新庫存與成本`, 'success');
 }
-function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?(o.totalUsd/o.total):DB.rate;document.getElementById('order-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${o.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📝 ${o.note}</div>`:''}<table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${(o.items||[]).map(i=>{
+function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?(o.totalUsd/o.total):DB.rate;document.getElementById('order-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${o.status==='received'&&o.receivedAt?(()=>{const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');return `<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📦 到貨日期：${rds}</div>`;})():''}${o.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📝 ${o.note}</div>`:''}<table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${(o.items||[]).map(i=>{
   const linked=(i.linkedProducts||[]).map(pid=>{
     const p=DB.products.find(x=>x.id===pid);
     return p?p.name:pid;
@@ -3975,6 +4057,7 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
 function confirmReceived(id){
   const o=DB.orders.find(x=>x.id===id);if(!o)return;
   o.status='received';
+  o.receivedAt=Date.now();
   applyOrderItemsWAC(o.items,applyWAC);
   saveDB();renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();openOrderDetail(id);
   toast('✅ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
@@ -3982,6 +4065,7 @@ function confirmReceived(id){
 function quickConfirmReceived(id){
   const o=DB.orders.find(x=>x.id===id);if(!o||o.status==='received')return;
   o.status='received';
+  o.receivedAt=Date.now();
   applyOrderItemsWAC(o.items,applyWAC);
   saveDB();renderOverview();renderOrders();if(typeof renderProducts==='function')renderProducts();
   toast('✅ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
