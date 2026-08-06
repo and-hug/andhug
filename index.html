@@ -855,34 +855,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
       </table>
     </div>
     <div class="sku-section">
-      <div class="sku-section-title">🗂 布貼大類</div>
-      <table class="sku-table"><tr><th>代碼</th><th>大類</th><th>子類</th></tr>
-        <tr><td><span class="code-badge">01</span></td><td>AN 動物</td><td>01貓科 / 02犬科 / 03熊科 / 04小型獸 / 05草食大型 / 06靈長類 / 07鳥類 / 08爬蟲恐龍 / 09昆蟲 / 99其他</td></tr>
-        <tr><td><span class="code-badge">02</span></td><td>OC 海洋</td><td>01魚類 / 02鯨豚 / 03甲殼 / 04軟體 / 05海洋爬蟲 / 06棘皮 / 99其他</td></tr>
-        <tr><td><span class="code-badge">03</span></td><td>CH 角色</td><td>01擬人動物 / 02幽靈鬼怪 / 03造型角色 / 04臉/表情圖案 / 05人物動作 / 06機器人 / 99其他</td></tr>
-        <tr><td><span class="code-badge">04</span></td><td>PT 植物</td><td>01花 / 02葉樹 / 03仙人掌多肉 / 99其他</td></tr>
-        <tr><td><span class="code-badge">05</span></td><td>FD 食物</td><td>01亞洲 / 02西式 / 03甜點烘焙 / 04水果 / 99其他</td></tr>
-        <tr><td><span class="code-badge">06</span></td><td>DR 飲料</td><td>01酒類 / 02飲料 / 03咖啡 / 99其他</td></tr>
-        <tr><td><span class="code-badge">07</span></td><td>SY 符號</td><td>01愛心 / 02星星 / 03蝴蝶結 / 04幾何 / 05音樂 / 06宗教玄學 / 99其他</td></tr>
-        <tr><td><span class="code-badge">08</span></td><td>EM 物品</td><td>01配件 / 02電器 / 03文具 / 04露營 / 05廚房 / 99其他</td></tr>
-        <tr><td><span class="code-badge">09</span></td><td>TR 運輸</td><td>01車輛 / 02兩輪 / 03飛機 / 04船 / 99其他</td></tr>
-        <tr><td><span class="code-badge">10</span></td><td>TX 文字</td><td>01英文 / 02中文 / 03節慶 / 99其他</td></tr>
-        <tr><td><span class="code-badge">11</span></td><td>LT 字母數字</td><td>01字母A-Z / 02數字0-9 / 03組合 / 99其他</td></tr>
-        <tr><td><span class="code-badge">12</span></td><td>BL 球類</td><td>01足球 / 02籃球 / 03棒球 / 04美式足球 / 05排球網球 / 99其他</td></tr>
-        <tr><td><span class="code-badge">13</span></td><td>SP 運動</td><td>01水上 / 02極限 / 03武術 / 99其他</td></tr>
-        <tr><td><span class="code-badge">14</span></td><td>SE 節慶</td><td>01農曆新年 / 02情人節 / 03復活節 / 04萬聖節 / 05感恩節 / 06聖誕節 / 99其他</td></tr>
-        <tr><td><span class="code-badge">15</span></td><td>UN 宇宙</td><td>01星球太空 / 02星座 / 03外星世界 / 04天氣自然 / 99其他</td></tr>
-        <tr><td><span class="code-badge">99</span></td><td>SP 特別</td><td>01聯名 / 02限定 / 03訂製 / 99其他</td></tr>
-      </table>
+      <div class="sku-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>🗂 布貼大類</span>
+        <button type="button" onclick="toggleSkuEditMode()" id="sku-edit-toggle-btn" style="text-transform:none;letter-spacing:normal;font-size:11px;font-weight:700;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:8px;padding:4px 10px;cursor:pointer">✏️ 編輯規則</button>
+      </div>
+      <div id="sku-cats-table-wrap"></div>
+      <div id="sku-cats-add-row" class="hidden" style="margin-top:10px">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addSkuCatRow()">+ 新增大類</button>
+      </div>
     </div>
     <div class="sku-section">
       <div class="sku-section-title">🎨 顏色代碼</div>
-      <table class="sku-table">
-        <tr><td><span class="code-badge">01</span> <span class="color-dot" style="background:#fff;border-color:#ccc"></span>白</td><td><span class="code-badge">02</span> <span class="color-dot" style="background:#222"></span>黑</td><td><span class="code-badge">03</span> <span class="color-dot" style="background:#a0aec0"></span>灰</td><td><span class="code-badge">04</span> <span class="color-dot" style="background:#e53e3e"></span>紅</td></tr>
-        <tr><td><span class="code-badge">05</span> <span class="color-dot" style="background:#ed8936"></span>橘</td><td><span class="code-badge">06</span> <span class="color-dot" style="background:#ecc94b"></span>黃</td><td><span class="code-badge">07</span> <span class="color-dot" style="background:#48bb78"></span>綠</td><td><span class="code-badge">08</span> <span class="color-dot" style="background:#4299e1"></span>藍</td></tr>
-        <tr><td><span class="code-badge">09</span> <span class="color-dot" style="background:#9f7aea"></span>紫</td><td><span class="code-badge">10</span> <span class="color-dot" style="background:#e8d5b7"></span>米</td><td><span class="code-badge">11</span> <span class="color-dot" style="background:#744210"></span>棕</td><td><span class="code-badge">12</span> <span class="color-dot" style="background:#f687b3"></span>粉紅</td></tr>
-        <tr><td><span class="code-badge">13</span> <span class="color-dot" style="background:#9ae6b4"></span>粉綠</td><td><span class="code-badge">14</span> <span class="color-dot" style="background:#90cdf4"></span>粉藍</td><td><span class="code-badge">99</span> 三色以上</td><td><span class="code-badge">00</span> 無色</td></tr>
-      </table>
+      <div id="sku-colors-table-wrap"></div>
+      <div id="sku-colors-add-row" class="hidden" style="margin-top:10px">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addSkuColorRow()">+ 新增顏色</button>
+      </div>
+    </div>
+    <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:-12px;margin-bottom:28px">
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits()">💾 儲存變更</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()">取消</button>
     </div>
     <div class="sku-section">
       <div class="sku-section-title">📏 尺寸代碼 · 售價 (毛布貼+$1)</div>
@@ -1823,7 +1814,7 @@ function importBackup(input){
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 async function fetchRate(){document.getElementById('rate-time').textContent='更新中...';try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');const d=await r.json();if(d.rates?.USD){DB.rate=d.rates.USD;DB.rateTime=new Date().toLocaleTimeString('zh-TW');saveDB();}}catch(e){}document.getElementById('rate-display').textContent=`¥1 = $${DB.rate.toFixed(4)}`;document.getElementById('rate-time').textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';}
-function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();}
+function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
 function renderOverview(){const ps=DB.products,ok=ps.filter(p=>p.status==='ok'),low=ok.filter(p=>p.stock<=(p.minStock||5)&&p.stock>0),today=DB.todaySales?.[todayStr()];document.getElementById('stat-total').textContent=ps.length;document.getElementById('stat-stock').textContent=ok.reduce((s,p)=>s+(p.stock||0),0);document.getElementById('stat-low').textContent=low.length;document.getElementById('stat-today').textContent=`$${(today?.revenue||0).toFixed(0)}`;const invValueCny=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);document.getElementById('stat-inventory-value').textContent=`$${(invValueCny*DB.rate).toFixed(0)}`;const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);if(!recent.length){ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';}else{ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="${o.status==='received'?'':`event.stopPropagation();quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'已到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:${o.status==='received'?'default':'pointer'}">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).length}件</div></div></div>`).join('');}const ls=document.getElementById('low-stock-list');if(!low.length){ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';}else{ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');}}
 function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
 const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',ST:'襪子',GT:'服飾',ZZ:'組合'};
@@ -2527,6 +2518,119 @@ function getCatLabel(sku){
 let currentView='grid';
 let activeSubcat='all';
 const SUBCAT_MAP={'01':'AN 動物','02':'OC 海洋','03':'CH 角色','04':'PT 植物','05':'FD 食物','06':'DR 飲料','07':'SY 符號','08':'EM 物品','09':'TR 運輸','10':'TX 文字','11':'LT 字母','12':'BL 球類','13':'SP 運動','14':'SE 節慶','15':'UN 宇宙','99':'SP 特別'};
+// ---- SKU 規則參考頁：大類/顏色可以自行編輯、新增（存在 DB.skuCats / DB.skuColors，沒有的話用預設值）----
+// 這個表純粹是給自己對照用的參考資料，不會影響商品分類側邊欄實際的運作邏輯
+const DEFAULT_SKU_CATS=[
+  {code:'01',label:'AN 動物',sub:'01貓科 / 02犬科 / 03熊科 / 04小型獸 / 05草食大型 / 06靈長類 / 07鳥類 / 08爬蟲恐龍 / 09昆蟲 / 99其他'},
+  {code:'02',label:'OC 海洋',sub:'01魚類 / 02鯨豚 / 03甲殼 / 04軟體 / 05海洋爬蟲 / 06棘皮 / 99其他'},
+  {code:'03',label:'CH 角色',sub:'01擬人動物 / 02幽靈鬼怪 / 03造型角色 / 04臉/表情圖案 / 05人物動作 / 06機器人 / 99其他'},
+  {code:'04',label:'PT 植物',sub:'01花 / 02葉樹 / 03仙人掌多肉 / 99其他'},
+  {code:'05',label:'FD 食物',sub:'01亞洲 / 02西式 / 03甜點烘焙 / 04水果 / 99其他'},
+  {code:'06',label:'DR 飲料',sub:'01酒類 / 02飲料 / 03咖啡 / 99其他'},
+  {code:'07',label:'SY 符號',sub:'01愛心 / 02星星 / 03蝴蝶結 / 04幾何 / 05音樂 / 06宗教玄學 / 99其他'},
+  {code:'08',label:'EM 物品',sub:'01配件 / 02電器 / 03文具 / 04露營 / 05廚房 / 99其他'},
+  {code:'09',label:'TR 運輸',sub:'01車輛 / 02兩輪 / 03飛機 / 04船 / 99其他'},
+  {code:'10',label:'TX 文字',sub:'01英文 / 02中文 / 03節慶 / 99其他'},
+  {code:'11',label:'LT 字母數字',sub:'01字母A-Z / 02數字0-9 / 03組合 / 99其他'},
+  {code:'12',label:'BL 球類',sub:'01足球 / 02籃球 / 03棒球 / 04美式足球 / 05排球網球 / 99其他'},
+  {code:'13',label:'SP 運動',sub:'01水上 / 02極限 / 03武術 / 99其他'},
+  {code:'14',label:'SE 節慶',sub:'01農曆新年 / 02情人節 / 03復活節 / 04萬聖節 / 05感恩節 / 06聖誕節 / 99其他'},
+  {code:'15',label:'UN 宇宙',sub:'01星球太空 / 02星座 / 03外星世界 / 04天氣自然 / 99其他'},
+  {code:'99',label:'SP 特別',sub:'01聯名 / 02限定 / 03訂製 / 99其他'}
+];
+const DEFAULT_SKU_COLORS=[
+  {code:'01',label:'白',hex:'#ffffff'},{code:'02',label:'黑',hex:'#222222'},
+  {code:'03',label:'灰',hex:'#a0aec0'},{code:'04',label:'紅',hex:'#e53e3e'},
+  {code:'05',label:'橘',hex:'#ed8936'},{code:'06',label:'黃',hex:'#ecc94b'},
+  {code:'07',label:'綠',hex:'#48bb78'},{code:'08',label:'藍',hex:'#4299e1'},
+  {code:'09',label:'紫',hex:'#9f7aea'},{code:'10',label:'米',hex:'#e8d5b7'},
+  {code:'11',label:'棕',hex:'#744210'},{code:'12',label:'粉紅',hex:'#f687b3'},
+  {code:'13',label:'粉綠',hex:'#9ae6b4'},{code:'14',label:'粉藍',hex:'#90cdf4'},
+  {code:'99',label:'三色以上',hex:''},{code:'00',label:'無色',hex:''}
+];
+let skuEditMode=false, skuCatsDraft=null, skuColorsDraft=null;
+function getSkuCats(){return DB.skuCats&&DB.skuCats.length?DB.skuCats:DEFAULT_SKU_CATS;}
+function getSkuColors(){return DB.skuColors&&DB.skuColors.length?DB.skuColors:DEFAULT_SKU_COLORS;}
+function renderSkuPage(){
+  renderSkuCatsTable();
+  renderSkuColorsTable();
+  document.getElementById('sku-cats-add-row').classList.toggle('hidden',!skuEditMode);
+  document.getElementById('sku-colors-add-row').classList.toggle('hidden',!skuEditMode);
+  document.getElementById('sku-edit-save-actions').classList.toggle('hidden',!skuEditMode);
+  document.getElementById('sku-edit-toggle-btn').textContent=skuEditMode?'👁 檢視模式':'✏️ 編輯規則';
+}
+function renderSkuCatsTable(){
+  const wrap=document.getElementById('sku-cats-table-wrap');
+  const rows=skuEditMode?skuCatsDraft:getSkuCats();
+  if(!skuEditMode){
+    wrap.innerHTML='<table class="sku-table"><tr><th>代碼</th><th>大類</th><th>子類</th></tr>'+
+      rows.map(r=>`<tr><td><span class="code-badge">${r.code}</span></td><td>${r.label}</td><td>${r.sub}</td></tr>`).join('')+'</table>';
+  }else{
+    wrap.innerHTML=rows.map((r,i)=>`<div style="display:grid;grid-template-columns:60px 110px 1fr 32px;gap:8px;margin-bottom:8px;align-items:center">
+      <input class="form-input" style="font-size:12px;text-align:center" value="${r.code}" maxlength="2" oninput="skuCatsDraft[${i}].code=this.value">
+      <input class="form-input" style="font-size:12px" value="${r.label}" oninput="skuCatsDraft[${i}].label=this.value">
+      <input class="form-input" style="font-size:12px" value="${(r.sub||'').replace(/"/g,'&quot;')}" oninput="skuCatsDraft[${i}].sub=this.value">
+      <button class="remove-btn" onclick="removeSkuCatRow(${i})">×</button>
+    </div>`).join('');
+  }
+}
+function renderSkuColorsTable(){
+  const wrap=document.getElementById('sku-colors-table-wrap');
+  const rows=skuEditMode?skuColorsDraft:getSkuColors();
+  if(!skuEditMode){
+    const cells=rows.map(r=>`<td>${r.hex?`<span class="code-badge">${r.code}</span> <span class="color-dot" style="background:${r.hex};${r.hex==='#ffffff'?'border-color:#ccc':''}"></span>${r.label}`:`<span class="code-badge">${r.code}</span> ${r.label}`}</td>`);
+    let html='<table class="sku-table">';
+    for(let i=0;i<cells.length;i+=4){html+='<tr>'+cells.slice(i,i+4).join('')+'</tr>';}
+    html+='</table>';
+    wrap.innerHTML=html;
+  }else{
+    wrap.innerHTML=rows.map((r,i)=>`<div style="display:grid;grid-template-columns:50px 1fr 60px 32px;gap:8px;margin-bottom:8px;align-items:center">
+      <input class="form-input" style="font-size:12px;text-align:center" value="${r.code}" maxlength="2" oninput="skuColorsDraft[${i}].code=this.value">
+      <input class="form-input" style="font-size:12px" value="${r.label}" oninput="skuColorsDraft[${i}].label=this.value">
+      <input type="color" style="width:100%;height:36px;border-radius:8px;border:1.5px solid var(--cream3);cursor:pointer" value="${r.hex||'#cccccc'}" oninput="skuColorsDraft[${i}].hex=this.value">
+      <button class="remove-btn" onclick="removeSkuColorRow(${i})">×</button>
+    </div>`).join('');
+  }
+}
+function toggleSkuEditMode(){
+  if(!skuEditMode){
+    skuCatsDraft=JSON.parse(JSON.stringify(getSkuCats()));
+    skuColorsDraft=JSON.parse(JSON.stringify(getSkuColors()));
+    skuEditMode=true;
+  }else{
+    skuEditMode=false;
+  }
+  renderSkuPage();
+}
+function addSkuCatRow(){
+  skuCatsDraft.push({code:'',label:'',sub:''});
+  renderSkuCatsTable();
+}
+function removeSkuCatRow(i){
+  skuCatsDraft.splice(i,1);
+  renderSkuCatsTable();
+}
+function addSkuColorRow(){
+  skuColorsDraft.push({code:'',label:'',hex:'#cccccc'});
+  renderSkuColorsTable();
+}
+function removeSkuColorRow(i){
+  skuColorsDraft.splice(i,1);
+  renderSkuColorsTable();
+}
+function saveSkuEdits(){
+  DB.skuCats=skuCatsDraft.filter(r=>r.code&&r.label);
+  DB.skuColors=skuColorsDraft.filter(r=>r.code&&r.label);
+  saveDB();
+  skuEditMode=false;
+  renderSkuPage();
+  toast('✅ SKU 規則已儲存','success');
+}
+function cancelSkuEdits(){
+  skuEditMode=false;
+  skuCatsDraft=null;skuColorsDraft=null;
+  renderSkuPage();
+}
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
@@ -4521,6 +4625,14 @@ function customConfirm(message,onConfirm){
   openModal('modal-confirm');
 }
 function closeModal(id){
+  // 智慧匯入採購表：如果已經辨識出結果、還沒按「匯入成採購單」，關閉前先跟你確認一下，避免手滑不小心把辨識結果弄丟
+  if(id==='modal-smart-import'&&smartImportItems&&smartImportItems.length&&!document.getElementById('smart-import-step-review').classList.contains('hidden')){
+    customConfirm('要放棄這次辨識出來的商品清單嗎？關閉後這些資料就不會保留了。',()=>{_actuallyCloseModal(id);});
+    return;
+  }
+  _actuallyCloseModal(id);
+}
+function _actuallyCloseModal(id){
   document.getElementById(id).classList.add('hidden');
   if(id==='modal-scan'){ // 相機掃描視窗無論從哪個管道關閉（叉叉/ESC/點外面）都要確實停止鏡頭
     if(scanRAF)cancelAnimationFrame(scanRAF);
@@ -4541,12 +4653,18 @@ document.addEventListener('keydown', function(e){
   // 關掉最後一個 (最上層)
   closeModal(opened[opened.length - 1].id);
 });
-document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id);}));
+// 點外面關閉 modal：要求 mousedown 跟 click 都落在遮罩本身，才算是「真的點外面」——
+// 否則像貼上文字這種操作，有時瀏覽器/系統選單會讓 click 的目標意外落到遮罩上，誤判成點外面把視窗關掉
+let _modalOverlayMouseDownOnSelf=false;
+document.addEventListener('mousedown',e=>{
+  _modalOverlayMouseDownOnSelf=!!(e.target&&e.target.classList&&e.target.classList.contains('modal-overlay'));
+});
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el&&_modalOverlayMouseDownOnSelf)closeModal(el.id);}));
 // 補強：有 6 個彈窗的 HTML 宣告在這支 script 之後，上面那行執行當下抓不到它們，
 // 導致點外面關不掉（桌機、手機都受影響，原本只補了手機，這次桌機也一起修）。
 document.addEventListener('click',e=>{
   const el=e.target;
-  if(el&&el.classList&&el.classList.contains('modal-overlay')&&!el.classList.contains('hidden'))closeModal(el.id);
+  if(el&&el.classList&&el.classList.contains('modal-overlay')&&!el.classList.contains('hidden')&&_modalOverlayMouseDownOnSelf)closeModal(el.id);
 });
 document.addEventListener('click',e=>{
   if(!window.matchMedia('(max-width:768px)').matches)return;
