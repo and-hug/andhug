@@ -167,6 +167,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
 .toast.error{border-color:var(--pink);background:var(--pink-light);color:#c45f7a;}
 @keyframes slideIn{from{transform:translateX(30px) scale(0.9);opacity:0}to{transform:translateX(0) scale(1);opacity:1}}
 .order-item-row{display:grid;grid-template-columns:1fr 96px 70px 34px;gap:8px;margin-bottom:8px;align-items:start;}
+.oi-suggest-wrap{position:relative;}
+.oi-suggest-list{position:absolute;top:100%;left:0;right:0;z-index:80;background:var(--surface,#fff);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.12);max-height:190px;overflow-y:auto;margin-top:3px;}
+.oi-suggest-item{padding:8px 10px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text2);}
+.oi-suggest-item:hover{background:var(--cream2);}
+.oi-suggest-item img{width:24px;height:24px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--cream2);}
+.oi-suggest-empty{padding:8px 10px;font-size:12px;color:var(--text3);}
+.oi-linked-tag{font-size:10px;color:var(--brown);font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px;}
+.oi-linked-tag.oi-new{color:var(--text3);font-weight:600;}
 .remove-btn{width:34px;height:38px;border-radius:8px;background:var(--red-light);border:1.5px solid #fca5a5;color:var(--red);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
 .remove-btn:hover{background:var(--red);color:#fff;}
 .rate-bar{display:flex;align-items:center;gap:10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--text2);font-weight:600;margin-bottom:20px;}
@@ -3435,15 +3443,82 @@ function unlockOrderItems(){
   });
 }
 let editingOrderId=null, orderItemsUnlocked=false;
-function addOrderItemFilled(name,cost,qty,readonly){
+function addOrderItemFilled(name,cost,qty,readonly,productId){
   const id=uid();
   const list=document.getElementById('order-items-list');
   const div=document.createElement('div');
   div.className='order-item-row';
   div.id='oi-'+id;
   const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:22px;text-align:center"':'style="font-size:12px;padding-left:22px;text-align:center"';
-  div.innerHTML=`<div><input type="text" class="form-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost||''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px;align-self:end"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`}`;
+  const linkedIdAttr=(!readonly&&productId)?` data-linked-id="${productId}"`:'';
+  const nameInputHtml=readonly
+    ?`<input type="text" class="form-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
+    :`<input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
+  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost||''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px;align-self:end"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`}`;
   list.appendChild(div);
+  if(!readonly&&productId){
+    const p=DB.products.find(x=>x.id===productId);
+    if(p){
+      const tag=div.querySelector('.oi-linked-tag');
+      if(tag)tag.innerHTML=`🔗 已連結:${p.name}`;
+    }
+  }
+}
+// ---- 採購單商品名稱自動搜尋/連結現有商品 ----
+function showOrderItemSuggestions(input){
+  const wrap=input.closest('.oi-suggest-wrap');
+  if(!wrap)return;
+  let list=wrap.querySelector('.oi-suggest-list');
+  if(list)list.remove();
+  const q=input.value.trim();
+  input.dataset.linkedId=input.dataset.linkedId||'';
+  const tag=wrap.querySelector('.oi-linked-tag');
+  if(!q){if(tag)tag.innerHTML='';return;}
+  // 如果目前已連結的商品名稱跟輸入框不同了，代表使用者改了字，先清掉連結
+  if(input.dataset.linkedId){
+    const linked=DB.products.find(x=>x.id===input.dataset.linkedId);
+    if(!linked||linked.name!==q){input.dataset.linkedId='';if(tag)tag.innerHTML='';}
+  }
+  const ql=q.toLowerCase();
+  const matches=(DB.products||[]).filter(p=>p.name&&(p.name.toLowerCase().includes(ql)||(p.sku||'').toLowerCase().includes(ql))).slice(0,8);
+  list=document.createElement('div');
+  list.className='oi-suggest-list';
+  if(matches.length===0){
+    list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，儲存時會自動新增一個新商品「${q}」</div>`;
+  }else{
+    matches.forEach(p=>{
+      const item=document.createElement('div');
+      item.className='oi-suggest-item';
+      item.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🖼</span>'}<span>${p.name}<br><span style="color:var(--text3);font-size:10px">${p.sku||''}</span></span>`;
+      item.onmousedown=function(e){e.preventDefault();selectOrderItemSuggestion(input,p.id,p.name);};
+      list.appendChild(item);
+    });
+  }
+  wrap.appendChild(list);
+}
+function selectOrderItemSuggestion(input,productId,productName){
+  input.value=productName;
+  input.dataset.linkedId=productId;
+  const wrap=input.closest('.oi-suggest-wrap');
+  if(wrap){
+    const list=wrap.querySelector('.oi-suggest-list');
+    if(list)list.remove();
+    const tag=wrap.querySelector('.oi-linked-tag');
+    if(tag)tag.innerHTML=`🔗 已連結:${productName}`;
+  }
+  updateOrderTotalPreview();
+}
+function hideOrderItemSuggestionsLater(input){
+  setTimeout(()=>{
+    const wrap=input.closest('.oi-suggest-wrap');
+    const list=wrap&&wrap.querySelector('.oi-suggest-list');
+    if(list)list.remove();
+    const tag=wrap&&wrap.querySelector('.oi-linked-tag');
+    if(tag&&!tag.innerHTML&&input.value.trim()&&!input.dataset.linkedId){
+      tag.innerHTML=`✨ 將新增為新商品「${input.value.trim()}」`;
+      tag.classList.add('oi-new');
+    }
+  },150);
 }
 function openEditOrder(id){
   const o=DB.orders.find(x=>x.id===id);
@@ -3461,7 +3536,7 @@ function openEditOrder(id){
   document.getElementById('o-total-usd').value=o.totalUsd||'';
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
-  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived));
+  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId));
   if(!o.items||!o.items.length)addOrderItem();
   closeModal('modal-order-detail');
   openModal('modal-order');
@@ -3542,7 +3617,7 @@ function updateOrderTotalPreview(){
 document.addEventListener('input',e=>{
   if(e.target.closest('#order-items-list')||e.target.id==='o-shipping')updateOrderTotalPreview();
 });
-function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div><input type="text" class="form-input" placeholder="商品名稱" style="font-size:12px"></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`;list.appendChild(div);
+function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div class="oi-suggest-wrap"><input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`;list.appendChild(div);
   pushUndo({label:'新增商品項目',undo:()=>{div.remove();updateOrderTotalPreview();},redo:()=>{list.appendChild(div);updateOrderTotalPreview();}});
   updateOrderTotalPreview();
 }
@@ -3566,7 +3641,8 @@ function saveOrder(){
     const cost=parseFloat(ins[1].value)||0;
     const qty=parseInt(ins[2].value)||1;
     if(name){
-      const p=DB.products.find(x=>x.name===name);
+      const linkedId=ins[0].dataset&&ins[0].dataset.linkedId;
+      const p=linkedId?DB.products.find(x=>x.id===linkedId):DB.products.find(x=>x.name===name);
       items.push({id:uid(),name,cost,qty,productId:p?p.id:''});
     }
   });
