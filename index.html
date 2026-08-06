@@ -971,7 +971,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
     <div class="modal-body">
       <div class="form-row">
         <div class="form-group"><label class="form-label">店家名稱 ✦</label><input type="text" class="form-input" id="o-supplier" placeholder="淘寶店名..."></div>
-        <div class="form-group"><label class="form-label">訂單日期 ✦</label><input type="date" class="form-input" id="o-date"></div>
+        <div class="form-group">
+          <label class="form-label">訂單日期 ✦</label>
+          <div style="position:relative" id="o-date-wrap">
+            <button type="button" onclick="toggleODateCal()" id="o-date-btn" class="form-input" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface)">
+              <span id="o-date-btn-label">選擇日期</span>
+              <span style="font-size:13px;color:var(--text3)">📅</span>
+            </button>
+            <input type="date" id="o-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
+            <div id="o-date-cal" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:80;background:var(--surface);border:1.5px solid var(--cream3);border-radius:16px;padding:16px;box-shadow:0 6px 20px rgba(139,111,71,.18);width:280px;box-sizing:border-box"></div>
+          </div>
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
@@ -1994,6 +2004,87 @@ function getSalesCountMap(){
   });
   return map;
 }
+// ---- 採購單「訂單日期」自訂日期選擇器（跟原生 <input type=date> 的醜彈窗不同，配色統一）----
+let oDateCalMonth=null; // {y,m}
+function toggleODateCal(){
+  const cal=document.getElementById('o-date-cal');
+  if(!cal)return;
+  const willShow=cal.style.display==='none';
+  if(willShow){
+    const cur=document.getElementById('o-date').value||todayStr();
+    const d=new Date(cur+'T00:00:00');
+    oDateCalMonth={y:d.getFullYear(),m:d.getMonth()};
+    renderODateCal();
+  }
+  cal.style.display=willShow?'block':'none';
+}
+function shiftODateCalMonth(dir){
+  if(!oDateCalMonth)return;
+  let {y,m}=oDateCalMonth;
+  m+=dir;
+  if(m<0){m=11;y--;}
+  if(m>11){m=0;y++;}
+  oDateCalMonth={y,m};
+  renderODateCal();
+}
+function pickODateDay(y,m,day){
+  const d=String(y)+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+  document.getElementById('o-date').value=d;
+  updateODateBtnLabel();
+  document.getElementById('o-date-cal').style.display='none';
+}
+function updateODateBtnLabel(){
+  const v=document.getElementById('o-date').value;
+  const label=document.getElementById('o-date-btn-label');
+  if(!label)return;
+  if(!v){label.textContent='選擇日期';return;}
+  const d=new Date(v+'T00:00:00');
+  label.textContent=String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear();
+}
+function renderODateCal(){
+  const cal=document.getElementById('o-date-cal');
+  if(!cal||!oDateCalMonth)return;
+  const {y,m}=oDateCalMonth;
+  const selected=document.getElementById('o-date').value||'';
+  const today=todayStr();
+  const firstWeekday=new Date(y,m,1).getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const monthNames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const weekLabels=['日','一','二','三','四','五','六'];
+  let cells='';
+  for(let i=0;i<firstWeekday;i++)cells+='<div></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const d=String(y)+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    const isSelected=d===selected;
+    const isToday=d===today;
+    cells+=`<button type="button" onclick="pickODateDay(${y},${m},${day})" style="
+      width:32px;height:32px;border-radius:50%;font-size:12.5px;font-weight:${isSelected?'800':'600'};
+      border:1.5px solid ${isToday&&!isSelected?'var(--brown-light)':'transparent'};
+      background:${isSelected?'var(--brown)':'transparent'};
+      color:${isSelected?'#fff':'var(--text2)'};
+      cursor:pointer;font-family:inherit;padding:0;transition:background .12s"
+      onmouseover="if(!${isSelected})this.style.background='var(--cream2)'" onmouseout="this.style.background='${isSelected?'var(--brown)':'transparent'}'">${day}</button>`;
+  }
+  cal.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <button type="button" onclick="shiftODateCalMonth(-1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">◀</button>
+      <div style="font-size:14px;font-weight:800;color:var(--brown);letter-spacing:.3px">${y}年 ${monthNames[m]}</div>
+      <button type="button" onclick="shiftODateCalMonth(1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">▶</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">
+      ${weekLabels.map(w=>`<div style="text-align:center;font-size:10.5px;font-weight:800;color:var(--text3)">${w}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;justify-items:center">${cells}</div>
+    <div style="border-top:1.5px solid var(--cream2);margin-top:10px;padding-top:12px;text-align:center">
+      <button type="button" onclick="pickODateDay(${new Date().getFullYear()},${new Date().getMonth()},${new Date().getDate()})" style="border:none;background:none;color:var(--brown);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">回到今天</button>
+    </div>`;
+}
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('o-date-wrap');
+  const cal=document.getElementById('o-date-cal');
+  if(!wrap||!cal||cal.style.display==='none')return;
+  if(!wrap.contains(e.target))cal.style.display='none';
+});
 function openSaleHistoryModal(){
   const d=new Date((saleHistoryDate||todayStr())+'T00:00:00');
   saleCalMonth={y:d.getFullYear(),m:d.getMonth()};
@@ -3890,7 +3981,7 @@ function confirmSmartImport(){
   let filledMeta=[];
   if(smartImportMeta){
     if(smartImportMeta.shopName){document.getElementById('o-supplier').value=smartImportMeta.shopName;filledMeta.push('店家');}
-    if(smartImportMeta.payDate){document.getElementById('o-date').value=smartImportMeta.payDate;filledMeta.push('日期');}
+    if(smartImportMeta.payDate){document.getElementById('o-date').value=smartImportMeta.payDate;updateODateBtnLabel();filledMeta.push('日期');}
     if(smartImportMeta.shipping!==null){document.getElementById('o-shipping').value=smartImportMeta.shipping;filledMeta.push('運費');}
     const noteParts=[];
     if(smartImportMeta.orderNo)noteParts.push('訂單號 '+smartImportMeta.orderNo);
@@ -3913,6 +4004,8 @@ function openAddOrder(){
   document.getElementById('order-unlock-btn').classList.add('hidden');
   document.getElementById('o-supplier').value='';
   document.getElementById('o-date').value=todayStr();
+  updateODateBtnLabel();
+  const odc=document.getElementById('o-date-cal');if(odc)odc.style.display='none';
   document.getElementById('o-shipping').value='';
   document.getElementById('o-total-usd').value='';
   document.getElementById('o-note').value='';
@@ -4030,6 +4123,8 @@ function openEditOrder(id){
   document.getElementById('order-unlock-btn').classList.toggle('hidden',!isReceived);
   document.getElementById('o-supplier').value=o.supplier||'';
   document.getElementById('o-date').value=o.date||todayStr();
+  updateODateBtnLabel();
+  const odc2=document.getElementById('o-date-cal');if(odc2)odc2.style.display='none';
   document.getElementById('o-shipping').value=o.shipping||'';
   document.getElementById('o-total-usd').value=o.totalUsd||'';
   document.getElementById('o-note').value=o.note||'';
@@ -4099,6 +4194,18 @@ function undoReceive(id){
   toast('↩️ 已取消到貨,庫存與成本已還原','success');
   });
 }
+// 採購單「總額美金」用的匯率：新增中的單用目前即時匯率（因為還沒付錢，是現在的行情）；
+// 已經存在的單（編輯中）固定用當初下單/付款時鎖住的匯率，不會因為之後改了商品項目或匯率波動而跟著變動
+function getEffectiveOrderRate(){
+  if(editingOrderId){
+    const o=DB.orders.find(x=>x.id===editingOrderId);
+    if(o){
+      if(o.rateUsed)return o.rateUsed;
+      if(o.totalUsd&&o.total)return o.totalUsd/o.total; // 舊資料沒存 rateUsed，用當初存的總額回推
+    }
+  }
+  return DB.rate||0;
+}
 function updateOrderTotalPreview(){
   const rows=document.querySelectorAll('#order-items-list .order-item-row');
   let totalCny=0;
@@ -4111,7 +4218,7 @@ function updateOrderTotalPreview(){
   const shipping=parseFloat(document.getElementById('o-shipping')?.value)||0;
   totalCny+=shipping;
   const usdInput=document.getElementById('o-total-usd');
-  if(usdInput)usdInput.value=(totalCny*(DB.rate||0)).toFixed(2);
+  if(usdInput)usdInput.value=(totalCny*getEffectiveOrderRate()).toFixed(2);
 }
 document.addEventListener('input',e=>{
   if(e.target.closest('#order-items-list')||e.target.id==='o-shipping')updateOrderTotalPreview();
@@ -4147,7 +4254,8 @@ function saveOrder(){
   });
   const shipping=parseFloat(document.getElementById('o-shipping').value)||0;
   const total=items.reduce((s,i)=>s+i.cost*i.qty,0)+shipping;
-  const totalUsd=total*(DB.rate||0);
+  const orderRate=getEffectiveOrderRate();
+  const totalUsd=total*orderRate;
   console.log('[除錯] 讀到的表單項目:',JSON.stringify(items.map(i=>i.name)));
   // 編輯模式
   if(editingOrderId){
@@ -4158,6 +4266,7 @@ function saveOrder(){
     o.date=document.getElementById('o-date').value;
     o.shipping=shipping;
     o.totalUsd=totalUsd;
+    if(!o.rateUsed)o.rateUsed=orderRate; // 補上舊資料沒有的鎖定匯率，之後編輯就都固定用這個了
     o.note=document.getElementById('o-note').value.trim();
     // 已到貨單預設不更動舊項目（除非手動解鎖）;但鎖住狀態下仍可以「新增」全新的商品項目
     function ensureProductsExist(list){
@@ -4208,7 +4317,7 @@ function saveOrder(){
     return;
   }
   // 新增模式
-  const order={id:uid(),supplier,date:document.getElementById('o-date').value,shipping,items,total,totalUsd,note:document.getElementById('o-note').value.trim(),status:'ordered',createdAt:Date.now()};
+  const order={id:uid(),supplier,date:document.getElementById('o-date').value,shipping,items,total,totalUsd,rateUsed:orderRate,note:document.getElementById('o-note').value.trim(),status:'ordered',createdAt:Date.now()};
   DB.orders.push(order);
   items.forEach(item=>{
     const existing=DB.products.find(p=>p.id===item.productId||p.name===item.name);
