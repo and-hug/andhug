@@ -3396,6 +3396,51 @@ async function handleSmartImportImage(input){
     }
   }
 }
+// 把 pdf.js 抓到的文字片段依照座標分行：Y 座標相近的算同一行，X 座標由左到右排序
+function pdfTextContentToRows(textContent){
+  const items=(textContent.items||[]).filter(it=>it.str&&it.str.trim()!=='');
+  const rows=[];
+  items.forEach(it=>{
+    const x=it.transform[4],y=it.transform[5];
+    let row=rows.find(r=>Math.abs(r.y-y)<4);
+    if(!row){row={y,items:[]};rows.push(row);}
+    row.items.push({x,str:it.str});
+  });
+  rows.sort((a,b)=>b.y-a.y); // PDF 座標 Y 越大越靠近頁面上方
+  return rows;
+}
+// 專門處理「淘寶/電商訂單詳情」這種表格：左邊商品資訊常常分成好幾行（標題／款式／備註），
+// 右邊對應的現價／原價／數量也各自分成好幾行、對齊在同樣的高度。
+// 用「遇到 x數字（數量）就結算一筆商品」的方式抓取，不管左邊分幾行都能正確配對
+function parsePdfRowsToItems(rows){
+  const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
+  const qtyRe=/^[xX×]\s*([\d]+)$/;
+  const items=[];
+  let leftBuf=[],firstPrice=null,stop=false;
+  for(const row of rows){
+    if(stop)break;
+    const left=[];let rowQty=null;
+    [...row.items].sort((a,b)=>a.x-b.x).forEach(it=>{
+      const s=it.str.trim();
+      if(!s||stop)return;
+      if(s.includes('付款详情')||s.includes('付款詳情')){stop=true;return;}
+      const pm=s.match(priceRe);
+      const qm=s.match(qtyRe);
+      if(pm){if(firstPrice===null)firstPrice=parseFloat(pm[1]);}
+      else if(qm){rowQty=parseInt(qm[1]);}
+      else left.push(s);
+    });
+    if(stop)break;
+    if(left.length)leftBuf.push(left.join(''));
+    if(rowQty!==null){
+      // 左邊有多行時，優先用第二行（通常是款式/變體，比標題更具辨識度），沒有就用第一行（標題）
+      const name=(leftBuf[1]||leftBuf[0]||'').trim();
+      if(name)items.push({name,rawName:name,cost:firstPrice||0,qty:rowQty||1});
+      leftBuf=[];firstPrice=null;
+    }
+  }
+  return items;
+}
 // 從 OCR 純文字裡，用「每行找 ¥金額 跟 x數量」的方式，盡量猜出品名/單價/數量
 function parseOcrTextToItems(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
@@ -3438,10 +3483,16 @@ async function handleSmartImportPDF(input){
       progress.textContent=`讀取第 ${pageNum}/${pdf.numPages} 頁...`;
       const page=await pdf.getPage(pageNum);
       const textContent=await page.getTextContent();
-      const pageText=textContent.items.map(it=>it.str).join('\n');
-      if(pageText.trim().length>5){
-        // 這頁有文字層，直接用文字辨識規則解析
-        allItems.push(...parseOcrTextToItems(pageText));
+      const totalTextLen=(textContent.items||[]).reduce((s,it)=>s+(it.str||'').trim().length,0);
+      if(totalTextLen>5){
+        // 這頁有文字層，先用表格式（座標比對）解析，抓不到東西再退回逐行文字比對
+        const rows=pdfTextContentToRows(textContent);
+        let pageItems=parsePdfRowsToItems(rows);
+        if(!pageItems.length){
+          const pageText=rows.map(r=>r.items.sort((a,b)=>a.x-b.x).map(i=>i.str).join(' ')).join('\n');
+          pageItems=parseOcrTextToItems(pageText);
+        }
+        allItems.push(...pageItems);
       }else{
         // 這頁沒有文字層（掃描圖檔），畫成圖片後用 OCR 辨識
         progress.textContent=`第 ${pageNum} 頁沒有文字層，改用文字辨識（OCR）中...`;
