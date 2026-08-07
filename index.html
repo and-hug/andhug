@@ -985,7 +985,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
-        <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label><input type="number" class="form-input" id="o-total-usd" placeholder="0.00" step="0.01" readonly style="background:var(--cream2);color:var(--text2)"></div>
+        <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label><input type="number" class="form-input" id="o-total-usd" placeholder="0.00" step="0.01" readonly style="background:var(--cream2);color:var(--text2)"><div id="o-total-cny-hint" style="font-size:11px;color:var(--text3);margin-top:4px">¥0.00</div></div>
         <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..."></div>
       </div>
       <div class="section-title" style="margin-bottom:10px;display:flex;align-items:center;gap:10px">商品清單<button class="btn btn-secondary btn-sm hidden" id="order-unlock-btn" onclick="unlockOrderItems()" style="font-weight:400"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8,11 V8.5 a4 4 0 0 1 7.3-2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg>解鎖編輯</button></div>
@@ -3583,6 +3583,8 @@ function deleteImportDraft(id){
 function initSmartImportDropzone(){
   const overlay=document.getElementById('modal-smart-import');
   const zone=document.getElementById('smart-import-dropzone');
+  const modalBox=overlay?overlay.querySelector('.modal'):null;
+  const innerList=document.getElementById('smart-import-list');
   if(!overlay||overlay.dataset.dzInit)return;
   overlay.dataset.dzInit='1';
   // 不只虛線框內，整個彈窗（包含外圍灰色遮罩）都能接住拖進來的檔案，跟 Claude 網頁一樣
@@ -3590,17 +3592,25 @@ function initSmartImportDropzone(){
     e.preventDefault();e.stopPropagation();
     if(zone){zone.style.borderColor='var(--brown)';zone.style.background='var(--peach-light)';}
     overlay.style.background='rgba(139,111,71,.55)';
+    // 拖曳游標靠近彈窗邊緣時，瀏覽器會自動把裡面可捲動的區塊捲動，
+    // 這裡拖曳期間先把捲動關掉，放開/離開後再還原，畫面才不會自己跳動
+    if(modalBox)modalBox.style.overflowY='hidden';
+    if(innerList)innerList.style.overflowY='hidden';
   }));
   overlay.addEventListener('dragleave',(e)=>{
     e.preventDefault();e.stopPropagation();
     if(e.target!==overlay)return; // 只有真的離開遮罩本身才取消樣式，避免拖到裡面子元素時閃爍
     if(zone){zone.style.borderColor='var(--cream3)';zone.style.background='transparent';}
     overlay.style.background='';
+    if(modalBox)modalBox.style.overflowY='';
+    if(innerList)innerList.style.overflowY='';
   });
   overlay.addEventListener('drop',(e)=>{
     e.preventDefault();e.stopPropagation();
     if(zone){zone.style.borderColor='var(--cream3)';zone.style.background='transparent';}
     overlay.style.background='';
+    if(modalBox)modalBox.style.overflowY='';
+    if(innerList)innerList.style.overflowY='';
     const files=e.dataTransfer.files;
     if(files&&files.length)handleSmartImportFiles(files);
   });
@@ -3921,7 +3931,7 @@ function renderSmartImportReview(){
           <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
         </div>
       </div>
-      <div style="position:relative"><span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px">¥</span><input type="number" class="form-input" value="${it.cost}" step="0.01" style="font-size:12px;padding-left:20px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
+      <div style="position:relative"><span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px">¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px;padding-left:20px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
       <input type="number" class="form-input" value="${it.qty}" min="1" style="font-size:12px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1">
       <button class="remove-btn" onclick="smartImportRemoveRow(${i})">×</button>
     </div>`;
@@ -4073,7 +4083,7 @@ function addOrderItemFilled(name,cost,qty,readonly,productId){
   const nameInputHtml=readonly
     ?`<input type="text" class="form-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
     :`<input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
-  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost||''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px;align-self:end"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`}`;
+  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px;align-self:end"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`}`;
   list.appendChild(div);
   if(!readonly&&productId){
     const p=DB.products.find(x=>x.id===productId);
@@ -4161,6 +4171,7 @@ function openEditOrder(id){
   document.getElementById('order-items-list').innerHTML='';
   (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId));
   if(!o.items||!o.items.length)addOrderItem();
+  updateOrderTotalPreview();
   closeModal('modal-order-detail');
   openModal('modal-order');
 }
@@ -4252,6 +4263,8 @@ function updateOrderTotalPreview(){
   totalCny+=shipping;
   const usdInput=document.getElementById('o-total-usd');
   if(usdInput)usdInput.value=(totalCny*getEffectiveOrderRate()).toFixed(2);
+  const cnyHint=document.getElementById('o-total-cny-hint');
+  if(cnyHint)cnyHint.textContent='¥'+totalCny.toFixed(2);
 }
 document.addEventListener('input',e=>{
   if(e.target.closest('#order-items-list')||e.target.id==='o-shipping')updateOrderTotalPreview();
