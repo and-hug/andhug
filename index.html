@@ -985,7 +985,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
-        <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label><input type="number" class="form-input" id="o-total-usd" placeholder="0.00" step="0.01" readonly style="background:var(--cream2);color:var(--text2)"><div id="o-total-cny-hint" style="font-size:11px;color:var(--text3);margin-top:4px">¥0.00</div></div>
+        <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
+          <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+            <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
+            <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
+          </div>
+        </div>
         <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..."></div>
       </div>
       <div class="section-title" style="margin-bottom:10px;display:flex;align-items:center;gap:10px">商品清單<button class="btn btn-secondary btn-sm hidden" id="order-unlock-btn" onclick="unlockOrderItems()" style="font-weight:400"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8,11 V8.5 a4 4 0 0 1 7.3-2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg>解鎖編輯</button></div>
@@ -1371,7 +1376,18 @@ const __bootSteps=[];
 
 let DB={products:[],orders:[],sales:[],rate:0.138,rateTime:null,todaySales:{}};
 function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};}
-function saveDB(){lsSet('patchDB_v3',JSON.stringify(DB));maybeAutoBackup();}
+let _autoSyncTimer=null;
+function saveDB(){
+  lsSet('patchDB_v3',JSON.stringify(DB));
+  maybeAutoBackup();
+  // 存到本機之後，順便排一個「延遲幾秒再同步到雲端」的動作（等她連續操作停下來才真的送出，
+  // 不會每按一下就打一次 API）。之前只有「打開網頁那一刻」才會同步，代表存了新的採購單/商品，
+  // 如果沒有手動按「同步到雲端」或整個重新整理網頁，雲端跟其他裝置都看不到剛剛的變動
+  if(typeof window.syncToSupabase==='function'){
+    clearTimeout(_autoSyncTimer);
+    _autoSyncTimer=setTimeout(()=>{window.syncToSupabase(true);},2500);
+  }
+}
 
 // ---- 自動備份：每隔一段時間，把當下的資料另外存一份到輪替的備份格，避免忘記手動匯出、誤刪資料時求助無門 ----
 const AUTO_BACKUP_SLOTS=5;
@@ -4045,7 +4061,7 @@ function openAddOrder(){
   updateODateBtnLabel();
   const odc=document.getElementById('o-date-cal');if(odc)odc.style.display='none';
   document.getElementById('o-shipping').value='';
-  document.getElementById('o-total-usd').value='';
+  document.getElementById('o-total-usd').textContent='$0.00';
   document.getElementById('o-note').value='';
   document.getElementById('order-items-list').innerHTML='';
   addOrderItem();
@@ -4166,7 +4182,6 @@ function openEditOrder(id){
   updateODateBtnLabel();
   const odc2=document.getElementById('o-date-cal');if(odc2)odc2.style.display='none';
   document.getElementById('o-shipping').value=o.shipping||'';
-  document.getElementById('o-total-usd').value=o.totalUsd||'';
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
   (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId));
@@ -4262,7 +4277,7 @@ function updateOrderTotalPreview(){
   const shipping=parseFloat(document.getElementById('o-shipping')?.value)||0;
   totalCny+=shipping;
   const usdInput=document.getElementById('o-total-usd');
-  if(usdInput)usdInput.value=(totalCny*getEffectiveOrderRate()).toFixed(2);
+  if(usdInput)usdInput.textContent='$'+(totalCny*getEffectiveOrderRate()).toFixed(2);
   const cnyHint=document.getElementById('o-total-cny-hint');
   if(cnyHint)cnyHint.textContent='¥'+totalCny.toFixed(2);
 }
@@ -4344,7 +4359,6 @@ function saveOrder(){
   const total=items.reduce((s,i)=>s+i.cost*i.qty,0)+shipping;
   const orderRate=getEffectiveOrderRate();
   const totalUsd=total*orderRate;
-  console.log('[除錯] 讀到的表單項目:',JSON.stringify(items.map(i=>i.name)));
   // 編輯模式
   if(editingOrderId){
     const o=DB.orders.find(x=>x.id===editingOrderId);
@@ -4370,7 +4384,6 @@ function saveOrder(){
       });
     }
     if(o.items&&o.items.length)ensureProductsExist(o.items);
-    console.log('[除錯] isReceived=',isReceived,'orderItemsUnlocked=',orderItemsUnlocked,'原本o.items=',JSON.stringify((o.items||[]).map(i=>i.name)));
     if(!isReceived||orderItemsUnlocked){
       // 保留原始 linkedProducts(編輯欄位看不到的)資訊:用名稱對應回去找
       const newItems=items.map(ni=>{
@@ -4392,7 +4405,6 @@ function saveOrder(){
       // 鎖住狀態：舊項目維持原樣，只把表單裡「找不到對應舊項目」的全新項目加進去，並直接套用WAC（視同這批新項目已到貨）
       const existingNames=new Set((o.items||[]).map(oi=>oi.name));
       const brandNewItems=items.filter(ni=>!existingNames.has(ni.name));
-      console.log('[除錯] 走鎖住分支，existingNames=',JSON.stringify([...existingNames]),'brandNewItems=',JSON.stringify(brandNewItems.map(i=>i.name)));
       if(brandNewItems.length>0){
         ensureProductsExist(brandNewItems);
         o.items=[...(o.items||[]),...brandNewItems];
