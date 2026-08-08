@@ -3190,6 +3190,20 @@ function updateCostUsd(){
   const el=document.getElementById('p-cost-usd');
   if(el)el.textContent=cost>0?`≈ $${usd}`:'';
 }
+// 這個商品過去每一次進貨、各自的單價（進貨價欄位本身是這些單價的加權平均，這裡列出每一筆原始資料）
+function getProductCostHistory(productId){
+  if(!productId)return[];
+  const rows=[];
+  (DB.orders||[]).forEach(o=>{
+    (o.items||[]).forEach(it=>{
+      if(it.productId===productId&&it.cost>0){
+        rows.push({date:o.date||'',cost:it.cost});
+      }
+    });
+  });
+  rows.sort((a,b)=>a.date.localeCompare(b.date));
+  return rows;
+}
 function updateEditCostUsd(){
   const cost=parseFloat(document.getElementById('edit-cost').value)||0;
   const usd=(cost*DB.rate).toFixed(2);
@@ -3307,6 +3321,11 @@ function openStockModal(id){
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">進貨價 (¥) <span id="edit-cost-usd" style="font-weight:600;color:var(--text3);font-size:11px">${(p.cost||0)>0?`≈ $${usd}`:''}</span></div>
             <input type="number" id="edit-cost" value="${p.cost?Number(p.cost).toFixed(2):0}" step="0.01" class="form-input" style="font-size:13px" oninput="updateEditCostUsd()">
+            ${(()=>{
+              const history=getProductCostHistory(p.id);
+              if(!history.length)return '';
+              return `<div style="margin-top:5px;font-size:10px;color:var(--text3);line-height:1.6">每次進貨單價：${history.map(h=>`${h.date} ¥${h.cost.toFixed(2)}`).join('、')}</div>`;
+            })()}
           </div>
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">售價 ($)</div>
@@ -3634,7 +3653,7 @@ function resumeImportDraft(id){
     document.getElementById('o-shipping').value=d.shipping||'';
     document.getElementById('o-note').value=d.note||'';
     document.getElementById('order-items-list').innerHTML='';
-    (d.items||[]).forEach(it=>addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId));
+    (d.items||[]).forEach(it=>addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost));
     if(!d.items||!d.items.length)addOrderItem();
     updateOrderTotalPreview();
     return;
@@ -3845,7 +3864,7 @@ function parsePdfRowsToItems(rows){
   const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
   const qtyRe=/^[xX×]\s*([\d]+)$/;
   const items=[];
-  let leftBuf=[],firstPrice=null,stop=false;
+  let leftBuf=[],firstPrice=null,secondPrice=null,stop=false;
   for(const row of rows){
     if(stop)break;
     const tokens=pdfRowToTokens(row.items);
@@ -3854,7 +3873,10 @@ function parsePdfRowsToItems(rows){
       if(tok.includes('付款详情')||tok.includes('付款詳情')){stop=true;break;}
       const pm=tok.match(priceRe);
       const qm=tok.match(qtyRe);
-      if(pm){if(firstPrice===null)firstPrice=parseFloat(pm[1]);}
+      if(pm){
+        if(firstPrice===null)firstPrice=parseFloat(pm[1]);
+        else if(secondPrice===null)secondPrice=parseFloat(pm[1]); // 第二個抓到的價錢＝原價（被劃線那個）
+      }
       else if(qm){rowQty=parseInt(qm[1]);}
       else left.push(tok);
     }
@@ -3862,8 +3884,12 @@ function parsePdfRowsToItems(rows){
     if(left.length)leftBuf.push(left.join(''));
     if(rowQty!==null){
       const name=(leftBuf[leftBuf.length-2]||leftBuf[leftBuf.length-1]||'').trim();
-      if(name)items.push({name,rawName:name,cost:firstPrice||0,qty:rowQty||1});
-      leftBuf=[];firstPrice=null;
+      if(name){
+        const item={name,rawName:name,cost:firstPrice||0,qty:rowQty||1};
+        if(secondPrice!==null&&secondPrice>(firstPrice||0))item.originalCost=secondPrice; // 只有原價真的比較高才存，避免抓錯
+        items.push(item);
+      }
+      leftBuf=[];firstPrice=null;secondPrice=null;
     }
   }
   return items;
@@ -4089,7 +4115,7 @@ function confirmSmartImport(){
   openAddOrder();
   document.getElementById('order-items-list').innerHTML='';
   valid.forEach(it=>{
-    addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId);
+    addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost);
   });
   // 如果是從 PDF 讀到店名/訂單編號/日期/運費，順便幫忙填好上方欄位
   let filledMeta=[];
@@ -4151,12 +4177,13 @@ function unlockOrderItems(){
   });
 }
 let editingOrderId=null, orderItemsUnlocked=false;
-function addOrderItemFilled(name,cost,qty,readonly,productId){
+function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost){
   const id=uid();
   const list=document.getElementById('order-items-list');
   const div=document.createElement('div');
   div.className='order-item-row';
   div.id='oi-'+id;
+  if(originalCost)div.dataset.originalCost=originalCost;
   const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:22px;text-align:center"':'style="font-size:12px;padding-left:22px;text-align:center"';
   const linkedIdAttr=(!readonly&&productId)?` data-linked-id="${productId}"`:'';
   const nameInputHtml=readonly
@@ -4247,7 +4274,7 @@ function openEditOrder(id){
   document.getElementById('o-shipping').value=o.shipping||'';
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
-  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId));
+  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId,i.originalCost));
   if(!o.items||!o.items.length)addOrderItem();
   updateOrderTotalPreview();
   closeModal('modal-order-detail');
@@ -4371,7 +4398,9 @@ function collectOrderFormItemsForDraft(){
     const qty=parseInt(ins[2]?.value)||1;
     if(name){
       const linkedId=ins[0].dataset&&ins[0].dataset.linkedId;
-      items.push({name,cost,qty,productId:linkedId||''});
+      const item={name,cost,qty,productId:linkedId||''};
+      if(row.dataset.originalCost)item.originalCost=parseFloat(row.dataset.originalCost);
+      items.push(item);
     }
   });
   return items;
@@ -4415,7 +4444,9 @@ function saveOrder(){
     if(name){
       const linkedId=ins[0].dataset&&ins[0].dataset.linkedId;
       const p=linkedId?DB.products.find(x=>x.id===linkedId):DB.products.find(x=>x.name===name);
-      items.push({id:uid(),name,cost,qty,productId:p?p.id:''});
+      const item={id:uid(),name,cost,qty,productId:p?p.id:''};
+      if(row.dataset.originalCost)item.originalCost=parseFloat(row.dataset.originalCost);
+      items.push(item);
     }
   });
   const shipping=parseFloat(document.getElementById('o-shipping').value)||0;
@@ -4508,7 +4539,9 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
   const nameCellWithImg=`<div style="display:flex;align-items:center;gap:8px">${thumbHtml}<div>${nameCell}</div></div>`;
   const itemUsd=(i.cost||0)*cnyToUsdRatio;
   const itemSubUsd=itemUsd*(i.qty||1);
-  return `<tr><td>${nameCellWithImg}</td><td><div style="font-weight:700">$${itemUsd.toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${(i.cost||0).toFixed(2)}</div></td><td>${i.qty}</td><td><div style="font-weight:700">$${itemSubUsd.toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${((i.cost||0)*(i.qty||1)).toFixed(2)}</div></td></tr>`;
+  const origHtml=i.originalCost?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">¥${i.originalCost.toFixed(2)}</div>`:'';
+  const origSubHtml=i.originalCost?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">¥${(i.originalCost*(i.qty||1)).toFixed(2)}</div>`:'';
+  return `<tr><td>${nameCellWithImg}</td><td>${origHtml}<div style="font-weight:700">$${itemUsd.toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${(i.cost||0).toFixed(2)}</div></td><td>${i.qty}</td><td>${origSubHtml}<div style="font-weight:700">$${itemSubUsd.toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${((i.cost||0)*(i.qty||1)).toFixed(2)}</div></td></tr>`;
 }).join('')}</tbody></table><div class="order-totals-row" style="display:flex;justify-content:flex-end;gap:32px;padding:10px 14px;margin-bottom:16px;border-top:1.5px solid var(--cream3)">
   <div style="text-align:right"><div style="font-size:11px;color:var(--text3);font-weight:700">商品小計</div><div style="font-weight:700">$${((o.items||[]).reduce((s,i)=>s+(i.cost||0)*cnyToUsdRatio*(i.qty||1),0)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${((o.items||[]).reduce((s,i)=>s+(i.cost||0)*(i.qty||1),0)).toFixed(2)}</div></div>
   <div style="text-align:right"><div style="font-size:11px;color:var(--text3);font-weight:700">總計（含運費）</div><div style="font-weight:800;font-size:16px;color:var(--brown)">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3)">¥${(o.total||0).toFixed(2)}</div></div>
