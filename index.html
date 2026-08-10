@@ -25,6 +25,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans TC','Nunito',sans-serif;background-color:var(--cream);color:var(--text);min-height:100vh;background-image:var(--body-gradient,none),radial-gradient(circle at 20% 20%,rgba(244,167,185,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(168,213,186,0.08) 0%,transparent 50%);background-attachment:fixed;}
+/* 🫧 霧面透明主題：卡片/彈窗/導覽列/側邊欄一律加毛玻璃模糊，背後那層漸層色塊透出朦朧色彩才有磨砂感 */
+body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .settings-panel,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card,body.theme-glass .customer-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:2px solid var(--cream3);display:flex;align-items:center;padding:0 24px;height:60px;gap:4px;}
 .nav-brand{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--brown);margin-right:20px;white-space:nowrap;}
 .nav-link{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
@@ -1254,21 +1256,6 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
 
       <div class="settings-divider"></div>
 
-      <div class="settings-section-title">🗂️ 分類管理</div>
-      <div class="settings-row-desc" style="margin-bottom:10px">隱藏用不到的分類、或刪掉沒有商品在用的分類；也可以自己加新分類（要有商品在用的分類沒辦法刪除，先隱藏就好）</div>
-      <div id="settings-category-list" style="margin-bottom:12px"></div>
-      <div style="background:var(--cream2);border-radius:12px;padding:12px">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">+ 新增分類</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input type="text" id="newcat-icon" class="form-input" placeholder="📦" maxlength="4" style="width:56px;text-align:center;font-size:15px">
-          <input type="text" id="newcat-code" class="form-input" placeholder="代碼 AC" maxlength="2" style="width:80px;text-transform:uppercase;font-family:monospace">
-          <input type="text" id="newcat-label" class="form-input" placeholder="分類名稱" style="flex:1">
-        </div>
-        <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center" onclick="addCustomCategory()">+ 新增</button>
-      </div>
-
-      <div class="settings-divider"></div>
-
       <div class="settings-section-title">💾 備份與資料</div>
       <div id="settings-autobackup-status" class="settings-row-desc" style="margin-bottom:12px"></div>
       <div class="settings-btn-row">
@@ -1524,6 +1511,8 @@ const THEMES={
   macaron:{name:'🍬 馬卡龍',cream:'#fbf7f0',cream2:'#f0e6de',cream3:'#d4b9b9',cream4:'#a8b6c4',brown:'#9a8ba3','brown-light':'#c2b2c2',text:'#453d4d',text2:'#7a6f80',text3:'#b8c4b0',navBg:'rgba(251,247,240,0.93)'},
   graphite:{name:'🪨 石墨棕',cream:'#f7f5f3',cream2:'#e3ded9',cream3:'#a49d95',cream4:'#6b5c52',brown:'#5c514e','brown-light':'#75706d',text:'#2c2a2f',text2:'#5c514e',text3:'#a49d95',navBg:'rgba(247,245,243,0.93)'},
   mist:{name:'☁️ 霧藍粉綠',cream:'#fbfcfe',cream2:'#ebeff8',cream3:'#c0d0e7',cream4:'#eacbd1',brown:'#97af8f','brown-light':'#b3c5ac',text:'#33403a',text2:'#5f7259',text3:'#9aab93',navBg:'rgba(251,252,254,0.93)'},
+  latte:{name:'☕ 拿鐵奶茶',cream:'#f8f1e8',cream2:'#efe2d1',cream3:'#e2cbaa',cream4:'#b7ada3',brown:'#8b6f63','brown-light':'#c9a196',text:'#3d2e28',text2:'#6b5850',text3:'#a6968c',navBg:'rgba(248,241,232,0.93)'},
+  glass:{name:'🫧 霧面透明',cream:'rgba(255,255,255,0.4)',cream2:'rgba(255,255,255,0.28)',cream3:'rgba(255,255,255,0.45)',cream4:'rgba(200,200,212,0.35)',brown:'#5c5c66','brown-light':'#9a9aa8',text:'#1c1c1e',text2:'#48484a',text3:'#8e8e93',navBg:'rgba(255,255,255,0.55)',glass:true},
   dark:{name:'🌙 關燈模式',cream:'#121212',cream2:'#1e1e1e',cream3:'#2c2c2c',cream4:'#3d3d3d',brown:'#d8d6d0','brown-light':'#a8a49c',text:'#c8c4bc',text2:'#a8a49c',text3:'#78746c',navBg:'rgba(18,18,18,0.93)'},
   neon:{name:'⚡ 霓虹彩色',cream:'#0d0d1a',cream2:'#1a1a2e',cream3:'#2a2a45',cream4:'#3d3d5c',brown:'#ff2fd8','brown-light':'#00f0ff',text:'#d8d6e8',text2:'#a8a6c0',text3:'#7a7898',navBg:'rgba(13,13,26,0.93)',
     accents:{peach:'#ff9500','peach-light':'#3d2b0d',pink:'#ff2fd8','pink-light':'#3d1533',mint:'#39ff14','mint-light':'#0d3d0d',lavender:'#b026ff','lavender-light':'#2a0d3d',yellow:'#faff00','yellow-light':'#3d3d0d'}}
@@ -1542,14 +1531,16 @@ function applyTheme(key){
   root.setProperty('--text2',t.text2);
   root.setProperty('--text3',t.text3);
   root.setProperty('--nav-bg',t.navBg);
-  root.setProperty('--body-gradient',key==='gradient'?'linear-gradient(135deg, rgba(253,230,240,0.55) 0%, rgba(232,225,250,0.5) 35%, rgba(220,235,250,0.5) 70%, rgba(230,245,240,0.45) 100%)':'none');
+  root.setProperty('--body-gradient',key==='gradient'?'linear-gradient(135deg, rgba(253,230,240,0.55) 0%, rgba(232,225,250,0.5) 35%, rgba(220,235,250,0.5) 70%, rgba(230,245,240,0.45) 100%)':key==='glass'?'linear-gradient(135deg, rgba(168,200,232,0.09) 0%, rgba(216,184,224,0.08) 35%, rgba(240,200,184,0.08) 70%, rgba(168,220,200,0.07) 100%)':'none');
   // 額外的 5 種強調色（peach/pink/mint/lavender/yellow），只有霓虹主題會覆蓋，其他主題用回原本預設值
   const defAccents={peach:'#f5c4a1','peach-light':'#fef0e7',pink:'#f4a7b9','pink-light':'#fde8ee',mint:'#a8d5ba','mint-light':'#e8f7ee',lavender:'#c4b5e8','lavender-light':'#f0ecfb',yellow:'#f5d876','yellow-light':'#fef9e4'};
   const acc=t.accents||defAccents;
   Object.keys(defAccents).forEach(k=>root.setProperty('--'+k,acc[k]||defAccents[k]));
   // 深色主題（關燈模式、霓虹）卡片/輸入框背景也要跟著變暗，不然白底黑字組合會反過來看不到
   const isDark=(key==='dark'||key==='neon');
-  root.setProperty('--surface',isDark?t.cream3:'#fff');
+  root.setProperty('--surface',isDark?t.cream3:key==='glass'?'rgba(255,255,255,0.55)':'#fff');
+  // 霧面透明主題：卡片、彈窗、導覽列都加上毛玻璃模糊效果，背後再襯一層漸層色塊，模糊起來才看得出來磨砂感
+  document.body.classList.toggle('theme-glass',key==='glass');
   if(!DB.settings)DB.settings={};
   DB.settings.theme=key;
   saveDB();
@@ -1935,42 +1926,157 @@ function deleteCategoryType(t){
   const counts={};
   DB.products.forEach(p=>{counts[p.type]=(counts[p.type]||0)+1;});
   if((counts[t]||0)>0){toast('這個分類還有商品在用，沒辦法刪除，先隱藏就好','error');return;}
-  customConfirm('確定要刪除「'+getTypeLabel(t)+'」這個分類嗎？這個動作沒辦法復原。',()=>{
-    if(!(DB.customTypes||[]).some(c=>c.code===t)){
-      // 內建分類：記錄成「已刪除」，不會真的動到 SKU 系統定義，只是不再顯示、不能選
-      if(!DB.deletedTypes)DB.deletedTypes=[];
-      DB.deletedTypes.push(t);
-    }else{
-      DB.customTypes=DB.customTypes.filter(c=>c.code!==t);
+  const label=getTypeLabel(t);
+  customConfirm('確定要刪除「'+label+'」這個分類嗎？可以用 ⌘Z 撤銷，或之後從「已刪除的分類」找回來。',()=>{
+    const isCustom=(DB.customTypes||[]).some(c=>c.code===t);
+    const wasHidden=(DB.hiddenTypes||[]).includes(t);
+    const customObj=isCustom?(DB.customTypes||[]).find(c=>c.code===t):null;
+    function applyDelete(){
+      if(!isCustom){
+        // 內建分類：記錄成「已刪除」，不會真的動到 SKU 系統定義，只是不再顯示、不能選
+        if(!DB.deletedTypes)DB.deletedTypes=[];
+        if(!DB.deletedTypes.includes(t))DB.deletedTypes.push(t);
+      }else{
+        // 自訂分類：不直接砍掉資料，搬去「已刪除分類」裡放著，之後才找得回來
+        DB.customTypes=(DB.customTypes||[]).filter(c=>c.code!==t);
+        if(!DB.deletedCustomTypes)DB.deletedCustomTypes=[];
+        if(customObj)DB.deletedCustomTypes.push(customObj);
+      }
+      if(DB.hiddenTypes)DB.hiddenTypes=DB.hiddenTypes.filter(x=>x!==t);
+      renderCategoryManager();
+      populateTypeDropdowns();
+      if(document.getElementById('cat-sidebar'))renderCatSidebar();
+      if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
     }
-    if(DB.hiddenTypes)DB.hiddenTypes=DB.hiddenTypes.filter(x=>x!==t);
+    function undoDelete(){
+      if(!isCustom){
+        if(DB.deletedTypes)DB.deletedTypes=DB.deletedTypes.filter(x=>x!==t);
+      }else{
+        DB.deletedCustomTypes=(DB.deletedCustomTypes||[]).filter(c=>c.code!==t);
+        if(!DB.customTypes)DB.customTypes=[];
+        if(customObj)DB.customTypes.push(customObj);
+      }
+      if(wasHidden){if(!DB.hiddenTypes)DB.hiddenTypes=[];DB.hiddenTypes.push(t);}
+      renderCategoryManager();
+      populateTypeDropdowns();
+      if(document.getElementById('cat-sidebar'))renderCatSidebar();
+      if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+    }
+    applyDelete();
+    pushUndo({label:'刪除分類「'+label+'」',undo:undoDelete,redo:applyDelete});
     saveDB();
-    renderCategoryManager();
-    populateTypeDropdowns();
-    if(document.getElementById('cat-sidebar'))renderCatSidebar();
-    if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
-    toast('🗑️ 已刪除分類','success');
+    toast('🗑️ 已刪除分類（⌘Z 撤銷）','success');
   });
+}
+// 已刪除分類的小抽屜：把軟刪除的自訂分類、跟被標記刪除的內建分類都列出來，一鍵救回來
+function toggleDeletedCatsBox(){
+  const box=document.getElementById('sidebar-deletedcats-box');
+  if(!box)return;
+  box.classList.toggle('hidden');
+  if(!box.classList.contains('hidden'))renderDeletedCatsBox();
+}
+function renderDeletedCatsBox(){
+  const box=document.getElementById('sidebar-deletedcats-box');
+  if(!box)return;
+  const builtinDeleted=(DB.deletedTypes||[]).map(t=>({code:t,label:CAT_LABELS[t]||t,icon:CAT_ICONS[t]||'📦',builtin:true}));
+  const customDeleted=(DB.deletedCustomTypes||[]).map(c=>({...c,builtin:false}));
+  const all=[...builtinDeleted,...customDeleted];
+  if(!all.length){
+    box.innerHTML='<div style="font-size:11px;color:var(--text3);padding:6px 2px">目前沒有已刪除的分類</div>';
+    return;
+  }
+  box.innerHTML=all.map(c=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 4px">
+    <span style="font-size:13px;flex-shrink:0">${c.icon}</span>
+    <span style="flex:1;min-width:0;font-size:12px;color:var(--text2)">${c.label}</span>
+    <button class="btn btn-secondary btn-sm" title="找回來" style="font-size:10px;padding:6px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center" onclick="restoreDeletedCat('${c.code}',${c.builtin})"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>`).join('');
+}
+function restoreDeletedCat(code,builtin){
+  if(builtin){
+    DB.deletedTypes=(DB.deletedTypes||[]).filter(t=>t!==code);
+  }else{
+    const idx=(DB.deletedCustomTypes||[]).findIndex(c=>c.code===code);
+    if(idx>=0){
+      const obj=DB.deletedCustomTypes.splice(idx,1)[0];
+      if(!DB.customTypes)DB.customTypes=[];
+      DB.customTypes.push(obj);
+    }
+  }
+  saveDB();
+  populateTypeDropdowns();
+  renderDeletedCatsBox();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  toast('✅ 分類已找回來','success');
+}
+function createCustomCategory(icon,code,label){
+  code=(code||'').trim().toUpperCase();
+  label=(label||'').trim();
+  icon=(icon||'').trim()||'📦';
+  if(!/^[A-Z]{2}$/.test(code)){toast('代碼要是 2 個英文字母，例如 AC','error');return false;}
+  if(!label){toast('請輸入分類名稱','error');return false;}
+  if(getAllCategoryTypes().includes(code)){toast('這個代碼已經有人用了，換一個','error');return false;}
+  if(!DB.customTypes)DB.customTypes=[];
+  DB.customTypes.push({code,label,icon});
+  saveDB();
+  populateTypeDropdowns();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  if(document.getElementById('settings-category-list'))renderCategoryManager();
+  toast('✅ 已新增分類「'+label+'」','success');
+  return true;
 }
 function addCustomCategory(){
   const codeInput=document.getElementById('newcat-code');
   const labelInput=document.getElementById('newcat-label');
   const iconInput=document.getElementById('newcat-icon');
-  const code=codeInput.value.trim().toUpperCase();
-  const label=labelInput.value.trim();
-  const icon=iconInput.value.trim()||'📦';
-  if(!/^[A-Z]{2}$/.test(code)){toast('代碼要是 2 個英文字母，例如 AC','error');return;}
-  if(!label){toast('請輸入分類名稱','error');return;}
-  if(getAllCategoryTypes().includes(code)){toast('這個代碼已經有人用了，換一個','error');return;}
-  if(!DB.customTypes)DB.customTypes=[];
-  DB.customTypes.push({code,label,icon});
-  saveDB();
-  codeInput.value='';labelInput.value='';iconInput.value='';
-  renderCategoryManager();
-  populateTypeDropdowns();
-  if(document.getElementById('cat-sidebar'))renderCatSidebar();
-  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
-  toast('✅ 已新增分類「'+label+'」','success');
+  if(createCustomCategory(iconInput.value,codeInput.value,labelInput.value)){
+    codeInput.value='';labelInput.value='';iconInput.value='';
+  }
+}
+// 側邊欄底部「+ 新增分類」：不用特地跑去設定頁，直接在分類列表這裡就能加
+function toggleSidebarAddCat(){
+  const box=document.getElementById('sidebar-addcat-box');
+  if(box)box.classList.toggle('hidden');
+}
+// 分類圖示：不用自己打 emoji，點一下跳出小picker選就好
+function toggleIconPicker(){
+  const picker=document.getElementById('sidebar-icon-picker');
+  const input=document.getElementById('sidebar-newcat-icon');
+  if(!picker||!input)return;
+  const willShow=picker.classList.contains('hidden');
+  if(willShow){
+    // 用 position:fixed 貼著輸入框下面顯示，才不會被側邊欄的 overflow 裁掉、也不會超出畫面右邊
+    const r=input.getBoundingClientRect();
+    const pw=172;
+    let left=r.left;
+    if(left+pw>window.innerWidth-8)left=window.innerWidth-pw-8;
+    picker.style.left=left+'px';
+    picker.style.top=(r.bottom+4)+'px';
+  }
+  picker.classList.toggle('hidden');
+}
+function pickSidebarIcon(emoji){
+  const input=document.getElementById('sidebar-newcat-icon');
+  if(input)input.value=emoji;
+  const picker=document.getElementById('sidebar-icon-picker');
+  if(picker)picker.classList.add('hidden');
+}
+document.addEventListener('click',(e)=>{
+  const picker=document.getElementById('sidebar-icon-picker');
+  const iconInput=document.getElementById('sidebar-newcat-icon');
+  if(!picker||picker.classList.contains('hidden'))return;
+  if(e.target!==iconInput&&!picker.contains(e.target))picker.classList.add('hidden');
+});
+function addCustomCategoryFromSidebar(){
+  const codeInput=document.getElementById('sidebar-newcat-code');
+  const labelInput=document.getElementById('sidebar-newcat-label');
+  const iconInput=document.getElementById('sidebar-newcat-icon');
+  if(createCustomCategory(iconInput.value,codeInput.value,labelInput.value)){
+    codeInput.value='';labelInput.value='';iconInput.value='';
+    const box=document.getElementById('sidebar-addcat-box');
+    if(box)box.classList.add('hidden');
+  }
 }
 const CAT_ICONS={PA:'🪡',PB:'🧸',RB:'🎀',PO:'👜',BG:'👝',ST:'🧦',GT:'👕',ZZ:'📦'};
 const SIZE_LABELS={0:'無尺寸',XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XX:'XXL'};
@@ -2594,6 +2700,11 @@ function handleSaleCustomerSelectChange(sel){
   }
 }
 
+let catDeleteMode=false;
+function toggleCatDeleteMode(){
+  catDeleteMode=!catDeleteMode;
+  renderCatSidebar();
+}
 function renderCatSidebar(){
   const types=getVisibleCategoryTypes();
   const counts={};
@@ -2603,7 +2714,12 @@ function renderCatSidebar(){
   const SIZES=['XS','S','M','L','XL','XX'];
   const SIZE_NAMES={XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XX:'XXL'};
   const PATCH_TYPES=['PA','PB'];
-  let rows=`<div class="cat-sidebar-header">分類</div>
+  const trashIcon='<svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg>';
+  let rows=`<div class="cat-sidebar-header" style="display:flex;align-items:center;justify-content:space-between">分類<span onclick="toggleCatDeleteMode()" title="${catDeleteMode?'完成':'刪除分類'}" style="font-size:11px;cursor:pointer;padding:3px 6px;margin-right:-4px;border-radius:6px;display:inline-flex;align-items:center;background:${catDeleteMode?'var(--brown)':'transparent'};color:${catDeleteMode?'#fff':'var(--text3)'}">${catDeleteMode?'完成':trashIcon}</span></div>
+  ${catDeleteMode?`<div style="padding:4px 12px 6px">
+    <span onclick="toggleDeletedCatsBox()" style="font-size:10.5px;color:var(--brown);cursor:pointer;text-decoration:underline">🗑 已刪除的分類，找回來</span>
+    <div id="sidebar-deletedcats-box" class="hidden" style="margin-top:6px;background:var(--cream2);border-radius:10px;padding:8px"></div>
+  </div>`:''}
     <div class="cat-sidebar-item ${activeCat==='all'?'active':''}" onclick="setCat('all')"
       ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
       ondragleave="this.classList.remove('drag-over')"
@@ -2634,12 +2750,13 @@ function renderCatSidebar(){
   }
   types.forEach(t=>{
     const isActive=activeCat===t;
-    rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" onclick="setCat('${t}')"
+    rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" onclick="${catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:`setCat('${t}')`}"
       ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
       ondragleave="this.classList.remove('drag-over')"
       ondrop="dropToCat(event,'${t}')">
       <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
+      ${catDeleteMode?`<span style="color:var(--red);display:inline-flex">${trashIcon}</span>`:''}
     </div>`;
     if(isActive && PATCH_TYPES.includes(t) && activeCat!=='__incomplete__' && !catSizesCollapsed){
       SIZES.forEach(s=>{
@@ -2656,6 +2773,20 @@ function renderCatSidebar(){
       });
     }
   });
+  rows+=`<div class="cat-sidebar-item" onclick="toggleSidebarAddCat()" style="color:var(--brown);font-weight:700">
+    <span>➕</span><span>新增分類</span>
+  </div>
+  <div id="sidebar-addcat-box" class="hidden" style="padding:10px 12px;background:var(--cream2);margin:4px 8px;border-radius:10px">
+    <div style="display:flex;gap:5px;margin-bottom:6px;position:relative">
+      <input type="text" id="sidebar-newcat-icon" class="form-input" placeholder="📦" maxlength="4" readonly onclick="toggleIconPicker()" style="width:44px;flex-shrink:0;text-align:center;font-size:13px;padding:6px 4px;cursor:pointer">
+      <div id="sidebar-icon-picker" class="hidden" style="position:fixed;z-index:9999;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.18);padding:8px;width:172px;max-height:190px;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px">
+        ${['📦','🪡','✂️','🧵','🧶','🧷','🎀','🧸','👜','👝','🧦','👕','👗','👒','📌','🪢','🌟','⭐','❤️','🎁','🐻','🐰','🐱','🐶','🐼','🐨','🦋','🦄','🌸','💐','🍭','🍰','☕','🎄','🎃','✨'].map(e=>`<span onclick="pickSidebarIcon('${e}')" style="cursor:pointer;font-size:16px;text-align:center;padding:3px;border-radius:6px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${e}</span>`).join('')}
+      </div>
+      <input type="text" id="sidebar-newcat-code" class="form-input" placeholder="代碼" maxlength="2" style="width:56px;flex-shrink:0;text-transform:uppercase;font-family:monospace;font-size:12px;padding:6px 4px">
+    </div>
+    <input type="text" id="sidebar-newcat-label" class="form-input" placeholder="分類名稱" style="font-size:12px;padding:6px 8px;margin-bottom:6px">
+    <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;font-size:11px;padding:6px" onclick="addCustomCategoryFromSidebar()">+ 新增</button>
+  </div>`;
   sidebar.innerHTML=rows;
 }
 
@@ -2852,7 +2983,7 @@ function pushUndo(entry){
 }
 function _refreshAfterUndo(){
   saveDB();
-  if(currentPage==='products')renderProducts();
+  if(currentPage==='products'){renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();}
   if(currentPage==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();}
   if(currentPage==='orders')renderOrders();
   if(currentPage==='overview')renderOverview();
@@ -3432,12 +3563,13 @@ function openStockModal(id){
     </div>
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">供應商</div>
-      <div style="display:flex;gap:6px">
-        <select id="edit-supplier" class="form-select" style="font-size:13px;flex:1" onchange="if(this.value==='__new__')addNewSupplier()">
-          <option value="">-- 選擇供應商 --</option>
-          ${(DB.suppliers||[]).map(s=>`<option value="${s}" ${(p.supplier||''===s)?'selected':''}>${s}</option>`).join('')}
-          <option value="__new__">＋ 新增供應商...</option>
-        </select>
+      <div style="position:relative" id="edit-supplier-wrap">
+        <button type="button" onclick="toggleSupplierMenu()" class="form-select" style="font-size:13px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+          <span id="edit-supplier-label">${p.supplier?p.supplier:'-- 選擇供應商 --'}</span>
+          <span style="font-size:10px;color:var(--text3);flex-shrink:0">▾</span>
+        </button>
+        <input type="hidden" id="edit-supplier" value="${(p.supplier||'').replace(/"/g,'&quot;')}">
+        <div id="edit-supplier-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.12);max-height:220px;overflow-y:auto;padding:4px"></div>
       </div>
     </div>
     <div style="margin-bottom:10px">
@@ -5056,18 +5188,71 @@ function deleteSaleRecord(idx){
 }
 function updateTodayStats(){const t=DB.todaySales?.[todayStr()];const rev=t?.revenue||0,cstCny=t?.cost||0,prof=rev-cstCny*DB.rate;document.getElementById('today-revenue').textContent=`$${rev.toFixed(2)}`;document.getElementById('today-cost').textContent=`¥${cstCny.toFixed(2)}`;document.getElementById('today-profit').textContent=`$${prof.toFixed(2)}`;document.getElementById('stat-today').textContent=`$${rev.toFixed(0)}`;}
 function addNewSupplier(){
-  const name=window.prompt('新增供應商名稱：');
-  if(!name||!name.trim())return;
-  const n=name.trim();
-  if(!DB.suppliers.includes(n)){DB.suppliers.push(n);saveDB();}
-  const sel=document.getElementById('edit-supplier');
-  if(sel){
-    const opt=document.createElement('option');
-    opt.value=n;opt.textContent=n;
-    sel.insertBefore(opt,sel.lastElementChild);
-    sel.value=n;
-  }
+  // 舊版用 window.prompt 加供應商，換成下面 showAddSupplierInput 那個自己畫的輸入框（原生 prompt 有些環境點了沒反應）
+  showAddSupplierInput();
 }
+function showAddSupplierInput(){
+  const menu=document.getElementById('edit-supplier-menu');
+  if(!menu)return;
+  menu.innerHTML=`<div style="padding:6px">
+    <input type="text" id="new-supplier-input" class="form-input" placeholder="供應商名稱" style="font-size:12px;padding:7px 10px;margin-bottom:6px" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddSupplier();}" onclick="event.stopPropagation()">
+    <div style="display:flex;gap:6px">
+      <button type="button" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="renderSupplierMenu()">取消</button>
+      <button type="button" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="confirmAddSupplier()">＋ 新增</button>
+    </div>
+  </div>`;
+  const input=document.getElementById('new-supplier-input');
+  if(input)input.focus();
+}
+function confirmAddSupplier(){
+  const input=document.getElementById('new-supplier-input');
+  if(!input)return;
+  const n=input.value.trim();
+  if(!n){toast('請輸入供應商名稱','error');return;}
+  if(!DB.suppliers)DB.suppliers=[];
+  if(!DB.suppliers.includes(n)){DB.suppliers.push(n);saveDB();}
+  pickSupplier(n);
+}
+// 供應商：自訂樣式的下拉選單（原生 select 打開時是瀏覽器原生樣式，換成自己畫的清單）；
+// 選項自動合併「手動新增過的」＋「採購單裡實際用過的店家名稱」，不用每次都手動新增
+function getKnownSuppliers(){
+  const set=new Set((DB.suppliers||[]).filter(Boolean));
+  (DB.orders||[]).forEach(o=>{if(o.supplier&&o.supplier.trim())set.add(o.supplier.trim());});
+  return [...set].sort((a,b)=>a.localeCompare(b,'zh-Hant'));
+}
+function toggleSupplierMenu(){
+  const menu=document.getElementById('edit-supplier-menu');
+  if(!menu)return;
+  const willShow=menu.classList.contains('hidden');
+  if(willShow)renderSupplierMenu();
+  menu.classList.toggle('hidden');
+}
+function renderSupplierMenu(){
+  const menu=document.getElementById('edit-supplier-menu');
+  const curEl=document.getElementById('edit-supplier');
+  if(!menu||!curEl)return;
+  const cur=curEl.value;
+  const suppliers=getKnownSuppliers();
+  const rowStyle=(active)=>`padding:8px 10px;font-size:12px;border-radius:7px;cursor:pointer;color:${active?'var(--brown)':'var(--text2)'};font-weight:${active?'800':'500'}`;
+  let html=`<div onclick="pickSupplier('')" style="${rowStyle(!cur)}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">-- 選擇供應商 --</div>`;
+  html+=suppliers.map(s=>`<div onclick="pickSupplier(this.dataset.v)" data-v="${s.replace(/"/g,'&quot;')}" style="${rowStyle(cur===s)}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${s}</div>`).join('');
+  html+=`<div onclick="showAddSupplierInput()" style="${rowStyle(false)};color:var(--brown);font-weight:700;border-top:1px solid var(--cream2);margin-top:4px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">＋ 新增供應商...</div>`;
+  menu.innerHTML=html;
+}
+function pickSupplier(name){
+  const input=document.getElementById('edit-supplier');
+  const label=document.getElementById('edit-supplier-label');
+  if(input)input.value=name;
+  if(label)label.textContent=name||'-- 選擇供應商 --';
+  const menu=document.getElementById('edit-supplier-menu');
+  if(menu)menu.classList.add('hidden');
+}
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('edit-supplier-wrap');
+  const menu=document.getElementById('edit-supplier-menu');
+  if(!wrap||!menu||menu.classList.contains('hidden'))return;
+  if(!wrap.contains(e.target))menu.classList.add('hidden');
+});
 function openModal(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden';}
 // ---- 相機掃描 QR 找商品：用 jsQR 逐格解析畫面，抓到跟 p.sku 相符的文字就直接跳去搜尋 ----
 let scanStream=null, scanRAF=null;
