@@ -45,6 +45,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);bac
 .section-title{font-size:13px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:6px;}
 .btn{padding:9px 20px;border-radius:20px;font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.2s;border:none;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .btn:focus-visible{outline:2.5px solid var(--brown-light);outline-offset:2px;}
+button:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px;}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);outline-offset:1px;}
 .batch-mode .product-card{user-select:none;-webkit-user-select:none;}
 .btn-primary{background:var(--brown);color:#fff;}
@@ -200,6 +201,8 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
 .cat-sidebar-item:hover{background:var(--cream2);color:var(--brown);}
 .cat-sidebar-item.active{background:var(--cream2);color:var(--brown);border-left-color:var(--brown);}
 .cat-sidebar-item.drag-over{background:var(--mint-light);border-left-color:var(--mint);color:#3d8a58;}
+.cat-sidebar-item.cat-reorder-over{box-shadow:inset 0 2px 0 var(--brown);}
+.cat-sidebar-item.cat-reorder-dragging{opacity:.4;}
 .cat-sidebar-header{padding:10px 16px;font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1px;background:var(--cream2);border-bottom:1px solid var(--cream3);}
 .product-card[draggable]{cursor:grab;}
 .product-card[draggable]:active{cursor:grabbing;opacity:0.7;}
@@ -1029,6 +1032,14 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
   <div class="modal" style="max-width:680px"><div class="modal-header"><div class="modal-title" id="order-detail-title">採購單詳情</div><button class="modal-close" onclick="closeModal('modal-order-detail')">×</button></div><div class="modal-body" id="order-detail-body"></div></div>
 </div>
 
+<!-- MODAL: 每次進貨單價歷史 -->
+<div class="modal-overlay hidden" id="modal-cost-history" style="z-index:400">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header"><div class="modal-title">📋 每次進貨單價</div><button class="modal-close" onclick="closeModal('modal-cost-history')">×</button></div>
+    <div class="modal-body" id="cost-history-body" style="padding-top:2px"></div>
+  </div>
+</div>
+
 <!-- MODAL: 自製確認視窗（取代原生 confirm，避免在某些瀏覽器/預覽環境被擋掉） -->
 <div class="modal-overlay hidden" id="modal-confirm" style="z-index:400">
   <div class="modal" style="max-width:380px">
@@ -1498,7 +1509,6 @@ const THEMES={
   white:{name:'⚪ 純白',cream:'#ffffff',cream2:'#fafafa',cream3:'#ececec',cream4:'#d8d8d8',brown:'#555555','brown-light':'#888888',text:'#222222',text2:'#555555',text3:'#999999',navBg:'rgba(255,255,255,0.95)'},
   sakura:{name:'🌸 櫻花粉',cream:'#fdf6f7',cream2:'#f9ecee',cream3:'#f3dee2',cream4:'#e8c8ce',brown:'#b5657e','brown-light':'#d69aab',text:'#4a2530',text2:'#8a5866',text3:'#c295a0',navBg:'rgba(253,246,247,0.93)'},
   rainbow:{name:'🌈 繽紛',cream:'#fffdf7',cream2:'#fef3f8',cream3:'#e8d5f5',cream4:'#c9a8e8',brown:'#e0457b','brown-light':'#f08fb0',text:'#3a1f4d',text2:'#7a3d8a',text3:'#c78fd1',navBg:'rgba(255,253,247,0.93)'},
-  sage:{name:'🌿 抹茶綠',cream:'#f6f8f4',cream2:'#eaf0e5',cream3:'#dbe6d2',cream4:'#c3d4b4',brown:'#5f7a4a','brown-light':'#8fa778',text:'#26301e',text2:'#4d5c3d',text3:'#8a9d78',navBg:'rgba(246,248,244,0.93)'},
   lavender:{name:'💜 淡紫',cream:'#faf9fd',cream2:'#f2eff9',cream3:'#e6def3',cream4:'#d5c8e9',brown:'#9683c4','brown-light':'#b8a8d9',text:'#3a3050',text2:'#6b5f8a',text3:'#a898c4',navBg:'rgba(250,249,253,0.93)'},
   ocean:{name:'🌊 霧霾藍',cream:'#f4f8fa',cream2:'#e5eef2',cream3:'#cfe0e8',cream4:'#aecbd8',brown:'#3d6f85','brown-light':'#6fa0b5',text:'#1c333d',text2:'#3d5e6b',text3:'#7ba0ae',navBg:'rgba(244,248,250,0.93)'},
   tiffany:{name:'💎 Tiffany藍',cream:'#f5fcfa',cream2:'#e3f5ef',cream3:'#c8ebe0',cream4:'#a3dcc8',brown:'#0abab5','brown-light':'#5fd3cd',text:'#0f3d38',text2:'#1f6b62',text3:'#6cb5aa',navBg:'rgba(245,252,250,0.93)'},
@@ -1506,7 +1516,6 @@ const THEMES={
   gradient:{name:'🌅 漸變',cream:'#fdf7fa',cream2:'#f5e9f2',cream3:'#e6d5e8',cream4:'#d0b8dd',brown:'#a67fb5','brown-light':'#c4a3d0',text:'#3d2d45',text2:'#6f5580',text3:'#b09bc0',navBg:'linear-gradient(90deg, rgba(253,240,245,0.93), rgba(240,232,250,0.93), rgba(232,240,250,0.93))'},
   interior:{name:'🏠 室內設計',cream:'#f5f0e8',cream2:'#ecdfd0',cream3:'#e8cabb',cream4:'#c4a882',brown:'#8faf8a','brown-light':'#a9c2a5',text:'#3d3a33',text2:'#6b6259',text3:'#9e9b96',navBg:'rgba(245,240,232,0.93)'},
   brand:{name:'🎨 品牌棕紫',cream:'#f7f2ee',cream2:'#ece1d9',cream3:'#ddc9bf',cream4:'#c6a396',brown:'#8a6a5f','brown-light':'#ab8478',text:'#3c2f2a',text2:'#6b544c',text3:'#a68b80',navBg:'rgba(247,242,238,0.93)'},
-  goldnavy:{name:'⛰️ 沙金玄',cream:'#faf6ef',cream2:'#f0e6d3',cream3:'#d9c19a',cream4:'#85919a',brown:'#695c4f','brown-light':'#8a7a68',text:'#20252b',text2:'#695c4f',text3:'#a89a80',navBg:'rgba(250,246,239,0.93)'},
   mystic:{name:'🌾 秘境粉綠',cream:'#fdfbf2',cream2:'#f5eeea',cream3:'#e0c3c8',cream4:'#a89a7c',brown:'#7c8f89','brown-light':'#9aa9a3',text:'#37413d',text2:'#6b7a72',text3:'#b0a58c',navBg:'rgba(253,251,242,0.93)'},
   macaron:{name:'🍬 馬卡龍',cream:'#fbf7f0',cream2:'#f0e6de',cream3:'#d4b9b9',cream4:'#a8b6c4',brown:'#9a8ba3','brown-light':'#c2b2c2',text:'#453d4d',text2:'#7a6f80',text3:'#b8c4b0',navBg:'rgba(251,247,240,0.93)'},
   graphite:{name:'🪨 石墨棕',cream:'#f7f5f3',cream2:'#e3ded9',cream3:'#a49d95',cream4:'#6b5c52',brown:'#5c514e','brown-light':'#75706d',text:'#2c2a2f',text2:'#5c514e',text3:'#a49d95',navBg:'rgba(247,245,243,0.93)'},
@@ -1864,7 +1873,35 @@ const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包'
 function getAllCategoryTypes(){
   const builtin=['PA','PB','RB','PO','BG','ST','GT','ZZ'].filter(t=>!(DB.deletedTypes||[]).includes(t));
   const custom=(DB.customTypes||[]).map(c=>c.code);
-  return [...builtin,...custom];
+  let all=[...builtin,...custom];
+  if(DB.catOrder&&DB.catOrder.length){
+    const known=new Set(all);
+    const ordered=DB.catOrder.filter(t=>known.has(t));
+    const missing=all.filter(t=>!ordered.includes(t));
+    all=[...ordered,...missing];
+  }
+  return all;
+}
+let catDragType=null;
+// 排序模式下把分類直接拖到想要的位置，一次到位；不用像按鈕那樣一格一格移
+function dropReorderCategory(targetType){
+  const dragged=catDragType;
+  catDragType=null;
+  if(!dragged||dragged===targetType)return;
+  const all=getAllCategoryTypes();
+  if(!DB.catOrder||!DB.catOrder.length)DB.catOrder=[...all];
+  else{
+    const known=new Set(DB.catOrder);
+    all.forEach(x=>{if(!known.has(x))DB.catOrder.push(x);});
+  }
+  const from=DB.catOrder.indexOf(dragged);
+  if(from<0)return;
+  DB.catOrder.splice(from,1);
+  const to=DB.catOrder.indexOf(targetType);
+  if(to<0)return;
+  DB.catOrder.splice(to,0,dragged);
+  saveDB();
+  renderCatSidebar();
 }
 function getVisibleCategoryTypes(){
   return getAllCategoryTypes().filter(t=>!(DB.hiddenTypes||[]).includes(t));
@@ -2703,6 +2740,13 @@ function handleSaleCustomerSelectChange(sel){
 let catDeleteMode=false;
 function toggleCatDeleteMode(){
   catDeleteMode=!catDeleteMode;
+  if(catDeleteMode)catReorderMode=false;
+  renderCatSidebar();
+}
+let catReorderMode=false;
+function toggleCatReorderMode(){
+  catReorderMode=!catReorderMode;
+  if(catReorderMode)catDeleteMode=false;
   renderCatSidebar();
 }
 function renderCatSidebar(){
@@ -2715,7 +2759,14 @@ function renderCatSidebar(){
   const SIZE_NAMES={XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XX:'XXL'};
   const PATCH_TYPES=['PA','PB'];
   const trashIcon='<svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg>';
-  let rows=`<div class="cat-sidebar-header" style="display:flex;align-items:center;justify-content:space-between">分類<span onclick="toggleCatDeleteMode()" title="${catDeleteMode?'完成':'刪除分類'}" style="font-size:11px;cursor:pointer;padding:3px 6px;margin-right:-4px;border-radius:6px;display:inline-flex;align-items:center;background:${catDeleteMode?'var(--brown)':'transparent'};color:${catDeleteMode?'#fff':'var(--text3)'}">${catDeleteMode?'完成':trashIcon}</span></div>
+  const reorderIcon='<svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l4-4 4 4"/><path d="M8 15l4 4 4-4"/></g></svg>';
+  let rows=`<div class="cat-sidebar-header" style="display:flex;align-items:center;justify-content:space-between">
+    <span>分類</span>
+    <span style="display:flex;gap:4px">
+      <span onclick="toggleCatReorderMode()" title="${catReorderMode?'完成':'排序分類'}" style="font-size:11px;cursor:pointer;padding:3px 6px;border-radius:6px;display:inline-flex;align-items:center;background:${catReorderMode?'var(--brown)':'transparent'};color:${catReorderMode?'#fff':'var(--text3)'}">${catReorderMode?'完成':reorderIcon}</span>
+      <span onclick="toggleCatDeleteMode()" title="${catDeleteMode?'完成':'刪除分類'}" style="font-size:11px;cursor:pointer;padding:3px 6px;margin-right:-4px;border-radius:6px;display:inline-flex;align-items:center;background:${catDeleteMode?'var(--brown)':'transparent'};color:${catDeleteMode?'#fff':'var(--text3)'}">${catDeleteMode?'完成':trashIcon}</span>
+    </span>
+  </div>
   ${catDeleteMode?`<div style="padding:4px 12px 6px">
     <span onclick="toggleDeletedCatsBox()" style="font-size:10.5px;color:var(--brown);cursor:pointer;text-decoration:underline">🗑 已刪除的分類，找回來</span>
     <div id="sidebar-deletedcats-box" class="hidden" style="margin-top:6px;background:var(--cream2);border-radius:10px;padding:8px"></div>
@@ -2748,12 +2799,20 @@ function renderCatSidebar(){
       <span>🐌</span><span class="ui-editable" data-ui-key="catlabel-stale" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-stale','滯銷商品')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${staleCount}</span>
     </div>`;
   }
-  types.forEach(t=>{
+  types.forEach((t,idx)=>{
     const isActive=activeCat===t;
-    rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" onclick="${catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:`setCat('${t}')`}"
+    const clickAttr=catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:(catReorderMode?'':`setCat('${t}')`);
+    const dragAttrs=catReorderMode?`draggable="true"
+      ondragstart="catDragType='${t}';event.dataTransfer.effectAllowed='move';this.classList.add('cat-reorder-dragging')"
+      ondragend="this.classList.remove('cat-reorder-dragging');catDragType=null"
+      ondragover="event.preventDefault();if(catDragType&&catDragType!=='${t}')this.classList.add('cat-reorder-over')"
+      ondragleave="this.classList.remove('cat-reorder-over')"
+      ondrop="event.preventDefault();this.classList.remove('cat-reorder-over');dropReorderCategory('${t}')"`:`
       ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
       ondragleave="this.classList.remove('drag-over')"
-      ondrop="dropToCat(event,'${t}')">
+      ondrop="dropToCat(event,'${t}')"`;
+    rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" onclick="${clickAttr}" ${dragAttrs}>
+      ${catReorderMode?`<span style="color:var(--text3);flex-shrink:0;cursor:grab;display:flex" title="拖曳排序"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span>`:''}
       <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
       ${catDeleteMode?`<span style="color:var(--red);display:inline-flex">${trashIcon}</span>`:''}
@@ -2931,11 +2990,11 @@ function cancelSkuEdits(){
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
-  if(!['PA','PB','all'].includes(activeCat)){el.innerHTML='';return;}
+  if(!['PA','PB','all','__incomplete__'].includes(activeCat)){el.innerHTML='';return;}
   // Always show all 15 categories
   const ALL_CODES=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','99'];
   // Count products per code
-  const prods=activeCat==='all'?DB.products:DB.products.filter(p=>p.type===activeCat);
+  const prods=activeCat==='all'?DB.products:activeCat==='__incomplete__'?DB.products.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img):DB.products.filter(p=>p.type===activeCat);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
   el.innerHTML=ALL_CODES.map(c=>{
@@ -3380,9 +3439,23 @@ function getProductCostHistory(productId){
 function jumpToOrderFromProduct(orderId){
   const o=DB.orders.find(x=>x.id===orderId);
   if(!o){toast('這張採購單找不到了，可能已經被刪除','error');return;}
+  closeModal('modal-cost-history');
   closeModal('modal-stock');
   showPage('orders',document.querySelector('.nav-link[onclick*="\'orders\'"]'));
   openOrderDetail(orderId);
+}
+// 商品編輯面板「每次進貨單價」按鈕：跳出獨立視窗顯示完整進貨紀錄，不會自動跳走，
+// 要看某一筆對應的採購單要另外點該筆右邊的「查看採購單」才會離開這個畫面
+function openCostHistoryModal(productId){
+  const history=getProductCostHistory(productId);
+  const body=document.getElementById('cost-history-body');
+  if(!body)return;
+  body.innerHTML=history.map(h=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px;border-bottom:1px solid var(--cream2)">
+      <div style="font-size:13px;color:var(--text2)"><span style="font-weight:700;color:var(--text)">${h.date}</span> <span style="color:var(--text3);margin-left:4px">¥${h.cost.toFixed(2)}</span></div>
+      ${h.orderId?`<button type="button" onclick="jumpToOrderFromProduct('${h.orderId}')" style="flex-shrink:0;display:flex;align-items:center;gap:3px;background:none;border:none;padding:0;font-family:inherit;font-size:11px;font-weight:700;color:var(--brown);cursor:pointer">查看採購單<svg viewBox="0 0 24 24" width="10" height="10" style="display:block"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:`<span style="flex-shrink:0;font-size:11px;color:var(--text3)">－</span>`}
+    </div>`).join('');
+  openModal('modal-cost-history');
 }
 function updateEditCostUsd(){
   const cost=parseFloat(document.getElementById('edit-cost').value)||0;
@@ -3506,8 +3579,7 @@ function openStockModal(id){
               const history=getProductCostHistory(p.id);
               if(!history.length)return '';
               return `<div style="margin-top:5px">
-                <button type="button" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('span').textContent=this.nextElementSibling.classList.contains('hidden')?'▾':'▴'" style="font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;display:flex;align-items:center;gap:3px">每次進貨單價（${history.length}筆）<span>▾</span></button>
-                <div class="hidden" style="font-size:10px;color:var(--text3);line-height:1.8;margin-top:3px">${history.map(h=>h.orderId?`<button type="button" onclick="jumpToOrderFromProduct('${h.orderId}')" style="background:none;border:none;padding:0;font-family:inherit;font-size:10px;color:var(--brown);text-decoration:underline;cursor:pointer">${h.date} ¥${h.cost.toFixed(2)} →</button>`:`${h.date} ¥${h.cost.toFixed(2)}`).join('<br>')}</div>
+                <button type="button" onclick="openCostHistoryModal('${p.id}')" style="font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;display:flex;align-items:center;gap:3px">每次進貨單價（${history.length}筆）<svg viewBox="0 0 24 24" width="9" height="9" style="display:block"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>`;
             })()}
           </div>
@@ -3531,7 +3603,6 @@ function openStockModal(id){
       </div>`:`
       <div class="stock-row ok-row" style="margin-left:106px"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" onclick="adjStock('${id}','ok',1)">+</button></div></div>`}
     </div>
-    <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.6">瑕疵品折扣賣、展示品／樣品出貨，改到「開單」結帳時直接標記就好，不用在這裡另外管理囉</div>
     <div class="form-row" style="gap:8px;margin-bottom:10px">
       <div>
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">分類</div>
@@ -4374,12 +4445,13 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost){
   div.className='order-item-row';
   div.id='oi-'+id;
   if(originalCost)div.dataset.originalCost=originalCost;
+  if(readonly)div.dataset.original='1'; // 標記「這一列本來就是這張單既有的項目」，儲存時用這個判斷是否為新增，不要用名稱比對（同名也可能是想再新增一批）
   const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:22px;text-align:center"':'style="font-size:12px;padding-left:22px;text-align:center"';
   const linkedIdAttr=(!readonly&&productId)?` data-linked-id="${productId}"`:'';
   const nameInputHtml=readonly
     ?`<input type="text" class="form-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
     :`<input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
-  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px;align-self:end"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`}`;
+  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
   list.appendChild(div);
   if(!readonly&&productId){
     const p=DB.products.find(x=>x.id===productId);
@@ -4564,7 +4636,7 @@ function updateOrderTotalPreview(){
 document.addEventListener('input',e=>{
   if(e.target.closest('#order-items-list')||e.target.id==='o-shipping')updateOrderTotalPreview();
 });
-function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div class="oi-suggest-wrap"><input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')" style="align-self:end">×</button>`;list.appendChild(div);
+function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div class="oi-suggest-wrap"><input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
   pushUndo({label:'新增商品項目',undo:()=>{div.remove();updateOrderTotalPreview();},redo:()=>{list.appendChild(div);updateOrderTotalPreview();}});
   updateOrderTotalPreview();
 }
@@ -4626,6 +4698,7 @@ function saveOrder(){
   if(!supplier){toast('請輸入店家名稱 🌸','error');return;}
   const rows=document.querySelectorAll('#order-items-list .order-item-row');
   const items=[];
+  const isOriginalRow=[];
   rows.forEach(row=>{
     const ins=row.querySelectorAll('input');
     const name=ins[0].value.trim();
@@ -4637,6 +4710,7 @@ function saveOrder(){
       const item={id:uid(),name,cost,qty,productId:p?p.id:''};
       if(row.dataset.originalCost)item.originalCost=parseFloat(row.dataset.originalCost);
       items.push(item);
+      isOriginalRow.push(row.dataset.original==='1');
     }
   });
   const shipping=parseFloat(document.getElementById('o-shipping').value)||0;
@@ -4686,9 +4760,10 @@ function saveOrder(){
       o.items=newItems;
       o.total=newItems.reduce((s,i)=>s+i.cost*i.qty,0)+shipping;
     }else if(isReceived){
-      // 鎖住狀態：舊項目維持原樣，只把表單裡「找不到對應舊項目」的全新項目加進去，並直接套用WAC（視同這批新項目已到貨）
-      const existingNames=new Set((o.items||[]).map(oi=>oi.name));
-      const brandNewItems=items.filter(ni=>!existingNames.has(ni.name));
+      // 鎖住狀態：舊項目維持原樣，只把「表單裡真的新增出來的列」加進去，並直接套用WAC（視同這批新項目已到貨）
+      // 用「這一列本來是不是鎖住的既有項目」(isOriginalRow) 判斷是不是新增，不要用名稱比對——
+      // 同名商品也可能是想再新增一批新的進貨，用名稱比對會被誤判成重複而整列被吃掉、存了跟沒存一樣
+      const brandNewItems=items.filter((ni,idx)=>!isOriginalRow[idx]);
       if(brandNewItems.length>0){
         ensureProductsExist(brandNewItems);
         o.items=[...(o.items||[]),...brandNewItems];
@@ -5197,8 +5272,8 @@ function showAddSupplierInput(){
   menu.innerHTML=`<div style="padding:6px">
     <input type="text" id="new-supplier-input" class="form-input" placeholder="供應商名稱" style="font-size:12px;padding:7px 10px;margin-bottom:6px" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddSupplier();}" onclick="event.stopPropagation()">
     <div style="display:flex;gap:6px">
-      <button type="button" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="renderSupplierMenu()">取消</button>
-      <button type="button" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="confirmAddSupplier()">＋ 新增</button>
+      <button type="button" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="event.stopPropagation();renderSupplierMenu()">取消</button>
+      <button type="button" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="event.stopPropagation();confirmAddSupplier()">＋ 新增</button>
     </div>
   </div>`;
   const input=document.getElementById('new-supplier-input');
@@ -5236,7 +5311,7 @@ function renderSupplierMenu(){
   const rowStyle=(active)=>`padding:8px 10px;font-size:12px;border-radius:7px;cursor:pointer;color:${active?'var(--brown)':'var(--text2)'};font-weight:${active?'800':'500'}`;
   let html=`<div onclick="pickSupplier('')" style="${rowStyle(!cur)}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">-- 選擇供應商 --</div>`;
   html+=suppliers.map(s=>`<div onclick="pickSupplier(this.dataset.v)" data-v="${s.replace(/"/g,'&quot;')}" style="${rowStyle(cur===s)}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${s}</div>`).join('');
-  html+=`<div onclick="showAddSupplierInput()" style="${rowStyle(false)};color:var(--brown);font-weight:700;border-top:1px solid var(--cream2);margin-top:4px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">＋ 新增供應商...</div>`;
+  html+=`<div onclick="event.stopPropagation();showAddSupplierInput()" style="${rowStyle(false)};color:var(--brown);font-weight:700;border-top:1px solid var(--cream2);margin-top:4px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">＋ 新增供應商...</div>`;
   menu.innerHTML=html;
 }
 function pickSupplier(name){
