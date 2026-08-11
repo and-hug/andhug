@@ -3429,7 +3429,7 @@ function getProductCostHistory(productId){
   (DB.orders||[]).forEach(o=>{
     (o.items||[]).forEach(it=>{
       if(it.productId===productId&&it.cost>0){
-        rows.push({date:o.date||'',cost:it.cost,orderId:o.id});
+        rows.push({date:o.date||'',cost:it.cost,orderId:o.id,supplier:o.supplier||'',qty:it.qty||1});
       }
     });
   });
@@ -3449,12 +3449,21 @@ function jumpToOrderFromProduct(orderId){
 // 要看某一筆對應的採購單要另外點該筆右邊的「查看採購單」才會離開這個畫面
 function openCostHistoryModal(productId){
   const history=getProductCostHistory(productId);
+  const p=DB.products.find(x=>x.id===productId);
   const body=document.getElementById('cost-history-body');
   if(!body)return;
+  const thumbHtml=p&&p.img?`<img src="${p.img}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--cream2)">`:`<span style="width:44px;height:44px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:var(--text3)">📦</span>`;
   body.innerHTML=history.map(h=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px;border-bottom:1px solid var(--cream2)">
-      <div style="font-size:13px;color:var(--text2)"><span style="font-weight:700;color:var(--text)">${h.date}</span> <span style="color:var(--text3);margin-left:4px">¥${h.cost.toFixed(2)}</span></div>
-      ${h.orderId?`<button type="button" onclick="jumpToOrderFromProduct('${h.orderId}')" style="flex-shrink:0;display:flex;align-items:center;gap:3px;background:none;border:none;padding:0;font-family:inherit;font-size:11px;font-weight:700;color:var(--brown);cursor:pointer">查看採購單<svg viewBox="0 0 24 24" width="10" height="10" style="display:block"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:`<span style="flex-shrink:0;font-size:11px;color:var(--text3)">－</span>`}
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--cream2)">
+      ${thumbHtml}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${h.date}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">${h.supplier?h.supplier+' · ':''}數量 ${h.qty}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-weight:800;color:var(--brown);font-size:14px">¥${h.cost.toFixed(2)}</div>
+        ${h.orderId?`<button type="button" onclick="jumpToOrderFromProduct('${h.orderId}')" style="display:flex;align-items:center;gap:2px;background:none;border:none;padding:0;margin-top:2px;font-family:inherit;font-size:10px;font-weight:700;color:var(--brown);cursor:pointer">查看採購單<svg viewBox="0 0 24 24" width="9" height="9" style="display:block"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}
+      </div>
     </div>`).join('');
   openModal('modal-cost-history');
 }
@@ -3764,6 +3773,15 @@ async function saveFromStock(id){
   window.pendingStockImgRemoved=false;
   p.updatedAt=Date.now();
   const after=JSON.parse(JSON.stringify(p));
+  // 改名的話，把舊採購單裡「當初沒連結productId、只能用名字對應」的項目補上連結，
+  // 不然改名後那些舊採購單裡的圖片/資料就永久找不到這個商品了（用名字比對，改名就斷線）
+  if(before.name&&after.name&&before.name!==after.name){
+    (DB.orders||[]).forEach(o=>{
+      (o.items||[]).forEach(it=>{
+        if(!it.productId&&it.name===before.name)it.productId=p.id;
+      });
+    });
+  }
   pushUndo({label:'編輯商品「'+(after.name||before.name)+'」',undo:()=>{Object.assign(p,before);},redo:()=>{Object.assign(p,after);}});
   saveDB();renderProducts();renderCatSidebar();
   toast('✅ 已儲存！確認後按「完成」離開（⌘Z 撤銷）','success');
@@ -3827,10 +3845,15 @@ function renderOrders(){
   }
   if(!sorted.length){container.innerHTML='';em.classList.remove('hidden');return;}
   em.classList.add('hidden');
+  let healedAnyProductId=false;
   container.innerHTML=sorted.map(o=>{
     const usd=(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2);
     const itemsHtml=(o.items||[]).map(i=>{
-      const p=i.productId?DB.products.find(x=>x.id===i.productId):DB.products.find(x=>x.name===i.name);
+      let p=i.productId?DB.products.find(x=>x.id===i.productId):null;
+      if(!p){
+        p=DB.products.find(x=>x.name===i.name); // 舊資料沒存 productId 時，退回用名稱找
+        if(p){i.productId=p.id;healedAnyProductId=true;} // 找到了就順手補上連結，以後改名也不會再斷線
+      }
       const imgSrc=i.img||(p?p.img||'':'');
       const sku=p&&p.sku?p.sku:'';
       return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream3)">
@@ -3867,6 +3890,7 @@ function renderOrders(){
       </div>
     </div>`;
   }).join('');
+  if(healedAnyProductId)saveDB(); // 把剛剛補上的 productId 連結存下來，下次就不用再找
 }
 function toggleAccordion(id){
   const body=document.getElementById('ab-'+id);
@@ -4231,21 +4255,26 @@ function parseOcrTextToItems(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
   const items=[];
   for(const line of lines){
-    const priceMatch=line.match(/[¥￥]\s*([\d]+\.?[\d]*)/);
+    const priceMatches=[...line.matchAll(/[¥￥]\s*([\d]+\.?[\d]*)/g)];
     const qtyMatch=line.match(/[xX×]\s*([\d]+)/);
-    if(!priceMatch)continue; // 沒有價格的行，大概不是商品列（可能是規格說明、按鈕文字等）
-    let name=line
-      .replace(priceMatch[0],'')
-      .replace(qtyMatch?qtyMatch[0]:'','')
-      .replace(/加入购物车|申请售后|加入購物車|申請售後/g,'')
-      .trim();
-    if(!name)continue;
-    items.push({
-      name,
-      rawName:name,
-      cost:parseFloat(priceMatch[1])||0,
-      qty:qtyMatch?(parseInt(qtyMatch[1])||1):1
-    });
+    if(!priceMatches.length)continue; // 沒有價格的行，大概不是商品列（可能是規格說明、按鈕文字等）
+    let name=line;
+    priceMatches.forEach(m=>{name=name.split(m[0]).join('');});
+    if(qtyMatch)name=name.split(qtyMatch[0]).join('');
+    name=name.replace(/加入购物车|申请售后|加入購物車|申請售後/g,'').trim();
+    const cost=parseFloat(priceMatches[0][1])||0;
+    if(!name){
+      // 這一行只有價格、沒有商品名字：通常是上一筆商品的「原價（劃線價）」單獨佔一行，補回去
+      const prev=items[items.length-1];
+      if(prev&&!prev.originalCost&&cost>prev.cost)prev.originalCost=cost;
+      continue;
+    }
+    const item={name,rawName:name,cost,qty:qtyMatch?(parseInt(qtyMatch[1])||1):1};
+    if(priceMatches.length>1){
+      const second=parseFloat(priceMatches[1][1])||0;
+      if(second>cost)item.originalCost=second; // 同一行抓到兩個價錢：第二個當作原價（被劃線那個）
+    }
+    items.push(item);
   }
   return items;
 }
@@ -4487,14 +4516,14 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost){
   const div=document.createElement('div');
   div.className='order-item-row';
   div.id='oi-'+id;
-  if(originalCost)div.dataset.originalCost=originalCost;
   if(readonly)div.dataset.original='1'; // 標記「這一列本來就是這張單既有的項目」，儲存時用這個判斷是否為新增，不要用名稱比對（同名也可能是想再新增一批）
   const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:22px;text-align:center"':'style="font-size:12px;padding-left:22px;text-align:center"';
   const linkedIdAttr=(!readonly&&productId)?` data-linked-id="${productId}"`:'';
   const nameInputHtml=readonly
-    ?`<input type="text" class="form-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
-    :`<input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
-  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
+    ?`<input type="text" class="form-input oi-name-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
+    :`<input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
+  const origCostHtml=readonly?'':`<div style="position:relative;margin-top:3px"><span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:10px;pointer-events:none">¥</span><input type="number" class="form-input oi-origcost-input" placeholder="原價(選填，畫線價)" step="0.01" value="${originalCost?Number(originalCost).toFixed(2):''}" style="font-size:10px;padding:4px 8px 4px 18px;height:24px"></div>`;
+  div.innerHTML=`<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div>${origCostHtml}</div><div><input type="number" class="form-input oi-qty-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
   list.appendChild(div);
   if(!readonly&&productId){
     const p=DB.products.find(x=>x.id===productId);
@@ -4664,9 +4693,8 @@ function updateOrderTotalPreview(){
   const rows=document.querySelectorAll('#order-items-list .order-item-row');
   let totalCny=0;
   rows.forEach(row=>{
-    const ins=row.querySelectorAll('input');
-    const cost=parseFloat(ins[1]?.value)||0;
-    const qty=parseInt(ins[2]?.value)||0;
+    const cost=parseFloat(row.querySelector('.oi-cost-input')?.value)||0;
+    const qty=parseInt(row.querySelector('.oi-qty-input')?.value)||0;
     totalCny+=cost*qty;
   });
   const shipping=parseFloat(document.getElementById('o-shipping')?.value)||0;
@@ -4679,7 +4707,7 @@ function updateOrderTotalPreview(){
 document.addEventListener('input',e=>{
   if(e.target.closest('#order-items-list')||e.target.id==='o-shipping')updateOrderTotalPreview();
 });
-function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div class="oi-suggest-wrap"><input type="text" class="form-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div></div><div><input type="number" class="form-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
+function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`<div class="oi-suggest-wrap"><input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div><div style="position:relative"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div><div style="position:relative;margin-top:3px"><span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:10px;pointer-events:none">¥</span><input type="number" class="form-input oi-origcost-input" placeholder="原價(選填，畫線價)" step="0.01" style="font-size:10px;padding:4px 8px 4px 18px;height:24px"></div></div><div><input type="number" class="form-input oi-qty-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
   pushUndo({label:'新增商品項目',undo:()=>{div.remove();updateOrderTotalPreview();},redo:()=>{list.appendChild(div);updateOrderTotalPreview();}});
   updateOrderTotalPreview();
 }
@@ -4697,14 +4725,15 @@ function collectOrderFormItemsForDraft(){
   const rows=document.querySelectorAll('#order-items-list .order-item-row');
   const items=[];
   rows.forEach(row=>{
-    const ins=row.querySelectorAll('input');
-    const name=ins[0]?.value.trim();
-    const cost=parseFloat(ins[1]?.value)||0;
-    const qty=parseInt(ins[2]?.value)||1;
+    const nameInput=row.querySelector('.oi-name-input');
+    const name=nameInput?.value.trim();
+    const cost=parseFloat(row.querySelector('.oi-cost-input')?.value)||0;
+    const qty=parseInt(row.querySelector('.oi-qty-input')?.value)||1;
     if(name){
-      const linkedId=ins[0].dataset&&ins[0].dataset.linkedId;
+      const linkedId=nameInput.dataset&&nameInput.dataset.linkedId;
       const item={name,cost,qty,productId:linkedId||''};
-      if(row.dataset.originalCost)item.originalCost=parseFloat(row.dataset.originalCost);
+      const origVal=parseFloat(row.querySelector('.oi-origcost-input')?.value);
+      if(origVal>0)item.originalCost=origVal;
       items.push(item);
     }
   });
@@ -4743,15 +4772,16 @@ function saveOrder(){
   const items=[];
   const isOriginalRow=[];
   rows.forEach(row=>{
-    const ins=row.querySelectorAll('input');
-    const name=ins[0].value.trim();
-    const cost=parseFloat(ins[1].value)||0;
-    const qty=parseInt(ins[2].value)||1;
+    const nameInput=row.querySelector('.oi-name-input');
+    const name=nameInput.value.trim();
+    const cost=parseFloat(row.querySelector('.oi-cost-input')?.value)||0;
+    const qty=parseInt(row.querySelector('.oi-qty-input')?.value)||1;
     if(name){
-      const linkedId=ins[0].dataset&&ins[0].dataset.linkedId;
+      const linkedId=nameInput.dataset&&nameInput.dataset.linkedId;
       const p=linkedId?DB.products.find(x=>x.id===linkedId):DB.products.find(x=>x.name===name);
       const item={id:uid(),name,cost,qty,productId:p?p.id:''};
-      if(row.dataset.originalCost)item.originalCost=parseFloat(row.dataset.originalCost);
+      const origVal=parseFloat(row.querySelector('.oi-origcost-input')?.value);
+      if(origVal>0)item.originalCost=origVal;
       items.push(item);
       isOriginalRow.push(row.dataset.original==='1');
     }
