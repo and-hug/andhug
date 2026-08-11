@@ -661,6 +661,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
   <div style="margin-left:auto;position:relative;display:flex;align-items:center;gap:6px">
     <button class="nav-link" style="color:var(--text3);" onclick="openSettings()" title="設定">⚙️ 設定</button>
     <input type="file" id="batch-img-input" accept="image/*" multiple style="display:none;" onchange="handleBatchUpload(this)">
+    <input type="file" id="batch-row-img-input" accept="image/*" style="display:none;" onchange="handleBatchRowImgFile(this)">
   </div>
   <input type="file" id="importFile" accept=".json,application/json" style="display:none;" onchange="importBackup(this)">
 </nav>
@@ -3490,7 +3491,7 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
 function deleteProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;if(!DB.productTrash)DB.productTrash=[];const trashEntry={...p,deletedAt:Date.now()};DB.productTrash.push(trashEntry);DB.products=DB.products.filter(x=>x.id!==id);pushUndo({label:'刪除 '+p.name,undo:()=>{DB.products.push(p);DB.productTrash=DB.productTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);},redo:()=>{DB.products=DB.products.filter(x=>x.id!==p.id);if(!DB.productTrash)DB.productTrash=[];DB.productTrash.push(trashEntry);}});saveDB();closeModal('modal-stock');renderProducts();toast('🗑 已刪除（⌘Z 撤銷）','success');}
 function openStockModal(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
-  editingId=id; pendingImg=null; window.pendingStockImg=null;
+  editingId=id; pendingImg=null; window.pendingStockImg=null; window.pendingStockImgRemoved=false;
   // Save snapshot for undo
   window._stockSnapshot = JSON.stringify(p);
   const imgSrc=p.img||'';
@@ -3551,8 +3552,9 @@ function openStockModal(id){
           ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'"
           ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';handleStockImgDrop(event,'${id}')"
           style="width:90px;height:90px;border-radius:12px;background:var(--cream2);border:2px dashed var(--cream4);cursor:pointer;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:all 0.2s">
-          ${imgSrc?`<img id="stock-img-preview" src="${imgSrc}" style="width:100%;height:100%;object-fit:contain">`:`<div style="font-size:24px;color:var(--text3);text-align:center"><div>📷</div><div style="font-size:9px;margin-top:4px;color:var(--text3)">拖曳或點擊</div></div>`}
+          ${imgSrc?`<img id="stock-img-preview" src="${imgSrc}" style="width:100%;height:100%;object-fit:contain">`:`<div id="stock-img-placeholder" style="font-size:24px;color:var(--text3);text-align:center"><div>📷</div><div style="font-size:9px;margin-top:4px;color:var(--text3)">拖曳或點擊</div></div>`}
           <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.35);color:#fff;font-size:9px;text-align:center;padding:3px;font-weight:700">換圖</div>
+          ${imgSrc?`<button type="button" id="stock-img-del-btn" onclick="event.stopPropagation();removeStockImg('${id}')" title="刪除照片" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.45);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>`:''}
         </div>
         <input type="file" id="stock-img-input" accept="image/*" style="display:none" onchange="handleStockImg(event,'${id}')">
         <button type="button" onclick="saveFromStock('${id}')" class="btn btn-sm" style="width:90px;margin-top:6px;justify-content:center;background:var(--cream2);color:var(--text3);border:1.5px solid var(--cream3)">💾 儲存</button>
@@ -3673,9 +3675,14 @@ function handleStockImgDrop(e,id){
   r.onload=ev=>{
     const data=ev.target.result;
     window.pendingStockImg=data;
+    window.pendingStockImgRemoved=false;
     const prev=document.getElementById('stock-img-preview');
     if(prev){prev.src=data;}
-    else{const zone=document.getElementById('stock-img-zone');if(zone){const img=document.createElement('img');img.id='stock-img-preview';img.src=data;img.style.cssText='width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0';zone.appendChild(img);}}
+    else{
+      const ph=document.getElementById('stock-img-placeholder');if(ph)ph.remove();
+      const zone=document.getElementById('stock-img-zone');if(zone){const img=document.createElement('img');img.id='stock-img-preview';img.src=data;img.style.cssText='width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0';zone.insertBefore(img,zone.firstChild);}
+    }
+    ensureStockImgDelBtn(id);
     toast('圖片已更新！記得按儲存','success');
   };
   r.readAsDataURL(f);
@@ -3686,14 +3693,44 @@ function handleStockImg(e,id){
   r.onload=ev=>{
     const data=ev.target.result;
     window.pendingStockImg=data;
+    window.pendingStockImgRemoved=false;
     const prev=document.getElementById('stock-img-preview');
     if(prev){prev.src=data;}
     else{
+      const ph=document.getElementById('stock-img-placeholder');if(ph)ph.remove();
       const zone=document.querySelector('#stock-modal-body div[onclick*="stock-img-input"]');
       if(zone){const img=document.createElement('img');img.id='stock-img-preview';img.src=data;img.style.cssText='width:100%;height:100%;object-fit:contain';zone.insertBefore(img,zone.firstChild);}
     }
+    ensureStockImgDelBtn(id);
   };
   r.readAsDataURL(f);
+}
+function ensureStockImgDelBtn(id){
+  if(document.getElementById('stock-img-del-btn'))return;
+  const zone=document.getElementById('stock-img-zone');if(!zone)return;
+  const btn=document.createElement('button');
+  btn.type='button';btn.id='stock-img-del-btn';btn.title='刪除照片';
+  btn.style.cssText='position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.45);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2';
+  btn.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg>';
+  btn.onclick=function(ev){ev.stopPropagation();removeStockImg(id);};
+  zone.appendChild(btn);
+}
+function removeStockImg(id){
+  window.pendingStockImg=null;
+  window.pendingStockImgRemoved=true;
+  const prev=document.getElementById('stock-img-preview');
+  if(prev)prev.remove();
+  const zone=document.getElementById('stock-img-zone');
+  if(zone&&!document.getElementById('stock-img-placeholder')){
+    const ph=document.createElement('div');
+    ph.id='stock-img-placeholder';
+    ph.style.cssText='font-size:24px;color:var(--text3);text-align:center';
+    ph.innerHTML='<div>📷</div><div style="font-size:9px;margin-top:4px;color:var(--text3)">拖曳或點擊</div>';
+    zone.insertBefore(ph,zone.firstChild);
+  }
+  const delBtn=document.getElementById('stock-img-del-btn');
+  if(delBtn)delBtn.remove();
+  toast('照片已移除，記得按儲存','success');
 }
 function undoStock(id){
   if(!window._stockSnapshot)return;
@@ -3706,6 +3743,7 @@ function undoStock(id){
 async function saveFromStock(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
   window._stockSnapshot=JSON.stringify(p); // save new snapshot
+  const before=JSON.parse(JSON.stringify(p));
   p.name=document.getElementById('edit-name').value.trim()||p.name;
   p.sku=document.getElementById('edit-sku').value.trim();
   p.type=document.getElementById('edit-type').value||p.type;
@@ -3720,10 +3758,15 @@ async function saveFromStock(id){
   if(window.pendingStockImg&&window.uploadImageIfNeeded){
     p.img=await window.uploadImageIfNeeded(id,window.pendingStockImg);
     window.pendingStockImg=null;
+  }else if(window.pendingStockImgRemoved){
+    p.img='';
   }
+  window.pendingStockImgRemoved=false;
   p.updatedAt=Date.now();
+  const after=JSON.parse(JSON.stringify(p));
+  pushUndo({label:'編輯商品「'+(after.name||before.name)+'」',undo:()=>{Object.assign(p,before);},redo:()=>{Object.assign(p,after);}});
   saveDB();renderProducts();renderCatSidebar();
-  toast('✅ 已儲存！確認後按「完成」離開','success');
+  toast('✅ 已儲存！確認後按「完成」離開（⌘Z 撤銷）','success');
 }
 function setStockDirect(id,val){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
@@ -4722,6 +4765,10 @@ function saveOrder(){
     const o=DB.orders.find(x=>x.id===editingOrderId);
     if(!o){toast('找不到採購單','error');return;}
     const isReceived=o.status==='received';
+    // 編輯可能連動改到 DB.products（自動建立新商品、WAC 成本回滾/套用），
+    // 所以撤銷要連 DB.products 一起存快照，只還原採購單本身會讓庫存/成本對不起來
+    const productsBefore=JSON.parse(JSON.stringify(DB.products));
+    const orderBefore=JSON.parse(JSON.stringify(o));
     o.supplier=supplier;
     o.date=document.getElementById('o-date').value;
     o.shipping=shipping;
@@ -4772,10 +4819,14 @@ function saveOrder(){
       }
     }
     saveDB();renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();
-    toast('✅ 採購單已更新','success');
+    const productsAfter=JSON.parse(JSON.stringify(DB.products));
+    const orderAfter=JSON.parse(JSON.stringify(o));
+    pushUndo({label:'編輯採購單「'+supplier+'」',undo:()=>{DB.products=productsBefore;const oi=DB.orders.findIndex(x=>x.id===o.id);if(oi!==-1)DB.orders[oi]=orderBefore;},redo:()=>{DB.products=productsAfter;const oi2=DB.orders.findIndex(x=>x.id===o.id);if(oi2!==-1)DB.orders[oi2]=orderAfter;}});
+    toast('✅ 採購單已更新（⌘Z 撤銷）','success');
     return;
   }
   // 新增模式
+  const productsBeforeNew=JSON.parse(JSON.stringify(DB.products));
   const order={id:uid(),supplier,date:document.getElementById('o-date').value,shipping,items,total,totalUsd,rateUsed:orderRate,note:document.getElementById('o-note').value.trim(),status:'ordered',createdAt:Date.now()};
   DB.orders.push(order);
   items.forEach(item=>{
@@ -4784,6 +4835,8 @@ function saveOrder(){
       DB.products.push({id:uid(),name:item.name,sku:'',type:'PA',size:'0',cost:0,price:0,stock:0,minStock:5,note:`${supplier} · ${order.date}`,status:'pending',img:null,updatedAt:Date.now()});
     }
   });
+  const productsAfterNew=JSON.parse(JSON.stringify(DB.products));
+  pushUndo({label:'新增採購單「'+supplier+'」',undo:()=>{DB.orders=DB.orders.filter(x=>x.id!==order.id);DB.products=productsBeforeNew;},redo:()=>{DB.orders.push(order);DB.products=productsAfterNew;}});
   saveDB();closeModal('modal-order');renderOrders();
   if(currentImportDraftId){
     DB.smartImportDrafts=(DB.smartImportDrafts||[]).filter(d=>d.id!==currentImportDraftId);
@@ -4791,7 +4844,7 @@ function saveOrder(){
     saveDB();
     updateImportDraftsBadge();
   }
-  toast(`✅ 採購單已建立！按「確認到貨」才會更新庫存與成本`, 'success');
+  toast(`✅ 採購單已建立！按「確認到貨」才會更新庫存與成本（⌘Z 撤銷）`, 'success');
 }
 function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?(o.totalUsd/o.total):DB.rate;document.getElementById('order-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${o.status==='received'&&o.receivedAt?(()=>{const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');return `<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📦 到貨日期：${rds}</div>`;})():''}${o.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📝 ${o.note}</div>`:''}<table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${(o.items||[]).map(i=>{
   const linked=(i.linkedProducts||[]).map(pid=>{
@@ -6070,7 +6123,14 @@ function renderBatchTable(){
     <td style="padding:8px;text-align:center"><div class="batch-check-custom${chk?' checked':''}" onclick="const s=!this.classList.contains('checked');this.classList.toggle('checked');this.style.background=s?'var(--brown)':'#fff';if(s)batchSelected.add('${p.id}');else batchSelected.delete('${p.id}')" style="width:14px;height:14px;border-radius:50%;border:2px solid #6b4f2a;background:${chk?'var(--brown)':'#fff'};cursor:pointer;margin:auto"></div></td>
     <td style="padding:8px">
       <div style="display:flex;align-items:center;gap:8px">
-        ${p.img?`<img src="${p.img}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:var(--cream2)">`:'<div style="width:36px;height:36px;border-radius:6px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>'}
+        <div class="batch-row-imgzone" data-id="${p.id}" onclick="triggerBatchRowImgPick('${p.id}')"
+          ondragover="event.preventDefault();this.style.borderColor='var(--brown)'"
+          ondragleave="this.style.borderColor='transparent'"
+          ondrop="event.preventDefault();this.style.borderColor='transparent';handleBatchRowImgDrop(event,'${p.id}')"
+          title="拖曳照片到這裡換圖，或點擊選擇"
+          style="width:36px;height:36px;border-radius:6px;background:var(--cream2);border:1.5px dashed transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;transition:border-color .15s">
+          ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:contain">`:'<span style="font-size:16px">📦</span>'}
+        </div>
         <div>
           <div style="font-weight:700;font-size:12px">${p.name}</div>
           <div style="font-size:10px;color:var(--text3);font-family:monospace">${p.sku||''}</div>
@@ -6084,6 +6144,47 @@ function renderBatchTable(){
   </tr>`;}).join('')+'</tbody>';
 }
 
+// 批次編輯表格：每一列的縮圖可以直接拖曳照片進來換圖，或點擊選檔案
+let batchRowImgTargetId=null;
+function triggerBatchRowImgPick(id){
+  batchRowImgTargetId=id;
+  const input=document.getElementById('batch-row-img-input');
+  if(input)input.click();
+}
+function handleBatchRowImgFile(input){
+  const f=input.files[0];
+  if(f)processBatchRowImgFile(f,batchRowImgTargetId);
+  input.value='';
+}
+function handleBatchRowImgDrop(e,id){
+  const f=e.dataTransfer.files[0];
+  processBatchRowImgFile(f,id);
+}
+function processBatchRowImgFile(f,id){
+  if(!f||!f.type.startsWith('image/')||!id)return;
+  const p=DB.products.find(x=>x.id===id);if(!p)return;
+  const oldImg=p.img;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    const data=ev.target.result;
+    let finalUrl=data;
+    if(window.uploadImageIfNeeded){
+      try{finalUrl=await window.uploadImageIfNeeded(id,data);}catch(e){}
+    }
+    p.img=finalUrl;
+    p.updatedAt=Date.now();
+    saveDB();
+    const zone=document.querySelector(`.batch-row-imgzone[data-id="${id}"]`);
+    const zoneHtml=(url)=>url?`<img src="${url}" style="width:100%;height:100%;object-fit:contain">`:'<span style="font-size:16px">📦</span>';
+    if(zone)zone.innerHTML=zoneHtml(finalUrl);
+    pushUndo({label:'更換照片「'+p.name+'」',
+      undo:()=>{p.img=oldImg;const z=document.querySelector(`.batch-row-imgzone[data-id="${id}"]`);if(z)z.innerHTML=zoneHtml(oldImg);},
+      redo:()=>{p.img=finalUrl;const z=document.querySelector(`.batch-row-imgzone[data-id="${id}"]`);if(z)z.innerHTML=zoneHtml(finalUrl);}});
+    renderProducts();
+    toast('圖片已更新','success');
+  };
+  reader.readAsDataURL(f);
+}
 function batchSetField(field){
   const v=document.getElementById('batch-val').value;
   if(v===''||v===null){toast('請先填入數值','error');return;}
