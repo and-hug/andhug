@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>🧸 布貼庫存系統</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -25,6 +25,13 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans TC','Nunito',sans-serif;background-color:var(--cream);color:var(--text);min-height:100vh;background-image:var(--body-gradient,none),radial-gradient(circle at 20% 20%,rgba(244,167,185,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(168,213,186,0.08) 0%,transparent 50%);background-attachment:fixed;}
+/* 瀏覽器對 button/input/select/textarea 預設不會繼承頁面字體（要另外設定），
+   之前很多地方各自忘記加、字體長得不一樣（有的變成瀏覽器預設字），統一在這裡補一次，
+   之後也不用再擔心新加的元件漏加 font-family 了 */
+button,input,select,textarea{font-family:inherit;}
+/* 商品編輯面板的「進階資訊」摺疊按鈕：預設（電腦版）不顯示，手機版才會出現讓她點開/收合，
+   電腦版的進階內容本來就一直顯示，不需要這顆按鈕 */
+.stock-advanced-toggle{display:none;}
 /* 🫧 霧面透明主題：卡片/彈窗/導覽列/側邊欄一律加毛玻璃模糊，背後那層漸層色塊透出朦朧色彩才有磨砂感 */
 body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .settings-panel,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card,body.theme-glass .customer-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:2px solid var(--cream3);display:flex;align-items:center;padding:0 24px;height:60px;gap:4px;}
@@ -212,6 +219,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
 .size-chip:hover{border-color:var(--brown-light);color:var(--brown);}
 .size-chip.active{background:var(--brown);color:#fff;border-color:var(--brown);}
 .batch-check-custom.checked{background:var(--brown)!important;border-color:#6b4f2a!important;}
+.reorder-check-custom.checked{background:var(--brown)!important;border-color:#6b4f2a!important;}
 
 .sticky-bar{position:sticky;top:72px;z-index:5;
   background:rgba(250,247,242,0.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
@@ -265,6 +273,12 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
    電腦版(>768px)完全不受影響，以下一行都不會套用
    ================================================================== */
 @media (max-width:768px){
+
+  /* --- 商品編輯面板：只有手機版才把「進階資訊」摺起來（顏色/款式、標籤、瑕疵庫存、周轉天數、商品連結），
+     電腦版維持原樣全部展開，不受影響 --- */
+  .stock-advanced-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:9px 2px;font-size:12px;font-weight:700;color:var(--text2);border-top:1.5px solid var(--cream2);margin-top:8px;margin-bottom:6px;}
+  .stock-advanced-section{display:none;}
+  .stock-advanced-section.expanded{display:block;}
 
   /* --- 整頁只能上下滾，不要連左右都能滑（min-width:0 修過縮放問題後，這個限制現在安全了）--- */
   html,body{overflow-x:hidden;}
@@ -559,9 +573,10 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
   #customer-list{grid-template-columns:1fr!important;}
 
   /* --- 浮動工具列 / 提示 --- */
-  .batch-toolbar{left:8px;right:8px;bottom:12px;transform:none;
+  /* iPhone 底部那條 Home 手勢列會蓋到固定在最下面的東西，用 safe-area-inset 讓它們自動往上讓開 */
+  .batch-toolbar{left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));transform:none;
       justify-content:center;flex-wrap:wrap;padding:8px 12px;gap:8px;}
-  .toast-container{left:12px;right:12px;bottom:12px;align-items:stretch;}
+  .toast-container{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));align-items:stretch;}
   .toast{max-width:100%;}
   .empty{padding:40px 16px;}
   .empty-icon{font-size:38px;}
@@ -593,6 +608,9 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
 
   /* --- 避免 iOS 點輸入框自動放大造成畫面亂跳 --- */
   .form-input,.form-select,.form-textarea,.search-input{font-size:16px!important;}
+  /* 這幾個是後來加的、沒有套用上面 class 的小輸入框（字級都寫死在 style 裡小於16px），
+     iOS Safari 對小於16px的輸入框，點下去會自動放大整個畫面，體驗很卡，這裡統一補上保護 */
+  #stock-range-min,#stock-range-max,#cart-discount-input,#sale-customer-select,#batch-val,.cart-price-input{font-size:16px!important;}
   /* 表單本來是桌機用的雙欄 grid，手機上沒改過，欄位塞不下時 grid 不會自動換行，
      而是直接把整排撐寬超出彈窗，造成內容被裁到 —— 跟前面 grid 縮放同一種問題 */
   .form-row{grid-template-columns:1fr!important;}
@@ -674,6 +692,9 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
     <div class="stat-card mint"><div class="stat-emoji">⭐</div><div class="stat-label">可賣庫存</div><div class="stat-value" id="stat-stock">0</div></div>
     <div class="stat-card peach"><div class="stat-emoji">⚠️</div><div class="stat-label">庫存偏低</div><div class="stat-value" id="stat-low">0</div></div>
     <div class="stat-card lavender"><div class="stat-emoji">💰</div><div class="stat-label">今日銷售</div><div class="stat-value" id="stat-today">$0</div></div>
+    <div class="stat-card lavender"><div class="stat-emoji">🗓️</div><div class="stat-label">本週銷售</div><div class="stat-value" id="stat-week">$0</div></div>
+    <div class="stat-card mint"><div class="stat-emoji">📅</div><div class="stat-label">本月營收</div><div class="stat-value" id="stat-month-revenue">$0</div></div>
+    <div class="stat-card peach"><div class="stat-emoji">📈</div><div class="stat-label">本月毛利</div><div class="stat-value" id="stat-month-profit">$0</div></div>
     <div class="stat-card pink"><div class="stat-emoji">🏦</div><div class="stat-label">庫存總價值</div><div class="stat-value" id="stat-inventory-value">$0</div></div>
   </div>
   <div class="form-row" style="gap:20px;align-items:start">
@@ -685,6 +706,10 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
       <div class="section-header"><div class="section-title">⚠️ 庫存警示</div></div>
       <div id="low-stock-list"></div>
     </div>
+    <div>
+      <div class="section-header"><div class="section-title">🚚 運送中</div><button class="btn btn-secondary btn-sm" onclick="showPage('orders',null)">查看全部 →</button></div>
+      <div id="in-transit-list"></div>
+    </div>
   </div>
 </div>
 
@@ -694,6 +719,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
     <div class="section-title">📦 商品庫</div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="renderProducts()"></div>
+      <button class="btn btn-secondary btn-icon" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap">
         <button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
@@ -704,6 +730,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
       <div style="display:flex;gap:4px"><button class="view-btn active" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
+      <button class="btn btn-secondary" onclick="openProductImport()">📥 匯入商品</button>
       <button class="btn btn-secondary btn-icon" onclick="openProductTrash()" title="已刪商品" style="padding:9px 14px">🗑</button>
       <button class="btn btn-primary" onclick="openAddProduct()">+ 新增商品</button>
     </div>
@@ -719,6 +746,14 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
         <div id="size-filters" style="display:none"></div>
         <div id="subcat-filters" style="display:flex;flex-wrap:wrap;gap:6px"></div>
       </div>
+      <div id="product-filtered-summary" style="font-size:11.5px;color:var(--text3);margin:2px 2px 8px"></div>
+      <div id="stock-range-filter-row" class="hidden" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;color:var(--text2)">
+        庫存範圍：
+        <input type="number" id="stock-range-min" placeholder="最少" min="0" oninput="renderProducts()" style="width:70px;font-size:12px;font-family:inherit;padding:5px 8px;border:1.5px solid var(--cream3);border-radius:8px;background:var(--surface)">
+        ～
+        <input type="number" id="stock-range-max" placeholder="最多" min="0" oninput="renderProducts()" style="width:70px;font-size:12px;font-family:inherit;padding:5px 8px;border:1.5px solid var(--cream3);border-radius:8px;background:var(--surface)">
+        <button type="button" onclick="document.getElementById('stock-range-min').value='';document.getElementById('stock-range-max').value='';renderProducts()" style="background:none;border:none;color:var(--text3);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit">清除</button>
+      </div>
       <div class="product-grid" id="product-grid"></div>
     </div>
   </div>
@@ -726,7 +761,8 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
 
 <!-- ORDERS -->
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:0 5px;min-width:14px;text-align:center;line-height:1.5;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">📥 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" style="display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border-radius:10px;font-size:9px;padding:0 5px;min-width:14px;text-align:center;line-height:1.5;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">📥 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
+  <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-list"></div>
   <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
@@ -779,7 +815,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
                 <button class="discount-btn" data-d="20" onclick="setDiscount(20)" style="width:100%">20%</button>
                 <button class="discount-btn" data-d="25" onclick="setDiscount(25)" style="width:100%">25%</button>
                 <button class="discount-btn" data-d="50" onclick="setDiscount(50)" style="width:100%">50%</button>
-                <input type="number" id="cart-discount-input" min="0" max="100" placeholder="自訂%" style="width:100%;box-sizing:border-box;font-size:11px;background:var(--surface);border:1.5px solid var(--cream3);padding:4px 6px;border-radius:8px;font-weight:700;text-align:center" onchange="setDiscount(this.value)">
+                <input type="number" id="cart-discount-input" min="0" max="100" placeholder="自訂%" style="width:100%;box-sizing:border-box;font-size:11px;font-family:inherit;background:var(--surface);border:1.5px solid var(--cream3);padding:4px 6px;border-radius:8px;font-weight:700;text-align:center" onchange="setDiscount(this.value)">
               </div>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;font-weight:700"><span style="color:var(--text)">應收</span><span id="cart-total" style="font-family:'Nunito',sans-serif;font-weight:800;color:var(--brown);font-size:18px">$0</span></div>
@@ -1001,6 +1037,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
+        <div class="form-group"><label class="form-label">預計到貨日期（選填）</label><input type="date" class="form-input" id="o-expected-date"></div>
         <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
           <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
             <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
@@ -1038,6 +1075,63 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
   <div class="modal" style="max-width:420px">
     <div class="modal-header"><div class="modal-title">📋 每次進貨單價</div><button class="modal-close" onclick="closeModal('modal-cost-history')">×</button></div>
     <div class="modal-body" id="cost-history-body" style="padding-top:2px"></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal-price-history" style="z-index:400">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header"><div class="modal-title">📈 售價變動紀錄</div><button class="modal-close" onclick="closeModal('modal-price-history')">×</button></div>
+    <div class="modal-body" id="price-history-body" style="padding-top:2px"></div>
+  </div>
+</div>
+
+<!-- MODAL: 確認到貨（可以填實際收到/瑕疵數量） -->
+<div class="modal-overlay hidden" id="modal-confirm-receive">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title">🚀 確認到貨</div>
+      <button class="modal-close" onclick="closeModal('modal-confirm-receive')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">預設是收到跟訂購一樣的數量。如果有短少或瑕疵，直接改下面的數字就好——短少的部分不會加進庫存，瑕疵的部分會單獨記在「瑕疵庫存」，不會混進可賣庫存裡。</div>
+      <div id="confirm-receive-body" style="max-height:50vh;overflow-y:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-confirm-receive')">取消</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="submitConfirmReceive()">✅ 確認到貨</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: 直接匯入新商品（不透過採購單） -->
+<div class="modal-overlay hidden" id="modal-product-import">
+  <div class="modal" style="max-width:900px;width:95vw">
+    <div class="modal-header">
+      <div class="modal-title">📥 匯入商品</div>
+      <button class="modal-close" onclick="closeModal('modal-product-import')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="product-import-step-pick">
+        <div style="font-size:12.5px;color:var(--text2);line-height:1.7;background:var(--cream2);border-radius:10px;padding:10px 12px;margin-bottom:14px">
+          用 Excel/CSV 一次匯入或更新一批商品，欄位跟「匯出商品清單」用的一樣：<br>
+          <strong>商品名稱、SKU、庫存、進貨價(¥)、售價($)、供應商、備註</strong>（其他欄位可以不填）。<br>
+          SKU 如果跟現有商品一樣，會直接更新那個商品；沒有 SKU 或找不到對應的，會新增一筆。
+        </div>
+        <input type="file" id="product-import-file-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleProductImportFile(this)">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" onclick="exportProductsExcel()">⬇️ 先下載目前的商品清單當範本</button>
+          <button class="btn btn-primary" onclick="document.getElementById('product-import-file-input').click()">選擇檔案</button>
+        </div>
+      </div>
+      <div id="product-import-step-review" class="hidden">
+        <div id="product-import-summary" style="font-size:12.5px;color:var(--text2);margin-bottom:10px"></div>
+        <div id="product-import-table-wrap" style="max-height:50vh;overflow-y:auto"></div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="cancelProductImport()">取消</button>
+          <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="confirmProductImport()">確認匯入</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1793,6 +1887,8 @@ function exportProductsExcel(){
         '商品名稱':p.name||'',
         'SKU':p.sku||'',
         '尺寸':p.size&&p.size!=='0'?(SIZE_LABELS[p.size]||p.size):'',
+        '顏色':p.color||'',
+        '款式':p.style||'',
         '狀態':p.status==='ok'?'正常':p.status==='pending'?'待入庫':p.status==='defect'?'瑕疵':p.status==='display'?'展示':p.status||'',
         '庫存':getProductStock(p),
         '進貨價(¥)':p.cost||0,
@@ -1810,6 +1906,128 @@ function exportProductsExcel(){
     XLSX.writeFile(wb,fname);
     toast('✅ 已下載 '+fname);
   }catch(e){alert('匯出失敗：'+e.message);}
+}
+// ---- 直接匯入新商品（不透過採購單）：讀 Excel/CSV，SKU 對得到現有商品就更新，對不到就新增 ----
+let productImportCandidates=[];
+function openProductImport(){
+  productImportCandidates=[];
+  document.getElementById('product-import-step-pick').classList.remove('hidden');
+  document.getElementById('product-import-step-review').classList.add('hidden');
+  const fileInput=document.getElementById('product-import-file-input');
+  if(fileInput)fileInput.value='';
+  openModal('modal-product-import');
+}
+function cancelProductImport(){
+  closeModal('modal-product-import');
+}
+function pickImportField(row,candidates){
+  for(const key of Object.keys(row)){
+    const norm=key.trim();
+    if(candidates.some(c=>norm===c||norm.includes(c)))return row[key];
+  }
+  return '';
+}
+function handleProductImportFile(input){
+  const f=input.files[0];
+  if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const sheet=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
+      productImportCandidates=rows.map(row=>{
+        const name=String(pickImportField(row,['商品名稱','名稱','Name'])||'').trim();
+        const sku=String(pickImportField(row,['SKU','sku'])||'').trim();
+        const stockRaw=pickImportField(row,['庫存','數量','Stock']);
+        const costRaw=pickImportField(row,['進貨價','成本','Cost']);
+        const priceRaw=pickImportField(row,['售價','價格','Price']);
+        const supplier=String(pickImportField(row,['供應商','Supplier'])||'').trim();
+        const color=String(pickImportField(row,['顏色','Color'])||'').trim();
+        const style=String(pickImportField(row,['款式','Style'])||'').trim();
+        const note=String(pickImportField(row,['備註','Note'])||'').trim();
+        const existing=sku?DB.products.find(p=>p.sku===sku):null;
+        return{
+          name,sku,supplier,color,style,note,
+          stock:stockRaw!==''?Math.max(0,parseInt(stockRaw)||0):null,
+          cost:costRaw!==''?parseFloat(costRaw)||0:null,
+          price:priceRaw!==''?parseFloat(priceRaw)||0:null,
+          existingId:existing?existing.id:null
+        };
+      }).filter(r=>r.name); // 沒有商品名稱的列跳過，多半是空白列
+      renderProductImportReview();
+    }catch(err){
+      toast('讀取檔案失敗：'+err.message,'error');
+    }
+  };
+  reader.readAsArrayBuffer(f);
+}
+function renderProductImportReview(){
+  document.getElementById('product-import-step-pick').classList.add('hidden');
+  document.getElementById('product-import-step-review').classList.remove('hidden');
+  const updateCount=productImportCandidates.filter(r=>r.existingId).length;
+  const createCount=productImportCandidates.length-updateCount;
+  document.getElementById('product-import-summary').innerHTML=
+    `讀到 <strong>${productImportCandidates.length}</strong> 筆：<strong style="color:var(--brown)">${createCount}</strong> 筆會新增，<strong style="color:#3d8a58">${updateCount}</strong> 筆 SKU 對得到現有商品、會更新。確認沒問題再匯入。`;
+  document.getElementById('product-import-table-wrap').innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr style="text-align:left;color:var(--text3);border-bottom:1.5px solid var(--cream3)"><th style="padding:6px">狀態</th><th style="padding:6px">商品名稱</th><th style="padding:6px">SKU</th><th style="padding:6px">庫存</th><th style="padding:6px">進貨價</th><th style="padding:6px">售價</th><th style="padding:6px">供應商</th></tr></thead>
+    <tbody>${productImportCandidates.map(r=>`<tr style="border-bottom:1px solid var(--cream2)">
+      <td style="padding:6px"><span style="font-size:10px;font-weight:700;color:${r.existingId?'#3d8a58':'var(--brown)'}">${r.existingId?'更新':'新增'}</span></td>
+      <td style="padding:6px">${r.name}</td>
+      <td style="padding:6px;font-family:monospace;color:var(--text3)">${r.sku||'-'}</td>
+      <td style="padding:6px">${r.stock??'-'}</td>
+      <td style="padding:6px">${r.cost??'-'}</td>
+      <td style="padding:6px">${r.price??'-'}</td>
+      <td style="padding:6px;color:var(--text3)">${r.supplier||'-'}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+function confirmProductImport(){
+  if(!productImportCandidates.length)return;
+  let created=0,updated=0;
+  const createdIds=[];
+  const updatedBefore=[]; // 更新前的完整資料，撤銷時要能還原回去，不只是新增的部分
+  productImportCandidates.forEach(r=>{
+    if(r.existingId){
+      const p=DB.products.find(x=>x.id===r.existingId);
+      if(!p)return;
+      updatedBefore.push(JSON.parse(JSON.stringify(p)));
+      p.name=r.name||p.name;
+      if(r.stock!==null)p.stock=r.stock;
+      if(r.cost!==null)p.cost=r.cost;
+      if(r.price!==null)p.price=r.price;
+      if(r.supplier)p.supplier=r.supplier;
+      if(r.color)p.color=r.color;
+      if(r.style)p.style=r.style;
+      if(r.note)p.note=r.note;
+      p.updatedAt=Date.now();
+      updated++;
+    }else{
+      const newP={id:uid(),name:r.name,sku:r.sku||'',type:'PA',size:'0',color:r.color||'',style:r.style||'',cost:r.cost||0,price:r.price||0,stock:r.stock||0,minStock:5,note:r.note||'',status:'ok',supplier:r.supplier||'',img:'',createdAt:Date.now(),updatedAt:Date.now()};
+      DB.products.push(newP);
+      createdIds.push(newP.id);
+      created++;
+    }
+  });
+  pushUndo({label:'匯入商品 '+productImportCandidates.length+' 筆',
+    undo:()=>{
+      DB.products=DB.products.filter(p=>!createdIds.includes(p.id));
+      updatedBefore.forEach(before=>{const p=DB.products.find(x=>x.id===before.id);if(p)Object.assign(p,before);});
+      saveDB();renderProducts();
+    },
+    redo:()=>{
+      updatedBefore.forEach(before=>{
+        const r=productImportCandidates.find(x=>x.existingId===before.id);
+        const p=DB.products.find(x=>x.id===before.id);
+        if(p&&r){p.name=r.name||p.name;if(r.stock!==null)p.stock=r.stock;if(r.cost!==null)p.cost=r.cost;if(r.price!==null)p.price=r.price;if(r.supplier)p.supplier=r.supplier;if(r.color)p.color=r.color;if(r.style)p.style=r.style;if(r.note)p.note=r.note;}
+      });
+      productImportCandidates.filter(r=>!r.existingId).forEach((r,i)=>{
+        if(!DB.products.find(p=>p.id===createdIds[i]))DB.products.push({id:createdIds[i],name:r.name,sku:r.sku||'',type:'PA',size:'0',color:r.color||'',style:r.style||'',cost:r.cost||0,price:r.price||0,stock:r.stock||0,minStock:5,note:r.note||'',status:'ok',supplier:r.supplier||'',img:'',createdAt:Date.now(),updatedAt:Date.now()});
+      });
+      saveDB();renderProducts();
+    }});
+  saveDB();closeModal('modal-product-import');renderProducts();
+  toast(`✅ 匯入完成：新增 ${created} 筆，更新 ${updated} 筆（⌘Z 撤銷）`,'success');
 }
 async function printProductLabels(){
   try{
@@ -1866,8 +2084,62 @@ function importBackup(input){
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 async function fetchRate(){document.getElementById('rate-time').textContent='更新中...';try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');const d=await r.json();if(d.rates?.USD){DB.rate=d.rates.USD;DB.rateTime=new Date().toLocaleTimeString('zh-TW');saveDB();}}catch(e){}document.getElementById('rate-display').textContent=`¥1 = $${DB.rate.toFixed(4)}`;document.getElementById('rate-time').textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';}
-function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
-function renderOverview(){const ps=DB.products,ok=ps.filter(p=>p.status==='ok'),low=ok.filter(p=>p.stock<=(p.minStock||5)&&p.stock>0),today=DB.todaySales?.[todayStr()];document.getElementById('stat-total').textContent=ps.length;document.getElementById('stat-stock').textContent=ok.reduce((s,p)=>s+(p.stock||0),0);document.getElementById('stat-low').textContent=low.length;document.getElementById('stat-today').textContent=`$${(today?.revenue||0).toFixed(0)}`;const invValueCny=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);document.getElementById('stat-inventory-value').textContent=`$${(invValueCny*DB.rate).toFixed(0)}`;const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);if(!recent.length){ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';}else{ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="${o.status==='received'?'':`event.stopPropagation();quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'已到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:${o.status==='received'?'default':'pointer'}">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).length}件</div></div></div>`).join('');}const ls=document.getElementById('low-stock-list');if(!low.length){ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';}else{ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');}}
+function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
+function renderOverview(){
+  const ps=DB.products,ok=ps.filter(p=>p.status==='ok'),low=ok.filter(p=>p.stock<=(p.minStock||5)&&p.stock>0),today=DB.todaySales?.[todayStr()];
+  document.getElementById('stat-total').textContent=ps.length;
+  document.getElementById('stat-stock').textContent=ok.reduce((s,p)=>s+(p.stock||0),0);
+  document.getElementById('stat-low').textContent=low.length;
+  document.getElementById('stat-today').textContent=`$${(today?.revenue||0).toFixed(0)}`;
+  const invValueCny=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);
+  document.getElementById('stat-inventory-value').textContent=`$${(invValueCny*DB.rate).toFixed(0)}`;
+  // 本週/本月營收/毛利：跟報表頁用同一套算法，篩範圍內的每日銷售紀錄加總。
+  // 本週固定用「週一到今天」算，比較符合一般記帳習慣的一週定義
+  const now=new Date();
+  const dow=(now.getDay()+6)%7; // 把星期一當作一週開始（0=週一...6=週日）
+  const weekStart=new Date(now);
+  weekStart.setDate(now.getDate()-dow);
+  const weekStartStr=weekStart.getFullYear()+'-'+String(weekStart.getMonth()+1).padStart(2,'0')+'-'+String(weekStart.getDate()).padStart(2,'0');
+  const thisMonth=todayStr().slice(0,7);
+  const sales=DB.todaySales||{};
+  let mRevenue=0,mCostCny=0,wRevenue=0;
+  Object.keys(sales).forEach(d=>{
+    if(d>=weekStartStr)wRevenue+=sales[d].revenue||0;
+    if(d.slice(0,7)!==thisMonth)return;
+    mRevenue+=sales[d].revenue||0;
+    mCostCny+=sales[d].cost||0;
+  });
+  document.getElementById('stat-week').textContent=`$${wRevenue.toFixed(0)}`;
+  document.getElementById('stat-month-revenue').textContent=`$${mRevenue.toFixed(0)}`;
+  document.getElementById('stat-month-profit').textContent=`$${(mRevenue-mCostCny*DB.rate).toFixed(0)}`;
+  const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+  if(!recent.length){
+    ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';
+  }else{
+    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="${o.status==='received'?'':`event.stopPropagation();quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'已到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:${o.status==='received'?'default':'pointer'}">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).length}件</div></div></div>`).join('');
+  }
+  const ls=document.getElementById('low-stock-list');
+  if(!low.length){
+    ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';
+  }else{
+    ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');
+  }
+  // 運送中：還沒到貨的採購單，超過14天沒到貨的用紅字標「延遲」
+  const il=document.getElementById('in-transit-list');
+  const inTransit=DB.orders.filter(o=>o.status!=='received').sort((a,b)=>(a.expectedDate||'9999').localeCompare(b.expectedDate||'9999'));
+  if(!inTransit.length){
+    il.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">沒有運送中的採購單 ✓</div>';
+  }else{
+    il.innerHTML=inTransit.map(o=>{
+      const isLate=(Date.now()-new Date(o.date).getTime())/86400000>14;
+      const qty=(o.items||[]).reduce((s,i)=>s+(i.qty||0),0);
+      return `<div class="alert-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer;${isLate?'border-color:#e08a8a':''}">
+        ${isLate?'⏰':'🚚'} <strong>${o.supplier}</strong>
+        <span style="margin-left:auto;text-align:right;font-size:11px;color:${isLate?'var(--red)':'var(--text3)'};font-weight:700">${o.expectedDate?'預計 '+o.expectedDate.slice(5)+' 到':isLate?'延遲中':qty+' 件'}</span>
+      </div>`;
+    }).join('');
+  }
+}
 function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
 const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',ST:'襪子',GT:'服飾',ZZ:'組合'};
 // ---- 分類管理：隱藏／刪除／新增分類（自訂分類存在 DB.customTypes，隱藏存在 DB.hiddenTypes，真的刪除的內建分類存在 DB.deletedTypes）----
@@ -2125,6 +2397,7 @@ let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', c
 const SORT_OPTIONS=[
   {value:'default',label:'📋 預設順序'},
   {value:'newest',label:'🆕 新進來的'},
+  {value:'recent_edit',label:'🕐 最近修改'},
   {value:'sales',label:'🔥 依銷量排序'},
   {value:'stock',label:'📦↑ 依庫存排序（少→多）'},
   {value:'stock_desc',label:'📦↓ 依庫存排序（多→少）'},
@@ -2146,6 +2419,10 @@ function toggleSortMenu(){
   const willShow=menu.style.display==='none';
   if(willShow)renderSortMenu();
   menu.style.display=willShow?'block':'none';
+}
+function toggleStockRangeFilter(){
+  const row=document.getElementById('stock-range-filter-row');
+  if(row)row.classList.toggle('hidden');
 }
 function setSortMode(v){
   sortMode=v;
@@ -2785,6 +3062,12 @@ function renderCatSidebar(){
       <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
     </div>`;
   }
+  const noImgCount=DB.products.filter(p=>!p.img).length;
+  if(noImgCount>0){
+    rows+=`<div class="cat-sidebar-item ${activeCat==='__noimg__'?'active':''}" onclick="setCat('__noimg__')">
+      <span>🖼️</span><span class="ui-editable" data-ui-key="catlabel-noimg" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-noimg','缺照片')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${noImgCount}</span>
+    </div>`;
+  }
   rows+=`<div class="cat-sidebar-item ${activeCat==='__hot__'?'active':''}" onclick="setCat('__hot__')">
     <span>🔥</span><span class="ui-editable" data-ui-key="catlabel-hot" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-hot','熱銷商品')}</span>
   </div>`;
@@ -3171,6 +3454,8 @@ function renderProducts(){
   const lastSoldMap=getLastSoldMap();
   if(activeCat==='__incomplete__'){
     ps=ps.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img);
+  } else if(activeCat==='__noimg__'){
+    ps=ps.filter(p=>!p.img);
   } else if(activeCat==='__hot__'){
     ps=ps.filter(p=>(salesMap[p.id]||0)>0);
   } else if(activeCat==='__stale__'){
@@ -3185,10 +3470,18 @@ function renderProducts(){
   }
   if(activeSize!=='all')ps=ps.filter(p=>(p.size||'0')===activeSize);
   if(activeSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.slice(2,4)===activeSubcat);
-  if(q)ps=ps.filter(p=>(p.name+p.sku+(p.note||'')).toLowerCase().includes(q));
+  if(q)ps=ps.filter(p=>(p.name+p.sku+(p.note||'')+((p.tags||[]).join(' '))+(p.color||'')+(p.style||'')).toLowerCase().includes(q));
+  const stockMinEl=document.getElementById('stock-range-min'),stockMaxEl=document.getElementById('stock-range-max');
+  const stockMin=stockMinEl&&stockMinEl.value!==''?parseInt(stockMinEl.value):null;
+  const stockMax=stockMaxEl&&stockMaxEl.value!==''?parseInt(stockMaxEl.value):null;
+  if(stockMin!==null)ps=ps.filter(p=>getProductStock(p)>=stockMin);
+  if(stockMax!==null)ps=ps.filter(p=>getProductStock(p)<=stockMax);
+  const dot=document.getElementById('stock-filter-active-dot');
+  if(dot)dot.classList.toggle('hidden',stockMin===null&&stockMax===null);
   const effectiveSort=activeCat==='__hot__'?'sales':sortMode;
   ps=ps.slice().sort((a,b)=>{
     if(effectiveSort==='newest')return (b.createdAt||b.updatedAt||0)-(a.createdAt||a.updatedAt||0);
+    if(effectiveSort==='recent_edit')return (b.updatedAt||0)-(a.updatedAt||0);
     if(effectiveSort==='sales')return (salesMap[b.id]||0)-(salesMap[a.id]||0);
     if(effectiveSort==='stock')return getProductStock(a)-getProductStock(b);
     if(effectiveSort==='stock_desc')return getProductStock(b)-getProductStock(a);
@@ -3199,6 +3492,11 @@ function renderProducts(){
   });
   const g=document.getElementById('product-grid');
   if(!g)return;
+  const summaryEl=document.getElementById('product-filtered-summary');
+  if(summaryEl){
+    const totalStockVal=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);
+    summaryEl.textContent=ps.length?`目前顯示 ${ps.length} 件商品 · 庫存成本小計 ¥${totalStockVal.toFixed(2)}（約 $${(totalStockVal*DB.rate).toFixed(2)}）`:'';
+  }
   g.className='view-'+currentView+(batchMode?' batch-mode':'');
   if(!ps.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">沒有商品</div></div>';return;}
   g.innerHTML=ps.map(p=>{
@@ -3223,11 +3521,14 @@ function renderProducts(){
         <div class="product-name" style="margin-bottom:3px">
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
         </div>
-        <div class="product-sku" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
+        <div class="product-sku" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}${p.color?' · '+p.color:''}${p.style?' · '+p.style:''}</div>
         ${missing.length>0?`<div class="pc-missing" style="font-size:9px;color:var(--red);font-weight:700">缺：${missing.join('·')}</div>`:''}
         ${p.supplier?`<div class="pc-supplier" style="font-size:9px;color:var(--text3);margin-bottom:2px">${p.supplier}</div>`:''}
         ${p.sku?`<div class="pc-catcode" style="font-size:9px;color:var(--text3);margin-bottom:4px;font-family:monospace">${getCatLabel(p.sku)}</div>`:''}
         ${soldCount>0?`<div style="font-size:9px;color:var(--brown);font-weight:700;margin-bottom:2px">🔥 已售出 ${soldCount} 件</div>`:''}
+        ${(()=>{const t=getInTransitInfo(p.id);return t?`<div style="font-size:9px;color:var(--brown);font-weight:700;margin-bottom:2px">🚚 在途 ${t.qty} 件${t.eta?'・'+t.eta.slice(5)+' 到':''}</div>`:'';})()}
+        ${p.defectStock>0?`<div style="font-size:9px;color:#c0392b;font-weight:700;margin-bottom:2px">⚠️ 瑕疵庫存 ${p.defectStock} 件</div>`:''}
+        ${p.tags&&p.tags.length?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:3px">${p.tags.map(t=>`<span style="font-size:8.5px;background:var(--cream2);color:var(--text2);border-radius:8px;padding:1px 6px">${t}</span>`).join('')}</div>`:''}
         ${activeCat==='__stale__'?`<div style="font-size:9px;color:var(--text3);font-weight:700;margin-bottom:2px">🐌 ${lastSoldMap[p.id]?Math.floor((Date.now()-new Date(lastSoldMap[p.id]).getTime())/86400000)+' 天沒賣':'從未賣出'}</div>`:''}
         <div class="product-meta"><span class="stock-badge ${sc}" style="margin-left:-2px">${sl}</span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div>
       </div></div>`;
@@ -3467,6 +3768,25 @@ function openCostHistoryModal(productId){
     </div>`).join('');
   openModal('modal-cost-history');
 }
+function openPriceHistoryModal(productId){
+  const p=DB.products.find(x=>x.id===productId);
+  if(!p)return;
+  const history=(p.priceHistory||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const body=document.getElementById('price-history-body');
+  if(!body)return;
+  body.innerHTML=history.map((h,i)=>{
+    const prev=i>0?history[i-1].price:null;
+    const diff=prev!==null?h.price-prev:null;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 2px;border-bottom:1px solid var(--cream2)">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">${h.date}</div>
+      <div style="text-align:right">
+        <span style="font-weight:800;color:var(--brown);font-size:14px">$${Number(h.price).toFixed(2)}</span>
+        ${diff!==null&&diff!==0?`<span style="font-size:11px;margin-left:6px;font-weight:700;color:${diff>0?'#3d8a58':'#c0392b'}">${diff>0?'▲':'▼'} $${Math.abs(diff).toFixed(2)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  openModal('modal-price-history');
+}
 function updateEditCostUsd(){
   const cost=parseFloat(document.getElementById('edit-cost').value)||0;
   const usd=(cost*DB.rate).toFixed(2);
@@ -3498,6 +3818,87 @@ function autoFillEditPriceBySize(id){
 }
 async function saveProduct(){const name=document.getElementById('p-name').value.trim();if(!name){toast('請輸入商品名稱 🌸','error');return;}const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const p={id,name,sku:document.getElementById('p-sku').value.trim(),type:document.getElementById('p-type').value,size:document.getElementById('p-size').value,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:finalImg,createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);saveDB();closeModal('modal-product');renderProducts();toast(editingId?'商品已更新 ✨':'商品已新增 🎉','success');}
 function deleteProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;if(!DB.productTrash)DB.productTrash=[];const trashEntry={...p,deletedAt:Date.now()};DB.productTrash.push(trashEntry);DB.products=DB.products.filter(x=>x.id!==id);pushUndo({label:'刪除 '+p.name,undo:()=>{DB.products.push(p);DB.productTrash=DB.productTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);},redo:()=>{DB.products=DB.products.filter(x=>x.id!==p.id);if(!DB.productTrash)DB.productTrash=[];DB.productTrash.push(trashEntry);}});saveDB();closeModal('modal-stock');renderProducts();toast('🗑 已刪除（⌘Z 撤銷）','success');}
+// 複製商品：新增很像的款式（例如同款不同色）時，不用整個重新填一次。
+// 複製過來的庫存/SKU/照片都清空——SKU/庫存是這個「新款」自己的東西，照抄舊的容易搞混，讓她自己補
+// 瑕疵庫存的兩個處理方式：轉入可賣（瑕疵程度輕微、可以照原價賣）或報廢（直接算損耗，不進可賣庫存）
+function moveDefectToSellable(id){
+  const p=DB.products.find(x=>x.id===id);
+  if(!p||!p.defectStock)return;
+  customConfirm(`確定要把 ${p.defectStock} 件瑕疵庫存轉入可賣庫存嗎？轉入後會跟正常商品混在一起、用一樣的價格賣，適合瑕疵程度輕微、不影響銷售的狀況。`,()=>{
+    const qty=p.defectStock;
+    const oldStock=p.stock||0;
+    p.stock=oldStock+qty;
+    p.defectStock=0;
+    p.updatedAt=Date.now();
+    pushUndo({label:'瑕疵轉可賣 '+p.name,
+      undo:()=>{p.stock=oldStock;p.defectStock=qty;saveDB();renderProducts();openStockModal(id);},
+      redo:()=>{p.stock=oldStock+qty;p.defectStock=0;saveDB();renderProducts();openStockModal(id);}});
+    saveDB();renderProducts();openStockModal(id);
+    toast(`✅ 已轉入 ${qty} 件到可賣庫存`,'success');
+  });
+}
+function writeOffDefectStock(id){
+  const p=DB.products.find(x=>x.id===id);
+  if(!p||!p.defectStock)return;
+  customConfirm(`確定要報廢這 ${p.defectStock} 件瑕疵庫存嗎？報廢後這批就直接算損耗、不會再進到可賣庫存裡了。`,()=>{
+    const qty=p.defectStock;
+    p.defectStock=0;
+    p.updatedAt=Date.now();
+    pushUndo({label:'報廢瑕疵庫存 '+p.name,
+      undo:()=>{p.defectStock=qty;saveDB();renderProducts();openStockModal(id);},
+      redo:()=>{p.defectStock=0;saveDB();renderProducts();openStockModal(id);}});
+    saveDB();renderProducts();openStockModal(id);
+    toast(`已報廢 ${qty} 件瑕疵庫存`,'success');
+  });
+}
+function duplicateProduct(id){
+  const p=DB.products.find(x=>x.id===id);
+  if(!p)return;
+  const copy={
+    ...p,
+    id:uid(),
+    name:p.name+'（複製）',
+    sku:'',
+    stock:0,
+    variants:p.variants?p.variants.map(v=>({...v,id:uid(),stock:0})):undefined,
+    status:'pending',
+    img:'',
+    lastRestockedAt:undefined,
+    priceHistory:undefined,
+    createdAt:Date.now(),
+    updatedAt:Date.now()
+  };
+  DB.products.push(copy);
+  pushUndo({label:'複製 '+p.name,undo:()=>{DB.products=DB.products.filter(x=>x.id!==copy.id);},redo:()=>{DB.products.push(copy);}});
+  saveDB();renderProducts();closeModal('modal-stock');openStockModal(copy.id);
+  toast('📋 已複製，記得補上 SKU 跟庫存','success');
+}
+function addEditTag(){
+  const input=document.getElementById('edit-tag-input');
+  if(!input)return;
+  const val=input.value.trim();
+  if(!val){return;}
+  const chips=document.getElementById('edit-tags-chips');
+  if(!chips)return;
+  if([...chips.querySelectorAll('.tag-chip')].some(c=>c.dataset.tag===val)){input.value='';return;} // 已經有一樣的標籤了，不重複加
+  const chip=document.createElement('span');
+  chip.className='tag-chip';
+  chip.dataset.tag=val;
+  chip.style.cssText='display:inline-flex;align-items:center;gap:4px;background:var(--cream2);color:var(--text2);border-radius:12px;padding:3px 8px 3px 10px;font-size:11px';
+  chip.innerHTML=`${val}<span onclick="removeEditTag(this)" style="cursor:pointer;color:var(--text3);font-weight:700">×</span>`;
+  chips.appendChild(chip);
+  input.value='';
+}
+function removeEditTag(el){
+  el.parentElement.remove();
+}
+function toggleStockAdvanced(id){
+  const el=document.getElementById('stock-advanced-'+id);
+  const arrow=document.getElementById('stock-advanced-arrow-'+id);
+  if(!el)return;
+  el.classList.toggle('expanded');
+  if(arrow)arrow.textContent=el.classList.contains('expanded')?'▴':'▾';
+}
 function openStockModal(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
   editingId=id; pendingImg=null; window.pendingStockImg=null; window.pendingStockImgRemoved=false;
@@ -3597,6 +3998,7 @@ function openStockModal(id){
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">售價 ($)</div>
             <input type="number" id="edit-price" value="${p.price?Number(p.price).toFixed(2):0}" step="0.01" class="form-input" style="font-size:13px">
+            ${p.priceHistory&&p.priceHistory.length?`<button type="button" onclick="openPriceHistoryModal('${p.id}')" style="margin-top:5px;font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;display:flex;align-items:center;gap:3px">售價變動紀錄（${p.priceHistory.length}筆）<svg viewBox="0 0 24 24" width="9" height="9" style="display:block"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:''}
           </div>
         </div>
       </div>
@@ -3658,16 +4060,56 @@ function openStockModal(id){
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">備註</div>
       <input type="text" id="edit-note" value="${p.note||''}" class="form-input" style="font-size:13px" placeholder="其他備註...">
     </div>
-    <div style="margin-bottom:10px">
-      <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
-      <div style="display:flex;gap:6px">
-        <input type="text" id="edit-link" value="${p.link||''}" class="form-input" style="font-size:12px;font-family:monospace" placeholder="https://item.taobao.com/...">
-        ${p.link?`<button onclick="window.open('${p.link}','_blank')" class="btn btn-secondary btn-sm" style="white-space:nowrap;flex-shrink:0">🔗 開啟</button>`:''}
+    <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（顏色/款式、標籤、瑕疵庫存、商品連結...）<span id="stock-advanced-arrow-${id}">▾</span></div>
+    <div class="stock-advanced-section" id="stock-advanced-${id}">
+      ${(()=>{
+        const turnover=getTurnoverDaysText(p);
+        const inStock=getDaysInStockText(p);
+        const transit=getInTransitInfo(p.id);
+        if(!turnover&&!inStock&&!transit)return '';
+        return `<div style="margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text3)">
+          ${turnover?`<span>📉 ${turnover}</span>`:''}
+          ${inStock?`<span>📦 ${inStock}</span>`:''}
+          ${transit?`<span style="color:var(--brown);font-weight:700">🚚 在途 ${transit.qty} 件${transit.eta?'，預計 '+transit.eta.slice(5)+' 到':''}</span>`:''}
+        </div>`;
+      })()}
+      ${p.defectStock>0?`<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;background:var(--cream2);border-radius:8px;padding:6px 10px;font-size:11px">
+        <span style="color:#c0392b;font-weight:700">⚠️ 瑕疵庫存 ${p.defectStock} 件</span>
+        <button type="button" onclick="moveDefectToSellable('${id}')" style="margin-left:auto;background:none;border:none;color:var(--brown);font-weight:700;font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit">轉入可賣</button>
+        <button type="button" onclick="writeOffDefectStock('${id}')" style="background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit">報廢</button>
+      </div>`:''}
+      <div class="form-row" style="gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">顏色（選填）</div>
+          <input type="text" id="edit-color" value="${(p.color||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:13px" placeholder="例如：白色、粉紅色">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">款式（選填）</div>
+          <input type="text" id="edit-style" value="${(p.style||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:13px" placeholder="例如：圓形、愛心形">
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">標籤</div>
+        <div id="edit-tags-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span class="tag-chip" data-tag="${t.replace(/"/g,'&quot;')}" style="display:inline-flex;align-items:center;gap:4px;background:var(--cream2);color:var(--text2);border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${t}<span onclick="removeEditTag(this)" style="cursor:pointer;color:var(--text3);font-weight:700">×</span></span>`).join('')}</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addEditTag()">+</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="edit-link" value="${p.link||''}" class="form-input" style="font-size:12px;font-family:monospace" placeholder="https://item.taobao.com/...">
+          ${p.link?`<button onclick="window.open('${p.link}','_blank')" class="btn btn-secondary btn-sm" style="white-space:nowrap;flex-shrink:0">🔗 開啟</button>`:''}
+        </div>
       </div>
     </div>
 
     <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
-      <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">🗑 刪除</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}')">🗑 刪除</button>
+        <button class="btn btn-secondary btn-sm" onclick="duplicateProduct('${id}')">📋 複製</button>
+      </div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-secondary btn-sm" onclick="undoStock('${id}')">↩ 復原</button>
         <button class="btn btn-secondary" onclick="closeModal('modal-stock')">完成</button>
@@ -3757,12 +4199,23 @@ async function saveFromStock(id){
   p.sku=document.getElementById('edit-sku').value.trim();
   p.type=document.getElementById('edit-type').value||p.type;
   p.cost=parseFloat(document.getElementById('edit-cost').value)||0;
-  p.price=parseFloat(document.getElementById('edit-price').value)||0;
+  const newPrice=parseFloat(document.getElementById('edit-price').value)||0;
+  if(newPrice!==p.price){
+    // 售價真的改了才記一筆歷史，單純沒動過不用留紀錄，不然歷史會塞滿一堆一樣的數字
+    if(!p.priceHistory)p.priceHistory=[];
+    p.priceHistory.push({date:todayStr(),price:newPrice});
+    if(p.priceHistory.length>50)p.priceHistory=p.priceHistory.slice(-50); // 只留最近50筆，避免無限長
+  }
+  p.price=newPrice;
   p.status=document.getElementById('edit-status').value;
   p.size=document.getElementById('edit-size').value||'0';
+  p.color=document.getElementById('edit-color').value.trim();
+  p.style=document.getElementById('edit-style').value.trim();
   const sup=document.getElementById('edit-supplier').value;
   if(sup&&sup!=='__new__')p.supplier=sup;
   p.note=document.getElementById('edit-note').value.trim();
+  const tagChips=document.querySelectorAll('#edit-tags-chips .tag-chip');
+  p.tags=tagChips.length?[...tagChips].map(c=>c.dataset.tag):undefined;
   p.link=document.getElementById('edit-link').value.trim();
   if(window.pendingStockImg&&window.uploadImageIfNeeded){
     p.img=await window.uploadImageIfNeeded(id,window.pendingStockImg);
@@ -3891,6 +4344,7 @@ function renderOrders(){
     </div>`;
   }).join('');
   if(healedAnyProductId)saveDB(); // 把剛剛補上的 productId 連結存下來，下次就不用再找
+  checkStaleOrders();
 }
 function toggleAccordion(id){
   const body=document.getElementById('ab-'+id);
@@ -4483,6 +4937,7 @@ function openAddOrder(){
   updateODateBtnLabel();
   const odc=document.getElementById('o-date-cal');if(odc)odc.style.display='none';
   document.getElementById('o-shipping').value='';
+  document.getElementById('o-expected-date').value='';
   document.getElementById('o-total-usd').textContent='$0.00';
   document.getElementById('o-note').value='';
   document.getElementById('order-items-list').innerHTML='';
@@ -4498,7 +4953,7 @@ function unlockOrderItems(){
   customConfirm('解鎖後可以修改已到貨單的商品內容，儲存時會自動幫你把舊的庫存/成本還原、再套用新的數字（如果期間已經賣出商品，可能造成負庫存）。\n\n確定要解鎖嗎？',()=>{
     document.querySelectorAll('#order-items-list .order-item-row input').forEach(inp=>{
       inp.removeAttribute('readonly');
-      inp.style.background='#fff';
+      inp.style.background='var(--surface)';
     });
     document.querySelectorAll('#order-items-list .order-item-row').forEach(row=>{
       const lock=row.querySelector('.lock-icon');
@@ -4606,6 +5061,7 @@ function openEditOrder(id){
   updateODateBtnLabel();
   const odc2=document.getElementById('o-date-cal');if(odc2)odc2.style.display='none';
   document.getElementById('o-shipping').value=o.shipping||'';
+  document.getElementById('o-expected-date').value=o.expectedDate||'';
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
   (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId,i.originalCost));
@@ -4641,6 +5097,7 @@ function applyWAC(p,purchaseCost,qty){
   }
   p.stock=oldStock+qty;
   p.updatedAt=Date.now();
+  p.lastRestockedAt=Date.now(); // 專門記「上次真的到貨補了新庫存」的時間，跟 updatedAt（任何欄位變動都會動）分開，「商品在庫天數」才準
 }
 function applyOrderItemsWAC(items,fn){
   (items||[]).forEach(item=>{
@@ -4659,13 +5116,31 @@ function applyOrderItemsWAC(items,fn){
     fn(p,item.cost,item.qty);
   });
 }
+// 到貨時如果用「實際收到−瑕疵」的良品數量套用 WAC（不是原本訂購的數量），
+// 之後要反向還原（取消到貨/刪單）時，也要用同一個數量去減回去，不然庫存會對不起來。
+// 這個函式回傳「當初真的套用進 WAC 的數量」是多少，優先用 receivedQty/defectQty，
+// 沒有這兩個欄位的話（例如透過 quickConfirmReceived 快速確認、或這個功能還沒上線前的舊單）就退回訂購數量。
+function getAppliedWACItems(o){
+  return (o.items||[]).map(item=>{
+    const applied=item.receivedQty!==undefined?Math.max(0,item.receivedQty-(item.defectQty||0)):item.qty;
+    return{...item,qty:applied,cost:item.landedCost!==undefined?item.landedCost:item.cost};
+  }).filter(item=>item.qty>0);
+}
+// 把這張單的運費，依良品數量平均分攤到每一件的成本上，這樣加權平均成本才是真正的「落地成本」（含運費），
+// 不是只算商品單價。回傳「每一件要加多少運費」，等於 0 就代表沒運費或沒有東西可以分攤。
+function getShippingPerUnit(o,goodItems){
+  const totalQty=(goodItems||[]).reduce((s,i)=>s+(i.qty||0),0);
+  if(!totalQty||!o.shipping)return 0;
+  return o.shipping/totalQty;
+}
 function undoReceive(id){
   const o=DB.orders.find(x=>x.id===id);
   if(!o||o.status!=='received')return;
   customConfirm('取消到貨會把這張單的庫存減回去、成本反向還原。\n如果期間已經賣出商品,可能造成負庫存。\n\n確定要取消到貨?',()=>{
-  applyOrderItemsWAC(o.items,reverseWAC);
+  applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
   o.status='ordered';
   delete o.receivedAt;
+  o.updatedAt=Date.now();
   saveDB();
   renderOrders();
   renderOverview();
@@ -4802,9 +5277,11 @@ function saveOrder(){
     o.supplier=supplier;
     o.date=document.getElementById('o-date').value;
     o.shipping=shipping;
+    o.expectedDate=document.getElementById('o-expected-date').value||'';
     o.totalUsd=totalUsd;
     if(!o.rateUsed)o.rateUsed=orderRate; // 補上舊資料沒有的鎖定匯率，之後編輯就都固定用這個了
     o.note=document.getElementById('o-note').value.trim();
+    o.updatedAt=Date.now();
     // 已到貨單預設不更動舊項目（除非手動解鎖）;但鎖住狀態下仍可以「新增」全新的商品項目
     function ensureProductsExist(list){
       list.forEach(item=>{
@@ -4833,7 +5310,7 @@ function saveOrder(){
       ensureProductsExist(newItems);
       // 已到貨單解鎖編輯：自動先還原舊的庫存/成本，再套用新的（等同取消到貨→編輯→確認到貨）
       if(isReceived&&orderItemsUnlocked){
-        applyOrderItemsWAC(o.items,reverseWAC);
+        applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
         applyOrderItemsWAC(newItems,applyWAC);
       }
       o.items=newItems;
@@ -4859,7 +5336,7 @@ function saveOrder(){
   }
   // 新增模式
   const productsBeforeNew=JSON.parse(JSON.stringify(DB.products));
-  const order={id:uid(),supplier,date:document.getElementById('o-date').value,shipping,items,total,totalUsd,rateUsed:orderRate,note:document.getElementById('o-note').value.trim(),status:'ordered',createdAt:Date.now()};
+  const order={id:uid(),supplier,date:document.getElementById('o-date').value,shipping,expectedDate:document.getElementById('o-expected-date').value||'',items,total,totalUsd,rateUsed:orderRate,note:document.getElementById('o-note').value.trim(),status:'ordered',createdAt:Date.now(),updatedAt:Date.now()};
   DB.orders.push(order);
   items.forEach(item=>{
     const existing=DB.products.find(p=>p.id===item.productId||p.name===item.name);
@@ -4930,34 +5407,237 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
     actionsRow.style.paddingLeft=Math.max(0,targetPad)+'px';
   });
 }
+// 「確認到貨」改成先跳出review畫面，讓她可以填實際收到/瑕疵數量（跟訂購的不一定一樣）；
+// quickConfirmReceived（首頁那個一鍵點擊）維持原本的快速版本，假設收到的跟訂購的一致，不用另外跳視窗
+let confirmReceiveOrderId=null;
 function confirmReceived(id){
+  openConfirmReceiveModal(id);
+}
+function openConfirmReceiveModal(id){
   const o=DB.orders.find(x=>x.id===id);if(!o)return;
+  confirmReceiveOrderId=id;
+  const body=document.getElementById('confirm-receive-body');
+  if(!body)return;
+  body.innerHTML=(o.items||[]).map((item,idx)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid var(--cream2)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:700">${item.name}</div>
+        <div style="font-size:10px;color:var(--text3)">訂購 ${item.qty} 件</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:9px;color:var(--text3)">實際收到</div>
+        <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:56px;font-size:12px;padding:4px;text-align:center">
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:9px;color:var(--text3)">瑕疵</div>
+        <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:52px;font-size:12px;padding:4px;text-align:center">
+      </div>
+    </div>`).join('');
+  openModal('modal-confirm-receive');
+}
+function submitConfirmReceive(){
+  const id=confirmReceiveOrderId;
+  const o=DB.orders.find(x=>x.id===id);
+  if(!o){closeModal('modal-confirm-receive');return;}
+  const items=o.items||[];
+  const shortages=[];
+  items.forEach((item,idx)=>{
+    const recvInput=document.querySelector(`.confirm-recv-qty[data-idx="${idx}"]`);
+    const defInput=document.querySelector(`.confirm-recv-defect[data-idx="${idx}"]`);
+    const received=recvInput?Math.max(0,parseInt(recvInput.value)||0):item.qty;
+    const defect=defInput?Math.max(0,Math.min(received,parseInt(defInput.value)||0)):0;
+    item.receivedQty=received;
+    item.defectQty=defect;
+    if(received<item.qty)shortages.push(`${item.name}（少${item.qty-received}件）`);
+  });
   o.status='received';
   o.receivedAt=Date.now();
-  applyOrderItemsWAC(o.items,applyWAC);
-  saveDB();renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();openOrderDetail(id);
-  toast('✅ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
+  o.updatedAt=Date.now();
+  // WAC 用「實際收到的良品數量」套用（實際收到−瑕疵），不是原本訂購的數量；
+  // 瑕疵的部分另外累加到商品的瑕疵庫存，不會混進可賣庫存裡
+  const goodItems=[];
+  items.forEach((item,idx)=>{
+    const qty=Math.max(0,(item.receivedQty??item.qty)-(item.defectQty||0));
+    if(qty>0)goodItems.push({...item,qty,__origIdx:idx});
+  });
+  // 運費分攤：把這張單的運費依良品總數量平均分攤到每一件的成本上，記在 item.landedCost 裡，
+  // 這樣算出來的加權平均成本才是含運費的真正落地成本，之後要反向還原（取消到貨/刪單）也會照這個記錄的數字算，不會跑掉
+  const shipPerUnit=getShippingPerUnit(o,goodItems);
+  goodItems.forEach(gi=>{
+    const landed=(gi.cost||0)+shipPerUnit;
+    gi.cost=landed;
+    items[gi.__origIdx].landedCost=landed;
+  });
+  applyOrderItemsWAC(goodItems,applyWAC);
+  items.forEach(item=>{
+    if(item.defectQty>0&&item.productId){
+      const p=DB.products.find(x=>x.id===item.productId);
+      if(p)p.defectStock=(p.defectStock||0)+item.defectQty;
+    }
+  });
+  saveDB();closeModal('modal-confirm-receive');renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();openOrderDetail(id);
+  toast(shortages.length?`✅ 已確認到貨（短少：${shortages.join('、')}）`:'✅ 已確認到貨，庫存與成本已更新','success');
 }
 function quickConfirmReceived(id){
   const o=DB.orders.find(x=>x.id===id);if(!o||o.status==='received')return;
   o.status='received';
   o.receivedAt=Date.now();
-  applyOrderItemsWAC(o.items,applyWAC);
+  o.updatedAt=Date.now();
+  // 快速確認也一樣分攤運費進落地成本，記在 item.landedCost，邏輯跟 submitConfirmReceive 一致
+  const items=o.items||[];
+  const shipPerUnit=getShippingPerUnit(o,items);
+  const landedItems=items.map(item=>{
+    const landed=(item.cost||0)+shipPerUnit;
+    item.landedCost=landed;
+    return{...item,cost:landed};
+  });
+  applyOrderItemsWAC(landedItems,applyWAC);
   saveDB();renderOverview();renderOrders();if(typeof renderProducts==='function')renderProducts();
   toast('✅ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
 }
 function deleteOrder(id){
   const o=DB.orders.find(x=>x.id===id);
   if(!o)return;
-  customConfirm('確定刪除採購單？',()=>{
+  const msg=o.status==='received'
+    ?'確定刪除採購單？這張單已到貨，刪除時會把庫存減回去、成本反向還原（如果期間已經賣出商品，可能造成負庫存）。'
+    :'確定刪除採購單？';
+  customConfirm(msg,()=>{
+    // 已到貨的單被刪除前，要先把當初 confirmReceived() 加進去的庫存/成本反向還原，
+    // 不然商品庫的數字會留著，變成「單被刪了，但庫存還在」對不起來
+    if(o.status==='received')applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
     DB.orders=DB.orders.filter(x=>x.id!==id);
     if(!DB.orderTrash)DB.orderTrash=[];
     const trashEntry={...o,deletedAt:Date.now()};
     DB.orderTrash.push(trashEntry);
-    pushUndo({label:'刪除採購單 '+o.supplier,undo:()=>{DB.orders.push(o);DB.orderTrash=DB.orderTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);},redo:()=>{DB.orders=DB.orders.filter(x=>x.id!==o.id);DB.orderTrash.push(trashEntry);}});
-    saveDB();closeModal('modal-order-detail');renderOrders();renderOverview();toast('採購單已刪除（⌘Z 撤銷）');
+    pushUndo({label:'刪除採購單 '+o.supplier,undo:()=>{DB.orders.push(o);DB.orderTrash=DB.orderTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);if(o.status==='received')applyOrderItemsWAC(getAppliedWACItems(o),applyWAC);},redo:()=>{DB.orders=DB.orders.filter(x=>x.id!==o.id);DB.orderTrash.push(trashEntry);if(o.status==='received')applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);}});
+    saveDB();closeModal('modal-order-detail');renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();toast('採購單已刪除（⌘Z 撤銷）');
   });
 }
+// ---- 待補貨清單：庫存到或低於安全庫存的商品，勾選後可以一次丟進新採購單 ----
+let reorderListSelected=new Set();
+function openReorderList(){
+  reorderListSelected=new Set();
+  const low=DB.products.filter(p=>{
+    if(p.status==='pending')return false; // 還沒有實際庫存資料的待完善商品，不算在補貨清單裡
+    const stock=getProductStock(p);
+    const min=p.minStock??5;
+    return stock<=min;
+  }).sort((a,b)=>{
+    // 缺貨的排最前面，接著照「庫存離安全庫存還差多少」排，差越多越急
+    const sa=getProductStock(a),sb=getProductStock(b);
+    if((sa<=0)!==(sb<=0))return sa<=0?-1:1;
+    return sa-(a.minStock??5)-(sb-(b.minStock??5));
+  });
+  const body=document.getElementById('reorder-list-body');
+  if(!low.length){
+    body.innerHTML='<div style="text-align:center;color:var(--text3);padding:24px">目前沒有庫存低於安全庫存的商品 🌸</div>';
+  }else{
+    body.innerHTML=low.map(p=>{
+      const stock=getProductStock(p);
+      const min=p.minStock??5;
+      const suggestQty=Math.max(1,min*2-stock);
+      const lastSupplier=getLastSupplierForProduct(p.id);
+      const imgHtml=p.img?`<img src="${p.img}" style="width:34px;height:34px;object-fit:contain;border-radius:7px;background:var(--cream2)">`:'<div style="width:34px;height:34px;border-radius:7px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:15px">📦</div>';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid var(--cream2)">
+        <div class="reorder-check-custom" data-pid="${p.id}" onclick="toggleReorderSelect('${p.id}',this)" style="width:14px;height:14px;border-radius:50%;border:2px solid #6b4f2a;background:#fff;cursor:pointer;flex-shrink:0"></div>
+        ${imgHtml}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12.5px;font-weight:700">${p.name}</div>
+          <div style="font-size:10.5px;color:${stock<=0?'var(--red)':'var(--text3)'}">${stock<=0?'⚠️ 缺貨':'庫存 '+stock}／安全庫存 ${min}${lastSupplier?' · 上次跟 '+lastSupplier+' 買':''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;color:var(--text3)">建議補</div>
+          <input type="number" class="form-input reorder-qty-input" data-pid="${p.id}" value="${suggestQty}" min="1" style="width:52px;font-size:12px;padding:4px 6px;text-align:center">
+        </div>
+      </div>`;
+    }).join('');
+  }
+  openModal('modal-reorder-list');
+}
+function toggleReorderSelect(pid,el){
+  if(reorderListSelected.has(pid)){reorderListSelected.delete(pid);el.classList.remove('checked');el.style.background='#fff';}
+  else{reorderListSelected.add(pid);el.classList.add('checked');el.style.background='var(--brown)';}
+}
+// 這個商品上一次是跟哪個供應商買的（照日期找最近一張含這個商品的採購單）
+function getLastSupplierForProduct(productId){
+  const orders=(DB.orders||[]).filter(o=>(o.items||[]).some(i=>i.productId===productId)).sort((a,b)=>b.date.localeCompare(a.date));
+  return orders.length?orders[0].supplier:'';
+}
+function addReorderListToNewOrder(){
+  if(!reorderListSelected.size){toast('先勾選要補的商品','error');return;}
+  const items=[...reorderListSelected].map(pid=>{
+    const p=DB.products.find(x=>x.id===pid);
+    const qtyInput=document.querySelector(`.reorder-qty-input[data-pid="${pid}"]`);
+    const qty=qtyInput?(parseInt(qtyInput.value)||1):1;
+    return {p,qty};
+  }).filter(x=>x.p);
+  closeModal('modal-reorder-list');
+  openAddOrder();
+  document.getElementById('order-items-list').innerHTML='';
+  items.forEach(({p,qty})=>addOrderItemFilled(p.name,0,qty,false,p.id));
+  updateOrderTotalPreview();
+  toast(`已把 ${items.length} 項商品加進新採購單，記得填單價再儲存`,'success');
+}
+
+// ---- 供應商統計：花費排行 + 平均到貨天數 ----
+let supplierStatsRange='month';
+function openSupplierStats(){
+  renderSupplierStatsTabs();
+  renderSupplierStatsBody();
+  openModal('modal-supplier-stats');
+}
+function renderSupplierStatsTabs(){
+  const tabs=[['month','本月'],['all','全部']];
+  document.getElementById('supplier-stats-range-tabs').innerHTML=tabs.map(([k,label])=>
+    `<button type="button" onclick="supplierStatsRange='${k}';renderSupplierStatsTabs();renderSupplierStatsBody()" style="font-size:12px;padding:5px 12px;border-radius:8px;border:1.5px solid var(--cream3);background:${supplierStatsRange===k?'var(--brown)':'var(--surface)'};color:${supplierStatsRange===k?'#fff':'var(--text2)'};cursor:pointer;font-family:inherit;font-weight:700">${label}</button>`
+  ).join('');
+}
+function renderSupplierStatsBody(){
+  const thisMonth=todayStr().slice(0,7);
+  const orders=(DB.orders||[]).filter(o=>supplierStatsRange==='all'||(o.date||'').slice(0,7)===thisMonth);
+  const bySupplier={};
+  orders.forEach(o=>{
+    const s=o.supplier||'（未填店家）';
+    if(!bySupplier[s])bySupplier[s]={spend:0,spendUsd:0,count:0,leadTimes:[]};
+    bySupplier[s].spend+=o.total||0;
+    bySupplier[s].spendUsd+=o.totalUsd||((o.total||0)*(o.rateUsed||DB.rate));
+    bySupplier[s].count++;
+    if(o.status==='received'&&o.receivedAt&&o.date){
+      const days=Math.round((o.receivedAt-new Date(o.date).getTime())/86400000);
+      if(days>=0)bySupplier[s].leadTimes.push(days);
+    }
+  });
+  const rows=Object.entries(bySupplier).sort((a,b)=>b[1].spendUsd-a[1].spendUsd);
+  const body=document.getElementById('supplier-stats-body');
+  if(!rows.length){
+    body.innerHTML='<div style="text-align:center;color:var(--text3);padding:24px">這段期間沒有採購單資料 🌸</div>';
+    return;
+  }
+  body.innerHTML=rows.map(([supplier,s])=>{
+    const avgLead=s.leadTimes.length?Math.round(s.leadTimes.reduce((a,b)=>a+b,0)/s.leadTimes.length):null;
+    return `<div style="padding:11px 4px;border-bottom:1px solid var(--cream2)">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div style="font-size:13px;font-weight:700">${supplier}</div>
+        <div style="text-align:right"><span style="font-weight:800;color:var(--brown)">$${s.spendUsd.toFixed(2)}</span> <span style="font-size:10px;color:var(--text3)">¥${s.spend.toFixed(2)}</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.count} 張採購單${avgLead!==null?` · 🚚 平均 ${avgLead} 天到貨`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ---- 太久沒到貨提醒：下單超過 14 天還沒收到，跳提示 ----
+function checkStaleOrders(){
+  const banner=document.getElementById('stale-order-banner');
+  if(!banner)return;
+  const STALE_DAYS=14;
+  const stale=(DB.orders||[]).filter(o=>o.status!=='received'&&o.date&&(Date.now()-new Date(o.date).getTime())/86400000>STALE_DAYS);
+  if(!stale.length){banner.classList.add('hidden');return;}
+  banner.classList.remove('hidden');
+  banner.innerHTML=`⏰ <strong>${stale.length} 張採購單下單超過 ${STALE_DAYS} 天還沒標記到貨</strong>，要不要去問一下物流狀況？　`+
+    stale.slice(0,3).map(o=>`<span style="text-decoration:underline;cursor:pointer" onclick="openOrderDetail('${o.id}')">${o.supplier}(${o.date})</span>`).join('、')+
+    (stale.length>3?` 等 ${stale.length} 張`:'');
+}
+
 function openOrderTrash(){
   const trash=DB.orderTrash||[];
   const el=document.getElementById('order-trash-body');
@@ -4987,9 +5667,12 @@ function restoreOrder(idx){
   if(!o)return;
   const restored={...o};
   delete restored.deletedAt;
+  restored.updatedAt=Date.now(); // 同上，找回時間要比雲端那筆「已刪除」的墓碑新，其他裝置才會正確跟著復原
   DB.orders.push(restored);
   trash.splice(realIdx,1);
-  saveDB();openOrderTrash();renderOrders();
+  // 刪除已到貨的單時，庫存/成本已經被反向還原過了；找回來要重新套用回去，不然單復原了但庫存沒回來
+  if(restored.status==='received')applyOrderItemsWAC(getAppliedWACItems(restored),applyWAC);
+  saveDB();openOrderTrash();renderOrders();if(typeof renderProducts==='function')renderProducts();
   toast('採購單已找回 🎉','success');
 }
 function deleteOrderPermanently(idx){
@@ -5120,7 +5803,7 @@ function renderCart(){
       <div class="cart-item-name">${c.name}${badgeIcon}</div>
       <div style="display:flex;align-items:center;gap:4px;margin-top:4px;flex-wrap:nowrap;position:relative">
         <span style="font-size:10px;color:var(--text3);flex-shrink:0">$</span>
-        <input type="number" value="${c.price}" step="0.5" ${st==='sample'?'readonly':''} style="width:50px;height:26px;box-sizing:border-box;flex-shrink:0;font-size:11px;background:${st==='sample'?'var(--cream3)':'var(--cream2)'};border:1.5px solid var(--cream3);color:var(--text);padding:0 6px;border-radius:8px;font-weight:700;${st==='sample'?'pointer-events:none;':''}" onchange="updateCartPrice(${i},this.value)">
+        <input type="number" class="cart-price-input" value="${c.price}" step="0.5" ${st==='sample'?'readonly':''} style="width:50px;height:26px;box-sizing:border-box;flex-shrink:0;font-size:11px;font-family:inherit;background:${st==='sample'?'var(--cream3)':'var(--cream2)'};border:1.5px solid var(--cream3);color:var(--text);padding:0 6px;border-radius:8px;font-weight:700;${st==='sample'?'pointer-events:none;':''}" onchange="updateCartPrice(${i},this.value)">
         <button onclick="toggleCartTypeMenu(event,${i})" title="正常／樣品／瑕疵品" style="font-weight:700;width:24px;height:24px;flex-shrink:0;border-radius:7px;border:1.5px solid ${typeBtnBorder};background:${st==='normal'?'#fff':typeBtnBorder};color:${typeBtnColor==='#fff'?'var(--text3)':'#fff'};cursor:pointer;display:flex;align-items:center;justify-content:center">${typeBtnIcon}</button>
         <div id="cart-type-menu-${i}" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;z-index:60;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:4px;min-width:120px">
           ${['normal','sample','defect'].map(t=>{
@@ -5172,11 +5855,89 @@ function toggleCartTypeMenu(e,i){
 function setCartSaleType(i,type){cart[i].saleType=type;renderCart();}
 document.addEventListener('click',()=>{document.querySelectorAll('[id^="cart-type-menu-"]').forEach(m=>m.classList.add('hidden'));});
 function updateCartPrice(i,v){cart[i].price=parseFloat(v)||0;renderCart();}
-function changeQty(i,d){const p=DB.products.find(x=>x.id===cart[i].productId);cart[i].qty=Math.max(1,cart[i].qty+d);if(p&&cart[i].qty>p.stock){cart[i].qty=p.stock;toast('已達庫存上限 😅');}renderCart();}
+function changeQty(i,d){
+  const c=cart[i];
+  const p=DB.products.find(x=>x.id===c.productId);
+  c.qty=Math.max(1,c.qty+d);
+  if(p){
+    // 有規格的商品，庫存上限要看「這個規格」自己的庫存，不能用商品總庫存（那是全部規格加起來的）
+    const cap=(c.variantId&&p.variants)?(p.variants.find(v=>v.id===c.variantId)?.stock??0):p.stock;
+    if(c.qty>cap){c.qty=Math.max(1,cap);toast('已達庫存上限 😅');}
+  }
+  renderCart();
+}
 function removeFromCart(i){cart.splice(i,1);renderCart();}
 function clearCart(){cart=[];cartDiscount=0;cartEditingDate=null;const inp=document.getElementById('cart-discount-input');if(inp)inp.value='';renderCart();}
-function confirmSale(){
+async function confirmSale(){
   if(!cart.length)return;
+  // 結帳前先跟雲端核對一次庫存，避免兩台裝置幾乎同時賣掉同一件商品（或同一款式）的最後庫存
+  // 都顯示成功、卻其實有一筆賣了不存在的庫存。登入/連線失敗時就跳過核對、照原本方式繼續。
+  const btn=document.getElementById('confirm-sale-btn');
+  const needCny={}; // productId -> 這次購物車總共要扣多少（非多規格）
+  const needVariant={}; // productId -> {variantId: 這次要扣多少}
+  cart.forEach(c=>{
+    if(c.variantId){
+      if(!needVariant[c.productId])needVariant[c.productId]={};
+      needVariant[c.productId][c.variantId]=(needVariant[c.productId][c.variantId]||0)+c.qty;
+    }else{
+      needCny[c.productId]=(needCny[c.productId]||0)+c.qty;
+    }
+  });
+  const idsToCheck=[...new Set([...Object.keys(needCny),...Object.keys(needVariant)])];
+  if(idsToCheck.length&&window.__sb){
+    try{
+      const{data:{session}}=await window.__sb.auth.getSession();
+      if(session){
+        if(btn){btn.style.pointerEvents='none';btn.style.opacity='.6';btn.dataset.origHtml=btn.innerHTML;btn.innerHTML='🔄 正在核對庫存...';}
+        const{data,error}=await window.__sb.from('products').select('id,stock,variants').in('id',idsToCheck);
+        if(btn){btn.style.pointerEvents='';btn.style.opacity='';if(btn.dataset.origHtml){btn.innerHTML=btn.dataset.origHtml;delete btn.dataset.origHtml;}}
+        if(!error&&data){
+          const short=[];
+          data.forEach(row=>{
+            const p=DB.products.find(x=>x.id===row.id);
+            if(needCny[row.id]){
+              const need=needCny[row.id];
+              if(need>(row.stock||0))short.push({name:p?p.name:row.id,live:row.stock||0,need});
+            }
+            if(needVariant[row.id]){
+              const cloudVariants=row.variants||[];
+              Object.keys(needVariant[row.id]).forEach(vid=>{
+                const need=needVariant[row.id][vid];
+                const cv=cloudVariants.find(v=>v.id===vid);
+                const live=cv?(cv.stock||0):0;
+                if(need>live){
+                  const label=cv?cv.label:(p&&p.variants?(p.variants.find(v=>v.id===vid)?.label||vid):vid);
+                  short.push({name:(p?p.name:row.id)+`（${label}）`,live,need});
+                }
+              });
+            }
+          });
+          if(short.length){
+            const msg=short.map(s=>`「${s.name}」雲端剩 ${s.live} 件，這次要賣 ${s.need} 件`).join('\n');
+            customConfirm('偵測到庫存跟雲端不一致，可能是另一台裝置剛賣掉了：\n\n'+msg+'\n\n要怎麼處理？點「確定」會先重新整理商品庫存再讓妳確認一次（不會直接送出這筆），點「取消」先不動。',()=>{
+              // 用雲端最新的數字覆蓋本機，讓她看到真實庫存後自己決定要不要調整購物車再送出
+              data.forEach(row=>{
+                const p=DB.products.find(x=>x.id===row.id);
+                if(!p)return;
+                if(row.variants&&p.variants){
+                  row.variants.forEach(cv=>{const lv=p.variants.find(v=>v.id===cv.id);if(lv)lv.stock=cv.stock||0;});
+                  p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);
+                }else{
+                  p.stock=row.stock||0;
+                }
+              });
+              saveDB();renderSaleProducts();renderCart();
+              toast('已更新成雲端最新庫存，請確認購物車數量後再按一次確認成交','error');
+            });
+            return;
+          }
+        }
+      }
+    }catch(e){
+      if(btn){btn.style.pointerEvents='';btn.style.opacity='';if(btn.dataset.origHtml){btn.innerHTML=btn.dataset.origHtml;delete btn.dataset.origHtml;}}
+      // 核對失敗（離線等）就不擋她做生意，照原本方式繼續
+    }
+  }
   const customerId=document.getElementById('sale-customer-select')?.value||null;
   cart.forEach(c=>{const p=DB.products.find(x=>x.id===c.productId);if(!p)return;if(c.variantId&&p.variants){const v=p.variants.find(x=>x.id===c.variantId);if(v)v.stock=Math.max(0,(v.stock||0)-c.qty);p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);}else{p.stock=Math.max(0,p.stock-c.qty);}});
   const today=cartEditingDate||todayStr();
@@ -5184,18 +5945,22 @@ function confirmSale(){
   const sampleItems=cart.filter(c=>c.saleType==='sample');
   const defectItems=cart.filter(c=>c.saleType==='defect'); // 瑕疵品照樣算進營收（用她自己調過的折扣價），只是另外記一筆做統計
   const msgs=[];
+  // 同一次結帳（同一個購物車）產生的銷售紀錄／樣品／瑕疵紀錄都標上同一個 txId，
+  // 這樣之後如果刪除或編輯這筆銷售紀錄，才能連著找到「同一筆交易」裡的樣品一起處理庫存還原，
+  // 不然樣品的庫存扣了、卻只掛在 DB.samples 裡沒人管，刪銷售紀錄時完全碰不到它
+  const txId='tx'+Date.now()+Math.random().toString(36).slice(2,7);
 
   if(defectItems.length){
     if(!DB.defects)DB.defects=[];
     const dQty=defectItems.reduce((s,c)=>s+c.qty,0);
-    DB.defects.push({id:'df'+Date.now(),date:today,time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:defectItems.map(c=>`${c.name}×${c.qty}`).join(', '),qty:dQty,customerId,rawItems:defectItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,price:c.price,cost:c.cost}))});
+    DB.defects.push({id:'df'+Date.now(),txId,date:today,time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:defectItems.map(c=>`${c.name}×${c.qty}`).join(', '),qty:dQty,customerId,rawItems:defectItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,price:c.price,cost:c.cost}))});
     msgs.push(`⚠️ 瑕疵品賣出 ${dQty} 件`);
   }
   if(sampleItems.length){
     // 免費樣品：庫存照扣（上面已經統一扣過了），記到 DB.samples，不算進銷售報表/營收
     const sCostCny=sampleItems.reduce((s,c)=>s+c.cost*c.qty,0);
     if(!DB.samples)DB.samples=[];
-    DB.samples.push({id:'sp'+Date.now(),date:today,time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:sampleItems.map(c=>`${c.name}×${c.qty}`).join(', '),cost:sCostCny,customerId,rawItems:sampleItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,cost:c.cost}))});
+    DB.samples.push({id:'sp'+Date.now(),txId,date:today,time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:sampleItems.map(c=>`${c.name}×${c.qty}`).join(', '),cost:sCostCny,customerId,rawItems:sampleItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,cost:c.cost}))});
     msgs.push(`🎁 樣品成本 $${(sCostCny*DB.rate).toFixed(2)}`);
   }
   if(soldItems.length){
@@ -5204,7 +5969,7 @@ function confirmSale(){
     DB.todaySales[today].revenue+=rev;DB.todaySales[today].cost+=costCny;
     const discText=cartDiscount>0?` 🏷${cartDiscount}%off`:'';
     const sampleText=sampleItems.length?` +🎁${sampleItems.length}項樣品`:'';
-    DB.todaySales[today].records.push({id:'s'+Date.now(),time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:soldItems.map(c=>`${c.name}×${c.qty}`).join(', ')+discText+sampleText,revenue:rev,cost:costCny,profit:profUsd,subtotal:sub,discount:cartDiscount,customerId,rawItems:soldItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,price:c.price,cost:c.cost}))});
+    DB.todaySales[today].records.push({id:'s'+Date.now(),txId,time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),items:soldItems.map(c=>`${c.name}×${c.qty}`).join(', ')+discText+sampleText,revenue:rev,cost:costCny,profit:profUsd,subtotal:sub,discount:cartDiscount,customerId,rawItems:soldItems.map(c=>({id:c.productId,name:c.name,qty:c.qty,price:c.price,cost:c.cost}))});
     msgs.push(`🎉 成交 $${rev.toFixed(2)} · 毛利 $${profUsd.toFixed(2)}`);
   }
   saveDB();
@@ -5284,6 +6049,9 @@ function editSaleRecord(idx){
     const p=DB.products.find(x=>x.id===item.id);
     if(p)p.stock+=item.qty;
   });
+  // 這筆交易如果當初結帳時有一起送出樣品（同一個 txId），編輯時也要一併還原庫存、移除統計，
+  // 不然改完重新送出後，原本那份樣品的庫存/統計會殘留一筆沒人管
+  removeLinkedSamplesDefects(rec.txId,true);
   // 載入購物車
   rec.rawItems.forEach(item=>{
     const p=DB.products.find(x=>x.id===item.id);
@@ -5305,6 +6073,7 @@ function editSaleRecord(idx){
   updateTodayStats();
   renderCart();
   renderSaleProducts();
+  if(typeof renderProducts==='function')renderProducts();
   closeModal('modal-sale-history');
   toast(t===todayStr()?'✏️ 已載入購物車，改完按成交即可':`✏️ 已載入購物車，改完按成交會存回 ${t} 這天`,'success');
   }
@@ -5313,6 +6082,41 @@ function editSaleRecord(idx){
   }else{
     doEditSaleRecord();
   }
+}
+// 同一次結帳如果同時送出樣品/瑕疵品，會跟銷售紀錄共用同一個 txId。
+// 刪除或編輯那筆銷售紀錄時，要連著找出同一個 txId 的樣品/瑕疵紀錄一起處理，
+// 不然樣品的庫存會扣了卻沒地方還、瑕疵統計也會殘留一筆對不上的資料
+function removeLinkedSamplesDefects(txId,restoreSampleStock){
+  const removed={samples:[],defects:[]};
+  if(!txId)return removed;
+  if(DB.samples){
+    for(let i=DB.samples.length-1;i>=0;i--){
+      const s=DB.samples[i];
+      if(s.txId===txId){
+        if(restoreSampleStock&&s.rawItems)s.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock+=item.qty;});
+        removed.samples.push(s);
+        DB.samples.splice(i,1);
+      }
+    }
+  }
+  if(DB.defects){
+    // 瑕疵品的庫存已經包含在銷售紀錄自己的 rawItems 裡還原過了，這裡只移除瑕疵統計，不要重複加庫存
+    for(let i=DB.defects.length-1;i>=0;i--){
+      const d=DB.defects[i];
+      if(d.txId===txId){removed.defects.push(d);DB.defects.splice(i,1);}
+    }
+  }
+  return removed;
+}
+function restoreLinkedSamplesDefects(removed,deductSampleStock){
+  if(!removed)return;
+  if(!DB.samples)DB.samples=[];
+  if(!DB.defects)DB.defects=[];
+  (removed.samples||[]).forEach(s=>{
+    if(deductSampleStock&&s.rawItems)s.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+    DB.samples.push(s);
+  });
+  (removed.defects||[]).forEach(d=>DB.defects.push(d));
 }
 function deleteSaleRecord(idx){
   const t=saleHistoryDate||todayStr();
@@ -5326,6 +6130,11 @@ function deleteSaleRecord(idx){
   DB.trash.push(trashEntry);
   // Restore stock
   if(rec.rawItems){rec.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock+=item.qty;});}
+  // 如果這筆交易當初結帳時有一起送出樣品/瑕疵品（同一個 txId），一起處理：樣品的庫存也要還原，
+  // 兩邊的統計紀錄也一起清掉，不然樣品庫存扣了卻沒地方還、瑕疵統計也會殘留一筆對不上的資料。
+  // 存進 trashEntry 裡，這樣不管是用垃圾桶「找回」還是用 ⌘Z 撤銷，都能正確地把樣品一起復原。
+  const linked=removeLinkedSamplesDefects(rec.txId,true);
+  trashEntry.linkedSamplesDefects=linked;
   // Remove record and update totals
   records.splice(idx,1);
   DB.todaySales[t].revenue=records.reduce((s,r)=>s+(r.revenue||0),0);
@@ -5335,6 +6144,7 @@ function deleteSaleRecord(idx){
     undo:()=>{
       // 重新扣回庫存
       if(recCopy.rawItems)recCopy.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
+      restoreLinkedSamplesDefects(linked,true);
       // 還原紀錄
       const recs=DB.todaySales?.[t]?.records;
       if(recs){
@@ -5344,10 +6154,12 @@ function deleteSaleRecord(idx){
         DB.todaySales[t].profit=recs.reduce((s,r)=>s+(r.profit||0),0);
       }
       DB.trash=DB.trash.filter(x=>x.deletedAt!==trashEntry.deletedAt);
+      if(typeof renderProducts==='function')renderProducts();renderSaleProducts();
     },
     redo:()=>{
       // 還原庫存
       if(recCopy.rawItems)recCopy.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock+=item.qty;});
+      removeLinkedSamplesDefects(rec.txId,true);
       // 重新刪除紀錄
       const recs=DB.todaySales?.[t]?.records;
       if(recs){
@@ -5359,9 +6171,10 @@ function deleteSaleRecord(idx){
       }
       if(!DB.trash)DB.trash=[];
       DB.trash.push(trashEntry);
+      if(typeof renderProducts==='function')renderProducts();renderSaleProducts();
     }
   });
-  saveDB();renderSaleHistory();updateTodayStats();
+  saveDB();renderSaleHistory();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();
   toast('🗑 已刪除（⌘Z 撤銷）','success');
 }
 function updateTodayStats(){const t=DB.todaySales?.[todayStr()];const rev=t?.revenue||0,cstCny=t?.cost||0,prof=rev-cstCny*DB.rate;document.getElementById('today-revenue').textContent=`$${rev.toFixed(2)}`;document.getElementById('today-cost').textContent=`¥${cstCny.toFixed(2)}`;document.getElementById('today-profit').textContent=`$${prof.toFixed(2)}`;document.getElementById('stat-today').textContent=`$${rev.toFixed(0)}`;}
@@ -5567,6 +6380,7 @@ function toast(msg,type=''){
 let currentPage='overview';
 let batchMode=false;
 let batchSelected=new Set();
+let lastClickedCardId=null; // 記住上一次點的卡片，shift+click 要框選範圍用
 
 function toggleBatchHintDetail(){
   const el=document.getElementById('batch-hint-detail');
@@ -5600,10 +6414,42 @@ function updateBatchUI(){
 }
 
 function handleCardClick(id,event){
+  // ⌘/Ctrl+click：像 Mac 選檔案那樣，不用先手動點「批次編輯」，直接把這張卡加選/取消，自動進入批次模式
+  if(event.metaKey||event.ctrlKey){
+    event.preventDefault();
+    if(!batchMode){
+      batchMode=true;
+      batchSelected.clear();
+      const btn=document.getElementById('batch-btn');
+      if(btn){btn.textContent='✕ 退出批次';btn.classList.add('btn-primary');btn.classList.remove('btn-secondary');}
+      const hint=document.getElementById('batch-hint');
+      if(hint)hint.classList.remove('hidden');
+    }
+    if(batchSelected.has(id))batchSelected.delete(id);
+    else batchSelected.add(id);
+    lastClickedCardId=id;
+    renderProducts();
+    updateBatchToolbar();
+    return;
+  }
+  // Shift+click：已經在批次模式的話，跟上一次點的卡片之間全部一起選起來（照畫面上排列的順序）
+  if(event.shiftKey&&batchMode&&lastClickedCardId){
+    event.preventDefault();
+    const cards=[...document.querySelectorAll('#product-grid [id^="pcard-"]')].map(el=>el.id.replace('pcard-',''));
+    const i1=cards.indexOf(lastClickedCardId),i2=cards.indexOf(id);
+    if(i1>=0&&i2>=0){
+      const from=Math.min(i1,i2),to=Math.max(i1,i2);
+      for(let i=from;i<=to;i++)batchSelected.add(cards[i]);
+      updateBatchUI();
+      updateBatchToolbar();
+    }
+    return;
+  }
   if(batchMode){
     event.stopPropagation();
     if(batchSelected.has(id))batchSelected.delete(id);
     else batchSelected.add(id);
+    lastClickedCardId=id;
     // Update just this card
     const card=document.getElementById('pcard-'+id);
     const icon=document.getElementById('pcheck-icon-'+id);
@@ -5616,7 +6462,7 @@ function handleCardClick(id,event){
 }
 
 function exitBatchMode(){
-  batchMode=false;batchSelected.clear();
+  batchMode=false;batchSelected.clear();lastClickedCardId=null;
   const btn=document.getElementById('batch-btn');
   const hint=document.getElementById('batch-hint');
   btn.textContent='✏️ 批次編輯';
@@ -6053,8 +6899,9 @@ function restoreTrash(idx){
   DB.todaySales[t].cost+=rec.cost||0;
   DB.todaySales[t].profit+=rec.profit||0;
   if(rec.rawItems)rec.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock-=item.qty;});
+  if(rec.linkedSamplesDefects)restoreLinkedSamplesDefects(rec.linkedSamplesDefects,true);
   trash.splice(realIdx,1);
-  saveDB();openTrash();renderSaleHistory();updateTodayStats();
+  saveDB();openTrash();renderSaleHistory();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();
   toast('已找回！','success');
 }
 function deleteTrash(idx){
@@ -6136,6 +6983,7 @@ function restoreProduct(idx){
   if(!p)return;
   const restored={...p};
   delete restored.deletedAt;
+  restored.updatedAt=Date.now(); // 找回的時候蓋一個新的修改時間，這樣同步上去一定比雲端那筆「已刪除」的墓碑新，其他裝置才會正確跟著復原
   DB.products.push(restored);
   trash.splice(realIdx,1);
   saveDB();openProductTrash();renderProducts();
@@ -6189,7 +7037,7 @@ function renderBatchTable(){
     </td>
     <td style="padding:8px"><input type="number" class="form-input batch-cost" value="${p.cost?Number(p.cost).toFixed(2):0}" step="0.01" style="font-size:12px;padding:5px 8px"></td>
     <td style="padding:8px"><input type="number" class="form-input batch-price" value="${p.price?Number(p.price).toFixed(2):0}" step="0.01" style="font-size:12px;padding:5px 8px"></td>
-    <td style="padding:8px"><input type="number" class="form-input batch-stock" value="${p.stock||0}" min="0" style="font-size:12px;padding:5px 8px"></td>
+    <td style="padding:8px">${p.variants&&p.variants.length>0?`<input type="number" class="form-input" value="${p.stock||0}" title="多規格商品的庫存要到商品編輯裡分別調整每一款，這裡不能直接改" style="font-size:12px;padding:5px 8px;opacity:.5;pointer-events:none">`:`<input type="number" class="form-input batch-stock" value="${p.stock||0}" min="0" style="font-size:12px;padding:5px 8px">`}</td>
     <td style="padding:8px"><input type="text" class="form-input batch-link" value="${p.link||''}" placeholder="https://..." style="font-size:11px;font-family:monospace;padding:5px 8px"></td>
   </tr>`;}).join('')+'</tbody>';
 }
@@ -6280,7 +7128,9 @@ function saveBatchEdit(){
     // Always save all rows (checkboxes only affect batch set)
     p.cost=parseFloat(row.querySelector('.batch-cost').value)||0;
     p.price=parseFloat(row.querySelector('.batch-price').value)||0;
-    p.stock=parseInt(row.querySelector('.batch-stock').value)||0;
+    // 多規格商品沒有 .batch-stock 這個欄位（庫存要去商品編輯逐款調整），這裡跳過，不要動 p.stock
+    const stockInput=row.querySelector('.batch-stock');
+    if(stockInput)p.stock=parseInt(stockInput.value)||0;
     p.link=row.querySelector('.batch-link').value.trim();
     p.updatedAt=Date.now();
     count++;
@@ -6306,10 +7156,38 @@ function renderStocktakeTable(){
     <th style="padding:8px;text-align:left;font-size:11px;color:var(--text3);font-weight:700;width:100px">實際數量</th>
     <th style="padding:8px;text-align:left;font-size:11px;color:var(--text3);font-weight:700;width:90px">差異</th>
   </tr></thead><tbody>`+
-  ps.map(p=>{const book=p.stock||0;return `<tr style="border-bottom:1px solid var(--cream2)" data-id="${p.id}" data-book="${book}">
+  ps.map(p=>{
+    const hasVariants=p.variants&&p.variants.length>0;
+    const imgHtml=p.img?`<img src="${p.img}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:var(--cream2)">`:'<div style="width:36px;height:36px;border-radius:6px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>';
+    if(hasVariants){
+      // 多規格商品（例如字母貼）：p.stock 只是所有款式庫存的加總，不能直接整個改掉——
+      // 不然下次任何一款有變動（賣出/手動調整），系統會照款式重新加總，剛剛盤點改的數字就會被蓋掉、白改了。
+      // 所以多規格商品要一款一款分開盤點。
+      return `<tr style="border-bottom:1px solid var(--cream2)" data-id="${p.id}" data-variant-product="1">
+        <td colspan="4" style="padding:8px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            ${imgHtml}
+            <div>
+              <div style="font-weight:700;font-size:12px">${p.name} <span style="color:var(--text3);font-weight:400;font-size:11px">（${p.variants.length}款，多規格商品，請分別盤點每一款）</span></div>
+              <div style="font-size:10px;color:var(--text3);font-family:monospace">${p.sku||''}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;padding-left:44px">
+            ${p.variants.map(v=>`<div style="display:flex;align-items:center;gap:5px;background:var(--cream2);border-radius:8px;padding:5px 8px">
+              <span style="font-size:12px;font-weight:800;min-width:18px">${v.label}</span>
+              <span style="font-size:10px;color:var(--text3);white-space:nowrap">帳面${v.stock||0}</span>
+              <input type="number" class="form-input stocktake-variant-count" data-variant-id="${v.id}" data-book="${v.stock||0}" min="0" style="font-size:11px;padding:3px 4px;width:40px;text-align:center" oninput="updateStocktakeVariantDiff(this)">
+              <span class="stocktake-variant-diff-cell" style="font-size:10px;min-width:22px;color:var(--text3)">－</span>
+            </div>`).join('')}
+          </div>
+        </td>
+      </tr>`;
+    }
+    const book=p.stock||0;
+    return `<tr style="border-bottom:1px solid var(--cream2)" data-id="${p.id}" data-book="${book}">
     <td style="padding:8px">
       <div style="display:flex;align-items:center;gap:8px">
-        ${p.img?`<img src="${p.img}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:var(--cream2)">`:'<div style="width:36px;height:36px;border-radius:6px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>'}
+        ${imgHtml}
         <div>
           <div style="font-weight:700;font-size:12px">${p.name}</div>
           <div style="font-size:10px;color:var(--text3);font-family:monospace">${p.sku||''}</div>
@@ -6320,6 +7198,18 @@ function renderStocktakeTable(){
     <td style="padding:8px"><input type="number" class="form-input stocktake-count" placeholder="－" min="0" style="font-size:12px;padding:5px 8px" oninput="updateStocktakeDiff(this)"></td>
     <td style="padding:8px" class="stocktake-diff-cell">－</td>
   </tr>`;}).join('')+'</tbody>';
+  updateStocktakeSummary();
+}
+function updateStocktakeVariantDiff(inputEl){
+  const cell=inputEl.parentElement.querySelector('.stocktake-variant-diff-cell');
+  const book=parseInt(inputEl.dataset.book)||0;
+  if(inputEl.value===''){cell.textContent='－';cell.style.color='var(--text3)';}
+  else{
+    const diff=(parseInt(inputEl.value)||0)-book;
+    cell.textContent=diff>0?('+'+diff):String(diff);
+    cell.style.color=diff===0?'var(--text3)':(diff>0?'#3d8a58':'#c0392b');
+    cell.style.fontWeight='700';
+  }
   updateStocktakeSummary();
 }
 function updateStocktakeDiff(inputEl){
@@ -6339,6 +7229,15 @@ function updateStocktakeSummary(){
   const rows=[...document.querySelectorAll('#stocktake-table tbody tr[data-id]')];
   let counted=0,diffCount=0;
   rows.forEach(row=>{
+    if(row.dataset.variantProduct){
+      row.querySelectorAll('.stocktake-variant-count').forEach(input=>{
+        if(input.value==='')return;
+        counted++;
+        const book=parseInt(input.dataset.book)||0;
+        if((parseInt(input.value)||0)!==book)diffCount++;
+      });
+      return;
+    }
     const input=row.querySelector('.stocktake-count');
     if(!input||input.value==='')return;
     counted++;
@@ -6349,8 +7248,28 @@ function updateStocktakeSummary(){
 }
 function applyStocktake(){
   const rows=[...document.querySelectorAll('#stocktake-table tbody tr[data-id]')];
-  const changes=[]; // {id, oldStock, newStock}
+  const changes=[]; // {id, variantId(optional), oldStock, newStock}
   rows.forEach(row=>{
+    if(row.dataset.variantProduct){
+      const id=row.dataset.id;
+      const p=DB.products.find(x=>x.id===id);
+      if(!p||!p.variants)return;
+      let touched=false;
+      row.querySelectorAll('.stocktake-variant-count').forEach(inp=>{
+        if(inp.value==='')return;
+        const vid=inp.dataset.variantId;
+        const v=p.variants.find(x=>x.id===vid);
+        if(!v)return;
+        const newV=Math.max(0,parseInt(inp.value)||0);
+        const oldV=v.stock||0;
+        if(newV===oldV)return;
+        changes.push({id,variantId:vid,oldStock:oldV,newStock:newV});
+        v.stock=newV;
+        touched=true;
+      });
+      if(touched){p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);p.updatedAt=Date.now();}
+      return;
+    }
     const input=row.querySelector('.stocktake-count');
     if(!input||input.value==='')return;
     const id=row.dataset.id;
@@ -6365,8 +7284,16 @@ function applyStocktake(){
   });
   if(!changes.length){toast('沒有需要調整的差異','error');return;}
   pushUndo({label:'盤點調整 '+changes.length+' 件',
-    undo:()=>{changes.forEach(c=>{const p=DB.products.find(x=>x.id===c.id);if(p)p.stock=c.oldStock;});saveDB();renderProducts();},
-    redo:()=>{changes.forEach(c=>{const p=DB.products.find(x=>x.id===c.id);if(p)p.stock=c.newStock;});saveDB();renderProducts();}});
+    undo:()=>{changes.forEach(c=>{
+      const p=DB.products.find(x=>x.id===c.id);if(!p)return;
+      if(c.variantId){const v=p.variants&&p.variants.find(x=>x.id===c.variantId);if(v)v.stock=c.oldStock;if(p.variants)p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);}
+      else p.stock=c.oldStock;
+    });saveDB();renderProducts();},
+    redo:()=>{changes.forEach(c=>{
+      const p=DB.products.find(x=>x.id===c.id);if(!p)return;
+      if(c.variantId){const v=p.variants&&p.variants.find(x=>x.id===c.variantId);if(v)v.stock=c.newStock;if(p.variants)p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);}
+      else p.stock=c.newStock;
+    });saveDB();renderProducts();}});
   saveDB();closeModal('modal-stocktake');renderProducts();
   toast('✅ 已套用 '+changes.length+' 件商品的盤點調整','success');
 }
@@ -6415,6 +7342,49 @@ let currentVariantProductId = null;
 function getProductStock(p){
   if(p.variants&&p.variants.length>0) return p.variants.reduce((s,v)=>s+(v.stock||0),0);
   return p.stock||0;
+}
+// 最近 N 天賣出這個商品的數量（用來估算庫存周轉），從每日銷售紀錄的 rawItems 撈
+function getRecentSoldQty(productId,days){
+  const cutoffStr=new Date(Date.now()-days*86400000).toISOString().slice(0,10); // YYYY-MM-DD 字串直接比較就好，格式跟 DB.todaySales 的 key 一致
+  let qty=0;
+  Object.keys(DB.todaySales||{}).forEach(dateStr=>{
+    if(dateStr<cutoffStr)return;
+    (DB.todaySales[dateStr].records||[]).forEach(rec=>{
+      (rec.rawItems||[]).forEach(item=>{if(item.id===productId)qty+=item.qty||0;});
+    });
+  });
+  return qty;
+}
+// 庫存周轉天數：照最近30天賣出的速度，現在的庫存還能撐幾天
+function getTurnoverDaysText(p){
+  const stock=getProductStock(p);
+  if(stock<=0)return null;
+  const sold30=getRecentSoldQty(p.id,30);
+  if(sold30<=0)return '很久（近30天沒賣出）';
+  const dailyRate=sold30/30;
+  const days=Math.round(stock/dailyRate);
+  return days<=0?'隨時可能賣完':`約還能撐 ${days} 天`;
+}
+// 商品在庫天數：距離上次真的補到新貨（applyWAC）過了幾天
+function getDaysInStockText(p){
+  if(!p.lastRestockedAt)return null;
+  const days=Math.floor((Date.now()-p.lastRestockedAt)/86400000);
+  return days<=0?'今天剛到貨':`到貨 ${days} 天`;
+}
+// 在途庫存：這個商品在所有「還沒到貨」的採購單裡總共訂了多少、最快哪張單的預計到貨日期
+function getInTransitInfo(productId){
+  const pending=(DB.orders||[]).filter(o=>o.status!=='received');
+  let qty=0,earliestEta=null;
+  pending.forEach(o=>{
+    (o.items||[]).forEach(item=>{
+      if(item.productId===productId){
+        qty+=item.qty||0;
+        if(o.expectedDate&&(!earliestEta||o.expectedDate<earliestEta))earliestEta=o.expectedDate;
+      }
+    });
+  });
+  if(qty<=0)return null;
+  return{qty,eta:earliestEta};
 }
 
 function openVariantPicker(id){
@@ -6504,7 +7474,7 @@ function adjVariantStock(productId,variantId,delta){
     <span id="batch-selected-count" style="font-size:13px;font-weight:700;color:var(--brown)">0 件已選</span>
     <div style="position:relative">
       <button onclick="toggleBatchHintDetail()" title="操作提示" style="background:none;border:none;width:24px;height:24px;flex-shrink:0;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;padding:0">💡</button>
-      <div id="batch-hint-detail" class="hidden" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:220px;font-size:11.5px;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow-lg);z-index:60">空白處拖曳可以框選商品；按住 <strong>Shift</strong> 再拖曳＝框選要「取消」選取的商品</div>
+      <div id="batch-hint-detail" class="hidden" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:220px;font-size:11.5px;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow-lg);z-index:60">空白處拖曳可以框選商品；按住 <strong>Shift</strong> 再拖曳＝框選要「取消」選取的商品<br><br>也可以直接按住 <strong>⌘</strong>（Windows 是 Ctrl）點商品卡片，一張一張加選，不用先按「批次編輯」；選好第一張後，按住 <strong>Shift</strong> 點另一張卡片＝連續框選中間全部</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
@@ -6577,6 +7547,38 @@ function adjVariantStock(productId,variantId,delta){
       <button class="modal-close" onclick="closeModal('modal-order-trash')">×</button>
     </div>
     <div class="modal-body" id="order-trash-body" style="max-height:60vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- MODAL: 待補貨清單 -->
+<div class="modal-overlay hidden" id="modal-reorder-list">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div class="modal-title">📋 待補貨清單</div>
+      <button class="modal-close" onclick="closeModal('modal-reorder-list')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">庫存已經到或低於「安全庫存」的商品，勾選要補的，可以直接丟進一張新採購單。</div>
+      <div id="reorder-list-body" style="max-height:50vh;overflow-y:auto"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-reorder-list')">先不用</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="addReorderListToNewOrder()">+ 加入新採購單</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: 供應商統計 -->
+<div class="modal-overlay hidden" id="modal-supplier-stats">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div class="modal-title">📊 供應商統計</div>
+      <button class="modal-close" onclick="closeModal('modal-supplier-stats')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:6px;margin-bottom:12px" id="supplier-stats-range-tabs"></div>
+      <div id="supplier-stats-body" style="max-height:55vh;overflow-y:auto"></div>
+    </div>
   </div>
 </div>
 
@@ -6712,11 +7714,37 @@ window.updateAuthStatusUI = async function() {
   }
 };
 
-sb.auth.onAuthStateChange((_event, _session) => {
+sb.auth.onAuthStateChange((_event, session) => {
   updateAuthStatusUI();
+  if (session && window.pullFromSupabase) window.pullFromSupabase(true); // 剛登入/回到有效登入狀態時，先拉一次最新資料
 });
 updateAuthStatusUI();
 
+// 同步時，如果某個欄位在雲端資料庫還不存在（例如新加的 variants/rate_used/received_at 還沒手動建欄位），
+// 不要整包同步都失敗——先把那個欄位拿掉重試一次，讓其他資料照樣能存上去，
+// 這樣就算漏做了資料庫的手動設定步驟，也不會完全卡住雲端同步。table 參數可以是 'products' 或 'orders'。
+async function upsertWithFallback(sb, table, rows, firstError, triedCols) {
+  triedCols = triedCols || [];
+  const msg = firstError.message || '';
+  // 兩種常見的「欄位不存在」錯誤格式都要抓：
+  // Postgres 原生：column "variants" of relation "products" does not exist
+  // PostgREST：Could not find the 'variants' column of 'products' in the schema cache
+  const m = /column ["']?([a-zA-Z_]+)["']?[^"']*does not exist/i.exec(msg)
+    || /find the ["']([a-zA-Z_]+)["'] column/i.exec(msg);
+  if (m && !triedCols.includes(m[1])) {
+    const col = m[1];
+    const strippedRows = rows.map(r => {
+      const copy = { ...r };
+      delete copy[col];
+      return copy;
+    });
+    console.warn(`⚠️ 雲端資料庫的 "${table}" 表還沒有 "${col}" 欄位，這次同步先跳過它。`);
+    const { error: retryErr } = await sb.from(table).upsert(strippedRows);
+    if (retryErr) return upsertWithFallback(sb, table, strippedRows, retryErr, [...triedCols, col]); // 可能不只一個欄位缺，一個一個拿掉重試
+    return;
+  }
+  throw firstError; // 不是「欄位不存在」的錯誤，或已經試過拿掉這欄了還是失敗，就是別的問題了
+}
 window.syncToSupabase = async function(silent) {
   const { data: { session } } = await sb.auth.getSession();
 
@@ -6743,6 +7771,8 @@ window.syncToSupabase = async function(silent) {
       sku: p.sku || '',
       type: p.type || '',
       size: p.size || '',
+      color: p.color || '',
+      style: p.style || '',
       cost: p.cost || 0,
       price: p.price || 0,
       stock: p.stock || 0,
@@ -6751,9 +7781,30 @@ window.syncToSupabase = async function(silent) {
       display_stock: p.displayStock || 0,
       note: p.note || '',
       status: p.status || 'ok',
+      variants: (p.variants && p.variants.length) ? p.variants : null, // 多規格商品的各款式庫存，之前完全沒同步上去
+      deleted: false, // 刪除同步用的墓碑欄位：這筆還活著
       updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString()
       // 注意：這裡刻意不放 img 欄位。upsert 只會更新有出現在這包資料裡的欄位，
       // 不放 img 就代表「這次同步不動雲端的圖片網址」，避免把雲端已存在的網址蓋成空的。
+    }));
+
+    // 本機刪掉、還在垃圾桶裡的商品，也要推一筆「墓碑」上去（deleted:true），
+    // 不然別台裝置永遠不會知道這筆被刪除了，只推活著的商品完全看不出刪除這件事發生過。
+    const deletedProducts = (DB.productTrash || []).map(p => ({
+      id: p.id,
+      user_id: uid,
+      name: p.name || '',
+      sku: p.sku || '',
+      type: p.type || '',
+      size: p.size || '',
+      cost: p.cost || 0,
+      price: p.price || 0,
+      stock: p.stock || 0,
+      min_stock: p.minStock ?? 5,
+      note: p.note || '',
+      status: p.status || 'ok',
+      deleted: true,
+      updated_at: p.deletedAt ? new Date(p.deletedAt).toISOString() : new Date().toISOString()
     }));
 
     // 本機真的有圖片網址（來自雲端回填、或剛上傳成功）的商品，另外單獨補寫 img 欄位
@@ -6767,6 +7818,8 @@ window.syncToSupabase = async function(silent) {
         sku: p.sku || '',
         type: p.type || '',
         size: p.size || '',
+        color: p.color || '',
+        style: p.style || '',
         cost: p.cost || 0,
         price: p.price || 0,
         stock: p.stock || 0,
@@ -6775,6 +7828,7 @@ window.syncToSupabase = async function(silent) {
         display_stock: p.displayStock || 0,
         note: p.note || '',
         status: p.status || 'ok',
+        variants: (p.variants && p.variants.length) ? p.variants : null,
         updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString(),
         img: p.img
       }));
@@ -6790,21 +7844,54 @@ window.syncToSupabase = async function(silent) {
       total_usd: o.totalUsd ?? null,
       note: o.note || '',
       status: o.status || 'ordered',
-      created_at: o.createdAt ? new Date(o.createdAt).toISOString() : new Date().toISOString()
+      rate_used: o.rateUsed ?? null,
+      expected_date: o.expectedDate || null,
+      received_at: o.receivedAt ? new Date(o.receivedAt).toISOString() : null,
+      created_at: o.createdAt ? new Date(o.createdAt).toISOString() : new Date().toISOString(),
+      deleted: false,
+      updated_at: o.updatedAt ? new Date(o.updatedAt).toISOString() : (o.createdAt ? new Date(o.createdAt).toISOString() : new Date().toISOString())
+    }));
+
+    // 刪除的採購單也一樣推一筆墓碑上去
+    const deletedOrders = (DB.orderTrash || []).map(o => ({
+      id: o.id,
+      user_id: uid,
+      supplier: o.supplier || '',
+      date: o.date || null,
+      shipping: o.shipping || 0,
+      total: o.total || 0,
+      status: o.status || 'ordered',
+      created_at: o.createdAt ? new Date(o.createdAt).toISOString() : new Date().toISOString(),
+      deleted: true,
+      updated_at: o.deletedAt ? new Date(o.deletedAt).toISOString() : new Date().toISOString()
     }));
 
     if (products.length) {
       const { error: pErr } = await sb.from('products').upsert(products);
-      if (pErr) throw pErr;
+      if (pErr) await upsertWithFallback(sb, 'products', products, pErr);
+    }
+    if (deletedProducts.length) {
+      const { error: dpErr } = await sb.from('products').upsert(deletedProducts);
+      if (dpErr) await upsertWithFallback(sb, 'products', deletedProducts, dpErr);
     }
     if (productsWithImg.length) {
       const { error: imgErr } = await sb.from('products').upsert(productsWithImg);
-      if (imgErr) throw imgErr;
+      if (imgErr) await upsertWithFallback(sb, 'products', productsWithImg, imgErr);
     }
     if (orders.length) {
       const { error: oErr } = await sb.from('orders').upsert(orders);
-      if (oErr) throw oErr;
+      if (oErr) await upsertWithFallback(sb, 'orders', orders, oErr);
     }
+    if (deletedOrders.length) {
+      const { error: doErr } = await sb.from('orders').upsert(deletedOrders);
+      if (doErr) await upsertWithFallback(sb, 'orders', deletedOrders, doErr);
+    }
+
+    // 推上去成功了，代表雲端現在跟本機這些欄位一致了——更新合併用的基準快照，
+    // 這樣下次合併才能正確分辨「這是這次同步之後才新改的」還是「早就同步過的舊值」
+    if (!DB.__syncBaseline) DB.__syncBaseline = { products: {}, orders: {} };
+    DB.products.forEach(p => { DB.__syncBaseline.products[p.id] = snapshotFields(p, PRODUCT_SCALAR_FIELDS); });
+    DB.orders.forEach(o => { DB.__syncBaseline.orders[o.id] = snapshotFields(o, ORDER_SCALAR_FIELDS); });
 
     toast(
       silent
@@ -6823,6 +7910,214 @@ window.syncToSupabase = async function(silent) {
     }
   }
 };
+
+// ---- 從雲端拉回其他裝置的最新變動 ----
+// 之前只有「本機推上雲端」，另一台裝置的變動要重新整理網頁才會看到。
+// 這個函式做反方向：把雲端的商品/採購單抓下來，跟本機比對時間戳記，
+// 雲端比較新的（代表別台裝置後來改過）就覆蓋本機；本機比較新或本機根本沒同步過的，
+// 保留本機（反正下一次 push 會自己補上去），這樣就不會互相蓋掉彼此還沒同步的修改。
+function cloudProductToLocal(cp) {
+  return {
+    id: cp.id,
+    name: cp.name || '',
+    sku: cp.sku || '',
+    type: cp.type || '',
+    size: cp.size || '0',
+    color: cp.color || '',
+    style: cp.style || '',
+    cost: cp.cost || 0,
+    price: cp.price || 0,
+    stock: cp.stock || 0,
+    minStock: cp.min_stock ?? 5,
+    defectStock: cp.defect_stock || 0,
+    displayStock: cp.display_stock || 0,
+    note: cp.note || '',
+    status: cp.status || 'ok',
+    variants: cp.variants || undefined,
+    img: cp.img || '',
+    updatedAt: cp.updated_at ? new Date(cp.updated_at).getTime() : Date.now()
+  };
+}
+function cloudOrderToLocal(co) {
+  return {
+    id: co.id,
+    supplier: co.supplier || '',
+    date: co.date || '',
+    shipping: co.shipping || 0,
+    items: co.items || [],
+    total: co.total || 0,
+    totalUsd: co.total_usd ?? undefined,
+    note: co.note || '',
+    status: co.status || 'ordered',
+    rateUsed: co.rate_used ?? undefined,
+    expectedDate: co.expected_date || '',
+    receivedAt: co.received_at ? new Date(co.received_at).getTime() : undefined,
+    createdAt: co.created_at ? new Date(co.created_at).getTime() : Date.now(),
+    updatedAt: co.updated_at ? new Date(co.updated_at).getTime() : Date.now()
+  };
+}
+let __pullingFromCloud = false;
+// 欄位層級合併要用的「基準快照」：記錄「上次真正跟雲端同步一致時，每個欄位長什麼樣子」，
+// 下次合併時拿本機現在的值、雲端現在的值，分別跟這個基準比對，才能知道「這個欄位到底是誰改的」，
+// 而不是像整筆蓋掉那樣，只要有任何一個欄位比較新就把整包資料互相蓋過去、犧牲掉另一邊沒衝突的修改。
+if (!DB.__syncBaseline) DB.__syncBaseline = { products: {}, orders: {} };
+const PRODUCT_SCALAR_FIELDS = ['name','sku','type','size','color','style','cost','price','stock','minStock','defectStock','displayStock','note','status','img'];
+const ORDER_SCALAR_FIELDS = ['supplier','date','shipping','total','totalUsd','note','status','rateUsed','receivedAt','expectedDate'];
+function snapshotFields(obj, fields) {
+  const out = {};
+  fields.forEach(f => { out[f] = obj[f]; });
+  return out;
+}
+function fieldsEqual(a, b) {
+  if (a === b) return true;
+  if (a == null && b == null) return true;
+  return JSON.stringify(a) === JSON.stringify(b); // stock/cost 等都是純量，這樣比較已經夠用
+}
+// 三方合併：base=上次同步一致時的樣子，local=本機現在的樣子，remote=雲端現在的樣子。
+// 逐一比對每個欄位：只有一邊改過 → 採用那一邊；兩邊都沒改 → 不動；兩邊都改了同一個欄位（真的衝突）→
+// 才退回「比時間戳記，較新的贏」，而且只套用在那個真的衝突的欄位上，不會連累其他沒衝突的欄位一起被蓋掉。
+function threeWayMergeFields(local, remote, base, fields, cloudIsNewer) {
+  let changedAny = false;
+  fields.forEach(f => {
+    const localChanged = !base || !fieldsEqual(local[f], base[f]);
+    const remoteChanged = !base || !fieldsEqual(remote[f], base[f]);
+    if (remoteChanged && !localChanged) {
+      if (!fieldsEqual(local[f], remote[f])) { local[f] = remote[f]; changedAny = true; }
+    } else if (localChanged && !remoteChanged) {
+      // 本機改了、雲端沒改：保留本機，不用動
+    } else if (localChanged && remoteChanged && !fieldsEqual(local[f], remote[f])) {
+      // 兩邊都真的改了同一個欄位，而且改成不一樣的值：這才是真的衝突，沒有「正確答案」，
+      // 只能取時間比較新的那邊贏，但只影響這一個欄位
+      if (cloudIsNewer) { local[f] = remote[f]; changedAny = true; }
+    }
+    // 兩邊都沒改，或都改成一樣的值：不用動
+  });
+  return changedAny;
+}
+// 合併「一筆」雲端商品/採購單資料進本機，回傳是否真的改到東西了。
+// pullFromSupabase()（整批拉）跟即時推播（一筆一筆來）共用同一套合併邏輯，只有一個地方要維護。
+function mergeCloudProductRecord(cp) {
+  const local = DB.products.find(p => p.id === cp.id);
+  const cloudTime = cp.updated_at ? new Date(cp.updated_at).getTime() : 0;
+  if (cp.deleted) {
+    if (local && cloudTime > (local.updatedAt || 0)) {
+      DB.products = DB.products.filter(p => p.id !== cp.id);
+      if (!DB.productTrash) DB.productTrash = [];
+      if (!DB.productTrash.find(t => t.id === cp.id)) DB.productTrash.push({ ...local, deletedAt: cloudTime });
+      delete DB.__syncBaseline.products[cp.id];
+      return true;
+    }
+    return false;
+  }
+  const remote = cloudProductToLocal(cp);
+  if (!local) {
+    DB.products.push(remote);
+    DB.__syncBaseline.products[cp.id] = snapshotFields(remote, PRODUCT_SCALAR_FIELDS);
+    return true;
+  }
+  const base = DB.__syncBaseline.products[cp.id];
+  const cloudIsNewer = cloudTime > (local.updatedAt || 0);
+  let changed = threeWayMergeFields(local, remote, base, PRODUCT_SCALAR_FIELDS, cloudIsNewer);
+  // variants 是陣列（每個款式一筆），欄位層級比對意義不大，維持原本「整包比時間戳記」的方式
+  if (!fieldsEqual(local.variants, remote.variants) && cloudIsNewer) { local.variants = remote.variants; changed = true; }
+  if (changed || cloudIsNewer) local.updatedAt = Math.max(local.updatedAt || 0, remote.updatedAt || 0);
+  DB.__syncBaseline.products[cp.id] = snapshotFields(local, PRODUCT_SCALAR_FIELDS); // 合併完，這就是新的基準
+  return changed;
+}
+function mergeCloudOrderRecord(co) {
+  const local = DB.orders.find(o => o.id === co.id);
+  const cloudTime = co.updated_at ? new Date(co.updated_at).getTime() : (co.created_at ? new Date(co.created_at).getTime() : 0);
+  if (co.deleted) {
+    if (local && cloudTime > (local.updatedAt || local.createdAt || 0)) {
+      DB.orders = DB.orders.filter(o => o.id !== co.id);
+      if (!DB.orderTrash) DB.orderTrash = [];
+      if (!DB.orderTrash.find(t => t.id === co.id)) DB.orderTrash.push({ ...local, deletedAt: cloudTime });
+      delete DB.__syncBaseline.orders[co.id];
+      return true;
+    }
+    return false;
+  }
+  const remote = cloudOrderToLocal(co);
+  if (!local) {
+    DB.orders.push(remote);
+    DB.__syncBaseline.orders[co.id] = snapshotFields(remote, ORDER_SCALAR_FIELDS);
+    return true;
+  }
+  const base = DB.__syncBaseline.orders[co.id];
+  const cloudIsNewer = cloudTime > (local.updatedAt || local.createdAt || 0);
+  let changed = threeWayMergeFields(local, remote, base, ORDER_SCALAR_FIELDS, cloudIsNewer);
+  // items 是商品清單陣列，同理維持整包比時間戳記，不逐項合併
+  if (!fieldsEqual(local.items, remote.items) && cloudIsNewer) { local.items = remote.items; changed = true; }
+  if (changed || cloudIsNewer) local.updatedAt = Math.max(local.updatedAt || 0, remote.updatedAt || 0);
+  DB.__syncBaseline.orders[co.id] = snapshotFields(local, ORDER_SCALAR_FIELDS);
+  return changed;
+}
+function afterCloudMergeApplied(silent) {
+  saveDB();
+  if (typeof currentPage !== 'undefined') {
+    if (currentPage === 'products' && typeof renderProducts === 'function') { renderProducts(); if (typeof renderCatSidebar === 'function') renderCatSidebar(); }
+    if (currentPage === 'orders' && typeof renderOrders === 'function') renderOrders();
+    if (currentPage === 'sales' && typeof renderSaleProducts === 'function') renderSaleProducts();
+    if (currentPage === 'overview' && typeof renderOverview === 'function') renderOverview();
+  }
+  if (!silent) toast('☁️ 已同步其他裝置的最新資料', 'success');
+}
+window.pullFromSupabase = async function(silent) {
+  if (__pullingFromCloud) return; // 避免同時重疊拉好幾次
+  __pullingFromCloud = true;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return; // 沒登入就沒有雲端資料可拉
+    const uid = session.user.id;
+    const [{ data: cloudProducts, error: pErr }, { data: cloudOrders, error: oErr }] = await Promise.all([
+      sb.from('products').select('*').eq('user_id', uid),
+      sb.from('orders').select('*').eq('user_id', uid)
+    ]);
+    if (pErr || oErr) throw (pErr || oErr);
+    let changed = false;
+    (cloudProducts || []).forEach(cp => { if (mergeCloudProductRecord(cp)) changed = true; });
+    (cloudOrders || []).forEach(co => { if (mergeCloudOrderRecord(co)) changed = true; });
+    if (changed) afterCloudMergeApplied(silent);
+  } catch (e) {
+    console.error('從雲端拉取失敗:', e);
+    // 安靜失敗就好，push 端已經有錯誤提示了，拉取這邊不用再打擾她一次
+  } finally {
+    __pullingFromCloud = false;
+  }
+};
+// 即時推播：訂閱 products/orders 兩張表，別台裝置一存檔，這邊幾乎立刻就會收到那一筆變動並直接合併，
+// 不用等 45 秒的輪詢或切回分頁才拉——把「兩台裝置同時改同一筆」的碰撞機率壓到最低（從 45 秒窗口縮到接近即時）。
+// 需要 Supabase 那邊把這兩張表加進 realtime 發布清單，見下面 setupRealtimeSync 裡的提醒。
+let __realtimeChannel = null;
+async function setupRealtimeSync() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return;
+  const uid = session.user.id;
+  if (__realtimeChannel) { sb.removeChannel(__realtimeChannel); __realtimeChannel = null; }
+  __realtimeChannel = sb.channel('db-changes-' + uid)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'products', filter: `user_id=eq.${uid}` }, payload => {
+      if (payload.new && mergeCloudProductRecord(payload.new)) afterCloudMergeApplied(true);
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${uid}` }, payload => {
+      if (payload.new && mergeCloudOrderRecord(payload.new)) afterCloudMergeApplied(true);
+    })
+    .subscribe(status => {
+      // Realtime 需要另外在 Supabase 專案打開（把表加進 supabase_realtime 發布清單）才會真的推播；
+      // 沒開的話這裡會安靜地連不上，不影響其他同步功能，45 秒輪詢還是照樣墊底運作
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') console.warn('即時同步連線失敗，會退回輪詢方式，不影響正常使用');
+    });
+}
+sb.auth.onAuthStateChange((_event, session) => {
+  if (session) setupRealtimeSync();
+});
+// 三個時機自動拉：剛登入/開頁面時拉一次、切回這個分頁時拉一次（最容易漏掉別台裝置變動的時刻）、
+// 分頁開著的時候每 45 秒拉一次墊底（即時推播若沒開通或斷線時的保險），這樣不用手動重新整理網頁也能跟上其他裝置的變動
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && window.pullFromSupabase) window.pullFromSupabase(true);
+});
+setInterval(() => {
+  if (document.visibilityState === 'visible' && window.pullFromSupabase) window.pullFromSupabase(true);
+}, 45000);
 
 // ---- 圖片遷移到雲端(一次性工具) ----
 const IMG_SIGNED_URL_SECONDS = 315360000; // 約 10 年,私有 bucket 用長效簽名網址
