@@ -4824,7 +4824,9 @@ function saveOrder(){
       const newItems=items.map(ni=>{
         const orig=(o.items||[]).find(oi=>oi.name===ni.name);
         if(orig){
-          return Object.assign({},orig,{cost:ni.cost,qty:ni.qty});
+          const merged=Object.assign({},orig,{cost:ni.cost,qty:ni.qty});
+          if(ni.originalCost)merged.originalCost=ni.originalCost;else delete merged.originalCost; // 原價要跟著表單走：清空就拿掉，填了就更新，不要一直沿用舊值
+          return merged;
         }
         return ni;
       });
