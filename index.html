@@ -2127,7 +2127,10 @@ function importBackup(input){
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 async function fetchRate(){document.getElementById('rate-time').textContent='更新中...';try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');const d=await r.json();if(d.rates?.USD){DB.rate=d.rates.USD;DB.rateTime=new Date().toLocaleTimeString('zh-TW');saveDB();}}catch(e){}document.getElementById('rate-display').textContent=`¥1 = $${DB.rate.toFixed(4)}`;document.getElementById('rate-time').textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';}
-function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();}
+function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();
+  // 記住目前在哪一頁，重新整理網頁的時候直接回到這一頁，不要每次都跳回總覽
+  try{localStorage.setItem('andhug_last_page',id);}catch(e){}
+}
 function renderOverview(){
   const ps=DB.products,ok=ps.filter(p=>p.status==='ok'),low=ok.filter(p=>p.stock<=(p.minStock||5)&&p.stock>0),today=DB.todaySales?.[todayStr()];
   document.getElementById('stat-total').textContent=ps.length;
@@ -7828,7 +7831,17 @@ function adjVariantStock(productId,variantId,delta){
   // 載入到記憶體 DB 物件並首次渲染
   try{loadDB();}catch(e){console.error('loadDB 失敗:',e);}
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
-  try{renderOverview();}catch(e){console.error('renderOverview 失敗:',e);}
+  // 重新整理網頁的時候，回到上次離開的那一頁，不要每次都跳回總覽
+  try{
+    const savedPage=localStorage.getItem('andhug_last_page');
+    const validPages=['overview','products','orders','sales','reports','customers','sku'];
+    if(savedPage&&validPages.includes(savedPage)&&savedPage!=='overview'){
+      const btn=[...document.querySelectorAll('.nav-link')].find(el=>(el.getAttribute('onclick')||'').includes(`showPage('${savedPage}'`));
+      showPage(savedPage,btn||null);
+    }else{
+      renderOverview();
+    }
+  }catch(e){console.error('還原上次頁面失敗:',e);try{renderOverview();}catch(e2){}}
   try{applyTheme((DB.settings&&DB.settings.theme)||'cream');}catch(e){console.error('applyTheme 失敗:',e);}
   try{captureUIDefaults();}catch(e){console.error('captureUIDefaults 失敗:',e);}
   try{applyUIOverrides();}catch(e){console.error('applyUIOverrides 失敗:',e);}
