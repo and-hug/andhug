@@ -5749,6 +5749,13 @@ let confirmReceiveOrderId=null;
 function confirmReceived(id){
   openConfirmReceiveModal(id);
 }
+// 原生數字輸入框的上下箭頭，大部分瀏覽器只有滑鼠移過去或點進去才會顯示，沒辦法用 CSS 強迫它一直待在那裡，
+// 這裡改用自己畫的 +/- 按鈕（跟商品編輯的庫存數量同一套做法），永遠看得到、不會忽隱忽現
+function adjConfirmRecvInput(selector,idx,delta){
+  const input=document.querySelector(`${selector}[data-idx="${idx}"]`);
+  if(!input)return;
+  input.value=Math.max(0,(parseInt(input.value)||0)+delta);
+}
 function openConfirmReceiveModal(id){
   const o=DB.orders.find(x=>x.id===id);if(!o)return;
   confirmReceiveOrderId=id;
@@ -5762,11 +5769,19 @@ function openConfirmReceiveModal(id){
       </div>
       <div style="text-align:center;margin-left:auto">
         <div style="font-size:9px;color:var(--text3)">實際收到</div>
-        <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:56px;font-size:12px;padding:4px;text-align:center">
+        <div style="display:flex;align-items:center;gap:3px">
+          <button type="button" onclick="adjConfirmRecvInput('.confirm-recv-qty','${idx}',-1)" style="width:20px;height:20px;border-radius:6px;background:var(--cream2);border:1px solid var(--cream3);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit">−</button>
+          <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:32px;font-size:12px;padding:4px 2px;text-align:center">
+          <button type="button" onclick="adjConfirmRecvInput('.confirm-recv-qty','${idx}',1)" style="width:20px;height:20px;border-radius:6px;background:var(--cream2);border:1px solid var(--cream3);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit">+</button>
+        </div>
       </div>
       <div style="text-align:center">
         <div style="font-size:9px;color:var(--text3)">瑕疵</div>
-        <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:52px;font-size:12px;padding:4px;text-align:center">
+        <div style="display:flex;align-items:center;gap:3px">
+          <button type="button" onclick="adjConfirmRecvInput('.confirm-recv-defect','${idx}',-1)" style="width:20px;height:20px;border-radius:6px;background:var(--cream2);border:1px solid var(--cream3);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit">−</button>
+          <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:32px;font-size:12px;padding:4px 2px;text-align:center">
+          <button type="button" onclick="adjConfirmRecvInput('.confirm-recv-defect','${idx}',1)" style="width:20px;height:20px;border-radius:6px;background:var(--cream2);border:1px solid var(--cream3);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit">+</button>
+        </div>
       </div>
     </div>`).join('');
   openModal('modal-confirm-receive');
