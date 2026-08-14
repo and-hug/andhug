@@ -5206,7 +5206,7 @@ function confirmSmartImport(){
     if(smartImportMeta.payDate){document.getElementById('o-date').value=smartImportMeta.payDate;updateODateBtnLabel();filledMeta.push('日期');}
     if(smartImportMeta.shipping!==null){document.getElementById('o-shipping').value=smartImportMeta.shipping;filledMeta.push('運費');}
     const noteParts=[];
-    if(smartImportMeta.orderNo)noteParts.push('訂單號 '+smartImportMeta.orderNo);
+    if(smartImportMeta.orderNo)noteParts.push(smartImportMeta.orderNo);
     if(smartImportMeta.discount)noteParts.push('優惠 -¥'+smartImportMeta.discount.toFixed(2));
     if(smartImportMeta.totalPaid!==null)noteParts.push('實付 ¥'+smartImportMeta.totalPaid.toFixed(2));
     if(noteParts.length){document.getElementById('o-note').value=noteParts.join(' | ');filledMeta.push('備註');}
