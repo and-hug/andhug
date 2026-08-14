@@ -157,6 +157,8 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .stock-count{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;width:36px;text-align:center;}
 input.stock-count::-webkit-inner-spin-button,input.stock-count::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input.stock-count{-moz-appearance:textfield;appearance:textfield;}
+input.confirm-recv-qty::-webkit-inner-spin-button,input.confirm-recv-qty::-webkit-outer-spin-button,input.confirm-recv-defect::-webkit-inner-spin-button,input.confirm-recv-defect::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appearance:textfield;}
 .adj-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.7);border:1.5px solid rgba(255,255,255,0.9);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .adj-btn:hover{background:var(--surface);}
 .empty{text-align:center;padding:60px 20px;color:var(--text3);}
@@ -1046,7 +1048,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
-        <div class="form-group"><label class="form-label">支付手續費 ($，選填)</label><input type="number" class="form-input" id="o-fee-usd" placeholder="0.00" step="0.01"></div>
+        <input type="number" id="o-fee-usd" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
         <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
         <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
           <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
@@ -4978,11 +4980,13 @@ function parsePdfRowsToItems(rows){
 // 額外把「淘寶訂單詳情」PDF 裡的店名、訂單編號、付款日期、運費/折扣/總金額也一併抓出來，
 // 匯入時可以直接幫你把採購單上方的欄位填好，不用再手動抄一次
 function parseTaobaoOrderMeta(rows){
-  const meta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null};
+  const meta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,feeUsd:null};
   const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
   let prevPlainRow=null;
+  const allTokensFlat=[]; // 保留一份「不分行」的完整 token 清單，等一下抓支付手續費要用
   rows.forEach(row=>{
     const tokens=pdfRowToTokens(row.items);
+    allTokensFlat.push(...tokens);
     if(!meta.shopName){
       const hasPrice=tokens.some(t=>priceRe.test(t));
       if(hasPrice&&prevPlainRow){
@@ -5009,6 +5013,17 @@ function parseTaobaoOrderMeta(rows){
       if(tok==='实付款'){const m=(tokens[i+1]||'').match(priceRe);if(m)meta.totalPaid=parseFloat(m[1]);}
     }
   });
+  // 保險機制：如果上面逐行比對沒抓到支付手續費（可能是「支付手续费」這個標籤跟它的金額，
+  // 被座標式分行分到不同行去了，導致 tokens[i+1] 那組永遠碰不到），
+  // 這裡改成整份 PDF 的 token 攤平成一條，不分行，再找一次
+  if(meta.feeUsd===null){
+    const idx=allTokensFlat.indexOf('支付手续费');
+    if(idx!==-1){
+      const raw=allTokensFlat.slice(idx+1,idx+4).join(' ');
+      const m=raw.match(/(\d+(?:\.\d+)?)/);
+      if(m)meta.feeUsd=parseFloat(m[1]);
+    }
+  }
   return meta;
 }
 function parseOcrTextToItems(text){
@@ -5727,11 +5742,11 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
     <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:2px">付款詳情</div>
     ${row('商品總價',grossCny)}
     ${row('運費',shippingCny)}
-    ${o.feeUsd?`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 0">
-      <span style="font-size:12px;color:var(--text2)">支付手續費</span>
-      <span style="font-weight:700;font-size:13px;color:var(--text)">$${o.feeUsd.toFixed(2)}</span>
-    </div>`:''}
     ${discountCny>0?row('店鋪優惠',discountCny,{sign:'-',color:'#d97b3f'}):''}
+    ${o.feeUsd?`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 0">
+      <span style="font-size:12px;color:#d97b3f">支付手續費</span>
+      <span style="font-weight:700;font-size:13px;color:#d97b3f">$${o.feeUsd.toFixed(2)}</span>
+    </div>`:''}
     ${row('實付款',totalCny,{big:true,border:true,extraUsd:o.feeUsd||0})}
   </div>`;
 })()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')">↩️ 取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div>`;openModal('modal-order-detail');
@@ -5759,6 +5774,13 @@ function confirmReceived(id){
 }
 // 原生數字輸入框的上下箭頭，大部分瀏覽器只有滑鼠移過去或點進去才會顯示——
 // 這是她要的效果（會出現、不用一直留著），所以這裡不用自己畫按鈕，就用原生的就好
+// 原生數字輸入框的上下箭頭，大部分瀏覽器只有滑鼠移過去或點進去才會顯示——
+// 她要的是「永遠都看得到」，原生的做不到，這裡自己畫一組小小的 ▲▼（樣子模仿原生箭頭），永遠顯示、點了就能加減
+function stepConfirmRecvInput(selector,idx,delta){
+  const input=document.querySelector(`${selector}[data-idx="${idx}"]`);
+  if(!input)return;
+  input.value=Math.max(0,(parseInt(input.value)||0)+delta);
+}
 function openConfirmReceiveModal(id){
   const o=DB.orders.find(x=>x.id===id);if(!o)return;
   confirmReceiveOrderId=id;
@@ -5772,11 +5794,23 @@ function openConfirmReceiveModal(id){
       </div>
       <div style="text-align:center;margin-left:auto">
         <div style="font-size:9px;color:var(--text3)">實際收到</div>
-        <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:56px;font-size:12px;padding:4px;text-align:center">
+        <div style="position:relative;display:inline-block">
+          <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:56px;font-size:12px;padding:4px 20px 4px 6px;text-align:center">
+          <div style="position:absolute;right:1px;top:1px;bottom:1px;width:17px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)">
+            <button type="button" onclick="stepConfirmRecvInput('.confirm-recv-qty','${idx}',1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button>
+            <button type="button" onclick="stepConfirmRecvInput('.confirm-recv-qty','${idx}',-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button>
+          </div>
+        </div>
       </div>
       <div style="text-align:center">
         <div style="font-size:9px;color:var(--text3)">瑕疵</div>
-        <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:52px;font-size:12px;padding:4px;text-align:center">
+        <div style="position:relative;display:inline-block">
+          <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:52px;font-size:12px;padding:4px 20px 4px 6px;text-align:center">
+          <div style="position:absolute;right:1px;top:1px;bottom:1px;width:17px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)">
+            <button type="button" onclick="stepConfirmRecvInput('.confirm-recv-defect','${idx}',1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button>
+            <button type="button" onclick="stepConfirmRecvInput('.confirm-recv-defect','${idx}',-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button>
+          </div>
+        </div>
       </div>
     </div>`).join('');
   openModal('modal-confirm-receive');
