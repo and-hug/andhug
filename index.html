@@ -1117,7 +1117,7 @@ input.stock-count{-moz-appearance:textfield;appearance:textfield;}
       <div id="confirm-receive-body" style="max-height:50vh;overflow-y:auto"></div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-confirm-receive')">取消</button>
-        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="submitConfirmReceive()">✅ 確認到貨</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="submitConfirmReceive()">⭐ 確認到貨</button>
       </div>
     </div>
   </div>
@@ -5752,11 +5752,11 @@ function openConfirmReceiveModal(id){
       </div>
       <div style="text-align:center">
         <div style="font-size:9px;color:var(--text3)">實際收到</div>
-        <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:56px;font-size:12px;padding:4px;text-align:center">
+        <input type="number" class="form-input confirm-recv-qty" data-idx="${idx}" value="${item.qty}" min="0" style="width:28px;font-size:12px;padding:4px 2px;text-align:center">
       </div>
       <div style="text-align:center">
         <div style="font-size:9px;color:var(--text3)">瑕疵</div>
-        <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:52px;font-size:12px;padding:4px;text-align:center">
+        <input type="number" class="form-input confirm-recv-defect" data-idx="${idx}" value="0" min="0" style="width:26px;font-size:12px;padding:4px 2px;text-align:center">
       </div>
     </div>`).join('');
   openModal('modal-confirm-receive');
@@ -5802,7 +5802,7 @@ function submitConfirmReceive(){
     }
   });
   saveDB();closeModal('modal-confirm-receive');renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();openOrderDetail(id);
-  toast(shortages.length?`✅ 已確認到貨（短少：${shortages.join('、')}）`:'✅ 已確認到貨，庫存與成本已更新','success');
+  toast(shortages.length?`⭐ 已確認到貨（短少：${shortages.join('、')}）`:'⭐ 已確認到貨，庫存與成本已更新','success');
 }
 function quickConfirmReceived(id){
   const o=DB.orders.find(x=>x.id===id);if(!o||o.status==='received')return;
@@ -5819,7 +5819,7 @@ function quickConfirmReceived(id){
   });
   applyOrderItemsWAC(landedItems,applyWAC);
   saveDB();renderOverview();renderOrders();if(typeof renderProducts==='function')renderProducts();
-  toast('✅ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
+  toast('⭐ 已確認到貨,庫存累加,成本用移動加權平均更新','success');
 }
 function deleteOrder(id){
   const o=DB.orders.find(x=>x.id===id);
