@@ -5109,7 +5109,7 @@ async function handleSmartImportPDF(input){
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     const allItems=[];
-    smartImportMeta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,feeUsd:null,rawPaymentText:''};
+    smartImportMeta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,totalPaidUsd:null,feeUsd:null,rawPaymentText:''};
     for(let pageNum=1;pageNum<=pdf.numPages;pageNum++){
       progress.textContent=`讀取第 ${pageNum}/${pdf.numPages} 頁...`;
       const page=await pdf.getPage(pageNum);
