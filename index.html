@@ -1037,34 +1037,38 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
   <div class="modal" style="max-width:680px">
     <div class="modal-header"><div class="modal-title" id="order-modal-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>新增採購單</div><button class="modal-close" onclick="closeModal('modal-order')">×</button></div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">店家名稱 ✦</label><input type="text" class="form-input" id="o-supplier" placeholder="淘寶店名..."></div>
-        <div class="form-group">
-          <label class="form-label">訂單日期 ✦</label>
-          <div style="position:relative" id="o-date-wrap">
-            <button type="button" onclick="toggleODateCal()" id="o-date-btn" class="form-input" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface)">
-              <span id="o-date-btn-label">選擇日期</span>
-              <span style="font-size:13px;color:var(--text3)">📅</span>
-            </button>
-            <input type="date" id="o-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
-            <div id="o-date-cal" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:80;background:var(--surface);border:1.5px solid var(--cream3);border-radius:16px;padding:16px;box-shadow:0 6px 20px rgba(139,111,71,.18);width:280px;box-sizing:border-box"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        <div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">店家名稱 ✦</label><input type="text" class="form-input" id="o-supplier" placeholder="淘寶店名..."></div>
+            <div class="form-group">
+              <label class="form-label">訂單日期 ✦</label>
+              <div style="position:relative" id="o-date-wrap">
+                <button type="button" onclick="toggleODateCal()" id="o-date-btn" class="form-input" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface)">
+                  <span id="o-date-btn-label">選擇日期</span>
+                  <span style="font-size:13px;color:var(--text3)">📅</span>
+                </button>
+                <input type="date" id="o-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
+                <div id="o-date-cal" style="display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:80;background:var(--surface);border:1.5px solid var(--cream3);border-radius:16px;padding:16px;box-shadow:0 6px 20px rgba(139,111,71,.18);width:280px;box-sizing:border-box"></div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
-        <input type="number" id="o-fee-usd" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
-        <textarea id="o-raw-payment-text" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px"></textarea>
-        <input type="number" id="o-total-paid-usd-actual" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
-        <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
-        <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
-          <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
-            <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
-            <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
+            <input type="number" id="o-fee-usd" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
+            <textarea id="o-raw-payment-text" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px"></textarea>
+            <input type="number" id="o-total-paid-usd-actual" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
+            <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
+            <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
+              <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
+                <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
+              </div>
+            </div>
           </div>
+          <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..."></div>
         </div>
-        <div class="form-group" style="grid-column:1/-1"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..."></div>
-        <div id="o-raw-payment-preview" class="hidden" style="grid-column:1/-1;background:var(--cream2);border-radius:10px;padding:12px 14px;margin-top:2px">
+        <div id="o-raw-payment-preview" style="background:var(--cream2);border-radius:10px;padding:12px 14px">
           <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">📋 已擷取的付款資訊</div>
           <div id="o-raw-payment-preview-text"></div>
         </div>
@@ -5278,9 +5282,8 @@ function confirmSmartImport(){
     if(smartImportMeta.totalPaidUsd){document.getElementById('o-total-paid-usd-actual').value=smartImportMeta.totalPaidUsd;}
     if(smartImportMeta.rawPaymentText){
       document.getElementById('o-raw-payment-text').value=smartImportMeta.rawPaymentText;
-      const preview=document.getElementById('o-raw-payment-preview');
       const previewText=document.getElementById('o-raw-payment-preview-text');
-      if(preview&&previewText){previewText.innerHTML=formatRawPaymentPreview(smartImportMeta.rawPaymentText);preview.classList.remove('hidden');}
+      if(previewText)previewText.innerHTML=formatRawPaymentPreview(smartImportMeta.rawPaymentText,{skipLabels:['實付款']});
     }
     const noteParts=[];
     if(smartImportMeta.orderNo)noteParts.push(smartImportMeta.orderNo);
@@ -5311,7 +5314,7 @@ function openAddOrder(){
   document.getElementById('o-fee-usd').value='';
   document.getElementById('o-raw-payment-text').value='';
   document.getElementById('o-total-paid-usd-actual').value='';
-  {const preview=document.getElementById('o-raw-payment-preview');if(preview)preview.classList.add('hidden');}
+  {const previewText=document.getElementById('o-raw-payment-preview-text');if(previewText)previewText.innerHTML=formatRawPaymentPreview(DEFAULT_PAYMENT_TEXT_TEMPLATE,{skipLabels:['實付款']});}
   document.getElementById('o-expected-date').value='';
   document.getElementById('o-total-usd').textContent='$0.00';
   document.getElementById('o-note').value='';
@@ -5427,13 +5430,36 @@ function saveProductAlias(productId,rawName){
 // 避免比對錯誤商品
 // 把抓到的付款資訊文字（一行一個「標籤 數值」）排成跟 app 其他地方一樣的「左邊標籤、右邊金額」列表，
 // 不是重新計算，只是把同一份文字換個排法，數字/文字完全照抄
-function formatRawPaymentPreview(text){
+// 淘寶頁面本身是簡體字，這裡對應成繁體字，只轉付款明細常見的固定詞彙，不是做全文簡繁轉換
+const PAYMENT_TERM_TRADITIONAL={'商品总价':'商品總價','运费(快递)':'運費(快遞)','运费':'運費','首单礼金':'首單禮金','支付手续费':'支付手續費','官方立减':'官方立減','实付款':'實付款','店铺优惠':'店鋪優惠','红包':'紅包','积分抵扣':'積分抵扣'};
+function toTraditionalPaymentTerm(label){
+  return PAYMENT_TERM_TRADITIONAL[label]||label;
+}
+function formatRawPaymentPreview(text,opts={}){
   return (text||'').split('\n').filter(Boolean).map(line=>{
     const m=line.match(/^(.+?)\s+([^\s]+)$/); // 最後一個空白後面當金額，前面全部當標籤
-    if(!m)return `<div style="padding:3px 0;font-size:12px;color:var(--text2)">${line}</div>`;
-    return `<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"><span style="font-size:12px;color:var(--text2)">${m[1]}</span><span style="font-size:12px;font-weight:700;color:var(--text)">${m[2]}</span></div>`;
+    let label,value;
+    if(!m){
+      // 這行沒抓到金額（可能原始資料就只有標籤、沒有數字），不要整行原封不動丟出去晾在那裡，
+      // 統一還是照標籤+金額兩欄的排版顯示，金額欄沒有的話就寫 0，不要留空白
+      label=line.trim();value='0';
+    }else{
+      label=m[1].trim();value=m[2];
+    }
+    // 優惠類的行，斷詞後常常會變成「首单礼金 -」這樣，減號黏在標籤後面，這裡判斷出來，
+    // 把減號移到金額前面（跟「店鋪優惠」那行的顯示方式一致），整行改成橘色
+    const isDiscount=/-$/.test(label);
+    if(isDiscount){label=label.replace(/\s*-$/,'');value=value==='0'?'0':'-'+value;}
+    label=toTraditionalPaymentTerm(label);
+    if(opts.skipLabels&&opts.skipLabels.includes(label))return '';
+    const color=isDiscount?'#d97b3f':'var(--text2)';
+    const valueColor=isDiscount?'#d97b3f':'var(--text)';
+    return `<div style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"><span style="font-size:12px;color:${color}">${label}</span><span style="font-size:12px;font-weight:700;color:${valueColor}">${value}</span></div>`;
   }).join('');
 }
+// 沒有從匯入抓到任何付款資訊的單（例如手動新增的），這裡是一份預設模板，
+// 每個欄位都寫 0，不要整塊區域直接不見，讓畫面看起來一致
+const DEFAULT_PAYMENT_TEXT_TEMPLATE='商品总价 0\n运费(快递) 0\n首单礼金 - 0\n支付手续费 USD 0\n官方立减 - 0';
 function findProductByAlias(rawName){
   if(!rawName)return null;
   const trimmed=rawName.trim();
@@ -5481,11 +5507,8 @@ function openEditOrder(id){
   document.getElementById('o-fee-usd').value=o.feeUsd||'';
   document.getElementById('o-raw-payment-text').value=o.rawPaymentText||'';
   document.getElementById('o-total-paid-usd-actual').value=o.totalPaidUsdActual||'';
-  {const preview=document.getElementById('o-raw-payment-preview');const previewText=document.getElementById('o-raw-payment-preview-text');
-   if(preview&&previewText){
-     if(o.rawPaymentText){previewText.innerHTML=formatRawPaymentPreview(o.rawPaymentText);preview.classList.remove('hidden');}
-     else preview.classList.add('hidden');
-   }}
+  {const previewText=document.getElementById('o-raw-payment-preview-text');
+   if(previewText)previewText.innerHTML=formatRawPaymentPreview(o.rawPaymentText||DEFAULT_PAYMENT_TEXT_TEMPLATE,{skipLabels:['實付款']});}
   document.getElementById('o-expected-date').value=o.expectedDate||'';
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
@@ -5600,8 +5623,9 @@ function updateOrderTotalPreview(){
   const shipping=parseFloat(document.getElementById('o-shipping')?.value)||0;
   totalCny+=shipping;
   const feeUsd=parseFloat(document.getElementById('o-fee-usd')?.value)||0; // 支付手續費是淘寶直接用美金收的，不能跟著匯率換算，要直接加
+  const totalPaidUsdActual=parseFloat(document.getElementById('o-total-paid-usd-actual')?.value)||0; // 淘寶「实付款」寫的真實美金金額，有的話優先顯示這個，不要自己用匯率算
   const usdInput=document.getElementById('o-total-usd');
-  if(usdInput)usdInput.textContent='$'+(totalCny*getEffectiveOrderRate()+feeUsd).toFixed(2);
+  if(usdInput)usdInput.textContent='$'+(totalPaidUsdActual||(totalCny*getEffectiveOrderRate()+feeUsd)).toFixed(2);
   const cnyHint=document.getElementById('o-total-cny-hint');
   if(cnyHint)cnyHint.textContent='¥'+totalCny.toFixed(2);
 }
@@ -5817,13 +5841,7 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
   </div>`;
   return `<div style="margin-left:auto;margin-right:7px;padding:12px 16px;margin-bottom:16px;max-width:320px;background:var(--cream2);border-radius:12px">
     <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:2px">付款詳情</div>
-    ${row('商品總價',grossCny)}
-    ${row('運費',shippingCny)}
-    ${discountCny>0?row('店鋪優惠',discountCny,{sign:'-',color:'#d97b3f'}):''}
-    ${o.feeUsd?`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:5px 0">
-      <span style="font-size:12px;color:#d97b3f">支付手續費</span>
-      <span style="font-weight:700;font-size:13px;color:#d97b3f">$${o.feeUsd.toFixed(2)}</span>
-    </div>`:''}
+    ${formatRawPaymentPreview(o.rawPaymentText||DEFAULT_PAYMENT_TEXT_TEMPLATE,{skipLabels:['實付款']})}
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0 5px;border-top:1.5px solid var(--cream3);margin-top:4px;padding-top:10px">
       <span style="font-size:13px;font-weight:700;color:var(--text)">實付款</span>
       <span style="text-align:right">
@@ -5832,10 +5850,6 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
       </span>
     </div>
     ${o.totalPaidUsdActual?'<div style="font-size:10px;color:var(--text3);text-align:right;margin-top:-2px">（照淘寶實際扣款金額，不是用匯率換算的）</div>':''}
-    ${o.rawPaymentText?`<div style="border-top:1.5px solid var(--cream3);margin-top:10px;padding-top:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">📋 已擷取的付款資訊</div>
-      ${formatRawPaymentPreview(o.rawPaymentText)}
-    </div>`:''}
   </div>`;
 })()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')">↩️ 取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div>`;openModal('modal-order-detail');
   // 渲染完後量測表格第一欄文字的實際位置，自動算出按鈕列要對齊的內距（不用猜數字）
