@@ -67,6 +67,9 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .marquee-box.deselect{border-color:#c45f7a;background:rgba(196,95,122,0.08);}
 .product-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--cream3);overflow:hidden;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;height:100%;}
 .product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--brown-light);}
+.product-card:hover .pc-quick-trash{opacity:1;}
+.pc-quick-trash{opacity:0;transition:opacity .15s;}
+.pc-quick-trash:hover{background:var(--red-light)!important;color:var(--red)!important;border-color:var(--red)!important;}
 .product-img{width:100%;aspect-ratio:1;background:var(--cream2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .product-img img{width:100%;height:100%;object-fit:contain;padding:8px;}
 .product-img .no-img{font-size:36px;}
@@ -635,6 +638,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 @media (max-width:768px) and (hover:none){
   .product-card:hover{transform:none;box-shadow:0 1px 5px rgba(61,47,31,.05);
       border-color:var(--cream3);}
+  .pc-quick-trash{opacity:1!important;} /* 觸控裝置沒有 hover，平常就要看得到，不然點不到 */
   .btn-primary:hover{transform:none;background:var(--brown);}
   .cat-sidebar-item:hover{background:none;color:var(--text2);}
   .cat-sidebar-item.active:hover{background:var(--cream2);color:var(--brown);}
@@ -3585,6 +3589,7 @@ function renderProducts(){
       ondragstart="dragProductId='${p.id}';event.dataTransfer.effectAllowed='move';this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target').forEach(el=>el.classList.remove('drag-over-target'))"
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target')" ondrop="dropReorderProduct(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
+      <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
       <div class="product-img">${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async">`:'<div class="no-img">📦</div>'}</div>
       <div class="product-info">
         <div class="product-name" style="margin-bottom:3px">
