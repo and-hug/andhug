@@ -2495,8 +2495,9 @@ const SORT_OPTIONS=[
 function renderSortMenu(){
   const menu=document.getElementById('sort-mode-menu');
   if(!menu)return;
-  menu.innerHTML=SORT_OPTIONS.map(o=>`<div onclick="setSortMode('${o.value}')" style="padding:9px 10px;border-radius:8px;font-size:13px;cursor:pointer;color:${sortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${sortMode===o.value?'700':'400'}"
-    onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${o.label}</div>`).join('');
+  // 選項每次開啟時都會重建；使用 data attribute 配合下方唯一的 click handler，
+  // 不再依賴會在重繪後失效的 inline onclick。
+  menu.innerHTML=SORT_OPTIONS.map(o=>`<button type="button" data-sort-mode="${o.value}" aria-pressed="${sortMode===o.value}" style="display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer;color:${sortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${sortMode===o.value?'700':'400'}">${o.label}</button>`).join('');
   const btnLabel=document.getElementById('sort-mode-btn-label');
   if(btnLabel){const cur=SORT_OPTIONS.find(o=>o.value===sortMode);btnLabel.textContent=cur?cur.label:'';}
 }
@@ -2512,11 +2513,30 @@ function toggleStockRangeFilter(){
   if(row)row.classList.toggle('hidden');
 }
 function setSortMode(v){
+  if(!SORT_OPTIONS.some(o=>o.value===v))return;
   sortMode=v;
-  document.getElementById('sort-mode-menu').style.display='none';
+  const menu=document.getElementById('sort-mode-menu');
+  if(menu)menu.style.display='none';
   renderSortMenu();
-  renderProducts();
+  // 商品卡片很多時，連續點選不應同步重繪多次而讓畫面卡住。
+  requestProductsRender();
 }
+let productRenderQueued=false;
+function requestProductsRender(){
+  if(productRenderQueued)return;
+  productRenderQueued=true;
+  requestAnimationFrame(()=>{
+    productRenderQueued=false;
+    renderProducts();
+  });
+}
+document.getElementById('sort-mode-menu')?.addEventListener('click',(e)=>{
+  const option=e.target.closest('[data-sort-mode]');
+  if(!option)return;
+  e.preventDefault();
+  e.stopPropagation();
+  setSortMode(option.dataset.sortMode);
+});
 document.addEventListener('click',(e)=>{
   const wrap=document.getElementById('sort-mode-wrap');
   const menu=document.getElementById('sort-mode-menu');
@@ -2528,8 +2548,8 @@ document.addEventListener('click',(e)=>{
 function getLastSoldMap(){
   const map={};
   Object.entries(DB.todaySales||{}).forEach(([date,day])=>{
-    (day.records||[]).forEach(r=>{
-      (r.rawItems||[]).forEach(it=>{
+    ((day&&day.records)||[]).forEach(r=>{
+      ((r&&r.rawItems)||[]).forEach(it=>{
         if(!it.id)return;
         if(!map[it.id]||date>map[it.id])map[it.id]=date;
       });
@@ -2540,8 +2560,8 @@ function getLastSoldMap(){
 function getSalesCountMap(){
   const map={};
   Object.values(DB.todaySales||{}).forEach(day=>{
-    (day.records||[]).forEach(r=>{
-      (r.rawItems||[]).forEach(it=>{
+    ((day&&day.records)||[]).forEach(r=>{
+      ((r&&r.rawItems)||[]).forEach(it=>{
         if(!it.id)return;
         map[it.id]=(map[it.id]||0)+(it.qty||0);
       });
@@ -3186,7 +3206,7 @@ function renderCatSidebar(){
       SIZES.forEach(s=>{
         const cnt=DB.products.filter(p=>p.type===t&&p.size===s).length;
         rows+=`<div class="cat-sidebar-item ${activeSize===s?'active':''}"
-          onclick="activeSize='${s}';renderCatSidebar();renderProducts();"
+          onclick="setSize('${s}')"
           ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
           ondragleave="this.classList.remove('drag-over')"
           ondrop="dropToSize(event,'${t}','${s}')"
@@ -3367,7 +3387,7 @@ function renderSubcatFilters(){
     const isActive=activeSubcat===c;
     const hasProducts=cnt>0;
     return `<button
-      onclick="activeSubcat=activeSubcat==='${c}'?'all':'${c}';renderSubcatFilters();renderProducts();"
+      onclick="setSubcat('${c}')"
       ondragover="event.preventDefault();this.style.background='var(--peach-light)';this.style.borderColor='var(--brown)';maybeShrinkGhostForSidebar()"
       ondragleave="this.style.background='${isActive?'var(--brown)':'#fff'}';this.style.borderColor='${isActive?'var(--brown)':hasProducts?'var(--cream3)':'var(--cream3)'}'"
       ondrop="event.preventDefault();this.style.background='${isActive?'var(--brown)':'#fff'}';dropToSubcat(event,'${c}')"
@@ -3392,9 +3412,10 @@ function setView(v){
 function setCat(f){
   if(activeCat===f){catSizesCollapsed=!catSizesCollapsed;}
   else{activeCat=f;activeSize='all';catSizesCollapsed=false;}
-  activeSubcat='all';renderCatSidebar();renderSizeFilters();renderSubcatFilters();renderProducts();
+  activeSubcat='all';requestProductsRender();
 }
-function setSize(s){activeSize=s;renderSizeFilters();renderProducts();}
+function setSize(s){activeSize=s;requestProductsRender();}
+function setSubcat(code){activeSubcat=activeSubcat===code?'all':code;requestProductsRender();}
 
 // ===== UNDO / REDO 系統 =====
 let undoStack=[],redoStack=[];
@@ -3527,6 +3548,8 @@ function dropToCat(event,newType){
 }
 
 function renderProducts(){
+  // 這三個元件與商品格都由同一輪 render 更新，避免切分類時重複建立整份 DOM。
+  renderSortMenu();
   renderCatSidebar();renderSizeFilters();renderSubcatFilters();
   // 第一次使用排序功能時，幫沒有 sortOrder 的商品補上預設值（保留原本順序）
   let needsSave=false;
