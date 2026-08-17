@@ -731,12 +731,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="renderProducts()"></div>
       <button class="btn btn-secondary btn-icon" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
-      <div style="position:relative" id="sort-mode-wrap">
-        <button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
-          <span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span>
-        </button>
-        <div id="sort-mode-menu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div>
-      </div>
+      <select id="sort-mode-select" aria-label="商品排序方式" onchange="setSortMode(this.value)" style="height:36px;border:1.5px solid var(--cream3);border-radius:10px;padding:0 30px 0 12px;font:inherit;font-size:13px;color:var(--text2);background:var(--surface);cursor:pointer;min-width:200px"></select>
       <div style="display:flex;gap:4px"><button class="view-btn active" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
@@ -1542,14 +1537,14 @@ function backfillMissingSortOrders(){
     }
   });
 }
-function saveDB(){
+function saveDB(options={}){
   backfillMissingSortOrders();
   lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
   // 存到本機之後，順便排一個「延遲幾秒再同步到雲端」的動作（等她連續操作停下來才真的送出，
   // 不會每按一下就打一次 API）。之前只有「打開網頁那一刻」才會同步，代表存了新的採購單/商品，
   // 如果沒有手動按「同步到雲端」或整個重新整理網頁，雲端跟其他裝置都看不到剛剛的變動
-  if(typeof window.syncToSupabase==='function'){
+  if(!options.skipCloudSync&&typeof window.syncToSupabase==='function'){
     clearTimeout(_autoSyncTimer);
     _autoSyncTimer=setTimeout(()=>{window.syncToSupabase(true);},2500);
   }
@@ -2166,7 +2161,21 @@ function importBackup(input){
 }
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-async function fetchRate(){document.getElementById('rate-time').textContent='更新中...';try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');const d=await r.json();if(d.rates?.USD){DB.rate=d.rates.USD;DB.rateTime=new Date().toLocaleTimeString('zh-TW');saveDB();}}catch(e){}document.getElementById('rate-display').textContent=`¥1 = $${DB.rate.toFixed(4)}`;document.getElementById('rate-time').textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';}
+async function fetchRate(){
+  const timeEl=document.getElementById('rate-time'),displayEl=document.getElementById('rate-display');
+  if(timeEl)timeEl.textContent='更新中...';
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),8000);
+  try{
+    const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY',{signal:controller.signal});
+    const d=await r.json();
+    if(d.rates?.USD&&d.rates.USD!==DB.rate){DB.rate=d.rates.USD;saveDB({skipCloudSync:true});}
+    if(d.rates?.USD)DB.rateTime=new Date().toLocaleTimeString('zh-TW');
+  }catch(e){console.warn('匯率更新失敗，保留目前匯率:',e.name||e);}
+  finally{clearTimeout(timeout);}
+  if(displayEl)displayEl.textContent=`¥1 = $${DB.rate.toFixed(4)}`;
+  if(timeEl)timeEl.textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';
+}
 function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products')renderProducts();if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();
   // 記住目前在哪一頁，重新整理網頁的時候直接回到這一頁，不要每次都跳回總覽
   try{localStorage.setItem('andhug_last_page',id);}catch(e){}
@@ -2493,20 +2502,10 @@ const SORT_OPTIONS=[
   {value:'name',label:'🔤 依名稱排序'}
 ];
 function renderSortMenu(){
-  const menu=document.getElementById('sort-mode-menu');
-  if(!menu)return;
-  // 選項每次開啟時都會重建；使用 data attribute 配合下方唯一的 click handler，
-  // 不再依賴會在重繪後失效的 inline onclick。
-  menu.innerHTML=SORT_OPTIONS.map(o=>`<button type="button" data-sort-mode="${o.value}" aria-pressed="${sortMode===o.value}" style="display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer;color:${sortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${sortMode===o.value?'700':'400'}">${o.label}</button>`).join('');
-  const btnLabel=document.getElementById('sort-mode-btn-label');
-  if(btnLabel){const cur=SORT_OPTIONS.find(o=>o.value===sortMode);btnLabel.textContent=cur?cur.label:'';}
-}
-function toggleSortMenu(){
-  const menu=document.getElementById('sort-mode-menu');
-  if(!menu)return;
-  const willShow=menu.style.display==='none';
-  if(willShow)renderSortMenu();
-  menu.style.display=willShow?'block':'none';
+  const select=document.getElementById('sort-mode-select');
+  if(!select)return;
+  select.innerHTML=SORT_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+  select.value=sortMode;
 }
 function toggleStockRangeFilter(){
   const row=document.getElementById('stock-range-filter-row');
@@ -2515,8 +2514,6 @@ function toggleStockRangeFilter(){
 function setSortMode(v){
   if(!SORT_OPTIONS.some(o=>o.value===v))return;
   sortMode=v;
-  const menu=document.getElementById('sort-mode-menu');
-  if(menu)menu.style.display='none';
   renderSortMenu();
   // 商品卡片很多時，連續點選不應同步重繪多次而讓畫面卡住。
   requestProductsRender();
@@ -2530,19 +2527,6 @@ function requestProductsRender(){
     renderProducts();
   });
 }
-document.getElementById('sort-mode-menu')?.addEventListener('click',(e)=>{
-  const option=e.target.closest('[data-sort-mode]');
-  if(!option)return;
-  e.preventDefault();
-  e.stopPropagation();
-  setSortMode(option.dataset.sortMode);
-});
-document.addEventListener('click',(e)=>{
-  const wrap=document.getElementById('sort-mode-wrap');
-  const menu=document.getElementById('sort-mode-menu');
-  if(!wrap||!menu||menu.style.display==='none')return;
-  if(!wrap.contains(e.target))menu.style.display='none';
-});
 // 統計每個商品的歷史累積銷售數量（加總 DB.todaySales 裡所有日期的紀錄）
 // 統計每個商品「最後一次賣出」的日期（用來抓滯銷商品）
 function getLastSoldMap(){
@@ -3817,7 +3801,8 @@ function dropReorderProduct(e,targetId,cardEl){
   list.splice(after?oi+1:oi,0,moved);
   DB.products.forEach((p,i)=>{p.sortOrder=i*10;});
   saveDB();
-  if(window.syncSortOrderToCloud)window.syncSortOrderToCloud();
+  // saveDB 已經會把這次變更排入唯一的雲端同步佇列；不要再額外開一個完整 upsert，
+  // 以免快速拖曳時同步請求重疊。
   renderProducts();
 }
 // ---- 手機觸控拖曳（Pointer Events + 長按觸發）----
@@ -8421,7 +8406,12 @@ async function upsertWithFallback(sb, table, rows, firstError, triedCols) {
   }
   throw firstError; // 不是「欄位不存在」的錯誤，或已經試過拿掉這欄了還是失敗，就是別的問題了
 }
-window.syncToSupabase = async function(silent) {
+// 雲端同步可能同時由儲存、拖曳排序、登入與開機流程觸發。以前每個觸發都會各自
+// 上傳完整資料集，網路慢或商品多時會堆積大量請求並連帶造成重繪卡住。
+let __syncInFlight = null;
+let __syncQueued = false;
+let __queuedSyncSilent = true;
+async function performSupabaseSync(silent) {
   const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
@@ -8613,6 +8603,27 @@ window.syncToSupabase = async function(silent) {
       setTimeout(()=>el.remove(),8000);
     }
   }
+}
+window.syncToSupabase = function(silent) {
+  if (__syncInFlight) {
+    __syncQueued = true;
+    __queuedSyncSilent = __queuedSyncSilent && !!silent;
+    return __syncInFlight;
+  }
+  __syncInFlight = (async () => {
+    let runSilent = !!silent;
+    do {
+      __syncQueued = false;
+      __queuedSyncSilent = true;
+      await performSupabaseSync(runSilent);
+      runSilent = __queuedSyncSilent;
+    } while (__syncQueued);
+  })().catch(e => {
+    // performSupabaseSync 本身會處理大多數 API 錯誤；這層保底避免未處理 rejection
+    // 讓後續同步佇列失效。
+    console.error('雲端同步佇列失敗:', e);
+  }).finally(() => { __syncInFlight = null; });
+  return __syncInFlight;
 };
 
 // ---- 從雲端拉回其他裝置的最新變動 ----
@@ -8777,15 +8788,25 @@ function mergeCloudOrderRecord(co) {
   DB.__syncBaseline.orders[co.id] = snapshotFields(local, ORDER_SCALAR_FIELDS);
   return changed;
 }
+let __cloudMergeRefreshTimer = null;
+let __cloudMergeNeedsNotice = false;
 function afterCloudMergeApplied(silent) {
-  saveDB();
-  if (typeof currentPage !== 'undefined') {
-    if (currentPage === 'products' && typeof renderProducts === 'function') { renderProducts(); if (typeof renderCatSidebar === 'function') renderCatSidebar(); }
-    if (currentPage === 'orders' && typeof renderOrders === 'function') renderOrders();
-    if (currentPage === 'sales' && typeof renderSaleProducts === 'function') renderSaleProducts();
-    if (currentPage === 'overview' && typeof renderOverview === 'function') renderOverview();
-  }
-  if (!silent) toast('☁️ 已同步其他裝置的最新資料', 'success');
+  // 一次完整雲端同步可能送回數百筆 realtime 事件。以前每一筆都 save + 全頁重繪，
+  // 會把主執行緒塞滿；現在收斂成一批更新只寫入、重繪一次，而且不再回推同一批雲端資料。
+  __cloudMergeNeedsNotice = __cloudMergeNeedsNotice || !silent;
+  if (__cloudMergeRefreshTimer) return;
+  __cloudMergeRefreshTimer = setTimeout(() => {
+    __cloudMergeRefreshTimer = null;
+    saveDB({skipCloudSync:true});
+    if (typeof currentPage !== 'undefined') {
+      if (currentPage === 'products' && typeof renderProducts === 'function') renderProducts();
+      if (currentPage === 'orders' && typeof renderOrders === 'function') renderOrders();
+      if (currentPage === 'sales' && typeof renderSaleProducts === 'function') renderSaleProducts();
+      if (currentPage === 'overview' && typeof renderOverview === 'function') renderOverview();
+    }
+    if (__cloudMergeNeedsNotice) toast('☁️ 已同步其他裝置的最新資料', 'success');
+    __cloudMergeNeedsNotice = false;
+  }, 120);
 }
 window.pullFromSupabase = async function(silent) {
   if (__pullingFromCloud) return; // 避免同時重疊拉好幾次
@@ -9156,7 +9177,7 @@ window.pullImagesFromCloud = async function() {
     });
 
     if (updated > 0) {
-      saveDB();
+      saveDB({skipCloudSync:true});
       if (typeof renderProducts === 'function') renderProducts();
       if (typeof renderCatSidebar === 'function') renderCatSidebar();
     }
