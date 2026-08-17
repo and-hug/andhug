@@ -4988,7 +4988,7 @@ function parsePdfRowsToItems(rows){
     if(stop)break;
     if(left.length)leftBuf.push(left.join(''));
     if(rowQty!==null){
-      const name=(leftBuf[leftBuf.length-2]||leftBuf[leftBuf.length-1]||'').trim();
+      const name=convertSimplifiedToTraditional((leftBuf[leftBuf.length-2]||leftBuf[leftBuf.length-1]||'').trim());
       if(name){
         const item={name,rawName:name,cost:firstPrice||0,qty:rowQty||1};
         if(secondPrice!==null&&secondPrice>(firstPrice||0))item.originalCost=secondPrice; // 只有原價真的比較高才存，避免抓錯
@@ -5016,7 +5016,7 @@ function parseTaobaoOrderMeta(rows){
     if(!meta.shopName){
       const hasPrice=tokens.some(t=>priceRe.test(t));
       if(hasPrice&&prevPlainRow){
-        meta.shopName=prevPlainRow;
+        meta.shopName=convertSimplifiedToTraditional(prevPlainRow);
       }else if(!hasPrice&&tokens.length===1&&tokens[0].length<=12&&!/退货|运输|签收|物流|详情|宝贝|付款|发货|收货|广东|东莞|镇|路|号|楼|室|\d/.test(tokens[0])){
         prevPlainRow=tokens[0];
       }
@@ -5078,6 +5078,7 @@ function parseOcrTextToItems(text){
     priceMatches.forEach(m=>{name=name.split(m[0]).join('');});
     if(qtyMatch)name=name.split(qtyMatch[0]).join('');
     name=name.replace(/加入购物车|申请售后|加入購物車|申請售後/g,'').trim();
+    name=convertSimplifiedToTraditional(name);
     const cost=parseFloat(priceMatches[0][1])||0;
     if(!name){
       // 這一行只有價格、沒有商品名字：通常是上一筆商品的「原價（劃線價）」單獨佔一行，補回去
@@ -5224,7 +5225,7 @@ function smartImportShowSuggestions(input,i){
     matches.forEach(p=>{
       const item=document.createElement('div');
       item.className='oi-suggest-item';
-      item.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🖼</span>'}<span>${p.name}<br><span style="color:var(--text3);font-size:10px">${p.sku||''}</span></span>`;
+      item.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🌸</span>'}<span>${p.name}<br><span style="color:var(--text3);font-size:10px">${p.sku||''}</span></span>`;
       item.onmousedown=function(e){e.preventDefault();smartImportSelectSuggestion(input,i,p.id,p.name);};
       list.appendChild(item);
     });
@@ -5391,7 +5392,7 @@ function showOrderItemSuggestions(input){
     matches.forEach(p=>{
       const item=document.createElement('div');
       item.className='oi-suggest-item';
-      item.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🖼</span>'}<span>${p.name}<br><span style="color:var(--text3);font-size:10px">${p.sku||''}</span></span>`;
+      item.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🌸</span>'}<span>${p.name}<br><span style="color:var(--text3);font-size:10px">${p.sku||''}</span></span>`;
       item.onmousedown=function(e){e.preventDefault();selectOrderItemSuggestion(input,p.id,p.name);};
       list.appendChild(item);
     });
@@ -5427,13 +5428,64 @@ function saveProductAlias(productId,rawName){
   }
 }
 // 依照匯入時讀到的原始名字，找找看有沒有商品之前記過這個別名——完全一樣（去除頭尾空白）才算數，
-// 避免比對錯誤商品
-// 把抓到的付款資訊文字（一行一個「標籤 數值」）排成跟 app 其他地方一樣的「左邊標籤、右邊金額」列表，
-// 不是重新計算，只是把同一份文字換個排法，數字/文字完全照抄
-// 淘寶頁面本身是簡體字，這裡對應成繁體字，只轉付款明細常見的固定詞彙，不是做全文簡繁轉換
-const PAYMENT_TERM_TRADITIONAL={'商品总价':'商品總價','运费(快递)':'運費(快遞)','运费':'運費','首单礼金':'首單禮金','支付手续费':'支付手續費','官方立减':'官方立減','实付款':'實付款','店铺优惠':'店鋪優惠','红包':'紅包','积分抵扣':'積分抵扣'};
+// 淘寶（跟大部分大陸來源）是簡體字，這裡做一份「字元對字元」的簡轉繁對照表——
+// 涵蓋常見的簡體字，不是每一個罕見字都收錄，但地址／商品／付款頁面會用到的字基本上都有，
+// 逐字替換，不是整段詞彙比對，所以商品名稱、店家名稱、備註這些抓進來的文字也都能轉
+const SIMPLIFIED_TO_TRADITIONAL_MAP={
+  '总':'總','续':'續','纺':'紡','舰':'艦','绣':'繡','绍':'紹','绒':'絨','绅':'紳','绩':'績','纪':'紀',
+  '纱':'紗','纲':'綱','纵':'縱','纹':'紋','纽':'紐','纷':'紛','纸':'紙',
+  '丑':'醜','业':'業','东':'東','丢':'丟','两':'兩','丽':'麗','个':'個','义':'義','为':'為','举':'舉',
+  '乐':'樂','习':'習','书':'書','买':'買','云':'雲','产':'產','亮':'亮','们':'們','件':'件','价':'價',
+  '仿':'仿','会':'會','似':'似','作':'作','便':'便','修':'修','倒':'倒','借':'借','债':'債','值':'值',
+  '做':'做','像':'像','儿':'兒','关':'關','具':'具','写':'寫','决':'決','冷':'冷','净':'淨','凉':'涼',
+  '减':'減','凿':'鑿','列':'列','创':'創','别':'別','刮':'刮','制':'製','刷':'刷','刺':'刺','刻':'刻',
+  '剪':'剪','割':'割','劈':'劈','力':'力','办':'辦','动':'動','势':'勢','包':'包','化':'化','单':'單',
+  '卖':'賣','印':'印','卸':'卸','厂':'廠','压':'壓','厕':'廁','厚':'厚','原':'原','双':'雙','发':'發',
+  '变':'變','号':'號','同':'同','后':'後','听':'聽','员':'員','咖':'咖','咸':'鹹','哀':'哀','售':'售',
+  '啡':'啡','喜':'喜','器':'器','回':'回','团':'團','围':'圍','国':'國','图':'圖','圆':'圓','坏':'壞',
+  '型':'型','境':'境','备':'備','复':'複','头':'頭','套':'套','奶':'奶','嫩':'嫩','学':'學','宜':'宜',
+  '实':'實','宽':'寬','寄':'寄','富':'富','察':'察','寸':'寸','对':'對','寻':'尋','导':'導','射':'射',
+  '尖':'尖','尺':'尺','层':'層','币':'幣','帅':'帥','师':'師','帘':'簾','带':'帶','帽':'帽','干':'乾',
+  '广':'廣','床':'床','库':'庫','应':'應','建':'建','开':'開','异':'異','弄':'弄','式':'式','弥':'彌',
+  '弯':'彎','弹':'彈','归':'歸','当':'當','录':'錄','忆':'憶','忘':'忘','忧':'憂','念':'念','怀':'懷',
+  '态':'態','怒':'怒','怕':'怕','恨':'恨','悬':'懸','惊':'驚','戳':'戳','户':'戶','扁':'扁','扎':'紮',
+  '扔':'扔','扛':'扛','扣':'扣','扫':'掃','扯':'扯','找':'找','抓':'抓','投':'投','抖':'抖','折':'折',
+  '抛':'拋','抬':'抬','抹':'抹','担':'擔','拉':'拉','拖':'拖','择':'擇','拽':'拽','拿':'拿','挂':'掛',
+  '挑':'挑','挤':'擠','捏':'捏','损':'損','换':'換','据':'據','接':'接','推':'推','描':'描','提':'提',
+  '握':'握','搞':'搞','搬':'搬','搭':'搭','摆':'擺','摇':'搖','摔':'摔','摸':'摸','撕':'撕','擦':'擦',
+  '收':'收','放':'放','效':'效','数':'數','斩':'斬','断':'斷','新':'新','方':'方','旋':'旋','旧':'舊',
+  '时':'時','易':'易','映':'映','晃':'晃','暖':'暖','曲':'曲','服':'服','机':'機','杂':'雜','来':'來',
+  '枕':'枕','果':'果','柜':'櫃','查':'查','样':'樣','格':'格','桌':'桌','梦':'夢','梳':'梳','椅':'椅',
+  '楼':'樓','款':'款','毯':'毯','气':'氣','汇':'匯','汤':'湯','沉':'沉','没':'沒','油':'油','洁':'潔',
+  '洗':'洗','测':'測','济':'濟','浮':'浮','涂':'塗','涩':'澀','淡':'淡','温':'溫','湿':'濕','滑':'滑',
+  '滚':'滾','漂':'漂','灭':'滅','灯':'燈','炸':'炸','点':'點','烧':'燒','热':'熱','焚':'焚','照':'照',
+  '熄':'熄','燃':'燃','爆':'爆','爱':'愛','环':'環','现':'現','甜':'甜','电':'電','画':'畫','盐':'鹽',
+  '盖':'蓋','眠':'眠','睡':'睡','码':'碼','砍':'砍','破':'破','硬':'硬','碎':'碎','磨':'磨','视':'視',
+  '离':'離','种':'種','租':'租','穷':'窮','窄':'窄','窗':'窗','立':'立','筑':'築','简':'簡','箱':'箱',
+  '米':'米','粗':'粗','粘':'黏','糕':'糕','糖':'糖','系':'系','纯':'純','练':'練','细':'細','织':'織',
+  '经':'經','绑':'綁','结':'結','绕':'繞','绘':'繪','给':'給','统':'統','编':'編','缝':'縫','缠':'纏',
+  '繁':'繁','美':'美','翻':'翻','老':'老','肉':'肉','脆':'脆','脏':'髒','苦':'苦','范':'範','茶':'茶',
+  '荡':'蕩','菜':'菜','营':'營','蔬':'蔬','薄':'薄','虑':'慮','蛋':'蛋','衣':'衣','补':'補','表':'錶',
+  '袋':'袋','袜':'襪','被':'被','裂':'裂','装':'裝','裙':'裙','裤':'褲','观':'觀','规':'規','觉':'覺',
+  '触':'觸','计':'計','认':'認','讨':'討','让':'讓','议':'議','记':'記','讲':'講','论':'論','设':'設',
+  '证':'證','评':'評','识':'識','试':'試','话':'話','该':'該','详':'詳','说':'說','读':'讀','课':'課',
+  '贝':'貝','财':'財','账':'賬','货':'貨','质':'質','贫':'貧','购':'購','贱':'賤','贴':'貼','贵':'貴',
+  '贷':'貸','费':'費','赁':'賃','资':'資','赠':'贈','跌':'跌','车':'車','转':'轉','软':'軟','轻':'輕',
+  '载':'載','较':'較','输':'輸','辣':'辣','达':'達','过':'過','运':'運','返':'返','还':'還','这':'這',
+  '进':'進','连':'連','退':'退','送':'送','选':'選','递':'遞','造':'造','邮':'郵','酒':'酒','酱':'醬',
+  '酸':'酸','醋':'醋','醒':'醒','重':'重','量':'量','钉':'釘','钝':'鈍','钟':'鐘','钩':'鉤','钱':'錢',
+  '钻':'鑽','银':'銀','销':'銷','锉':'銼','镇':'鎮','镜':'鏡','长':'長','门':'門','闪':'閃','问':'問',
+  '间':'間','闻':'聞','阅':'閱','队':'隊','阳':'陽','阴':'陰','难':'難','雨':'雨','雪':'雪','震':'震',
+  '静':'靜','面':'麵','鞋':'鞋','韧':'韌','项':'項','预':'預','领':'領','题':'題','颤':'顫','风':'風',
+  '飘':'飄','饭':'飯','饰':'飾','饼':'餅','馆':'館','马':'馬','验':'驗','鱼':'魚','鲜':'鮮','鸡':'雞',
+  '鸭':'鴨'
+};
 function toTraditionalPaymentTerm(label){
-  return PAYMENT_TERM_TRADITIONAL[label]||label;
+  return convertSimplifiedToTraditional(label);
+}
+function convertSimplifiedToTraditional(text){
+  if(!text)return text;
+  return text.split('').map(ch=>SIMPLIFIED_TO_TRADITIONAL_MAP[ch]||ch).join('');
 }
 function formatRawPaymentPreview(text,opts={}){
   return (text||'').split('\n').filter(Boolean).map(line=>{
