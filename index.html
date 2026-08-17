@@ -1529,7 +1529,21 @@ const __bootSteps=[];
 let DB={products:[],orders:[],sales:[],rate:0.138,rateTime:null,todaySales:{}};
 function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};}
 let _autoSyncTimer=null;
+// 商品新增的管道很多（手動新增、複製、匯入、匯入時自動建立...），有些沒有幫忙寫上 sortOrder，
+// 導致「預設排序」拿到的是 undefined→當作0→大家全部並列在最前面，看某個小分類的時候特別明顯（全部因為東西多，比較不會發現）
+// 每次存檔前先補齊，新商品照順序排在「目前最後面」，不會全部擠在最前面
+function backfillMissingSortOrders(){
+  let maxSort=-10;
+  DB.products.forEach(p=>{if(typeof p.sortOrder==='number')maxSort=Math.max(maxSort,p.sortOrder);});
+  DB.products.forEach(p=>{
+    if(p.sortOrder===undefined||p.sortOrder===null){
+      maxSort+=10;
+      p.sortOrder=maxSort;
+    }
+  });
+}
 function saveDB(){
+  backfillMissingSortOrders();
   lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
   // 存到本機之後，順便排一個「延遲幾秒再同步到雲端」的動作（等她連續操作停下來才真的送出，
