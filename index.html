@@ -3135,12 +3135,6 @@ function renderCatSidebar(){
       <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
     </div>`;
   }
-  const noImgCount=DB.products.filter(p=>!p.img).length;
-  if(noImgCount>0){
-    rows+=`<div class="cat-sidebar-item ${activeCat==='__noimg__'?'active':''}" onclick="setCat('__noimg__')">
-      <span>🖼️</span><span class="ui-editable" data-ui-key="catlabel-noimg" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-noimg','缺照片')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${noImgCount}</span>
-    </div>`;
-  }
   rows+=`<div class="cat-sidebar-item ${activeCat==='__hot__'?'active':''}" onclick="setCat('__hot__')">
     <span>🔥</span><span class="ui-editable" data-ui-key="catlabel-hot" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-hot','熱銷商品')}</span>
   </div>`;
@@ -3170,7 +3164,7 @@ function renderCatSidebar(){
       ondrop="dropToCat(event,'${t}')"`;
     rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" data-cat-type="${t}" onclick="${clickAttr}" ${dragAttrs}>
       ${catReorderMode?`<span style="color:var(--text3);flex-shrink:0;cursor:grab;display:flex" title="拖曳排序"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span>`:''}
-      <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span>
+      <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span><span style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;margin-left:4px">${t}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
       ${catDeleteMode?`<span style="color:var(--red);display:inline-flex">${trashIcon}</span>`:''}
     </div>`;
@@ -3505,7 +3499,10 @@ function dropToCat(event,newType){
   ids.forEach(id=>{
     const p=DB.products.find(x=>x.id===id);
     if(!p)return;
+    // 拖進分類的時候，SKU 開頭幫忙帶入分類代碼——原本只有「SKU已經有字」才會換開頭，
+    // 完全空白的話什麼都不會發生，她要的是空白時也要自動幫她寫好開頭，不用整串自己打
     if(p.sku&&p.sku.length>=2)p.sku=newType+p.sku.slice(2);
+    else if(!p.sku)p.sku=newType;
     p.type=newType;p.updatedAt=Date.now();
   });
   pushUndo({label:`移動 ${ids.length} 件`,
@@ -3527,8 +3524,6 @@ function renderProducts(){
   const lastSoldMap=getLastSoldMap();
   if(activeCat==='__incomplete__'){
     ps=ps.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img);
-  } else if(activeCat==='__noimg__'){
-    ps=ps.filter(p=>!p.img);
   } else if(activeCat==='__hot__'){
     ps=ps.filter(p=>(salesMap[p.id]||0)>0);
   } else if(activeCat==='__stale__'){
@@ -4275,7 +4270,10 @@ function openStockModal(id){
             <div style="margin-bottom:4px">
               <div style="font-size:11px;color:var(--text2);font-weight:700">SKU</div>
             </div>
-            <input type="text" id="edit-sku" value="${p.sku||''}" class="form-input" style="font-size:13px;font-family:monospace">
+            <div style="display:flex;gap:6px">
+              <input type="text" id="edit-sku" value="${p.sku||''}" class="form-input" style="font-size:13px;font-family:monospace">
+              <button type="button" onclick="copyEditSku()" title="複製 SKU" style="flex-shrink:0;width:38px;border-radius:10px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+            </div>
           </div>
         </div>
         <div class="form-row" style="gap:8px">
@@ -5517,6 +5515,28 @@ function formatRawPaymentPreview(text,opts={}){
 // 沒有從匯入抓到任何付款資訊的單（例如手動新增的），這裡是一份預設模板，
 // 每個欄位都寫 0，不要整塊區域直接不見，讓畫面看起來一致
 const DEFAULT_PAYMENT_TEXT_TEMPLATE='商品总价 0\n运费(快递) 0\n首单礼金 - 0\n支付手续费 USD 0\n官方立减 - 0';
+// SKU 一鍵複製：手機上要選取文字再複製很麻煩，直接點按鈕複製整串 SKU 到剪貼簿
+function copyEditSku(){
+  const input=document.getElementById('edit-sku');
+  if(!input||!input.value){toast('SKU 是空的，沒東西可以複製','error');return;}
+  // navigator.clipboard 這個物件本身有時候就不存在（例如比較舊的瀏覽器），
+  // 不是呼叫 writeText() 才會失敗——要先檢查整個物件在不在，不然會直接噴錯，連 catch 都接不到
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(input.value).then(()=>{
+      toast('📋 SKU 已複製','success');
+    }).catch(()=>{
+      copyEditSkuFallback(input);
+    });
+  }else{
+    copyEditSkuFallback(input);
+  }
+}
+function copyEditSkuFallback(input){
+  // 退回選取文字這個舊方法
+  input.select();
+  try{document.execCommand('copy');toast('📋 SKU 已複製','success');}
+  catch(e){toast('複製失敗，麻煩手動選取複製','error');}
+}
 function findProductByAlias(rawName){
   if(!rawName)return null;
   const trimmed=rawName.trim();
@@ -6247,7 +6267,7 @@ function renderSaleCatSidebar(){
   TYPE_ORDER.forEach(t=>{
     const isActive=saleFilter===t;
     rows+=`<div class="cat-sidebar-item ${isActive?'active':''}" onclick="setSaleFilter('${t}')">
-      <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span>
+      <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-'+t,getTypeLabel(t))}</span><span style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;margin-left:4px">${t}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
     </div>`;
     if(isActive&&PATCH_TYPES.includes(t)){
