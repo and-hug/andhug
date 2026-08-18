@@ -193,6 +193,65 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 .oi-group-check{display:none;position:absolute;top:-6px;left:-6px;width:20px;height:20px;border-radius:50%;border:2px solid var(--brown);background:var(--surface);cursor:pointer;z-index:2;align-items:center;justify-content:center;font-size:11px;color:var(--brown);font-weight:800;}
 #order-items-list.group-select-mode .oi-group-check,#smart-import-list.group-select-mode .oi-group-check{display:flex;}
 .order-item-group .oi-group-check{display:none!important;}
+.si-bundle-toggle{width:40px;height:38px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;flex:0 0 40px;cursor:pointer;transition:all .15s;padding:0}
+.si-bundle-toggle:hover,.si-bundle-toggle.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
+.smart-import-review-row{grid-template-columns:40px 40px minmax(0,1fr) 124px 78px 36px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
+.smart-import-review-row .form-input,.si-bundle-component .form-input{height:38px;box-sizing:border-box}
+.smart-import-review-row>[id^="si-img-slot-"]{width:40px!important;height:38px!important;margin-top:0;border-radius:9px!important}
+.si-bundle-component>[id^="sibp-img-slot-"]{height:38px!important;margin-top:0;border-radius:9px!important}
+.smart-import-review-row .remove-btn{width:36px;height:34px;margin-top:2px;border-radius:9px}
+.si-bundle-component .remove-btn{width:36px;height:34px;margin-top:2px;border-radius:9px}
+.smart-import-review-name{min-width:0}
+.smart-import-review-name>.oi-linked-tag{min-height:16px;margin-top:3px}
+.smart-import-price-cell{position:relative;min-width:0}
+.smart-import-price-cell>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px;pointer-events:none}
+.smart-import-price-cell>.form-input{padding-left:26px}
+.smart-import-qty-cell{text-align:center}
+.order-items-header,.order-form-review-row{display:grid;grid-template-columns:40px 40px minmax(0,1fr) 124px 78px 36px;gap:8px;align-items:start}
+.order-items-header{margin-bottom:5px}
+.order-form-review-row{margin-bottom:12px}
+#modal-order .form-input:not(.oi-origcost-input){height:38px}
+.order-form-review-row .form-input{height:auto;box-sizing:border-box}
+.order-form-review-row>[id^="oi-img-slot-"]{width:40px!important;height:38px!important;margin-top:0;border-radius:9px!important}
+.order-form-review-row .remove-btn{width:36px;height:34px;margin-top:2px;border-radius:9px}
+.order-form-review-name{min-width:0}
+.order-form-review-name>.oi-linked-tag{min-height:16px;margin-top:3px}
+.order-row-group-icon{width:40px;height:38px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;padding:0}
+.order-row-group-icon:hover,.order-row-group-icon.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
+.order-row-group-icon.active{box-shadow:0 0 0 2px rgba(139,111,71,.14)}
+.order-item-group .order-row-group-icon{visibility:hidden;pointer-events:none}
+.order-form-cost-cell{display:flex;align-items:flex-start;gap:4px;flex-wrap:wrap;min-width:0}
+.order-form-cost-main{position:relative;flex:1;min-width:82px}
+.order-form-cost-main>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
+.order-form-cost-main>.form-input{padding-left:24px}
+.order-form-qty-cell{text-align:center}
+.order-form-review-row .lock-icon{width:36px;height:34px!important;margin-top:2px;border-radius:9px;box-sizing:border-box}
+.si-bundle-panel{grid-column:1/-1;margin:0 0 10px 96px;padding:12px;border:1.5px dashed var(--cream4);border-radius:12px;background:var(--cream1);min-width:0}
+.si-bundle-component{display:grid;grid-template-columns:44px minmax(0,1fr) 108px 44px;gap:10px;align-items:start;margin-top:9px}
+.si-bundle-search-wrap{position:relative;min-width:0}
+.si-bundle-search-wrap>.oi-linked-tag{min-height:16px;margin-top:3px}
+.si-bundle-search-wrap .oi-suggest-list{top:calc(100% + 2px);left:0;right:0;border-color:var(--cream4);border-radius:12px;background:var(--surface);box-shadow:0 8px 22px rgba(139,111,71,.18);z-index:160}
+.si-bundle-search-wrap .oi-suggest-item{padding:8px 10px;border-bottom:1px solid var(--cream2)}
+.si-bundle-search-wrap .oi-suggest-item:last-child{border-bottom:none}
+@media(max-width:700px){
+  .smart-import-review-row{grid-template-columns:40px 40px minmax(0,1fr) 36px!important;gap:8px!important}
+  .smart-import-review-row>.si-bundle-toggle{grid-column:1;grid-row:1}
+  .smart-import-review-row>[id^="si-img-slot-"]{grid-column:2;grid-row:1}
+  .smart-import-review-name{grid-column:3;grid-row:1}
+  .smart-import-price-cell{grid-column:1/3;grid-row:2}
+  .smart-import-qty-cell{grid-column:3;grid-row:2}
+  .smart-import-review-row>.remove-btn{grid-column:4;grid-row:1}
+  .si-bundle-panel{margin-left:0}
+  .si-bundle-component{grid-template-columns:44px minmax(0,1fr) 76px 44px;gap:8px}
+  .order-items-header{display:none}
+  .order-form-review-row{grid-template-columns:40px 40px minmax(0,1fr) 36px;gap:8px}
+  .order-form-review-row>.order-row-group-icon{grid-column:1;grid-row:1}
+  .order-form-review-row>[id^="oi-img-slot-"]{grid-column:2;grid-row:1}
+  .order-form-review-name{grid-column:3;grid-row:1}
+  .order-form-cost-cell{grid-column:1/3;grid-row:2}
+  .order-form-qty-cell{grid-column:3;grid-row:2}
+  .order-form-review-row>.remove-btn,.order-form-review-row>.lock-icon{grid-column:4;grid-row:1}
+}
 .oi-group-check.checked{background:var(--brown);color:#fff;}
 .oi-group-check.checked::after{content:'✓';}
 .oi-suggest-wrap{position:relative;}
@@ -204,6 +263,10 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 .oi-linked-tag{font-size:10px;color:var(--brown);font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px;}
 .oi-linked-tag.oi-new{color:var(--text3);font-weight:600;}
 .remove-btn{width:34px;height:38px;border-radius:8px;background:var(--red-light);border:1.5px solid #fca5a5;color:var(--red);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.modal-close,.remove-btn{position:relative;font-size:0!important;line-height:0;padding:0!important}
+.modal-close::before,.modal-close::after,.remove-btn::before,.remove-btn::after{content:'';position:absolute;left:50%;top:50%;width:11px;height:1.5px;background:currentColor;border-radius:999px;pointer-events:none;transform-origin:center}
+.modal-close::before,.remove-btn::before{transform:translate(-50%,-50%) rotate(45deg)}
+.modal-close::after,.remove-btn::after{transform:translate(-50%,-50%) rotate(-45deg)}
 .remove-btn:hover{background:var(--red);color:#fff;}
 .rate-bar{display:flex;align-items:center;gap:10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--text2);font-weight:600;margin-bottom:20px;}
 .rate-val{font-family:'Nunito',sans-serif;font-weight:800;color:var(--brown);font-size:14px;}
@@ -215,6 +278,15 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 .sku-table td{padding:8px 10px;font-size:12px;border-bottom:1px solid var(--cream2);color:var(--text);}
 .code-badge{font-family:monospace;background:var(--brown);color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;}
 .color-dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:4px;border:1.5px solid rgba(0,0,0,0.1);}
+.sku-color-btn{width:100%;height:36px;border-radius:9px;border:1.5px solid var(--cream3);background:var(--cream2);padding:4px;display:flex;align-items:center;gap:3px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.sku-color-btn:hover,.sku-color-btn.active{border-color:var(--brown);box-shadow:0 0 0 2px rgba(139,111,71,.12)}
+.sku-color-preview{height:100%;flex:1;border-radius:6px;border:1px solid rgba(61,47,31,.18)}
+.sku-color-popover{position:fixed;z-index:10000;width:236px;max-width:calc(100vw - 24px);background:var(--cream);border:1.5px solid var(--cream3);border-radius:16px;padding:12px;box-shadow:0 12px 32px rgba(61,47,31,.20)}
+.sku-color-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin:9px 0 11px}
+.sku-color-choice{width:100%;aspect-ratio:1;border-radius:8px;border:1.5px solid rgba(61,47,31,.15);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.sku-color-choice:hover{transform:scale(1.08);box-shadow:0 2px 7px rgba(61,47,31,.18)}
+.sku-color-hex-row{height:36px;display:flex;align-items:center;gap:5px;background:var(--surface);border:1.5px solid var(--cream3);border-radius:9px;padding:0 10px;color:var(--text3);font-family:monospace}
+.sku-color-hex-row input{min-width:0;flex:1;border:none;outline:none;background:transparent;color:var(--text);font:700 12px monospace;text-transform:uppercase}
 .order-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--cream3);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
 .alert-card{background:var(--yellow-light);border:1.5px solid var(--yellow);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px;}
 .cat-sidebar-item{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:8px;}
@@ -938,10 +1010,6 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         <button type="button" class="btn btn-secondary btn-sm" onclick="addSkuColorRow()">+ 新增顏色</button>
       </div>
     </div>
-    <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:-12px;margin-bottom:28px">
-      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits()">💾 儲存變更</button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()">取消</button>
-    </div>
     <div class="sku-section">
       <div class="sku-section-title" style="display:flex;align-items:center;justify-content:space-between">
         <span>📏 尺寸代碼 · 售價 (毛布貼+$1)</span>
@@ -950,6 +1018,11 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div id="sku-sizes-add-row" class="hidden" style="margin-top:10px">
         <button type="button" class="btn btn-secondary btn-sm" onclick="addSkuSizeRow()">+ 新增尺寸</button>
       </div>
+    </div>
+    <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1.5px solid var(--cream3)">
+      <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()">↩ 復原</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()">取消</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits()">💾 儲存變更</button>
     </div>
   </div>
 </div>
@@ -1075,7 +1148,8 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         </div>
       </div>
       <div class="section-title" style="margin-bottom:10px;display:flex;align-items:center;gap:10px">商品清單<button class="btn btn-secondary btn-sm hidden" id="order-unlock-btn" onclick="unlockOrderItems()" style="font-weight:400"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8,11 V8.5 a4 4 0 0 1 7.3-2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg>解鎖編輯</button></div>
-      <div style="display:grid;grid-template-columns:36px 1fr 96px 70px 34px;gap:8px;margin-bottom:4px">
+      <div class="order-items-header">
+        <span></span>
         <span></span>
         <label style="font-size:9.5px;color:var(--text3);font-weight:700">商品名稱</label>
         <label style="font-size:9.5px;color:var(--text3);font-weight:700">商品金額（¥）</label>
@@ -1085,7 +1159,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div id="order-items-list"></div>
       <div style="display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="addOrderItem()">+ 新增商品項目</button>
-        <button type="button" class="btn btn-secondary btn-sm" id="order-group-toggle-btn" onclick="toggleOrderGroupSelectMode()" style="display:inline-flex!important;visibility:visible;opacity:1">🔗 組合</button>
+        <button type="button" class="btn btn-primary btn-sm hidden" id="order-group-toggle-btn" onclick="finishOrderRowGroupSelection()">✓ 完成組合</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
         <button class="btn btn-secondary hidden" id="order-back-btn" onclick="backToOrderDetail()">← 返回詳情</button>
@@ -1309,7 +1383,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 <div class="modal-overlay hidden" id="modal-smart-import">
   <div class="modal" style="max-width:640px">
     <div class="modal-header">
-      <div class="modal-title">📥 智慧匯入採購表</div>
+      <div class="modal-title">📥 智慧匯入採購表 <span style="font-size:9px;font-weight:800;color:#fff;background:var(--brown);border-radius:999px;padding:3px 7px;margin-left:6px;white-space:nowrap">修正版 0818-S</span></div>
       <button class="modal-close" onclick="closeModal('modal-smart-import')">×</button>
     </div>
     <div class="modal-body">
@@ -1340,7 +1414,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         <div id="smart-import-list" style="max-height:45vh;overflow-y:auto"></div>
         <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
           <button class="btn btn-secondary btn-sm" onclick="smartImportAddRow()">+ 手動新增一列</button>
-          <button class="btn btn-secondary btn-sm" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()">🔗 組合</button>
+          <button class="btn btn-secondary btn-sm hidden" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()" title="舊版多列組合功能">🔗 組合</button>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
           <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')">取消</button>
@@ -3322,10 +3396,69 @@ const DEFAULT_SKU_COLORS=[
   {code:'99',label:'三色以上',hex:''},{code:'00',label:'無色',hex:''}
 ];
 let skuEditMode=false, skuCatsDraft=null, skuColorsDraft=null, skuTypesDraft=null, skuSizesDraft=null;
+let skuUndoStack=[],skuRedoStack=[],skuFieldEditBefore=null;
 function getSkuSizes(){return DB.skuSizes&&DB.skuSizes.length?DB.skuSizes:DEFAULT_SKU_SIZES;}
 function getSkuTypes(){return DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:DEFAULT_SKU_TYPES;}
 function getSkuCats(){return DB.skuCats&&DB.skuCats.length?DB.skuCats:DEFAULT_SKU_CATS;}
 function getSkuColors(){return DB.skuColors&&DB.skuColors.length?DB.skuColors:DEFAULT_SKU_COLORS;}
+function getSkuDraftSnapshot(){
+  return JSON.parse(JSON.stringify({types:skuTypesDraft||[],sizes:skuSizesDraft||[],cats:skuCatsDraft||[],colors:skuColorsDraft||[]}));
+}
+function applySkuDraftSnapshot(s){
+  if(!s)return;
+  skuTypesDraft=JSON.parse(JSON.stringify(s.types||[]));
+  skuSizesDraft=JSON.parse(JSON.stringify(s.sizes||[]));
+  skuCatsDraft=JSON.parse(JSON.stringify(s.cats||[]));
+  skuColorsDraft=JSON.parse(JSON.stringify(s.colors||[]));
+}
+function updateSkuUndoButton(){
+  const btn=document.getElementById('sku-undo-btn');
+  if(!btn)return;
+  btn.disabled=!skuUndoStack.length;
+  btn.style.opacity=skuUndoStack.length?'1':'.45';
+  btn.style.cursor=skuUndoStack.length?'pointer':'not-allowed';
+}
+function pushSkuUndoEntry(label,before,after){
+  if(JSON.stringify(before)===JSON.stringify(after))return;
+  skuUndoStack.push({label,before,after});
+  if(skuUndoStack.length>40)skuUndoStack.shift();
+  skuRedoStack=[];
+  updateSkuUndoButton();
+}
+function beginSkuFieldEdit(){
+  if(!skuEditMode||skuFieldEditBefore)return;
+  skuFieldEditBefore=getSkuDraftSnapshot();
+}
+function commitSkuFieldEdit(label){
+  if(!skuFieldEditBefore)return;
+  const before=skuFieldEditBefore;
+  skuFieldEditBefore=null;
+  pushSkuUndoEntry(label||'修改 SKU 規則',before,getSkuDraftSnapshot());
+}
+function runSkuDraftAction(label,fn,renderFn){
+  commitSkuFieldEdit();
+  const before=getSkuDraftSnapshot();
+  fn();
+  pushSkuUndoEntry(label,before,getSkuDraftSnapshot());
+  (renderFn||renderSkuPage)();
+}
+function skuUndoEdit(){
+  commitSkuFieldEdit();
+  const entry=skuUndoStack.pop();
+  if(!entry){toast('沒有可以復原的 SKU 編輯','error');updateSkuUndoButton();return;}
+  applySkuDraftSnapshot(entry.before);
+  skuRedoStack.push(entry);
+  renderSkuPage();
+  toast('↩ 已復原：'+entry.label,'success');
+}
+function skuRedoEdit(){
+  const entry=skuRedoStack.pop();
+  if(!entry){toast('沒有可以重做的 SKU 編輯','error');return;}
+  applySkuDraftSnapshot(entry.after);
+  skuUndoStack.push(entry);
+  renderSkuPage();
+  toast('↪ 已重做：'+entry.label,'success');
+}
 function renderSkuPage(){
   renderSkuTypesTable();
   renderSkuSizesTable();
@@ -3337,6 +3470,7 @@ function renderSkuPage(){
   document.getElementById('sku-colors-add-row').classList.toggle('hidden',!skuEditMode);
   document.getElementById('sku-edit-save-actions').classList.toggle('hidden',!skuEditMode);
   document.getElementById('sku-edit-toggle-btn').textContent=skuEditMode?'👁 檢視模式':'✏️ 編輯規則';
+  updateSkuUndoButton();
 }
 function renderSkuSizesTable(){
   const wrap=document.getElementById('sku-sizes-table-wrap');
@@ -3384,6 +3518,7 @@ function renderSkuCatsTable(){
   }
 }
 function renderSkuColorsTable(){
+  closeSkuColorPicker();
   const wrap=document.getElementById('sku-colors-table-wrap');
   const rows=skuEditMode?skuColorsDraft:getSkuColors();
   if(!skuEditMode){
@@ -3396,62 +3531,121 @@ function renderSkuColorsTable(){
     wrap.innerHTML=rows.map((r,i)=>`<div style="display:grid;grid-template-columns:50px 1fr 60px 32px;gap:8px;margin-bottom:8px;align-items:center">
       <input class="form-input" style="font-size:12px;text-align:center" value="${r.code}" maxlength="2" oninput="skuColorsDraft[${i}].code=this.value">
       <input class="form-input" style="font-size:12px" value="${r.label}" oninput="skuColorsDraft[${i}].label=this.value">
-      <input type="color" style="width:100%;height:36px;border-radius:8px;border:1.5px solid var(--cream3);cursor:pointer" value="${r.hex||'#cccccc'}" oninput="skuColorsDraft[${i}].hex=this.value">
+      <button type="button" class="sku-color-btn" data-sku-color-index="${i}" onclick="openSkuColorPicker(event,${i})" aria-label="選擇 ${r.label||r.code} 的顏色"><span class="sku-color-preview" style="background:${normalizeSkuColorHex(r.hex)||'#cccccc'}"></span><span aria-hidden="true" style="width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid var(--text3);margin-right:1px"></span></button>
       <button class="remove-btn" onclick="removeSkuColorRow(${i})">×</button>
     </div>`).join('');
   }
 }
+function normalizeSkuColorHex(value){
+  let v=String(value||'').trim().replace(/^#/,'');
+  if(/^[0-9a-fA-F]{3}$/.test(v))v=v.split('').map(ch=>ch+ch).join('');
+  return /^[0-9a-fA-F]{6}$/.test(v)?'#'+v.toLowerCase():null;
+}
+function closeSkuColorPicker(){
+  const pop=document.getElementById('sku-color-popover');
+  if(pop)pop.remove();
+  document.querySelectorAll('.sku-color-btn.active').forEach(btn=>btn.classList.remove('active'));
+}
+function applySkuDraftColor(i,value){
+  const hex=normalizeSkuColorHex(value);
+  if(!hex){toast('請輸入 3 或 6 碼 HEX 色碼','error');return;}
+  commitSkuFieldEdit();
+  const before=getSkuDraftSnapshot();
+  if(!skuColorsDraft[i])return;
+  skuColorsDraft[i].hex=hex;
+  pushSkuUndoEntry('修改顏色',before,getSkuDraftSnapshot());
+  const preview=document.querySelector(`.sku-color-btn[data-sku-color-index="${i}"] .sku-color-preview`);
+  if(preview)preview.style.background=hex;
+  closeSkuColorPicker();
+}
+function openSkuColorPicker(event,i){
+  if(event){event.preventDefault();event.stopPropagation();}
+  const button=event&&event.currentTarget;
+  const existing=document.getElementById('sku-color-popover');
+  if(existing&&existing.dataset.index===String(i)){closeSkuColorPicker();return;}
+  closeSkuColorPicker();
+  if(!button||!skuColorsDraft||!skuColorsDraft[i])return;
+  button.classList.add('active');
+  const current=normalizeSkuColorHex(skuColorsDraft[i].hex)||'#cccccc';
+  const presetSource=[current,...getSkuColors().map(r=>r.hex),...DEFAULT_SKU_COLORS.map(r=>r.hex)];
+  const presets=[...new Set(presetSource.map(normalizeSkuColorHex).filter(Boolean))].slice(0,21);
+  const pop=document.createElement('div');
+  pop.id='sku-color-popover';
+  pop.className='sku-color-popover';
+  pop.dataset.index=String(i);
+  pop.onclick=e=>e.stopPropagation();
+  pop.innerHTML=`<div style="font-size:12px;font-weight:800;color:var(--brown)">🎨 選擇顏色</div>
+    <div class="sku-color-grid">${presets.map(hex=>`<button type="button" class="sku-color-choice" style="background:${hex};${hex==='#ffffff'?'box-shadow:inset 0 0 0 1px #d7cfc2':''}" onclick="applySkuDraftColor(${i},'${hex}')" aria-label="選擇 ${hex}" title="${hex}"></button>`).join('')}</div>
+    <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:5px">HEX 色碼</div>
+    <div class="sku-color-hex-row"><span>#</span><input id="sku-color-hex-input" value="${current.slice(1)}" maxlength="6" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();applySkuDraftColor(${i},this.value)}"></div>
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><button type="button" class="btn btn-secondary btn-sm" onclick="closeSkuColorPicker()">取消</button><button type="button" class="btn btn-primary btn-sm" onclick="applySkuDraftColor(${i},document.getElementById('sku-color-hex-input').value)">套用</button></div>`;
+  document.body.appendChild(pop);
+  const rect=button.getBoundingClientRect();
+  const gap=7;
+  let left=Math.max(12,Math.min(window.innerWidth-pop.offsetWidth-12,rect.right-pop.offsetWidth));
+  let top=rect.bottom+gap;
+  if(top+pop.offsetHeight>window.innerHeight-12)top=Math.max(12,rect.top-pop.offsetHeight-gap);
+  pop.style.left=left+'px';pop.style.top=top+'px';
+  setTimeout(()=>{const input=document.getElementById('sku-color-hex-input');if(input){input.focus();input.select();}},0);
+}
+document.addEventListener('click',function(e){
+  const pop=document.getElementById('sku-color-popover');
+  if(pop&&!pop.contains(e.target)&&!e.target.closest('.sku-color-btn'))closeSkuColorPicker();
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&document.getElementById('sku-color-popover')){
+    e.preventDefault();e.stopImmediatePropagation();closeSkuColorPicker();
+  }
+});
+window.addEventListener('resize',closeSkuColorPicker);
+window.addEventListener('scroll',closeSkuColorPicker,true);
 function toggleSkuEditMode(){
   if(!skuEditMode){
     skuTypesDraft=JSON.parse(JSON.stringify(getSkuTypes()));
     skuSizesDraft=JSON.parse(JSON.stringify(getSkuSizes()));
     skuCatsDraft=JSON.parse(JSON.stringify(getSkuCats()));
     skuColorsDraft=JSON.parse(JSON.stringify(getSkuColors()));
+    skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
     skuEditMode=true;
   }else{
     skuEditMode=false;
+    skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
   }
   renderSkuPage();
 }
 function addSkuSizeRow(){
-  skuSizesDraft.push({code:'',label:'',price:0});
-  renderSkuSizesTable();
+  runSkuDraftAction('新增尺寸',()=>skuSizesDraft.push({code:'',label:'',price:0}),renderSkuSizesTable);
 }
 function removeSkuSizeRow(i){
-  skuSizesDraft.splice(i,1);
-  renderSkuSizesTable();
+  runSkuDraftAction('刪除尺寸',()=>skuSizesDraft.splice(i,1),renderSkuSizesTable);
 }
 function addSkuTypeRow(){
-  skuTypesDraft.push({code:'',label:''});
-  renderSkuTypesTable();
+  runSkuDraftAction('新增商品類型',()=>skuTypesDraft.push({code:'',label:''}),renderSkuTypesTable);
 }
 function removeSkuTypeRow(i){
-  skuTypesDraft.splice(i,1);
-  renderSkuTypesTable();
+  runSkuDraftAction('刪除商品類型',()=>skuTypesDraft.splice(i,1),renderSkuTypesTable);
 }
 function addSkuCatRow(){
-  skuCatsDraft.push({code:'',label:'',sub:''});
-  renderSkuCatsTable();
+  runSkuDraftAction('新增布貼大類',()=>skuCatsDraft.push({code:'',label:'',sub:''}),renderSkuCatsTable);
 }
 function removeSkuCatRow(i){
-  skuCatsDraft.splice(i,1);
-  renderSkuCatsTable();
+  runSkuDraftAction('刪除布貼大類',()=>skuCatsDraft.splice(i,1),renderSkuCatsTable);
 }
 function addSkuColorRow(){
-  skuColorsDraft.push({code:'',label:'',hex:'#cccccc'});
-  renderSkuColorsTable();
+  runSkuDraftAction('新增顏色',()=>skuColorsDraft.push({code:'',label:'',hex:'#cccccc'}),renderSkuColorsTable);
 }
 function removeSkuColorRow(i){
-  skuColorsDraft.splice(i,1);
-  renderSkuColorsTable();
+  runSkuDraftAction('刪除顏色',()=>skuColorsDraft.splice(i,1),renderSkuColorsTable);
 }
 function saveSkuEdits(){
+  commitSkuFieldEdit();
   DB.skuTypes=skuTypesDraft.filter(r=>r.code&&r.label);
   DB.skuSizes=skuSizesDraft.filter(r=>r.code&&r.label);
   DB.skuCats=skuCatsDraft.filter(r=>r.code&&r.label);
   DB.skuColors=skuColorsDraft.filter(r=>r.code&&r.label);
   saveDB();
   skuEditMode=false;
+  skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
   renderSkuPage();
   // 商品類型的名稱改了，商品庫、開單頁側邊欄跟各種下拉選單都要跟著刷新，
   // 不然她要切頁再切回來才看得到新名稱
@@ -3464,8 +3658,17 @@ function saveSkuEdits(){
 function cancelSkuEdits(){
   skuEditMode=false;
   skuTypesDraft=null;skuSizesDraft=null;skuCatsDraft=null;skuColorsDraft=null;
+  skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
   renderSkuPage();
 }
+// SKU 編輯中的輸入欄位以「一次聚焦到離開欄位」視為一筆修改，
+// 因此文字、數字與顏色都能用畫面上的復原鍵或 Cmd/Ctrl+Z 回復。
+document.addEventListener('focusin',function(e){
+  if(skuEditMode&&e.target&&e.target.matches('#page-sku input'))beginSkuFieldEdit();
+});
+document.addEventListener('change',function(e){
+  if(skuEditMode&&e.target&&e.target.matches('#page-sku input'))commitSkuFieldEdit('修改 SKU 規則');
+});
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
@@ -3560,9 +3763,16 @@ document.addEventListener('keydown',function(e){
     }
     return;
   }
-  // input/textarea 不攔截
+  // SKU 規則正在編輯時，優先復原整筆規則修改；即使游標仍停在輸入框也能使用。
+  if(skuEditMode&&currentPage==='sku'){
+    if(k==='z'&&!e.shiftKey){e.preventDefault();skuUndoEdit();return;}
+    if((k==='z'&&e.shiftKey)||k==='y'){e.preventDefault();skuRedoEdit();return;}
+  }
+  // 一般文字輸入框保留瀏覽器自己的文字復原；但選照片後焦點常停在 file input，
+  // 這種情況要讓網站的照片復原接手，否則按 Cmd/Ctrl+Z 會完全沒反應。
   const t=e.target;
-  if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable))return;
+  const isFileInput=t&&t.tagName==='INPUT'&&String(t.type||'').toLowerCase()==='file';
+  if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable)&&!isFileInput)return;
   if(k==='z'&&!e.shiftKey){e.preventDefault();doUndo();}
   else if((k==='z'&&e.shiftKey)||k==='y'){e.preventDefault();doRedo();}
 });
@@ -4335,27 +4545,10 @@ function openStockModal(id){
     <div>
     <div style="font-weight:700;color:var(--text2);margin-bottom:6px;font-size:9px;text-transform:uppercase;letter-spacing:1px">大類/子類</div>
     <div style="display:flex;flex-direction:column;gap:3px;font-size:9px">
-      ${[
-        {c:'01',n:'AN 動物',sub:'01貓·02犬·03熊·04小型·05草食·06靈長·07鳥·08爬蟲·09昆蟲'},
-        {c:'02',n:'OC 海洋',sub:'01魚·02鯨豚·03甲殼·04軟體·05爬蟲·06棘皮'},
-        {c:'03',n:'CH 角色',sub:'01擬人·02幽靈鬼怪·03造型·04臉/表情·05人物·06機器人'},
-        {c:'04',n:'PT 植物',sub:'01花·02葉樹·03仙人掌'},
-        {c:'05',n:'FD 食物',sub:'01亞洲·02西式·03甜點·04水果·99其他'},
-        {c:'06',n:'DR 飲料',sub:'01酒·02飲料·03咖啡'},
-        {c:'07',n:'SY 符號',sub:'01愛心·02星星·03蝴蝶結·04幾何·05音樂·06宗教'},
-        {c:'08',n:'EM 物品',sub:'01配件·02電器·03文具·04露營·05廚房'},
-        {c:'09',n:'TR 運輸',sub:'01車·02兩輪·03飛機·04船'},
-        {c:'10',n:'TX 文字',sub:'01英文·02中文·03節慶'},
-        {c:'11',n:'LT 字母',sub:'01字母·02數字·03組合'},
-        {c:'12',n:'BL 球類',sub:'01足·02籃·03棒·04美式·05排網'},
-        {c:'13',n:'SP 運動',sub:'01水上·02極限·03武術'},
-        {c:'14',n:'SE 節慶',sub:'01農曆·02情人·03復活·04萬聖·05感恩·06聖誕'},
-        {c:'15',n:'UN 宇宙',sub:'01星球·02星座·03外星世界·04天氣'},
-        {c:'99',n:'SP 特別',sub:'01聯名·02限定·03訂製'},
-      ].map(x=>`<div style="margin-bottom:4px">
+      ${getSkuCats().map(x=>`<div style="margin-bottom:4px">
         <div style="padding:2px 0">
-          <div style="font-family:monospace;font-weight:800;font-size:9px;color:#fff;background:var(--brown);border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:1px">${x.c} ${x.n}</div>
-          <div style="color:var(--text3);font-size:8px;line-height:1.6;display:flex;flex-wrap:wrap;gap:1px 4px">${x.sub.split('·').map(s=>`<span style="white-space:nowrap">${s.trim()}</span>`).join('')}</div>
+          <div style="font-family:monospace;font-weight:800;font-size:9px;color:#fff;background:var(--brown);border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:1px">${smartImportEsc(x.code)} ${smartImportEsc(x.label)}</div>
+          <div style="color:var(--text3);font-size:8px;line-height:1.6;display:flex;flex-wrap:wrap;gap:1px 4px">${String(x.sub||'').split(/\s*[·／\/]\s*/).filter(Boolean).map(s=>`<span style="white-space:nowrap">${smartImportEsc(s.trim())}</span>`).join('')}</div>
         </div>
       </div>`).join('')}
     </div>
@@ -4363,12 +4556,9 @@ function openStockModal(id){
     <div style="border-left:1px solid var(--cream3);padding-left:10px;margin-left:4px">
     <div style="font-weight:700;color:var(--text2);margin-bottom:6px;font-size:9px;text-transform:uppercase;letter-spacing:1px">顏色</div>
     <div style="display:flex;flex-direction:column;gap:1px;font-size:9px">
-      ${[['01','白'],['02','黑'],['03','灰'],['04','紅'],['05','橘'],['06','黃'],
-         ['07','綠'],['08','藍'],['09','紫'],['10','米'],['11','棕'],['12','粉紅'],
-         ['13','粉綠'],['14','粉藍'],['99','三色+'],['00','無色']
-        ].map(([c,n])=>`<div style="display:flex;gap:4px;align-items:center;padding:1px 0">
-          <span style="font-family:monospace;font-weight:800;color:var(--brown);min-width:16px">${c}</span>
-          <span style="color:var(--text2)">${n}</span>
+      ${getSkuColors().map(color=>`<div style="display:flex;gap:4px;align-items:center;padding:1px 0">
+          <span style="font-family:monospace;font-weight:800;color:var(--brown);min-width:16px">${smartImportEsc(color.code)}</span>
+          <span style="color:var(--text2)">${smartImportEsc(color.label)}</span>
         </div>`).join('')}
     </div>
     </div>
@@ -4436,7 +4626,7 @@ function openStockModal(id){
         ${p.variants.map(v=>`<div style="display:flex;align-items:center;gap:5px;background:var(--cream2);border-radius:8px;padding:5px 8px">
           <span style="font-weight:800;font-size:13px;min-width:20px;text-align:center">${v.label}</span>
           <span style="width:1px;align-self:stretch;background:var(--cream4);margin:0 2px"></span>
-          <span class="stock-count" id="sc-v-${v.id}" style="font-size:13px">${v.stock||0}</span>
+          <input type="number" class="stock-count" id="sc-v-${v.id}" value="${v.stock||0}" min="0" inputmode="numeric" aria-label="${v.label} 款式庫存" onfocus="this.select()" onchange="setVariantStockDirect('${id}','${v.id}',this.value)" style="font-size:13px;width:40px;background:var(--surface);border:1.5px solid var(--cream3);border-radius:7px;padding:3px 2px;outline:none">
           <div style="display:flex;gap:3px"><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
         </div>`).join('')}
       </div>`:`
@@ -4672,6 +4862,19 @@ function setStockDirect(id,val){
   p.status='ok';
   saveDB();
 }
+function setVariantStockDirect(productId,variantId,val){
+  const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
+  const v=p.variants.find(x=>x.id===variantId);if(!v)return;
+  v.stock=Math.max(0,parseInt(val,10)||0);
+  p.stock=p.variants.reduce((sum,item)=>sum+(item.stock||0),0);
+  p.status='ok';
+  p.updatedAt=Date.now();
+  const input=document.getElementById('sc-v-'+variantId);
+  if(input)input.value=v.stock;
+  const total=document.getElementById('sc-variant-total');
+  if(total)total.textContent=p.stock;
+  saveDB();
+}
 function adjStock(id,type,d){const p=DB.products.find(x=>x.id===id);if(!p)return;if(type==='ok'){p.stock=Math.max(0,(p.stock||0)+d);p.status='ok';document.getElementById('sc-ok').value=p.stock;}else if(type==='defect'){p.defectStock=Math.max(0,(p.defectStock||0)+d);}else if(type==='display'){p.displayStock=Math.max(0,(p.displayStock||0)+d);}saveDB();}
 let orderSortMode='newest';
 const ORDER_SORT_OPTIONS=[
@@ -4781,6 +4984,7 @@ let smartImportMeta=null; // 從 PDF 額外抓到的店名/訂單編號/日期/�
 let currentImportDraftId=null; // 目前是不是從某份既有草稿繼續編輯，是的話存那份草稿的 id
 function openSmartImport(){
   smartImportItems=[];
+  smartImportBundleExpanded=new Set();
   smartImportMeta=null;
   currentImportDraftId=null;
   smartImportGroupSelectMode=false;
@@ -4870,6 +5074,7 @@ function resumeImportDraft(id){
     return;
   }
   smartImportItems=JSON.parse(JSON.stringify(d.items||[]));
+  smartImportBundleExpanded=new Set();
   smartImportMeta=d.meta?JSON.parse(JSON.stringify(d.meta)):null;
   currentImportDraftId=id;
   document.getElementById('smart-import-excel-input').value='';
@@ -5298,6 +5503,189 @@ async function handleSmartImportPDF(input){
     toast('PDF 讀取失敗：'+String(err&&err.message||err),'error');
   }
 }
+let smartImportBundleExpanded=new Set();
+function smartImportEsc(v){
+  return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function smartImportBundleKey(it){
+  if(!it._bundleKey)it._bundleKey='sib-'+uid();
+  return it._bundleKey;
+}
+function smartImportBundleToggleHtml(i,it){
+  const key=smartImportBundleKey(it);
+  const active=Array.isArray(it.bundleItems)&&it.bundleItems.length>0;
+  const open=smartImportBundleExpanded.has(key);
+  return `<button type="button" class="si-bundle-toggle${active?' active':''}" onclick="toggleSmartImportBundle(${i})" title="${open?'收合組合內容':'設定這個商品包含哪些組合商品'}" aria-label="設定組合內容" aria-expanded="${open?'true':'false'}">
+    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span style="font-size:8px;margin-left:-2px">${open?'▴':'▾'}</span>
+  </button>`;
+}
+function smartImportBundlePanelHtml(i,it){
+  const key=smartImportBundleKey(it);
+  if(!smartImportBundleExpanded.has(key))return '';
+  if(!Array.isArray(it.bundleItems))it.bundleItems=[];
+  const rows=it.bundleItems.map((part,j)=>`<div class="si-bundle-component">
+    ${smartImportBundlePartPhotoSlotHtml(i,j,part.img||'')}
+    <div class="si-bundle-search-wrap oi-suggest-wrap">
+      <input type="text" class="form-input" value="${smartImportEsc(part.name)}" placeholder="輸入關鍵字搜尋，例如：星星" autocomplete="off" style="font-size:11px" oninput="smartImportBundleShowSuggestions(this,${i},${j})" onblur="hideOrderItemSuggestionsLater(this)">
+      <div class="oi-linked-tag">${smartImportBundleLinkedTag(part)}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:3px"><input type="number" class="form-input" value="${Math.max(1,parseInt(part.qty)||1)}" min="1" step="1" style="font-size:11px;text-align:center" onchange="smartImportUpdateBundlePart(${i},${j},'qty',this.value)"><span style="font-size:9px;color:var(--text3);white-space:nowrap">個/組</span></div>
+    <button type="button" class="remove-btn" onclick="smartImportRemoveBundlePart(${i},${j})" title="刪除這個組合商品">×</button>
+  </div>`).join('');
+  return `<div class="si-bundle-panel">
+    <div style="font-size:11px;font-weight:800;color:var(--brown)">🔗「${smartImportEsc(it.name||'這個商品')}」裡面包含：</div>
+    <div style="font-size:9px;color:var(--text3);margin-top:2px">匯入採購單時會自動拆成以下商品，並放在同一個組合框內；原本總價會平均分配，不會重複計算。</div>
+    ${rows||'<div style="font-size:10px;color:var(--text3);padding:8px 0 2px">還沒有組合商品，按下面新增。</div>'}
+    <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="smartImportAddBundlePart(${i})">＋ 新增組合商品</button>
+  </div>`;
+}
+function smartImportBundlePartPhotoSlotHtml(i,j,img){
+  const key=`${i}-${j}`;
+  return `<div id="sibp-img-slot-${key}" style="width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s;box-sizing:border-box" onclick="document.getElementById('sibp-img-input-${key}').click()" title="幫這個組合商品加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processSmartImportBundlePartImgFile(event.dataTransfer.files[0],${i},${j})"><img id="sibp-img-thumb-${key}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="sibp-img-placeholder-${key}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="sibp-img-input-${key}" style="display:none" onchange="processSmartImportBundlePartImgFile(event.target.files[0],${i},${j})">`;
+}
+function processSmartImportBundlePartImgFile(f,i,j){
+  const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
+  if(!part||!f||!f.type||!f.type.startsWith('image/'))return;
+  const oldImg=part.img||'';
+  const r=new FileReader();
+  r.onload=ev=>{
+    const newImg=ev.target.result;
+    applySmartImportBundlePartImg(part,i,j,newImg);
+    pushUndo({
+      label:'更換組合商品照片'+(part.name?'「'+part.name+'」':''),
+      undo:()=>applySmartImportBundlePartImg(part,i,j,oldImg),
+      redo:()=>applySmartImportBundlePartImg(part,i,j,newImg)
+    });
+    const fileInput=document.getElementById(`sibp-img-input-${i}-${j}`);
+    if(fileInput)fileInput.value='';
+    toast('📷 照片已加入，可按 ⌘Z 復原','success');
+  };
+  r.readAsDataURL(f);
+}
+function applySmartImportBundlePartImg(part,i,j,img){
+  if(!part)return;
+  if(img)part.img=img;else delete part.img;
+  const key=`${i}-${j}`;
+  const thumb=document.getElementById('sibp-img-thumb-'+key);
+  const ph=document.getElementById('sibp-img-placeholder-'+key);
+  if(thumb){
+    thumb.src=img||'';
+    thumb.style.display=img?'block':'none';
+  }
+  if(ph)ph.style.display=img?'none':'block';
+}
+function toggleSmartImportBundle(i){
+  const it=smartImportItems[i];if(!it)return;
+  const key=smartImportBundleKey(it);
+  if(smartImportBundleExpanded.has(key))smartImportBundleExpanded.delete(key);
+  else{
+    smartImportBundleExpanded.add(key);
+    if(!Array.isArray(it.bundleItems)||!it.bundleItems.length)it.bundleItems=[{name:'',qty:1},{name:'',qty:1}];
+  }
+  renderSmartImportReview();
+}
+function smartImportAddBundlePart(i){
+  const it=smartImportItems[i];if(!it)return;
+  if(!Array.isArray(it.bundleItems))it.bundleItems=[];
+  it.bundleItems.push({name:'',qty:1});
+  smartImportBundleExpanded.add(smartImportBundleKey(it));
+  renderSmartImportReview();
+}
+function smartImportUpdateBundlePart(i,j,field,value){
+  const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];if(!part)return;
+  part[field]=field==='qty'?Math.max(1,parseInt(value)||1):value;
+}
+function smartImportBundleLinkedTag(part){
+  if(!part||!part.productId)return '';
+  const p=DB.products.find(x=>x.id===part.productId);
+  return p?`🔗 已連結:${smartImportEsc(p.name)}`:'';
+}
+function smartImportBundleShowSuggestions(input,i,j){
+  const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
+  const wrap=input.closest('.si-bundle-search-wrap');
+  if(!part||!wrap)return;
+  const old=wrap.querySelector('.oi-suggest-list');if(old)old.remove();
+  const q=input.value.trim();
+  part.name=q;
+  const tag=wrap.querySelector('.oi-linked-tag');
+  if(part.productId){
+    const linked=DB.products.find(x=>x.id===part.productId);
+    if(!linked||linked.name!==q){delete part.productId;if(tag)tag.innerHTML='';}
+  }
+  // 沒有輸入關鍵字時完全不顯示清單，避免一點欄位就把全部商品擠到右側。
+  if(!q)return;
+  const ql=q.toLowerCase();
+  const matches=(DB.products||[]).filter(p=>p.name&&(
+    p.name.toLowerCase().includes(ql)||String(p.sku||'').toLowerCase().includes(ql)
+  )).slice(0,8);
+  const list=document.createElement('div');
+  list.className='oi-suggest-list';
+  if(!matches.length){
+    list.innerHTML=`<div class="oi-suggest-empty">找不到包含「${smartImportEsc(q)}」的現有商品；你仍可直接使用這個新名稱。</div>`;
+  }else{
+    matches.forEach(p=>{
+      const option=document.createElement('div');
+      option.className='oi-suggest-item';
+      option.innerHTML=`${p.img?`<img src="${p.img}">`:'<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">🌸</span>'}<span style="min-width:0">${smartImportEsc(p.name)}${p.sku?`<br><span style="color:var(--text3);font-size:9px">${smartImportEsc(p.sku)}</span>`:''}</span>`;
+      option.onmousedown=function(e){e.preventDefault();smartImportSelectBundleSuggestion(input,i,j,p.id);};
+      list.appendChild(option);
+    });
+  }
+  wrap.appendChild(list);
+}
+function smartImportSelectBundleSuggestion(input,i,j,productId){
+  const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
+  const p=DB.products.find(x=>x.id===productId);
+  if(!part||!p)return;
+  part.name=p.name;part.productId=p.id;input.value=p.name;
+  if(!part.img&&p.img){
+    part.img=p.img;
+    const key=`${i}-${j}`;
+    const thumb=document.getElementById('sibp-img-thumb-'+key);
+    const ph=document.getElementById('sibp-img-placeholder-'+key);
+    if(thumb){thumb.src=p.img;thumb.style.display='block';}
+    if(ph)ph.style.display='none';
+  }
+  const wrap=input.closest('.si-bundle-search-wrap');
+  if(wrap){
+    const list=wrap.querySelector('.oi-suggest-list');if(list)list.remove();
+    const tag=wrap.querySelector('.oi-linked-tag');if(tag)tag.innerHTML=`🔗 已連結:${smartImportEsc(p.name)}`;
+  }
+}
+function smartImportRemoveBundlePart(i,j){
+  const it=smartImportItems[i];if(!it||!Array.isArray(it.bundleItems))return;
+  it.bundleItems.splice(j,1);
+  renderSmartImportReview();
+}
+function expandSmartImportBundleItems(items){
+  const expanded=[];
+  items.forEach(it=>{
+    const parts=(it.bundleItems||[]).filter(part=>part&&String(part.name||'').trim());
+    if(!parts.length){
+      const plain={...it};delete plain.bundleItems;delete plain._bundleKey;expanded.push(plain);return;
+    }
+    const gid=uid();
+    const perSetCount=parts.reduce((sum,part)=>sum+Math.max(1,parseInt(part.qty)||1),0)||1;
+    const sharedUnitCost=(Number(it.cost)||0)/perSetCount;
+    parts.forEach(part=>{
+      const perSetQty=Math.max(1,parseInt(part.qty)||1);
+      const partName=String(part.name||'').trim();
+      const matched=(part.productId&&DB.products.find(p=>p.id===part.productId))||DB.products.find(p=>p.name===partName)||findProductByAlias(partName);
+      expanded.push({
+        name:partName,
+        rawName:partName,
+        cost:sharedUnitCost,
+        qty:(Math.max(1,parseInt(it.qty)||1))*perSetQty,
+        productId:matched?matched.id:undefined,
+        groupId:gid,
+        groupLabel:it.name||parts.map(x=>x.name).join('、'),
+        img:part.img||(matched&&matched.img?matched.img:'')
+      });
+    });
+  });
+  return expanded;
+}
 function renderSmartImportReview(){
   document.getElementById('smart-import-step-upload').classList.add('hidden');
   document.getElementById('smart-import-step-review').classList.remove('hidden');
@@ -5317,20 +5705,19 @@ function renderSmartImportReview(){
     if(matchedP)it.productId=matchedP.id; else delete it.productId;
     const imgSrc=it.img||(matchedP&&matchedP.img?matchedP.img:'');
     return `
-    <div class="order-item-row" style="grid-template-columns:1fr 80px 60px 30px;align-items:center">
+    <div class="order-item-row smart-import-review-row">
       <span class="oi-group-check" id="si-group-check-${i}" onclick="toggleSiGroupCheck(${i})"></span>
-      <div style="display:flex;align-items:center;gap:8px;min-width:0">
-        ${smartImportPhotoSlotHtml(i,imgSrc)}
-        <div class="oi-suggest-wrap" style="flex:1;min-width:0">
-          <input type="text" class="form-input" value="${(it.name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入可自動帶出現有商品">
-          ${it.rawName&&it.rawName!==it.name?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:2px">原始：${it.rawName}</div>`:''}
-          <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
-        </div>
+      ${smartImportBundleToggleHtml(i,it)}
+      ${smartImportPhotoSlotHtml(i,imgSrc)}
+      <div class="oi-suggest-wrap smart-import-review-name">
+        <input type="text" class="form-input" value="${(it.name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入可自動帶出現有商品">
+        ${it.rawName&&it.rawName!==it.name?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:2px">原始：${it.rawName}</div>`:''}
+        <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
       </div>
-      <div style="position:relative"><span style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px">¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px;padding-left:20px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
-      <input type="number" class="form-input" value="${it.qty}" min="1" style="font-size:12px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1">
+      <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
+      <input type="number" class="form-input smart-import-qty-cell" value="${it.qty}" min="1" style="font-size:12px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1">
       <button class="remove-btn" onclick="smartImportRemoveRow(${i})">×</button>
-    </div>`;
+    </div>${smartImportBundlePanelHtml(i,it)}`;
   });
   // 把連續同一個 groupId 的列包成一個組合框，標題是她自己打的名字（沒打過就先用商品名稱拼一個當預設值）
   let html='';
@@ -5483,7 +5870,7 @@ function confirmSmartImport(){
   Object.keys(smartImportGroupLabels).forEach(gid=>{
     smartImportItems.forEach(it=>{if(it.groupId===gid)it.groupLabel=smartImportGroupLabels[gid];});
   });
-  const valid=smartImportItems.filter(it=>it.name&&it.name.trim());
+  const valid=expandSmartImportBundleItems(smartImportItems.filter(it=>it.name&&it.name.trim()));
   if(!valid.length){toast('沒有可以匯入的商品資料','error');return;}
   // 保險：不管商品名稱是從哪個匯入管道（Excel/OCR/PDF）或手動新增列進來的，統一在這裡再轉一次簡體→繁體，
   // 就算某個管道漏轉了，這裡也能補上，日後新增匯入方式也不用一個一個記得加
@@ -5500,6 +5887,7 @@ function confirmSmartImport(){
     addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost,it.img);
   });
   regroupOrderItemRowsFromItems(valid);
+  enableOrderBackToSmartImport();
   // 如果是從 PDF 讀到店名/訂單編號/日期/運費，順便幫忙填好上方欄位
   let filledMeta=[];
   if(smartImportMeta){
@@ -5524,6 +5912,36 @@ function confirmSmartImport(){
   toast(`已帶入 ${valid.length} 筆商品${metaMsg}，確認後儲存即可`,'success');
 }
 
+let orderOpenedFromSmartImport=false;
+function setOrderBackButtonMode(mode){
+  const btn=document.getElementById('order-back-btn');
+  if(!btn)return;
+  if(mode==='smart-import'){
+    orderOpenedFromSmartImport=true;
+    btn.textContent='← 返回智慧匯入';
+    btn.onclick=backToSmartImportReview;
+    btn.classList.remove('hidden');
+  }else if(mode==='detail'){
+    orderOpenedFromSmartImport=false;
+    btn.textContent='← 返回詳情';
+    btn.onclick=backToOrderDetail;
+    btn.classList.remove('hidden');
+  }else{
+    orderOpenedFromSmartImport=false;
+    btn.textContent='← 返回詳情';
+    btn.onclick=backToOrderDetail;
+    btn.classList.add('hidden');
+  }
+}
+function enableOrderBackToSmartImport(){setOrderBackButtonMode('smart-import');}
+function backToSmartImportReview(){
+  if(!orderOpenedFromSmartImport)return;
+  _actuallyCloseModal('modal-order');
+  orderOpenedFromSmartImport=false;
+  openModal('modal-smart-import');
+  renderSmartImportReview();
+  toast('已返回智慧匯入，剛才的組合商品與照片都還在','success');
+}
 function openAddOrder(){
   editingOrderId=null;
   orderItemsUnlocked=false;
@@ -5531,7 +5949,7 @@ function openAddOrder(){
   currentOrderFormRate=DB.rate||0; // 一開表單就把匯率凍結，之後不管改多久都不會再跳動
   document.getElementById('order-modal-title').innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" style="display:inline-block;vertical-align:-3px;margin-right:4px"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>新增採購單';
   document.getElementById('order-save-btn').innerHTML='💾 儲存採購單';
-  document.getElementById('order-back-btn').classList.add('hidden');
+  setOrderBackButtonMode('hidden');
   document.getElementById('order-unlock-btn').classList.add('hidden');
   document.getElementById('order-save-draft-btn').classList.remove('hidden');
   document.getElementById('o-supplier').value='';
@@ -5558,14 +5976,16 @@ function resetOrderGroupSelectMode(){
   if(list)list.classList.remove('group-select-mode');
   const btn=document.getElementById('order-group-toggle-btn');
   if(btn){
-    btn.textContent='🔗 組合';
-    btn.classList.remove('hidden');
-    btn.style.setProperty('display','inline-flex','important');
-    btn.style.visibility='visible';
-    btn.style.opacity='1';
+    btn.textContent='✓ 完成組合';
+    btn.classList.add('hidden');
+    btn.style.removeProperty('display');
+    btn.style.removeProperty('visibility');
+    btn.style.removeProperty('opacity');
   }
+  updateOrderRowGroupSelectionUI();
 }
 function backToOrderDetail(){
+  if(orderOpenedFromSmartImport){backToSmartImportReview();return;}
   if(!editingOrderId)return;
   closeModal('modal-order');
   openOrderDetail(editingOrderId);
@@ -5590,7 +6010,7 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img){
   const id=uid();
   const list=document.getElementById('order-items-list');
   const div=document.createElement('div');
-  div.className='order-item-row';
+  div.className='order-item-row order-form-review-row';
   div.id='oi-'+id;
   if(img)div.dataset.img=img;
   if(readonly)div.dataset.original='1'; // 標記「這一列本來就是這張單既有的項目」，儲存時用這個判斷是否為新增，不要用名稱比對（同名也可能是想再新增一批）
@@ -5600,7 +6020,7 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img){
     ?`<input type="text" class="form-input oi-name-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
     :`<input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
   const origCostInlineHtml=readonly?'':`<div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" value="${originalCost?Number(originalCost).toFixed(2):''}" style="width:48px;font-size:10px;padding:4px;height:26px;text-align:center"></div>`;
-  div.innerHTML=`${orderItemPhotoSlotHtml(id,img)}<div class="oi-suggest-wrap">${nameInputHtml}<div class="oi-linked-tag"></div></div><div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><div style="position:relative;flex:1;min-width:70px"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div>${origCostInlineHtml}</div><div><input type="number" class="form-input oi-qty-input" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}></div>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center;height:36px"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
+  div.innerHTML=`${orderRowGroupIconHtml(id)}${orderItemPhotoSlotHtml(id,img)}<div class="oi-suggest-wrap order-form-review-name">${nameInputHtml}<div class="oi-linked-tag"></div></div><div class="order-form-cost-cell"><div class="order-form-cost-main"><span>¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div>${origCostInlineHtml}</div><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"'}>${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
   list.appendChild(div);
   if(!readonly&&productId){
     const p=DB.products.find(x=>x.id===productId);
@@ -5850,7 +6270,7 @@ function openEditOrder(id){
   const isReceived=o.status==='received';
   document.getElementById('order-modal-title').textContent=isReceived?'✏️ 編輯採購單(已到貨,商品鎖住)':'✏️ 編輯採購單';
   document.getElementById('order-save-btn').innerHTML='💾 儲存修改';
-  document.getElementById('order-back-btn').classList.remove('hidden');
+  setOrderBackButtonMode('detail');
   document.getElementById('order-unlock-btn').classList.toggle('hidden',!isReceived);
   document.getElementById('order-save-draft-btn').classList.add('hidden');
   document.getElementById('o-supplier').value=o.supplier||'';
@@ -5992,7 +6412,7 @@ document.addEventListener('input',e=>{
 // 這裡是「我這筆到底買了什麼」的參考圖（例如金銀星星是分開的兩個商品，但淘寶賣家是一起賣的，
 // 這裡可以放同一張截圖在兩行上，一眼就知道這兩行其實是同一次買的）
 function orderItemPhotoSlotHtml(id,img){
-  return `<div id="oi-img-slot-${id}" style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s" onclick="document.getElementById('oi-img-input-${id}').click()" title="幫這個項目加照片（跟商品照片分開，例如淘寶截圖）——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processOrderItemImgFile(event.dataTransfer.files[0],'${id}')"><img id="oi-img-thumb-${id}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="oi-img-placeholder-${id}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="oi-img-input-${id}" style="display:none" onchange="processOrderItemImgFile(event.target.files[0],'${id}')"><span class="oi-group-check" id="oi-group-check-${id}" onclick="toggleOiGroupCheck('${id}')"></span>`;
+  return `<div id="oi-img-slot-${id}" style="width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s;box-sizing:border-box" onclick="document.getElementById('oi-img-input-${id}').click()" title="幫這個項目加照片（跟商品照片分開，例如淘寶截圖）——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processOrderItemImgFile(event.dataTransfer.files[0],'${id}')"><img id="oi-img-thumb-${id}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="oi-img-placeholder-${id}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="oi-img-input-${id}" style="display:none" onchange="processOrderItemImgFile(event.target.files[0],'${id}')">`;
 }
 function processOrderItemImgFile(f,id){
   if(!f||!f.type||!f.type.startsWith('image/'))return;
@@ -6010,7 +6430,7 @@ function processOrderItemImgFile(f,id){
 // 智慧匯入審核清單也要能加照片，但這裡整份清單每次都整包重繪（不是像採購單那樣操作固定的 DOM 節點），
 // 所以照片存回 smartImportItems[i].img 這個陣列資料裡，不是存在 DOM dataset 上
 function smartImportPhotoSlotHtml(i,img){
-  return `<div id="si-img-slot-${i}" style="width:32px;height:32px;border-radius:8px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s" onclick="document.getElementById('si-img-input-${i}').click()" title="幫這個項目加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processSmartImportItemImgFile(event.dataTransfer.files[0],${i})"><img id="si-img-thumb-${i}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="si-img-placeholder-${i}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="si-img-input-${i}" style="display:none" onchange="processSmartImportItemImgFile(event.target.files[0],${i})">`;
+  return `<div id="si-img-slot-${i}" style="width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s;box-sizing:border-box" onclick="document.getElementById('si-img-input-${i}').click()" title="幫這個項目加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processSmartImportItemImgFile(event.dataTransfer.files[0],${i})"><img id="si-img-thumb-${i}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="si-img-placeholder-${i}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="si-img-input-${i}" style="display:none" onchange="processSmartImportItemImgFile(event.target.files[0],${i})">`;
 }
 function processSmartImportItemImgFile(f,i){
   if(!f||!f.type||!f.type.startsWith('image/'))return;
@@ -6028,6 +6448,43 @@ function processSmartImportItemImgFile(f,i){
 // 用一個虛線框把那幾行圈起來，標題自動列出裡面有哪些商品名稱，方便一眼看出是同一次買的 ----
 let orderGroupSelectMode=false;
 let orderGroupSelectedIds=new Set();
+function orderRowGroupIconHtml(rowId){
+  return `<button type="button" class="order-row-group-icon" id="order-row-group-icon-${rowId}" onclick="toggleOrderRowGroupPick('${rowId}')" title="選取這個商品加入組合" aria-label="選取這個商品加入組合" aria-pressed="false"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`;
+}
+function updateOrderRowGroupSelectionUI(){
+  document.querySelectorAll('#order-items-list .order-row-group-icon').forEach(icon=>{
+    const id=(icon.id||'').replace(/^order-row-group-icon-/,'');
+    const active=orderGroupSelectedIds.has(id);
+    icon.classList.toggle('active',active);
+    icon.setAttribute('aria-pressed',active?'true':'false');
+    icon.title=active?'取消選取這個商品':'選取這個商品加入組合';
+  });
+  const btn=document.getElementById('order-group-toggle-btn');
+  if(btn){
+    const n=orderGroupSelectedIds.size;
+    btn.classList.toggle('hidden',n<2);
+    btn.textContent=n>=2?`✓ 完成組合（${n}）`:'✓ 完成組合';
+  }
+}
+function toggleOrderRowGroupPick(rowId){
+  const row=document.getElementById('oi-'+rowId);
+  if(!row)return;
+  if(row.closest('.order-item-group')){toast('這個商品已經在組合裡；要重新組合請先按組合框右上角的 × 解散','error');return;}
+  if(orderGroupSelectedIds.has(rowId))orderGroupSelectedIds.delete(rowId);
+  else orderGroupSelectedIds.add(rowId);
+  orderGroupSelectMode=orderGroupSelectedIds.size>0;
+  updateOrderRowGroupSelectionUI();
+  if(orderGroupSelectedIds.size===1)toast('再點其他商品前面的組合圖示','success');
+}
+function finishOrderRowGroupSelection(){
+  if(orderGroupSelectedIds.size<2){toast('至少要選 2 個商品才能組合','error');return;}
+  confirmOrderItemGroup();
+  const count=orderGroupSelectedIds.size;
+  orderGroupSelectedIds=new Set();
+  orderGroupSelectMode=false;
+  updateOrderRowGroupSelectionUI();
+  toast(`✅ 已將 ${count} 個商品組合在一起`,'success');
+}
 function toggleOrderGroupSelectMode(){
   const list=document.getElementById('order-items-list');
   const btn=document.getElementById('order-group-toggle-btn');
@@ -6035,10 +6492,21 @@ function toggleOrderGroupSelectMode(){
   if(!orderGroupSelectMode){
     const ungroupedRows=[...list.querySelectorAll('.order-item-row')].filter(r=>!r.closest('.order-item-group'));
     if(ungroupedRows.length<2){toast('至少要有 2 個還沒組合的項目才能組合喔','error');return;}
+    // 畫面剛好只有兩個未組合商品時，不必再進入勾選模式：按一次就直接把這兩項組合起來。
+    if(ungroupedRows.length===2){
+      orderGroupSelectedIds=new Set(ungroupedRows.map(row=>(row.id||'').replace(/^oi-/,'')));
+      confirmOrderItemGroup();
+      orderGroupSelectedIds=new Set();
+      list.classList.remove('group-select-mode');
+      btn.textContent='🔗 組合';
+      toast('✅ 已將這兩個商品組合在一起','success');
+      return;
+    }
     orderGroupSelectMode=true;
     orderGroupSelectedIds=new Set();
     list.classList.add('group-select-mode');
     btn.innerHTML='<svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M5,13 L10,18 L19,7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>完成組合';
+    toast('請勾選要放在一起的商品，再按「完成組合」','success');
   }else{
     if(orderGroupSelectedIds.size>=2)confirmOrderItemGroup();
     else if(orderGroupSelectedIds.size===1)toast('至少要選 2 個項目才能組合喔','error');
@@ -6080,7 +6548,7 @@ function ungroupOrderItems(gid){
 }
 // 組合標題列：一個可以自己打字的輸入框(存在畫面上就好，存單時才讀出來)，加一個解散按鈕
 function orderGroupPhotoSlotHtml(gid,img){
-  return `<div id="og-img-slot-${gid}" style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:var(--surface);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px dashed var(--cream4)" onclick="document.getElementById('og-img-input-${gid}').click()" title="幫這個組合加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='var(--cream4)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';processOrderGroupImgFile(event.dataTransfer.files[0],'${gid}')"><img id="og-img-thumb-${gid}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="og-img-placeholder-${gid}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="og-img-input-${gid}" style="display:none" onchange="processOrderGroupImgFile(event.target.files[0],'${gid}')">`;
+  return `<div id="og-img-slot-${gid}" style="width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--surface);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px dashed var(--cream4);box-sizing:border-box" onclick="document.getElementById('og-img-input-${gid}').click()" title="幫這個組合加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='var(--cream4)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';processOrderGroupImgFile(event.dataTransfer.files[0],'${gid}')"><img id="og-img-thumb-${gid}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="og-img-placeholder-${gid}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="og-img-input-${gid}" style="display:none" onchange="processOrderGroupImgFile(event.target.files[0],'${gid}')">`;
 }
 function processOrderGroupImgFile(f,gid){
   if(!f||!f.type||!f.type.startsWith('image/'))return;
@@ -6098,7 +6566,7 @@ function processOrderGroupImgFile(f,gid){
 function orderGroupLabelBarEl(gid,labelText,img){
   const bar=document.createElement('div');
   bar.className='order-item-group-label';
-  bar.innerHTML=`${orderGroupPhotoSlotHtml(gid,img)}<span style="flex-shrink:0">🔗</span><input type="text" class="oi-group-label-input" value="${(labelText||'').replace(/"/g,'&quot;')}" placeholder="幫這組取個名字" style="flex:1;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--brown);padding:2px 4px;min-width:0"><button type="button" onclick="ungroupOrderItems('${gid}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0" title="解散這個組合">✕</button>`;
+  bar.innerHTML=`<span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0">🔗</span>${orderGroupPhotoSlotHtml(gid,img)}<input type="text" class="oi-group-label-input" value="${(labelText||'').replace(/"/g,'&quot;')}" placeholder="幫這組取個名字" style="flex:1;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--brown);padding:2px 4px;min-width:0"><button type="button" onclick="ungroupOrderItems('${gid}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0" title="解散這個組合">✕</button>`;
   return bar;
 }
 // 重新編輯舊單/續編草稿時，把之前存的 item.groupId 還原成畫面上的組合框；
@@ -6127,13 +6595,15 @@ function regroupOrderItemRowsFromItems(items){
     groupDiv.insertBefore(orderGroupLabelBarEl(gid,label,grp.img),groupDiv.firstChild);
   });
 }
-function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row';div.id='oi-'+id;div.innerHTML=`${orderItemPhotoSlotHtml(id)}<div class="oi-suggest-wrap"><input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><div style="position:relative;flex:1;min-width:70px"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none">¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" style="font-size:12px;padding-left:22px"></div><div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" style="width:48px;font-size:10px;padding:4px;height:26px;text-align:center"></div></div><div><input type="number" class="form-input oi-qty-input" placeholder="數量" min="1" value="1" style="font-size:12px"></div><button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
+function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row order-form-review-row';div.id='oi-'+id;div.innerHTML=`${orderRowGroupIconHtml(id)}${orderItemPhotoSlotHtml(id)}<div class="oi-suggest-wrap order-form-review-name"><input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div class="order-form-cost-cell"><div class="order-form-cost-main"><span>¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" style="font-size:12px"></div><div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" style="width:48px;font-size:10px;padding:4px;height:26px;text-align:center"></div></div><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="1" style="font-size:12px"><button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
   pushUndo({label:'新增商品項目',undo:()=>{div.remove();updateOrderTotalPreview();},redo:()=>{list.appendChild(div);updateOrderTotalPreview();}});
   updateOrderTotalPreview();
 }
 function removeOrderItemRow(id){
   const div=document.getElementById('oi-'+id);
   if(!div)return;
+  orderGroupSelectedIds.delete(id);
+  updateOrderRowGroupSelectionUI();
   const list=div.parentNode;
   const nextSibling=div.nextSibling;
   const parentGroup=div.closest('.order-item-group');
@@ -6369,7 +6839,7 @@ function saveOrder(event){
   currentOrderFormRate=order.rateUsed;
   document.getElementById('order-modal-title').textContent='✏️ 編輯採購單';
   document.getElementById('order-save-btn').innerHTML='💾 儲存修改';
-  document.getElementById('order-back-btn').classList.remove('hidden');
+  setOrderBackButtonMode('detail');
   document.getElementById('order-unlock-btn').classList.add('hidden');
   document.getElementById('order-save-draft-btn').classList.add('hidden');
   openModal('modal-order');
@@ -8568,7 +9038,9 @@ function adjVariantStock(productId,variantId,delta){
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
   v.stock=Math.max(0,(v.stock||0)+delta);
   p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);
-  const el=document.getElementById('sc-v-'+variantId);if(el)el.textContent=v.stock;
+  p.status='ok';
+  p.updatedAt=Date.now();
+  const el=document.getElementById('sc-v-'+variantId);if(el){if('value' in el)el.value=v.stock;else el.textContent=v.stock;}
   const tot=document.getElementById('sc-variant-total');if(tot)tot.textContent=p.stock;
   saveDB();
 }
@@ -9679,11 +10151,11 @@ window.addEventListener('load', () => {
 </script>
 <script>
 // ═══════════════════════════════════════════════════════════════
-// 採購單最終執行保護（0818-C）
+// 採購單最終執行保護（0818-S）
 // 放在所有主要程式之後：避免其他初始化／舊資料渲染把儲存停留、圖片、組合、繁體付款資訊蓋掉。
 // ═══════════════════════════════════════════════════════════════
 (function(){
-  const ORDER_FIX_BUILD='0818-C';
+  const ORDER_FIX_BUILD='0818-S';
 
   function showOrderFixBuild(){
     const title=document.getElementById('order-modal-title');
@@ -9724,26 +10196,34 @@ window.addEventListener('load', () => {
         btn=document.createElement('button');
         btn.type='button';
         btn.id='order-group-toggle-btn';
-        btn.className='btn btn-secondary btn-sm';
-        btn.textContent='🔗 組合';
-        btn.onclick=()=>toggleOrderGroupSelectMode();
+        btn.className='btn btn-primary btn-sm hidden';
+        btn.textContent='✓ 完成組合';
+        btn.onclick=()=>finishOrderRowGroupSelection();
         addBtn.insertAdjacentElement('afterend',btn);
       }
     }
     if(btn){
-      btn.classList.remove('hidden');
-      btn.style.setProperty('display','inline-flex','important');
-      btn.style.setProperty('visibility','visible','important');
-      btn.style.setProperty('opacity','1','important');
+      btn.style.removeProperty('display');
+      btn.style.removeProperty('visibility');
+      btn.style.removeProperty('opacity');
+      if(typeof updateOrderRowGroupSelectionUI==='function')updateOrderRowGroupSelectionUI();
     }
   }
 
   function ensureOrderPhotoButtons(){
     document.querySelectorAll('#order-items-list .order-item-row').forEach(row=>{
-      if(row.querySelector('[id^="oi-img-slot-"]'))return;
       const id=(row.id||'').replace(/^oi-/,'');
-      if(!id||typeof orderItemPhotoSlotHtml!=='function')return;
-      row.insertAdjacentHTML('afterbegin',orderItemPhotoSlotHtml(id,row.dataset.img||''));
+      if(!id)return;
+      row.classList.add('order-form-review-row');
+      let icon=row.querySelector('.order-row-group-icon');
+      if(!icon&&typeof orderRowGroupIconHtml==='function'){
+        row.insertAdjacentHTML('afterbegin',orderRowGroupIconHtml(id));
+        icon=row.querySelector('.order-row-group-icon');
+      }
+      if(!row.querySelector('[id^="oi-img-slot-"]')&&typeof orderItemPhotoSlotHtml==='function'){
+        if(icon)icon.insertAdjacentHTML('afterend',orderItemPhotoSlotHtml(id,row.dataset.img||''));
+        else row.insertAdjacentHTML('afterbegin',orderItemPhotoSlotHtml(id,row.dataset.img||''));
+      }
     });
     document.querySelectorAll('#order-items-list .order-item-group').forEach(group=>{
       const gid=group.dataset.groupId;
