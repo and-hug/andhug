@@ -731,7 +731,8 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="renderProducts()"></div>
       <button class="btn btn-secondary btn-icon" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
-      <select id="sort-mode-select" aria-label="商品排序方式" onchange="setSortMode(this.value)" style="height:36px;border:1.5px solid var(--cream3);border-radius:10px;padding:0 30px 0 12px;font:inherit;font-size:13px;color:var(--text2);background:var(--surface);cursor:pointer;min-width:200px"></select>
+      <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
+
       <div style="display:flex;gap:4px"><button class="view-btn active" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
@@ -2015,15 +2016,15 @@ function processProductImportFile(f){
       const sheet=wb.Sheets[wb.SheetNames[0]];
       const rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
       productImportCandidates=rows.map(row=>{
-        const name=String(pickImportField(row,['商品名稱','名稱','Name'])||'').trim();
+        const name=convertSimplifiedToTraditional(String(pickImportField(row,['商品名稱','名稱','Name'])||'').trim());
         const sku=String(pickImportField(row,['SKU','sku'])||'').trim();
         const stockRaw=pickImportField(row,['庫存','數量','Stock']);
         const costRaw=pickImportField(row,['進貨價','成本','Cost']);
         const priceRaw=pickImportField(row,['售價','價格','Price']);
-        const supplier=String(pickImportField(row,['供應商','Supplier'])||'').trim();
-        const color=String(pickImportField(row,['顏色','Color'])||'').trim();
-        const style=String(pickImportField(row,['款式','Style'])||'').trim();
-        const note=String(pickImportField(row,['備註','Note'])||'').trim();
+        const supplier=convertSimplifiedToTraditional(String(pickImportField(row,['供應商','Supplier'])||'').trim());
+        const color=convertSimplifiedToTraditional(String(pickImportField(row,['顏色','Color'])||'').trim());
+        const style=convertSimplifiedToTraditional(String(pickImportField(row,['款式','Style'])||'').trim());
+        const note=convertSimplifiedToTraditional(String(pickImportField(row,['備註','Note'])||'').trim());
         const existing=sku?DB.products.find(p=>p.sku===sku):null;
         return{
           name,sku,supplier,color,style,note,
@@ -2502,11 +2503,26 @@ const SORT_OPTIONS=[
   {value:'name',label:'🔤 依名稱排序'}
 ];
 function renderSortMenu(){
-  const select=document.getElementById('sort-mode-select');
-  if(!select)return;
-  select.innerHTML=SORT_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
-  select.value=sortMode;
+  const menu=document.getElementById('sort-mode-menu');
+  if(!menu)return;
+  menu.innerHTML=SORT_OPTIONS.map(o=>`<div onclick="setSortMode('${o.value}')" style="padding:9px 10px;border-radius:8px;font-size:13px;cursor:pointer;color:${sortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${sortMode===o.value?'700':'400'}"
+    onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${o.label}</div>`).join('');
+  const btnLabel=document.getElementById('sort-mode-btn-label');
+  if(btnLabel){const cur=SORT_OPTIONS.find(o=>o.value===sortMode);btnLabel.innerHTML=cur?cur.label:'';}
 }
+function toggleSortMenu(){
+  const menu=document.getElementById('sort-mode-menu');
+  if(!menu)return;
+  const willShow=menu.style.display==='none';
+  if(willShow)renderSortMenu();
+  menu.style.display=willShow?'block':'none';
+}
+document.addEventListener('click',(e)=>{
+  const wrap=document.getElementById('sort-mode-wrap');
+  const menu=document.getElementById('sort-mode-menu');
+  if(!wrap||!menu||menu.style.display==='none')return;
+  if(!wrap.contains(e.target))menu.style.display='none';
+});
 function toggleStockRangeFilter(){
   const row=document.getElementById('stock-range-filter-row');
   if(row)row.classList.toggle('hidden');
@@ -2514,6 +2530,7 @@ function toggleStockRangeFilter(){
 function setSortMode(v){
   if(!SORT_OPTIONS.some(o=>o.value===v))return;
   sortMode=v;
+  document.getElementById('sort-mode-menu').style.display='none';
   renderSortMenu();
   // 商品卡片很多時，連續點選不應同步重繪多次而讓畫面卡住。
   requestProductsRender();
@@ -4896,8 +4913,9 @@ function handleSmartImportExcel(input){
       for(let i=headerIdx+1;i<rows.length;i++){
         const r=rows[i];
         if(!r||!r.length)continue;
-        const name=String(r[nameCol]||'').trim();
+        let name=String(r[nameCol]||'').trim();
         if(!name)continue;
+        name=convertSimplifiedToTraditional(name);
         const cost=parseFloat(String(r[priceCol]||'').replace(/[^0-9.]/g,''))||0;
         const qty=parseInt(String(r[qtyCol]||'1').replace(/[^0-9]/g,''))||1;
         items.push({name,rawName:name,cost,qty});
@@ -5287,6 +5305,9 @@ function smartImportRemoveRow(i){
 function confirmSmartImport(){
   const valid=smartImportItems.filter(it=>it.name&&it.name.trim());
   if(!valid.length){toast('沒有可以匯入的商品資料','error');return;}
+  // 保險：不管商品名稱是從哪個匯入管道（Excel/OCR/PDF）或手動新增列進來的，統一在這裡再轉一次簡體→繁體，
+  // 就算某個管道漏轉了，這裡也能補上，日後新增匯入方式也不用一個一個記得加
+  valid.forEach(it=>{it.name=convertSimplifiedToTraditional(it.name);});
   if(currentImportDraftId){
     DB.smartImportDrafts=(DB.smartImportDrafts||[]).filter(d=>d.id!==currentImportDraftId);
     updateImportDraftsBadge();
@@ -5503,7 +5524,23 @@ const SIMPLIFIED_TO_TRADITIONAL_MAP={
   '间':'間','闻':'聞','阅':'閱','队':'隊','阳':'陽','阴':'陰','难':'難','雨':'雨','雪':'雪','震':'震',
   '静':'靜','面':'麵','鞋':'鞋','韧':'韌','项':'項','预':'預','领':'領','题':'題','颤':'顫','风':'風',
   '飘':'飄','饭':'飯','饰':'飾','饼':'餅','馆':'館','马':'馬','验':'驗','鱼':'魚','鲜':'鮮','鸡':'雞',
-  '鸭':'鴨'
+  '鸭':'鴨',
+  // 補充：顏色（商品顏色欄位常用，原表漏收）、常見姓氏（客戶姓名）、地址常用字
+  '红':'紅','黄':'黃','绿':'綠','蓝':'藍','县':'縣','栋':'棟',
+  '罗':'羅','贾':'賈','阎':'閻','严':'嚴','叶':'葉','韦':'韋',
+  '鲁':'魯','苏':'蘇','卢':'盧','吕':'呂','陈':'陳','刘':'劉',
+  '杨':'楊','赵':'趙','孙':'孫','郑':'鄭','冯':'馮','蒋':'蔣',
+  '韩':'韓','谢':'謝','邓':'鄧','萧':'蕭','丝':'絲','绸':'綢',
+  '缎':'緞','艳':'艷','靓':'靚','寿':'壽','处':'處','亲':'親',
+  '谁':'誰','邻':'鄰','乡':'鄉','区':'區','亏':'虧','丧':'喪',
+  '尽':'盡','执':'執','扬':'揚','拥':'擁','积':'積','称':'稱',
+  '稳':'穩','窝':'窩','网':'網','联':'聯','职':'職','肤':'膚',
+  '腾':'騰','舍':'捨','艰':'艱','芦':'蘆','苹':'蘋','获':'獲',
+  '虾':'蝦','蚂':'螞','蚁':'蟻',
+  '华':'華','体':'體','汉':'漢','专':'專','与':'與','里':'裡',
+  '并':'並','将':'將','爷':'爺','妈':'媽','络':'絡','庄':'莊',
+  '台':'臺','湾':'灣','岛':'島','屿':'嶼','峡':'峽','滨':'濱',
+  '桥':'橋','丰':'豐','兴':'興','顺':'順','禄':'祿','宝':'寶'
 };
 function toTraditionalPaymentTerm(label){
   return convertSimplifiedToTraditional(label);
