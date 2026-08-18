@@ -1020,8 +1020,8 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       </div>
     </div>
     <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1.5px solid var(--cream3)">
-      <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()">↩ 復原</button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()">取消</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()">💫 復原</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
       <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits()">💾 儲存變更</button>
     </div>
   </div>
@@ -1087,7 +1087,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         </div>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-        <button class="btn btn-secondary" onclick="closeModal('modal-product')">取消</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-product')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-primary" id="save-product-btn" onclick="saveProduct()">💾 儲存</button>
       </div>
     </div>
@@ -1162,8 +1162,8 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         <button type="button" class="btn btn-primary btn-sm hidden" id="order-group-toggle-btn" onclick="finishOrderRowGroupSelection()">✓ 完成組合</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-secondary hidden" id="order-back-btn" onclick="backToOrderDetail()">← 返回詳情</button>
-        <button class="btn btn-secondary" onclick="closeModal('modal-order')">取消</button>
+        <button class="btn btn-secondary hidden" id="order-back-btn" onclick="backToOrderDetail()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-order')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-secondary" id="order-save-draft-btn" onclick="saveOrderFormDraft()">📝 儲存草稿</button>
         <button type="button" class="btn btn-primary" id="order-save-btn" onclick="saveOrder(event)">💾 儲存採購單</button>
       </div>
@@ -1216,7 +1216,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       </div>
       <div id="confirm-receive-body" style="max-height:50vh;overflow-y:auto"></div>
       <div style="display:flex;gap:8px;margin-top:14px">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-confirm-receive')">取消</button>
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-confirm-receive')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="submitConfirmReceive()">⭐ 確認到貨</button>
       </div>
     </div>
@@ -1251,7 +1251,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
         <div id="product-import-summary" style="font-size:12.5px;color:var(--text2);margin-bottom:10px"></div>
         <div id="product-import-table-wrap" style="max-height:50vh;overflow-y:auto"></div>
         <div style="display:flex;gap:8px;margin-top:14px">
-          <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="cancelProductImport()">取消</button>
+          <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="cancelProductImport()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
           <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="confirmProductImport()">確認匯入</button>
         </div>
       </div>
@@ -1266,7 +1266,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
     <div class="modal-body">
       <div id="confirm-message" style="font-size:14px;color:var(--text2);line-height:1.7;white-space:pre-line;margin-bottom:20px"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-secondary" id="confirm-cancel-btn" onclick="closeModal('modal-confirm')">取消</button>
+        <button class="btn btn-secondary" id="confirm-cancel-btn" onclick="closeModal('modal-confirm')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-danger" id="confirm-ok-btn">確定</button>
       </div>
     </div>
@@ -1297,7 +1297,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
           <button class="btn btn-secondary btn-sm hidden" id="ui-edit-revert-btn" onclick="revertToPreviousUIVersion()">⏪ 回上一版</button>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary" onclick="closeModal('modal-ui-edit')">取消</button>
+          <button class="btn btn-secondary" onclick="closeModal('modal-ui-edit')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
           <button class="btn btn-primary" onclick="saveUIEditableText()">💾 儲存</button>
         </div>
       </div>
@@ -1349,7 +1349,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div class="form-group"><label class="form-label">電話</label><input type="text" class="form-input" id="c-phone" placeholder="連絡電話（選填）"></div>
       <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="c-note" placeholder="偏好、地址、社群帳號等（選填）"></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-        <button class="btn btn-secondary" onclick="closeModal('modal-customer')">取消</button>
+        <button class="btn btn-secondary" onclick="closeModal('modal-customer')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-primary" id="customer-save-btn" onclick="saveCustomer()">💾 儲存顧客</button>
       </div>
     </div>
@@ -1417,7 +1417,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
           <button class="btn btn-secondary btn-sm hidden" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()" title="舊版多列組合功能">🔗 組合</button>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')">取消</button>
+          <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
           <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
           <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入成採購單</button>
         </div>
@@ -3578,7 +3578,7 @@ function openSkuColorPicker(event,i){
     <div class="sku-color-grid">${presets.map(hex=>`<button type="button" class="sku-color-choice" style="background:${hex};${hex==='#ffffff'?'box-shadow:inset 0 0 0 1px #d7cfc2':''}" onclick="applySkuDraftColor(${i},'${hex}')" aria-label="選擇 ${hex}" title="${hex}"></button>`).join('')}</div>
     <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:5px">HEX 色碼</div>
     <div class="sku-color-hex-row"><span>#</span><input id="sku-color-hex-input" value="${current.slice(1)}" maxlength="6" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();applySkuDraftColor(${i},this.value)}"></div>
-    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><button type="button" class="btn btn-secondary btn-sm" onclick="closeSkuColorPicker()">取消</button><button type="button" class="btn btn-primary btn-sm" onclick="applySkuDraftColor(${i},document.getElementById('sku-color-hex-input').value)">套用</button></div>`;
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px"><button type="button" class="btn btn-secondary btn-sm" onclick="closeSkuColorPicker()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button><button type="button" class="btn btn-primary btn-sm" onclick="applySkuDraftColor(${i},document.getElementById('sku-color-hex-input').value)">套用</button></div>`;
   document.body.appendChild(pop);
   const rect=button.getBoundingClientRect();
   const gap=7;
@@ -4715,7 +4715,7 @@ function openStockModal(id){
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
         <div style="display:flex;gap:6px">
-          <input type="text" id="edit-link" value="${p.link||''}" class="form-input" style="font-size:12px;font-family:monospace" placeholder="https://item.taobao.com/...">
+          <input type="text" id="edit-link" value="${p.link||''}" class="form-input" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/...">
           ${p.link?`<button onclick="window.open('${p.link}','_blank')" class="btn btn-secondary btn-sm" style="white-space:nowrap;flex-shrink:0">🔗 開啟</button>`:''}
         </div>
       </div>
@@ -4727,7 +4727,7 @@ function openStockModal(id){
         <button class="btn btn-secondary btn-sm" onclick="duplicateProduct('${id}')">📋 複製</button>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-secondary btn-sm" onclick="undoStock('${id}')">↩ 復原</button>
+        <button class="btn btn-secondary btn-sm" onclick="undoStock('${id}')">💫 復原</button>
         <button class="btn btn-secondary" onclick="closeModal('modal-stock')">完成</button>
         <button class="btn btn-primary" onclick="saveFromStock('${id}')">💾 儲存</button>
       </div>
@@ -5918,17 +5918,17 @@ function setOrderBackButtonMode(mode){
   if(!btn)return;
   if(mode==='smart-import'){
     orderOpenedFromSmartImport=true;
-    btn.textContent='← 返回智慧匯入';
+    btn.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回智慧匯入';
     btn.onclick=backToSmartImportReview;
     btn.classList.remove('hidden');
   }else if(mode==='detail'){
     orderOpenedFromSmartImport=false;
-    btn.textContent='← 返回詳情';
+    btn.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情';
     btn.onclick=backToOrderDetail;
     btn.classList.remove('hidden');
   }else{
     orderOpenedFromSmartImport=false;
-    btn.textContent='← 返回詳情';
+    btn.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情';
     btn.onclick=backToOrderDetail;
     btn.classList.add('hidden');
   }
@@ -6885,7 +6885,7 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
     </div>
     ${o.totalPaidUsdActual?'<div style="font-size:10px;color:var(--text3);text-align:right;margin-top:-2px">（照淘寶實際扣款金額，不是用匯率換算的）</div>':''}
   </div>`;
-})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')">↩️ 取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div>`;openModal('modal-order-detail');
+})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div>`;openModal('modal-order-detail');
   // 渲染完後量測表格第一欄文字的實際位置，自動算出按鈕列要對齊的內距（不用猜數字）
   requestAnimationFrame(()=>{
     const firstTd=document.querySelector('#order-detail-body table td');
@@ -7702,7 +7702,7 @@ function showAddSupplierInput(){
   menu.innerHTML=`<div style="padding:6px">
     <input type="text" id="new-supplier-input" class="form-input" placeholder="供應商名稱" style="font-size:12px;padding:7px 10px;margin-bottom:6px" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddSupplier();}" onclick="event.stopPropagation()">
     <div style="display:flex;gap:6px">
-      <button type="button" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="event.stopPropagation();renderSupplierMenu()">取消</button>
+      <button type="button" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="event.stopPropagation();renderSupplierMenu()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
       <button type="button" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="event.stopPropagation();confirmAddSupplier()">＋ 新增</button>
     </div>
   </div>`;
@@ -9101,7 +9101,7 @@ function adjVariantStock(productId,variantId,delta){
     <button class="btn btn-primary" onclick="openBatchMoveModal()">📂 移動到</button>
     <button class="btn btn-primary" onclick="openBatchEditSelected()">✏️ 編輯選取</button>
     <button class="btn btn-danger btn-sm" onclick="batchDeleteProducts()">🗑 刪除</button>
-    <button class="btn btn-secondary btn-sm" onclick="exitBatchMode()">取消</button>
+    <button class="btn btn-secondary btn-sm" onclick="exitBatchMode()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
   </div>
 </div>
 
@@ -9128,7 +9128,7 @@ function adjVariantStock(productId,variantId,delta){
       </div>
 
       <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
-        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-batch-move')">取消</button>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-batch-move')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
         <button class="btn btn-primary btn-sm" onclick="applyBatchMove()">套用</button>
       </div>
     </div>
