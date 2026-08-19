@@ -158,10 +158,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .stock-icon{font-size:18px;width:24px;text-align:center;}
 .stock-label{font-size:12px;font-weight:700;color:var(--text2);}
 .stock-count{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;width:36px;text-align:center;}
-input.stock-count::-webkit-inner-spin-button,input.stock-count::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
-input.stock-count{-moz-appearance:textfield;appearance:textfield;}
-input.confirm-recv-qty::-webkit-inner-spin-button,input.confirm-recv-qty::-webkit-outer-spin-button,input.confirm-recv-defect::-webkit-inner-spin-button,input.confirm-recv-defect::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
-input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appearance:textfield;}
+input.stock-count::-webkit-inner-spin-button,input.stock-count::-webkit-outer-spin-button,.smart-import-price-cell input::-webkit-inner-spin-button,.smart-import-price-cell input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input.stock-count,.smart-import-price-cell input{-moz-appearance:textfield;appearance:textfield;}
+input.confirm-recv-qty::-webkit-inner-spin-button,input.confirm-recv-qty::-webkit-outer-spin-button,input.confirm-recv-defect::-webkit-inner-spin-button,input.confirm-recv-defect::-webkit-outer-spin-button,input.sibp-qty-input::-webkit-inner-spin-button,input.sibp-qty-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appearance:textfield;appearance:textfield;}
 .adj-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.7);border:1.5px solid rgba(255,255,255,0.9);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .adj-btn:hover{background:var(--surface);}
 .empty{text-align:center;padding:60px 20px;color:var(--text3);}
@@ -195,7 +195,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 .order-item-group .oi-group-check{display:none!important;}
 .si-bundle-toggle{width:40px;height:38px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;flex:0 0 40px;cursor:pointer;transition:all .15s;padding:0}
 .si-bundle-toggle:hover,.si-bundle-toggle.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
-.smart-import-review-row{grid-template-columns:40px 40px minmax(0,1fr) 124px 78px 36px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
+.smart-import-review-row{grid-template-columns:40px 40px minmax(0,1fr) 76px 60px 36px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
 .smart-import-review-row .form-input,.si-bundle-component .form-input{height:38px;box-sizing:border-box}
 .smart-import-review-row>[id^="si-img-slot-"]{width:40px!important;height:38px!important;margin-top:0;border-radius:9px!important}
 .si-bundle-component>[id^="sibp-img-slot-"]{height:38px!important;margin-top:0;border-radius:9px!important}
@@ -226,8 +226,8 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
 .order-form-cost-main>.form-input{padding-left:24px}
 .order-form-qty-cell{text-align:center}
 .order-form-review-row .lock-icon{width:36px;height:34px!important;margin-top:2px;border-radius:9px;box-sizing:border-box}
-.si-bundle-panel{grid-column:1/-1;margin:0 0 10px 96px;padding:12px;border:1.5px dashed var(--cream4);border-radius:12px;background:var(--cream1);min-width:0}
-.si-bundle-component{display:grid;grid-template-columns:44px minmax(0,1fr) 108px 44px;gap:10px;align-items:start;margin-top:9px}
+.si-bundle-panel{grid-column:1/-1;margin:0 0 16px 96px;padding:12px;border:1.5px dashed var(--cream4);border-radius:12px;background:var(--cream1);min-width:0}
+.si-bundle-component{display:grid;grid-template-columns:44px minmax(0,1fr) 90px 44px;gap:10px;align-items:start;margin-top:9px}
 .si-bundle-search-wrap{position:relative;min-width:0}
 .si-bundle-search-wrap>.oi-linked-tag{min-height:16px;margin-top:3px}
 .si-bundle-search-wrap .oi-suggest-list{top:calc(100% + 2px);left:0;right:0;border-color:var(--cream4);border-radius:12px;background:var(--surface);box-shadow:0 8px 22px rgba(139,111,71,.18);z-index:160}
@@ -242,7 +242,7 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
   .smart-import-qty-cell{grid-column:3;grid-row:2}
   .smart-import-review-row>.remove-btn{grid-column:4;grid-row:1}
   .si-bundle-panel{margin-left:0}
-  .si-bundle-component{grid-template-columns:44px minmax(0,1fr) 76px 44px;gap:8px}
+  .si-bundle-component{grid-template-columns:44px minmax(0,1fr) 84px 44px;gap:8px}
   .order-items-header{display:none}
   .order-form-review-row{grid-template-columns:40px 40px minmax(0,1fr) 36px;gap:8px}
   .order-form-review-row>.order-row-group-icon{grid-column:1;grid-row:1}
@@ -1420,14 +1420,16 @@ input.confirm-recv-qty,input.confirm-recv-defect{-moz-appearance:textfield;appea
       <div id="smart-import-step-review" class="hidden">
         <div style="font-size:12px;color:var(--text3);margin-bottom:10px">辨識結果如下，請檢查一下有沒有抓錯，可以直接修改或刪除：</div>
         <div id="smart-import-list" style="max-height:45vh;overflow-y:auto"></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
-          <button class="btn btn-secondary btn-sm" onclick="smartImportAddRow()">+ 手動新增一列</button>
-          <button class="btn btn-secondary btn-sm hidden" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()" title="舊版多列組合功能">🔗 組合</button>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-          <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
-          <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入成採購單</button>
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;border-top:1.5px solid var(--cream3);padding-top:16px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="smartImportAddRow()">+ 手動新增一列</button>
+            <button class="btn btn-secondary btn-sm hidden" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()" title="舊版多列組合功能">🔗 組合</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
+            <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
+            <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入成採購單</button>
+          </div>
         </div>
       </div>
     </div>
@@ -5390,11 +5392,12 @@ async function handleSmartImportImage(input){
   try{
     for(let i=0;i<files.length;i++){
       progress.textContent=`辨識中（${i+1}/${files.length}張），請稍候...`;
-      // 明確指定各檔案的 CDN 位置，有些瀏覽器/環境不指定會載入失敗
+      // corePath 要指向「資料夾」讓 Tesseract 自己挑對應裝置的版本（simd/非simd），
+      // 寫死成單一檔案是官方文件明確不建議的做法，會在部分裝置上直接失敗；
+      // langPath 拿掉，讓它用 v5 版本的預設值（現在預設走 jsDelivr，比舊版那個位址穩）
       const {data:{text}}=await Tesseract.recognize(files[i],'chi_tra+eng',{
         workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
-        corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core-simd.wasm.js',
-        langPath:'https://tessdata.projectnaptha.com/4.0.0'
+        corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5'
       });
       allItems.push(...parseOcrTextToItems(text));
     }
@@ -5638,8 +5641,7 @@ async function handleSmartImportPDF(input){
         const dataUrl=canvas.toDataURL('image/png');
         const {data:{text}}=await Tesseract.recognize(dataUrl,'chi_tra+eng',{
           workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
-          corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core-simd.wasm.js',
-          langPath:'https://tessdata.projectnaptha.com/4.0.0'
+          corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5'
         });
         allItems.push(...parseOcrTextToItems(text));
       }
@@ -5668,7 +5670,6 @@ function smartImportBundleToggleHtml(i,it){
   const open=smartImportBundleExpanded.has(key);
   return `<button type="button" class="si-bundle-toggle${active?' active':''}" onclick="toggleSmartImportBundle(${i})" title="${open?'收合組合內容':'設定這個商品包含哪些組合商品'}" aria-label="設定組合內容" aria-expanded="${open?'true':'false'}">
     <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    <span style="font-size:8px;margin-left:-2px">${open?'▴':'▾'}</span>
   </button>`;
 }
 function smartImportBundlePanelHtml(i,it){
@@ -5681,7 +5682,7 @@ function smartImportBundlePanelHtml(i,it){
       <input type="text" class="form-input" value="${smartImportEsc(part.name)}" placeholder="輸入關鍵字搜尋，例如：星星" autocomplete="off" style="font-size:11px" oninput="smartImportBundleShowSuggestions(this,${i},${j})" onblur="hideOrderItemSuggestionsLater(this)">
       <div class="oi-linked-tag">${smartImportBundleLinkedTag(part)}</div>
     </div>
-    <div style="display:flex;align-items:center;gap:3px"><input type="number" class="form-input" value="${Math.max(1,parseInt(part.qty)||1)}" min="1" step="1" style="font-size:11px;text-align:center" onchange="smartImportUpdateBundlePart(${i},${j},'qty',this.value)"><span style="font-size:9px;color:var(--text3);white-space:nowrap">個/組</span></div>
+    <div style="display:flex;align-items:center;gap:3px"><div style="position:relative;display:inline-block"><input type="number" id="sibp-qty-${i}-${j}" class="form-input sibp-qty-input" value="${Math.max(1,parseInt(part.qty)||1)}" min="1" step="1" style="font-size:11px;text-align:center;width:64px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportUpdateBundlePart(${i},${j},'qty',this.value)"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportBundleQty(${i},${j},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportBundleQty(${i},${j},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div><span style="font-size:9px;color:var(--text3);white-space:nowrap">個/組</span></div>
     <button type="button" class="remove-btn" onclick="smartImportRemoveBundlePart(${i},${j})" title="刪除這個組合商品">×</button>
   </div>`).join('');
   return `<div class="si-bundle-panel">
@@ -5740,8 +5741,15 @@ function smartImportAddBundlePart(i){
   const it=smartImportItems[i];if(!it)return;
   if(!Array.isArray(it.bundleItems))it.bundleItems=[];
   it.bundleItems.push({name:'',qty:1});
+  const j=it.bundleItems.length-1;
   smartImportBundleExpanded.add(smartImportBundleKey(it));
   renderSmartImportReview();
+  // Safari 的 backdrop-filter 模糊背景疊加動態改內容的清單時，偶爾會殘留舊畫面的「幽靈殘影」
+  // （新增一列組合商品時最容易看到）；強迫捲動到新那一列可以逼瀏覽器重新畫一次，順便讓她看到剛新增的那列
+  requestAnimationFrame(()=>{
+    const newInput=document.querySelector(`.si-bundle-search-wrap input[oninput*="smartImportBundleShowSuggestions(this,${i},${j})"]`);
+    if(newInput)newInput.closest('.si-bundle-component')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
 }
 function smartImportUpdateBundlePart(i,j,field,value){
   const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];if(!part)return;
@@ -5866,7 +5874,7 @@ function renderSmartImportReview(){
         <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
       </div>
       <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
-      <input type="number" class="form-input smart-import-qty-cell" value="${it.qty}" min="1" style="font-size:12px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1">
+      <div class="smart-import-qty-cell" style="position:relative;display:inline-block"><input type="number" id="si-qty-${i}" class="form-input sibp-qty-input" value="${it.qty}" min="1" style="font-size:12px;text-align:center;width:60px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportQty(${i},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportQty(${i},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div>
       <button class="remove-btn" onclick="smartImportRemoveRow(${i})">×</button>
     </div>${smartImportBundlePanelHtml(i,it)}`;
   });
@@ -7003,7 +7011,8 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
   }).join('、');
   const nameCell=linked?`<div>${i.name}</div><div style="font-size:10px;color:var(--text3);margin-top:3px">↳ ${linked}</div>`:i.name;
   const linkedP=i.productId?DB.products.find(x=>x.id===i.productId):null;
-  const thumbHtml=linkedP&&linkedP.img?`<img src="${linkedP.img}" alt="" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--cream2)">`:`<span style="width:32px;height:32px;border-radius:8px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:var(--text3)">📦</span>`;
+  const itemImg=i.img||(linkedP&&linkedP.img)||'';
+  const thumbHtml=itemImg?`<img src="${itemImg}" alt="" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--cream2)">`:`<span style="width:32px;height:32px;border-radius:8px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:var(--text3)">📦</span>`;
   const nameCellWithImg=`<div style="display:flex;align-items:center;gap:8px">${thumbHtml}<div>${nameCell}</div></div>`;
   const itemUsd=(i.cost||0)*cnyToUsdRatio;
   const itemSubUsd=itemUsd*(i.qty||1);
@@ -7061,6 +7070,20 @@ function confirmReceived(id){
 }
 // 原生數字輸入框的上下箭頭，大部分瀏覽器只有滑鼠移過去或點進去才會顯示——
 // 她要的是「永遠都看得到」，原生的做不到，這裡自己畫一組小小的 ▲▼（樣子模仿原生箭頭），永遠顯示、點了就能加減
+function stepSmartImportQty(i,delta){
+  const input=document.getElementById(`si-qty-${i}`);
+  if(!input)return;
+  const val=Math.max(1,(parseInt(input.value)||1)+delta);
+  input.value=val;
+  if(smartImportItems[i])smartImportItems[i].qty=val;
+}
+function stepSmartImportBundleQty(i,j,delta){
+  const input=document.getElementById(`sibp-qty-${i}-${j}`);
+  if(!input)return;
+  const val=Math.max(1,(parseInt(input.value)||1)+delta);
+  input.value=val;
+  smartImportUpdateBundlePart(i,j,'qty',val);
+}
 function stepConfirmRecvInput(selector,idx,delta){
   const input=document.querySelector(`${selector}[data-idx="${idx}"]`);
   if(!input)return;
