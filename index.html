@@ -3613,26 +3613,32 @@ function toggleSkuEditMode(){
   }
   renderSkuPage();
 }
+// 新增列時，若清單中已有 code:'99' 那一列（固定放最後），新項目要插在它上面一格；
+// 沒有 99 的清單就照舊加到最後。
+function insertSkuDraftRow(draft,row){
+  const i=draft.findIndex(r=>r.code==='99');
+  if(i===-1)draft.push(row);else draft.splice(i,0,row);
+}
 function addSkuSizeRow(){
-  runSkuDraftAction('新增尺寸',()=>skuSizesDraft.push({code:'',label:'',price:0}),renderSkuSizesTable);
+  runSkuDraftAction('新增尺寸',()=>insertSkuDraftRow(skuSizesDraft,{code:'',label:'',price:0}),renderSkuSizesTable);
 }
 function removeSkuSizeRow(i){
   runSkuDraftAction('刪除尺寸',()=>skuSizesDraft.splice(i,1),renderSkuSizesTable);
 }
 function addSkuTypeRow(){
-  runSkuDraftAction('新增商品類型',()=>skuTypesDraft.push({code:'',label:''}),renderSkuTypesTable);
+  runSkuDraftAction('新增商品類型',()=>insertSkuDraftRow(skuTypesDraft,{code:'',label:''}),renderSkuTypesTable);
 }
 function removeSkuTypeRow(i){
   runSkuDraftAction('刪除商品類型',()=>skuTypesDraft.splice(i,1),renderSkuTypesTable);
 }
 function addSkuCatRow(){
-  runSkuDraftAction('新增布貼大類',()=>skuCatsDraft.push({code:'',label:'',sub:''}),renderSkuCatsTable);
+  runSkuDraftAction('新增布貼大類',()=>insertSkuDraftRow(skuCatsDraft,{code:'',label:'',sub:''}),renderSkuCatsTable);
 }
 function removeSkuCatRow(i){
   runSkuDraftAction('刪除布貼大類',()=>skuCatsDraft.splice(i,1),renderSkuCatsTable);
 }
 function addSkuColorRow(){
-  runSkuDraftAction('新增顏色',()=>skuColorsDraft.push({code:'',label:'',hex:'#cccccc'}),renderSkuColorsTable);
+  runSkuDraftAction('新增顏色',()=>insertSkuDraftRow(skuColorsDraft,{code:'',label:'',hex:'#cccccc'}),renderSkuColorsTable);
 }
 function removeSkuColorRow(i){
   runSkuDraftAction('刪除顏色',()=>skuColorsDraft.splice(i,1),renderSkuColorsTable);
