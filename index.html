@@ -187,7 +187,8 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .toast.error{border-color:var(--pink);background:var(--pink-light);color:#c45f7a;}
 @keyframes slideIn{from{transform:translateX(30px) scale(0.9);opacity:0}to{transform:translateX(0) scale(1);opacity:1}}
 .order-item-row{position:relative;display:grid;grid-template-columns:36px 1fr 96px 70px 34px;gap:8px;margin-bottom:8px;align-items:start;}
-.order-item-group{border:1.5px dashed var(--cream4);border-radius:12px;padding:10px 8px 2px;margin-bottom:10px;background:var(--cream2);}
+.order-item-group{position:relative;border:1.5px dashed var(--cream4);border-radius:12px;padding:10px 8px 2px;margin-bottom:10px;background:var(--cream2);}
+.order-item-group-dissolve{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--cream);background:var(--brown);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;z-index:2}
 .order-item-group-label{font-size:11px;font-weight:700;color:var(--brown);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .order-item-group .order-item-row{margin-bottom:8px;}
 .oi-group-check{display:none;position:absolute;top:-6px;left:-6px;width:20px;height:20px;border-radius:50%;border:2px solid var(--brown);background:var(--surface);cursor:pointer;z-index:2;align-items:center;justify-content:center;font-size:11px;color:var(--brown);font-weight:800;}
@@ -5057,6 +5058,66 @@ function setOrderSortMode(v){
   renderOrderSortMenu();
   renderOrders();
 }
+function renderOrderItemsGrouped(items){
+  // 同一組(groupId)的項目摺成一列，預設收合、顯示組合的照片/名字跟總價；
+  // 點旁邊的箭頭才展開看裡面實際的細項(例如金星星/銀星星各自的單價數量)
+  const rowHtml=i=>{
+    const p=i.productId?DB.products.find(x=>x.id===i.productId):null;
+    const imgSrc=i.img||(p?p.img||'':'');
+    const sku=p&&p.sku?p.sku:'';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream3)">
+      <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">${imgSrc?`<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain">`:'📦'}</div>
+      <div style="flex:1;min-width:0">
+        ${sku?`<div style="font-size:9px;font-family:monospace;color:var(--text3);font-weight:700">${sku}</div>`:''}
+        <div style="font-size:12px;color:var(--text1)">${i.name}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);white-space:nowrap">¥${(i.cost||0).toFixed(2)} × ${i.qty}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--brown);white-space:nowrap;min-width:52px;text-align:right">¥${((i.cost||0)*(i.qty||1)).toFixed(2)}</div>
+    </div>`;
+  };
+  let html='';
+  let i=0;
+  while(i<items.length){
+    const it=items[i];
+    if(it.groupId){
+      let j=i;
+      while(j<items.length&&items[j].groupId===it.groupId)j++;
+      const members=items.slice(i,j);
+      if(members.length>1){
+        const gid=it.groupId;
+        const gImg=members.find(m=>m.groupImg)?.groupImg||members.find(m=>m.img)?.img||'';
+        const gLabel=it.groupLabel||members.map(m=>m.name).join('、');
+        const gTotal=members.reduce((sum,m)=>sum+(m.cost||0)*(m.qty||1),0);
+        const gid2=`oig-${gid}`;
+        html+=`<div style="border-bottom:1px solid var(--cream3)">
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer" onclick="toggleOrderItemGroupRow('${gid2}')">
+            <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">${gImg?`<img src="${gImg}" style="width:100%;height:100%;object-fit:contain">`:'📦'}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:9px;color:var(--text3);font-weight:700;display:flex;align-items:center;gap:3px"><svg viewBox="0 0 24 24" width="10" height="10" style="flex-shrink:0"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>組合 · ${members.length}項</div>
+              <div style="font-size:12px;color:var(--text1)">${gLabel}</div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:var(--brown);white-space:nowrap;min-width:52px;text-align:right">¥${gTotal.toFixed(2)}</div>
+            <svg id="${gid2}-arrow" viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;color:var(--text3);transition:transform .15s"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div id="${gid2}" style="display:none;padding-left:20px">${members.map(rowHtml).join('')}</div>
+        </div>`;
+        i=j;
+        continue;
+      }
+    }
+    html+=rowHtml(it);
+    i++;
+  }
+  return html;
+}
+function toggleOrderItemGroupRow(gid2){
+  const body=document.getElementById(gid2);
+  const arrow=document.getElementById(gid2+'-arrow');
+  if(!body)return;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.style.transform=open?'':'rotate(-180deg)';
+}
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
@@ -5078,24 +5139,13 @@ function renderOrders(){
   let healedAnyProductId=false;
   container.innerHTML=sorted.map(o=>{
     const usd=(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2);
-    const itemsHtml=(o.items||[]).map(i=>{
-      let p=i.productId?DB.products.find(x=>x.id===i.productId):null;
-      if(!p){
-        p=DB.products.find(x=>x.name===i.name); // 舊資料沒存 productId 時，退回用名稱找
+    (o.items||[]).forEach(i=>{
+      if(!i.productId){
+        const p=DB.products.find(x=>x.name===i.name); // 舊資料沒存 productId 時，退回用名稱找
         if(p){i.productId=p.id;healedAnyProductId=true;} // 找到了就順手補上連結，以後改名也不會再斷線
       }
-      const imgSrc=i.img||(p?p.img||'':'');
-      const sku=p&&p.sku?p.sku:'';
-      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream3)">
-        <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">${imgSrc?`<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain">`:'📦'}</div>
-        <div style="flex:1;min-width:0">
-          ${sku?`<div style="font-size:9px;font-family:monospace;color:var(--text3);font-weight:700">${sku}</div>`:''}
-          <div style="font-size:12px;color:var(--text1)">${i.name}</div>
-        </div>
-        <div style="font-size:11px;color:var(--text3);white-space:nowrap">¥${(i.cost||0).toFixed(2)} × ${i.qty}</div>
-        <div style="font-size:12px;font-weight:700;color:var(--brown);white-space:nowrap;min-width:52px;text-align:right">¥${((i.cost||0)*(i.qty||1)).toFixed(2)}</div>
-      </div>`;
-    }).join('');
+    });
+    const itemsHtml=renderOrderItemsGrouped(o.items||[]);
     return `<div class="order-accordion" id="oa-${o.id}">
       <div class="order-accordion-head" onclick="toggleAccordion('${o.id}')">
         <div style="flex:1">
@@ -6702,9 +6752,34 @@ function confirmOrderItemGroup(){
 function ungroupOrderItems(gid){
   const groupDiv=document.querySelector(`.order-item-group[data-group-id="${gid}"]`);
   if(!groupDiv)return;
-  const rows=[...groupDiv.querySelectorAll('.order-item-row')];
-  rows.forEach(r=>groupDiv.parentNode.insertBefore(r,groupDiv));
-  groupDiv.remove();
+  doUngroupOrderItems(gid);
+}
+// 解散組合(dissolve)本身可以⌘Z撤銷——重新把rows包回同一個組合框、標題文字跟照片都還原
+function doUngroupOrderItems(gid){
+  const gd=document.querySelector(`.order-item-group[data-group-id="${gid}"]`);
+  if(!gd)return;
+  const parent=gd.parentNode;
+  const anchor=gd.nextSibling;
+  const rows=[...gd.querySelectorAll('.order-item-row')];
+  const labelInput=gd.querySelector('.oi-group-label-input');
+  const labelText=labelInput?labelInput.value:'';
+  const img=gd.dataset.img||'';
+  rows.forEach(r=>parent.insertBefore(r,gd));
+  gd.remove();
+  pushUndo({label:'解散組合',
+    undo:()=>{
+      const newGd=document.createElement('div');
+      newGd.className='order-item-group';
+      newGd.dataset.groupId=gid;
+      if(img)newGd.dataset.img=img;
+      parent.insertBefore(newGd,anchor);
+      rows.forEach(r=>newGd.appendChild(r));
+      newGd.insertBefore(orderGroupLabelBarEl(gid,labelText,img),newGd.firstChild);
+      updateOrderTotalPreview();
+    },
+    redo:()=>doUngroupOrderItems(gid)
+  });
+  updateOrderTotalPreview();
 }
 // 組合標題列：一個可以自己打字的輸入框(存在畫面上就好，存單時才讀出來)，加一個解散按鈕
 function orderGroupPhotoSlotHtml(gid,img){
@@ -6726,7 +6801,7 @@ function processOrderGroupImgFile(f,gid){
 function orderGroupLabelBarEl(gid,labelText,img){
   const bar=document.createElement('div');
   bar.className='order-item-group-label';
-  bar.innerHTML=`<span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brown)"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>${orderGroupPhotoSlotHtml(gid,img)}<input type="text" class="oi-group-label-input" value="${(labelText||'').replace(/"/g,'&quot;')}" placeholder="幫這組取個名字" style="flex:1;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--brown);padding:2px 4px;min-width:0"><button type="button" onclick="ungroupOrderItems('${gid}')" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:0 4px;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="解散這個組合"><svg viewBox="0 0 24 24" width="15" height="15"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg></button>`;
+  bar.innerHTML=`<span style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brown)"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>${orderGroupPhotoSlotHtml(gid,img)}<input type="text" class="oi-group-label-input" value="${(labelText||'').replace(/"/g,'&quot;')}" placeholder="幫這組取個名字" style="flex:1;border:none;background:transparent;font-size:12px;font-weight:700;color:var(--brown);padding:2px 4px;min-width:0"><button type="button" class="order-item-group-dissolve" onclick="ungroupOrderItems('${gid}')" title="解散這個組合"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg></button>`;
   return bar;
 }
 // 重新編輯舊單/續編草稿時，把之前存的 item.groupId 還原成畫面上的組合框；
