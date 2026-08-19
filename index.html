@@ -109,6 +109,9 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .settings-btn-row{display:flex;flex-wrap:wrap;gap:8px;}
 .settings-toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
 .settings-toggle input{opacity:0;width:0;height:0}
+.hint-info-btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:20px;padding:0;border:none;background:transparent;color:var(--text3);vertical-align:middle;}
+.hint-info-btn svg{width:20px;height:20px;display:block;}
+.hint-info-btn:hover{opacity:.88;}
 .hidden{display:none !important;}
 .modal-overlay.hidden{display:none;}
 .modal{background:var(--cream);border-radius:20px;border:2px solid var(--cream3);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
@@ -1041,9 +1044,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     </div>
     <div class="sku-section">
       <div class="sku-section-title" style="display:flex;align-items:center;gap:6px;position:relative">
-        <span style="display:inline-flex;align-items:center;color:var(--text2)"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="4" rx="1.2"/><rect x="3" y="17" width="6" height="4" rx="1.2"/><rect x="15" y="17" width="6" height="4" rx="1.2"/><path d="M12 7v5M6 12h12M6 12v5M18 12v5"/></g></svg></span>
-        <span>商品子分類</span>
-        <span id="sku-subcat-tip-btn" onclick="event.stopPropagation();document.getElementById('sku-subcat-tip').classList.toggle('hidden')" title="查看說明" style="cursor:pointer;width:15px;height:15px;border-radius:50%;background:var(--cream2);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">i</span>
+        <span>📂 商品子分類</span>
+        <button type="button" id="sku-subcat-tip-btn" class="hint-info-btn" onclick="event.stopPropagation();document.getElementById('sku-subcat-tip').classList.toggle('hidden')" title="查看說明" aria-label="查看說明"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 8.8v5.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
         <div id="sku-subcat-tip" class="hidden" style="position:absolute;top:24px;left:0;width:min(310px,80vw);font-size:10.5px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:8px 10px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60;font-weight:500">每個商品類型都可以自己新增子分類。代碼留給系統辨識，商品庫與商品編輯的下拉只顯示名稱。</div>
       </div>
       <div id="sku-type-subcats-wrap"></div>
@@ -1283,7 +1285,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     <div class="modal-body">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;position:relative">
         <span style="font-size:13px;font-weight:700;color:var(--text2)">請確認收到的數量</span>
-        <span onclick="this.nextElementSibling.classList.toggle('hidden')" title="預設是收到跟訂購一樣的數量。如果有短少或瑕疵，直接改下面的數字就好——短少的部分不會加進庫存，瑕疵的部分會單獨記在「瑕疵庫存」，不會混進可賣庫存裡。" style="cursor:pointer;width:15px;height:15px;border-radius:50%;background:var(--cream2);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">ⓘ</span>
+        <button type="button" class="hint-info-btn" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden')" title="預設是收到跟訂購一樣的數量。如果有短少或瑕疵，直接改下面的數字就好——短少的部分不會加進庫存，瑕疵的部分會單獨記在「瑕疵庫存」，不會混進可賣庫存裡。" aria-label="查看說明"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 8.8v5.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></button>
         <div class="hidden" style="position:absolute;top:20px;left:0;width:240px;font-size:11px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:10px 12px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60">預設是收到跟訂購一樣的數量。如果有短少或瑕疵，直接改下面的數字就好——短少的部分不會加進庫存，瑕疵的部分會單獨記在「瑕疵庫存」，不會混進可賣庫存裡。</div>
       </div>
       <div id="confirm-receive-body" style="max-height:50vh;overflow-y:auto"></div>
@@ -2275,9 +2277,11 @@ function saveUIEditableText(){
   if(DB.uiOverrideHistory[key].length>10)DB.uiOverrideHistory[key].shift(); // 只留最近 10 版
   DB.uiOverrides[key]={text:val,color};
   saveDB();
-  closeModal('modal-ui-edit');
   applyUIOverrides();
-  toast('✅ 已儲存','success');
+  const histNow=(DB.uiOverrideHistory&&DB.uiOverrideHistory[key])||[];
+  const revertBtn=document.getElementById('ui-edit-revert-btn');
+  if(revertBtn)revertBtn.classList.toggle('hidden',histNow.length===0);
+  toast('✅ 已儲存，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 function resetUIEditableText(){
   const key=document.getElementById('ui-edit-input').dataset.targetKey;
@@ -3103,7 +3107,7 @@ document.addEventListener('click',(e)=>{
 // 確認到貨視窗上面那個 ⓘ 小提示：點外面自動收起來，不用再點一次ⓘ才能關掉
 document.addEventListener('click',(e)=>{
   document.querySelectorAll('#modal-confirm-receive .modal-body > div:first-child > div:last-child:not(.hidden)').forEach(tip=>{
-    if(!tip.previousElementSibling||(e.target!==tip.previousElementSibling&&!tip.contains(e.target)))tip.classList.add('hidden');
+    if(!tip.previousElementSibling||(!(tip.previousElementSibling.contains&&tip.previousElementSibling.contains(e.target))&&!tip.contains(e.target)))tip.classList.add('hidden');
   });
 });
 // SKU 商品子分類的小提示：點外面自動收起來
@@ -3111,7 +3115,7 @@ document.addEventListener('click',(e)=>{
   const tip=document.getElementById('sku-subcat-tip');
   const btn=document.getElementById('sku-subcat-tip-btn');
   if(!tip||tip.classList.contains('hidden'))return;
-  if(e.target!==btn&&!tip.contains(e.target))tip.classList.add('hidden');
+  if(!(btn&&btn.contains(e.target))&&!tip.contains(e.target))tip.classList.add('hidden');
 });
 function addCustomCategoryFromSidebar(){
   const codeInput=document.getElementById('sidebar-newcat-code');
@@ -3738,7 +3742,6 @@ function saveCustomer(){
     DB.customers.push({id:newId,name,phone,note,createdAt:Date.now()});
   }
   saveDB();
-  closeModal('modal-customer');
   renderCustomers();
   refreshSaleCustomerSelect();
   if(newId&&quickAddCustomerFromSales){
@@ -3746,7 +3749,14 @@ function saveCustomer(){
     if(sel){sel.value=newId;syncCustomSelectLabel('sale-customer-select');}
     quickAddCustomerFromSales=false;
   }
-  toast(editingCustomerId?'✅ 顧客資料已更新':'🎉 顧客已新增','success');
+  const wasEditing=!!editingCustomerId;
+  if(newId){
+    editingCustomerId=newId;
+    document.getElementById('customer-modal-title').textContent='✏️ 編輯顧客';
+    document.getElementById('customer-save-btn').textContent='💾 儲存修改';
+  }
+  openModal('modal-customer');
+  toast(wasEditing?'✅ 顧客資料已更新，可繼續編輯':'🎉 顧客已新增，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 function deleteCustomer(id){
   customConfirm('確定刪除這位顧客？（過去的購買紀錄會保留，只是不會再顯示顧客姓名）',()=>{
@@ -4144,8 +4154,8 @@ function countProductsUsingTypeSubcat(type,code){return DB.products.filter(p=>p.
 function renderSkuTypeSubcats(){
   const wrap=document.getElementById('sku-type-subcats-wrap');if(!wrap)return;const types=(skuEditMode?skuTypesDraft:getSkuTypes()).filter(t=>t.code&&t.label);
   wrap.innerHTML=types.map(t=>{const type=t.code,rows=skuEditMode?getSkuDraftTypeSubcats(type):getTypeSubcats(type),title=getTypeDisplayLabel(type);if(!skuEditMode&&!rows.length)return '';
-    const rowHtml=rows.length?rows.map((r,i)=>{const used=countProductsUsingTypeSubcat(type,r.code);if(!skuEditMode)return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream2)"><span class="code-badge">${r.code}</span><span style="font-size:12px;font-weight:700;flex:1">${r.label}</span><span style="font-size:10px;color:var(--text3)">${used?used+' 件':''}</span></div>`;return `<div draggable="true" ondragstart="startSkuSubcatDrag(event,'${type}',${i})" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='transparent'" ondrop="dropSkuSubcatDrag(event,'${type}',${i})" style="display:grid;grid-template-columns:18px 54px minmax(0,1fr) 32px;gap:7px;align-items:center;padding:5px 0;border:1px solid transparent;border-radius:8px"><span title="拖曳排序" style="cursor:grab;color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span><input class="form-input" maxlength="4" value="${String(r.code||'').replace(/"/g,'&quot;')}" style="font-size:11px;text-align:center;padding:7px 6px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].code=this.value"><input class="form-input" value="${String(r.label||'').replace(/"/g,'&quot;')}" style="font-size:11px;padding:7px 9px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].label=this.value"><button class="remove-btn" onclick="removeSkuTypeSubcatRow('${type}',${i})">×</button></div>`;}).join(''):`<div style="font-size:11px;color:var(--text3);padding:4px 0">還沒有子分類</div>`;
-    return `<div style="border:1.5px solid var(--cream3);border-radius:12px;padding:10px 12px;margin-bottom:9px;background:var(--surface)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:${rows.length?'5px':'0'}"><span style="font-family:monospace;font-size:10px;color:var(--text3);font-weight:800">${type}</span><span style="font-size:12px;font-weight:800;color:var(--text)">${title}</span><span style="margin-left:auto;font-size:10px;color:var(--text3)">${rows.length} 個</span></div>${rowHtml}${skuEditMode?`<button type="button" class="btn btn-secondary btn-sm" style="margin-top:7px" onclick="addSkuTypeSubcatRow('${type}')">＋ 新增子分類</button>`:''}</div>`;}).join('')||'<div style="font-size:11px;color:var(--text3)">先新增商品類型，再設定子分類。</div>';
+    const rowHtml=rows.length?rows.map((r,i)=>{if(!skuEditMode)return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream2)"><span class="code-badge">${r.code}</span><span style="font-size:12px;font-weight:700;flex:1">${r.label}</span></div>`;return `<div draggable="true" ondragstart="startSkuSubcatDrag(event,'${type}',${i})" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='transparent'" ondrop="dropSkuSubcatDrag(event,'${type}',${i})" style="display:grid;grid-template-columns:18px 54px minmax(0,1fr) 32px;gap:7px;align-items:center;padding:5px 0;border:1px solid transparent;border-radius:8px"><span title="拖曳排序" style="cursor:grab;color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span><input class="form-input" maxlength="4" value="${String(r.code||'').replace(/"/g,'&quot;')}" style="font-size:11px;text-align:center;padding:7px 6px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].code=this.value"><input class="form-input" value="${String(r.label||'').replace(/"/g,'&quot;')}" style="font-size:11px;padding:7px 9px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].label=this.value"><button class="remove-btn" onclick="removeSkuTypeSubcatRow('${type}',${i})">×</button></div>`;}).join(''):`<div style="font-size:11px;color:var(--text3);padding:4px 0">還沒有子分類</div>`;
+    return `<div style="border:1.5px solid var(--cream3);border-radius:12px;padding:10px 12px;margin-bottom:9px;background:var(--surface)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:${rows.length?'5px':'0'}"><span style="font-family:monospace;font-size:10px;color:var(--text3);font-weight:800">${type}</span><span style="font-size:12px;font-weight:800;color:var(--text)">${title}</span></div>${rowHtml}${skuEditMode?`<button type="button" class="btn btn-secondary btn-sm" style="margin-top:7px" onclick="addSkuTypeSubcatRow('${type}')">＋ 新增子分類</button>`:''}</div>`;}).join('')||'<div style="font-size:11px;color:var(--text3)">先新增商品類型，再設定子分類。</div>';
 }
 function addSkuTypeSubcatRow(type){runSkuDraftAction('新增 '+type+' 子分類',()=>{const rows=getSkuDraftTypeSubcats(type),row={code:'',label:''},i=rows.findIndex(r=>r.code==='99');if(i<0)rows.push(row);else rows.splice(i,0,row);},renderSkuTypeSubcats);}
 function removeSkuTypeSubcatRow(type,i){const rows=getSkuDraftTypeSubcats(type),row=rows[i];if(!row)return;const used=row.code?countProductsUsingTypeSubcat(type,row.code):0,go=()=>runSkuDraftAction('刪除 '+type+' 子分類',()=>getSkuDraftTypeSubcats(type).splice(i,1),renderSkuTypeSubcats);if(used)customConfirm(`「${row.label||row.code}」目前有 ${used} 件商品正在使用。刪除後會改到「其他」(99)；如果沒有 99，則會變成未分類。確定刪除嗎？`,go);else go();}
@@ -4675,6 +4685,7 @@ function doRedo(){
   }catch(e){toast('重做失敗','error');}
   finally{_autoUndoRestoring=false;}
 }
+// 全站儲存原則：儲存只存資料、不代表離開；真正離開由 ×／取消／Esc 負責。
 // 全站儲存快捷鍵：只要目前畫面真的看得到「儲存／保存」按鈕，Cmd/Ctrl+S 就按那一顆。
 // 有彈窗時只處理最上層彈窗，避免跳過確認視窗去誤存底下的內容；
 // 同一個畫面同時有「儲存草稿」和正式儲存時，正式儲存優先。
@@ -5413,7 +5424,17 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
-  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const p={id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-size').value,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);saveDB();closeModal('modal-product');renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();toast(editingId?'商品已更新 ✨':'商品已新增 🎉','success');
+  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const p={id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-size').value,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
+  const wasEditing=!!editingId;
+  saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
+  // 儲存不等於離開：第一次新增完成後立刻切成編輯這一筆，之後再按儲存只會更新同一商品，不會重複新增。
+  if(!wasEditing){
+    editingId=id;
+    document.getElementById('product-modal-title').textContent='✏️ 編輯商品';
+    if(saveBtn)saveBtn.textContent='💾 儲存修改';
+  }
+  openModal('modal-product');
+  toast(wasEditing?'商品已更新 ✨，可繼續編輯':'商品已新增 🎉，可繼續編輯；按 × 或 Esc 才離開','success');
   }finally{
     if(saveBtn){saveBtn.dataset.saving='';saveBtn.style.pointerEvents='';saveBtn.style.opacity='';}
   }
@@ -6065,12 +6086,15 @@ function saveSmartImportDraft(opts={}){
     if(idx>=0)DB.smartImportDrafts[idx]={...DB.smartImportDrafts[idx],...draftData};
     else DB.smartImportDrafts.push({id:currentImportDraftId,...draftData});
   }else{
-    DB.smartImportDrafts.push({id:uid(),...draftData});
+    const newDraftId=uid();
+    DB.smartImportDrafts.push({id:newDraftId,...draftData});
+    currentImportDraftId=newDraftId;
   }
   saveDB();
-  _actuallyCloseModal('modal-smart-import');
+  if(opts.auto)_actuallyCloseModal('modal-smart-import');
+  else openModal('modal-smart-import');
   updateImportDraftsBadge();
-  toast(opts.auto?'📝 已自動儲存成草稿':'📝 已儲存草稿，可以在「草稿」按鈕裡繼續編輯','success');
+  toast(opts.auto?'📝 已自動儲存成草稿':'📝 已儲存草稿，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 function updateImportDraftsBadge(){
   const badge=document.getElementById('import-drafts-badge');
@@ -6365,6 +6389,25 @@ function pdfRowToTokens(rowItems){
   if(cur.trim())tokens.push(cur.trim());
   return tokens;
 }
+// 智慧匯入：這些都是付款／訂單資訊，不是商品。
+// 淘寶 PDF 的付款詳情常會跨到下一頁；下一頁不一定再印一次「付款詳情」標題，
+// 所以不能只靠看到標題後停止，還要把明顯的付款欄位一律排除。
+const SMART_IMPORT_NON_PRODUCT_RE=/(付款详情|付款詳情|商品总价|商品總價|运费|運費|快递|快遞|店铺优惠|店鋪優惠|支付优惠|支付優惠|支付手续费|支付手續費|官方立减|官方立減|淘金币|淘金幣|购物金|購物金|会员红包|會員紅包|红包|紅包|首单礼金|首單禮金|实付款|實付款|订单信息|訂單信息|订单编号|訂單編號|付款时间|付款時間|创建时间|創建時間|收货信息|收貨信息|物流信息|物流資訊)/i;
+function isSmartImportNonProductText(v){
+  const s=String(v||'').trim();
+  if(!s)return true;
+  if(/^\d+\s*\/\s*\d+$/.test(s))return true; // PDF 頁碼 1/2、2/2
+  return SMART_IMPORT_NON_PRODUCT_RE.test(s);
+}
+function cleanSmartImportItems(items){
+  return (items||[]).filter(it=>{
+    const name=String(it&&it.name||'').trim();
+    if(!name||isSmartImportNonProductText(name))return false;
+    // 避免只剩符號／金額字樣被當商品
+    if(/^(?:[-–—\s]|USD|RMB|CNY|¥|￥|\d+[.,]?\d*)+$/i.test(name))return false;
+    return true;
+  });
+}
 // 專門處理「淘寶/電商訂單詳情」這種表格：左邊商品資訊常常分成好幾行（標題／款式／備註），
 // 右邊對應的現價／原價／數量也各自分成好幾行、對齊在同樣的高度。
 // 用「遇到 x數字（數量）就結算一筆商品」的方式抓取，不管左邊分幾行都能正確配對；
@@ -6378,9 +6421,13 @@ function parsePdfRowsToItems(rows){
   for(const row of rows){
     if(stop)break;
     const tokens=pdfRowToTokens(row.items);
+    const rowText=tokens.join(' ').trim();
     const left=[];let rowQty=null;
+    // 「付款詳情」本身代表商品區已結束；而付款詳情跨頁後沒有標題的續頁，
+    // 也要靠欄位名稱擋掉，不能再被誤判成商品。
+    if(tokens.some(tok=>tok.includes('付款详情')||tok.includes('付款詳情'))){stop=true;break;}
+    if(isSmartImportNonProductText(rowText)){leftBuf=[];firstPrice=null;secondPrice=null;continue;}
     for(const tok of tokens){
-      if(tok.includes('付款详情')||tok.includes('付款詳情')){stop=true;break;}
       const pm=tok.match(priceRe);
       const qm=tok.match(qtyRe);
       if(pm){
@@ -6482,6 +6529,7 @@ function parseOcrTextToItems(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
   const items=[];
   for(const line of lines){
+    if(isSmartImportNonProductText(line))continue;
     const priceMatches=[...line.matchAll(/[¥￥]\s*([\d]+\.?[\d]*)/g)];
     const qtyMatch=line.match(/[xX×]\s*([\d]+)/);
     if(!priceMatches.length)continue; // 沒有價格的行，大概不是商品列（可能是規格說明、按鈕文字等）
@@ -6521,7 +6569,8 @@ async function handleSmartImportPDF(input){
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     const allItems=[];
-    const allPdfRows=[]; // 付款詳情可能跨頁：先把每一頁 rows 合併，最後一次解析整份 PDF 的付款/訂單資訊
+    const allPdfRows=[]; // 文字層頁面全部合併後再解析，讓「付款詳情」的停止狀態可以跨頁延續
+    const allPdfTextParts=[];
     smartImportMeta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,totalPaidUsd:null,feeUsd:null,rawPaymentText:''};
     for(let pageNum=1;pageNum<=pdf.numPages;pageNum++){
       progress.textContent=`讀取第 ${pageNum}/${pdf.numPages} 頁...`;
@@ -6529,15 +6578,11 @@ async function handleSmartImportPDF(input){
       const textContent=await page.getTextContent();
       const totalTextLen=(textContent.items||[]).reduce((s,it)=>s+(it.str||'').trim().length,0);
       if(totalTextLen>5){
-        // 這頁有文字層，先用表格式（座標比對）解析，抓不到東西再退回逐行文字比對
+        // 不要每頁各自解析商品。付款詳情可能從上一頁延續到下一頁，若每頁重置狀態，
+        // 「淘金幣抵扣／官方立減」這類付款列就會在下一頁被誤當商品。
         const rows=pdfTextContentToRows(textContent);
         allPdfRows.push(...rows);
-        let pageItems=parsePdfRowsToItems(rows);
-        if(!pageItems.length){
-          const pageText=rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n');
-          pageItems=parseOcrTextToItems(pageText);
-        }
-        allItems.push(...pageItems);
+        allPdfTextParts.push(rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n'));
       }else{
         // 這頁沒有文字層（掃描圖檔），畫成圖片後用 OCR 辨識
         progress.textContent=`第 ${pageNum} 頁沒有文字層，改用文字辨識（OCR）中...`;
@@ -6552,12 +6597,14 @@ async function handleSmartImportPDF(input){
           workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
           corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5'
         });
-        allItems.push(...parseOcrTextToItems(text));
+        allItems.push(...cleanSmartImportItems(parseOcrTextToItems(text)));
       }
     }
-    // 所有有文字層的頁面都讀完後，再用「整份 PDF」一次解析付款詳情與訂單資訊。
-    // 這樣第 1 頁出現「付款詳情」、第 2 頁才出現支付手續費/折扣/實付款時，狀態會正確延續。
+    // 文字層商品一定要整份 PDF 一次解析，不能逐頁重置。
     if(allPdfRows.length){
+      let textItems=parsePdfRowsToItems(allPdfRows);
+      if(!textItems.length&&allPdfTextParts.length)textItems=parseOcrTextToItems(allPdfTextParts.join('\n'));
+      allItems.unshift(...cleanSmartImportItems(textItems));
       const fullMeta=parseTaobaoOrderMeta(allPdfRows);
       Object.keys(fullMeta).forEach(k=>{
         const v=fullMeta[k];
@@ -6565,10 +6612,11 @@ async function handleSmartImportPDF(input){
       });
     }
     progress.classList.add('hidden');
-    if(!allItems.length){toast('沒有從 PDF 讀到商品資料，可能格式跟預期不同，建議改用 Excel 或截圖','error');return;}
-    smartImportItems=allItems;
+    const cleanedItems=cleanSmartImportItems(allItems);
+    if(!cleanedItems.length){toast('沒有從 PDF 讀到商品資料，可能格式跟預期不同，建議改用 Excel 或截圖','error');return;}
+    smartImportItems=cleanedItems;
     renderSmartImportReview();
-    toast(`✅ 從 PDF 讀到 ${allItems.length} 筆，請仔細檢查一遍再匯入`,'success');
+    toast(`✅ 從 PDF 讀到 ${cleanedItems.length} 筆，付款／折扣欄位已自動排除，請再檢查一次`,'success');
   }catch(err){
     progress.classList.add('hidden');
     toast('PDF 讀取失敗：'+String(err&&err.message||err),'error');
@@ -7993,12 +8041,15 @@ function saveOrderFormDraft(opts={}){
     if(idx>=0)DB.smartImportDrafts[idx]={...DB.smartImportDrafts[idx],...draftData};
     else DB.smartImportDrafts.push({id:currentImportDraftId,...draftData});
   }else{
-    DB.smartImportDrafts.push({id:uid(),...draftData});
+    const newDraftId=uid();
+    DB.smartImportDrafts.push({id:newDraftId,...draftData});
+    currentImportDraftId=newDraftId;
   }
   saveDB();
-  _actuallyCloseModal('modal-order');
+  if(opts.auto)_actuallyCloseModal('modal-order');
+  else openModal('modal-order');
   updateImportDraftsBadge();
-  toast(opts.auto?'📝 已自動儲存成草稿':'📝 已儲存草稿，可以在「草稿」按鈕裡繼續編輯','success');
+  toast(opts.auto?'📝 已自動儲存成草稿':'📝 已儲存草稿，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 // 採購單商品照片與商品庫共用同一張：只要採購單這列有照片，儲存時就同步回已連結/同名商品。
 // 這樣智慧匯入或採購單裡只需要放一次照片，商品庫不必再重複上傳。
@@ -10179,8 +10230,9 @@ function saveBatchEdit(){
     p.updatedAt=Date.now();
     count++;
   });
-  saveDB();closeModal('modal-batch');renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();
-  toast('✅ '+count+' 件商品儲存完成！','success');
+  saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  openModal('modal-batch');
+  toast('✅ '+count+' 件商品儲存完成，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 
 // ---- 盤點模式：輸入實際清點數量，跟帳面庫存比對差異，一次套用調整 ----
