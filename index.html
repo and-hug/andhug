@@ -1564,7 +1564,30 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       <div class="settings-divider"></div>
 
       <div class="settings-section-title">💾 備份與資料</div>
-      <div id="settings-autobackup-status" class="settings-row-desc" style="margin-bottom:12px"></div>
+      <div id="settings-autobackup-status" class="settings-row-desc" style="margin-bottom:10px"></div>
+      <div id="settings-storage-card" style="border:1.5px solid var(--cream3);border-radius:12px;background:var(--surface);padding:11px 12px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:7px;min-width:0">
+            <span style="font-size:14px">🗄️</span>
+            <div>
+              <div style="font-size:12px;font-weight:800;color:var(--text)">本機資料空間</div>
+              <div style="font-size:9.5px;color:var(--text3);margin-top:1px">PDF 原檔不會存進這裡；商品照片、草稿與自動備份才會佔空間</div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="refreshLocalStorageUsage()" title="重新計算目前用量" style="flex-shrink:0;padding:5px 8px">↻</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+          <div style="background:var(--cream2);border-radius:9px;padding:8px 9px">
+            <div style="font-size:9.5px;color:var(--text3);font-weight:700">目前主資料</div>
+            <div id="settings-storage-main" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
+          </div>
+          <div style="background:var(--cream2);border-radius:9px;padding:8px 9px">
+            <div style="font-size:9.5px;color:var(--text3);font-weight:700">庫存系統本機總用量</div>
+            <div id="settings-storage-total" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
+          </div>
+        </div>
+        <div id="settings-storage-browser" style="font-size:9.5px;color:var(--text3);margin-top:7px;line-height:1.5"></div>
+      </div>
       <div class="settings-btn-row">
         <button class="btn btn-secondary btn-sm" onclick="exportBackup()">⬇️ 匯出備份</button>
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 還原備份</button>
@@ -1978,6 +2001,62 @@ function openSettings(){
   const s=document.getElementById('settings-autobackup-status');
   if(s)s.textContent=autoBackupTimeAgoText();
   openModal('modal-settings');
+  refreshLocalStorageUsage();
+}
+function formatStorageBytes(bytes){
+  const n=Math.max(0,Number(bytes)||0);
+  if(n<1024)return n+' B';
+  if(n<1024*1024)return (n/1024).toFixed(n<10240?1:0)+' KB';
+  if(n<1024*1024*1024)return (n/(1024*1024)).toFixed(n<10*1024*1024?2:1)+' MB';
+  return (n/(1024*1024*1024)).toFixed(2)+' GB';
+}
+function utf8ByteSize(value){
+  try{return new TextEncoder().encode(String(value==null?'':value)).length;}catch(e){return String(value==null?'':value).length*2;}
+}
+async function refreshLocalStorageUsage(){
+  const mainEl=document.getElementById('settings-storage-main');
+  const totalEl=document.getElementById('settings-storage-total');
+  const browserEl=document.getElementById('settings-storage-browser');
+  if(!mainEl||!totalEl)return;
+  mainEl.textContent='計算中…';
+  totalEl.textContent='計算中…';
+  if(browserEl)browserEl.textContent='';
+  try{
+    // 主資料：以目前真正會存回 patchDB_v3 的 DB 內容估算 UTF-8 大小。
+    const mainBytes=utf8ByteSize(JSON.stringify(DB||{}));
+    // 庫存系統總用量：把目前載入快取裡所有 patchDB_*（主資料＋自動備份等）加總。
+    let patchBytes=0;
+    if(typeof LS_CACHE!=='undefined'&&LS_CACHE&&typeof LS_CACHE.forEach==='function'){
+      LS_CACHE.forEach((v,k)=>{if(String(k).indexOf('patchDB')===0)patchBytes+=utf8ByteSize(v);});
+    }
+    // saveDB 有 debounce / 非同步寫入時，快取可能還沒更新；至少不要顯示得比主資料還小。
+    patchBytes=Math.max(patchBytes,mainBytes);
+    mainEl.textContent=formatStorageBytes(mainBytes);
+    totalEl.textContent=formatStorageBytes(patchBytes);
+    if(browserEl){
+      if(navigator.storage&&navigator.storage.estimate){
+        try{
+          const est=await navigator.storage.estimate();
+          const usage=Number(est&&est.usage)||0;
+          const quota=Number(est&&est.quota)||0;
+          if(usage>0&&quota>0){
+            const pct=Math.min(100,usage/quota*100);
+            browserEl.textContent=`瀏覽器回報此網站實際使用 ${formatStorageBytes(usage)} ／ 可用上限約 ${formatStorageBytes(quota)}（${pct<0.1?'<0.1':pct.toFixed(1)}%）`;
+          }else if(usage>0){
+            browserEl.textContent=`瀏覽器回報此網站實際使用 ${formatStorageBytes(usage)}`;
+          }else{
+            browserEl.textContent='上面是庫存資料本身的估算大小。';
+          }
+        }catch(e){browserEl.textContent='上面是庫存資料本身的估算大小。';}
+      }else{
+        browserEl.textContent='上面是庫存資料本身的估算大小。';
+      }
+    }
+  }catch(e){
+    mainEl.textContent='無法計算';
+    totalEl.textContent='無法計算';
+    if(browserEl)browserEl.textContent='重新開啟設定後可以再試一次。';
+  }
 }
 function toggleLowStockAlertSetting(on){
   if(!DB.settings)DB.settings={};
