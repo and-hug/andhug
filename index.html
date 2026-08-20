@@ -1087,10 +1087,11 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
         <button type="button" class="btn btn-secondary btn-sm" onclick="addSkuSizeRow()">+ 新增尺寸</button>
       </div>
     </div>
-    <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1.5px solid var(--cream3)">
+    <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:18px;padding-top:18px;border-top:1.5px solid var(--cream3)">
       <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()">💫 復原</button>
       <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits()">💾 儲存變更</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="saveSkuEdits({keepEditing:true})">💾 儲存變更</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits({keepEditing:false})">✓ 完成</button>
     </div>
   </div>
 </div>
@@ -3152,6 +3153,8 @@ function getSizePrice(size,type){const base=SIZE_PRICES[size];if(base===undefine
 let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', catSizesCollapsed=false;
 let activeTypeSubcat='all';
 let sidebarSubcatEditorType=null;
+// SKU 規則資料原則：DEFAULT_* 只提供「第一次沒有資料時」的預設值。
+// 一旦使用者手動儲存過名稱，讀取時不得再用 migration / inference 偷偷覆蓋 label。
 const DEFAULT_TYPE_SUBCATS={
   RB:[
     {code:'01',label:'寬版'},
@@ -3176,15 +3179,9 @@ function getAllTypeSubcatsMap(){
   const saved=DB.typeSubcats&&typeof DB.typeSubcats==='object'?DB.typeSubcats:{};
   Object.keys(saved).forEach(type=>{
     base[type]=(saved[type]||[]).map(r=>({code:String(r.code||''),label:String(r.label||'')})).filter(r=>r.code&&r.label);
-    // RB 商品子分類只管帶身型態；扣具款式另外放在 SKU 細類規則。
+    // 已儲存的商品子分類名稱永遠以使用者手動設定為準。
+    // 系統只補「缺少的代碼」，不再改任何既有 label。
     if(type==='RB'){
-      base[type]=base[type].map(r=>{
-        if(r.code==='01'&&['寬布條','寬織帶','寬版','圓尾環扣'].includes(r.label))return {...r,label:'寬版'};
-        if(r.code==='02'&&['細布條','細織帶','窄布條','窄織帶','細版','圓尾小環扣'].includes(r.label))return {...r,label:'細版'};
-        if(r.code==='03'&&['方尾環扣','掛繩','寬吊繩'].includes(r.label))return {...r,label:'寬吊繩'};
-        if(r.code==='04'&&['細吊繩'].includes(r.label))return {...r,label:'細吊繩'};
-        return r;
-      });
       if(!base[type].some(r=>r.code==='03'))base[type].splice(Math.min(2,base[type].length),0,{code:'03',label:'寬吊繩'});
       if(!base[type].some(r=>r.code==='04')){
         const idx99=base[type].findIndex(r=>r.code==='99');
@@ -4083,12 +4080,8 @@ let skuEditMode=false, skuCatsDraft=null, skuColorsDraft=null, skuTypesDraft=nul
 let skuUndoStack=[],skuRedoStack=[],skuFieldEditBefore=null;
 function getSkuSizes(){return DB.skuSizes&&DB.skuSizes.length?DB.skuSizes:DEFAULT_SKU_SIZES;}
 function getSkuTypes(){
-  const rows=DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:DEFAULT_SKU_TYPES;
-  // 舊版預設名稱自動縮短成「織帶 Ribbon」；若使用者自己改成其他自訂名稱則保留。
-  return rows.map(r=>{
-    if(r&&r.code==='RB'&&['布條／掛繩 Ribbon','布條/掛繩 Ribbon','織帶／掛繩 Ribbon','織帶/掛繩 Ribbon','布條／掛繩','布條/掛繩','織帶／掛繩','織帶/掛繩'].includes(String(r.label||'')))return {...r,label:'織帶 Ribbon'};
-    return r;
-  });
+  // 已儲存的商品類型名稱以使用者手動設定為準，不在讀取時自動改名。
+  return DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:DEFAULT_SKU_TYPES;
 }
 function getSkuCats(){return DB.skuCats&&DB.skuCats.length?DB.skuCats:DEFAULT_SKU_CATS;}
 function getSkuColors(){return DB.skuColors&&DB.skuColors.length?DB.skuColors:DEFAULT_SKU_COLORS;}
@@ -4224,7 +4217,7 @@ function skuRuleRowsHtml(type,rows,kind){
     const removeFn=isDetail?'removeSkuTypeDetailRow':'removeSkuTypeSubcatRow';
     const startFn=isDetail?'startSkuDetailDrag':'startSkuSubcatDrag';
     const dropFn=isDetail?'dropSkuDetailDrag':'dropSkuSubcatDrag';
-    return `<div draggable="true" ondragstart="${startFn}(event,'${type}',${i})" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='transparent'" ondrop="${dropFn}(event,'${type}',${i})" style="display:grid;grid-template-columns:18px 54px minmax(0,1fr) 32px;gap:7px;align-items:center;padding:5px 0;border:1px solid transparent;border-radius:8px"><span title="拖曳排序" style="cursor:grab;color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span><input class="form-input" maxlength="4" value="${String(r.code||'').replace(/"/g,'&quot;')}" style="font-size:11px;text-align:center;padding:7px 6px" oninput="${getFn}('${type}')[${i}].code=this.value"><input class="form-input" value="${String(r.label||'').replace(/"/g,'&quot;')}" style="font-size:11px;padding:7px 9px" oninput="${getFn}('${type}')[${i}].label=this.value"><button class="remove-btn" onclick="${removeFn}('${type}',${i})">×</button></div>`;
+    return `<div draggable="true" ondragstart="${startFn}(event,'${type}',${i})" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='transparent'" ondrop="${dropFn}(event,'${type}',${i})" style="display:grid;grid-template-columns:18px 54px minmax(0,1fr) 32px;gap:7px;align-items:center;padding:5px 0;border:1px solid transparent;border-radius:8px"><span title="拖曳排序" style="cursor:grab;color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span><input class="form-input" data-sku-rule-kind="${isDetail?'detail':'subcat'}" data-sku-rule-type="${type}" data-sku-rule-index="${i}" data-sku-rule-field="code" maxlength="4" value="${String(r.code||'').replace(/"/g,'&quot;')}" style="font-size:11px;text-align:center;padding:7px 6px" oninput="${getFn}('${type}')[${i}].code=this.value"><input class="form-input" data-sku-rule-kind="${isDetail?'detail':'subcat'}" data-sku-rule-type="${type}" data-sku-rule-index="${i}" data-sku-rule-field="label" value="${String(r.label||'').replace(/"/g,'&quot;')}" style="font-size:11px;padding:7px 9px" oninput="${getFn}('${type}')[${i}].label=this.value"><button class="remove-btn" onclick="${removeFn}('${type}',${i})">×</button></div>`;
   }).join('');
 }
 function renderSkuTypeSubcats(){
@@ -4522,7 +4515,22 @@ function addSkuColorRow(){
 function removeSkuColorRow(i){
   runSkuDraftAction('刪除顏色',()=>skuColorsDraft.splice(i,1),renderSkuColorsTable);
 }
-function saveSkuEdits(){
+function syncSkuRuleDraftFromDom(){
+  if(!skuEditMode)return;
+  document.querySelectorAll('#sku-type-subcats-wrap input[data-sku-rule-kind]').forEach(el=>{
+    const type=String(el.dataset.skuRuleType||'').trim().toUpperCase();
+    const index=parseInt(el.dataset.skuRuleIndex,10);
+    const field=el.dataset.skuRuleField;
+    const kind=el.dataset.skuRuleKind;
+    if(!type||!Number.isFinite(index)||!['code','label'].includes(field))return;
+    const rows=kind==='detail'?getSkuDraftTypeDetails(type):getSkuDraftTypeSubcats(type);
+    if(rows[index])rows[index][field]=el.value;
+  });
+}
+async function saveSkuEdits(options){
+  options=options||{};
+  const keepEditing=options.keepEditing!==false;
+  syncSkuRuleDraftFromDom();
   commitSkuFieldEdit();
   const oldSkuTypes=(DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:getSkuTypes()).map(r=>({code:String(r.code||'').trim().toUpperCase(),label:String(r.label||'').trim()}));
   const newSkuTypes=(skuTypesDraft||[]).map(r=>({
@@ -4641,11 +4649,56 @@ function saveSkuEdits(){
     if(!valid){const other=(DB.typeSubcats[p.type]||[]).find(r=>r.code==='99');if(other)p.typeSubcat='99';else delete p.typeSubcat;}
   });
 
-  saveDB();
-  skuEditMode=false;
+  // 本機儲存要等到 IndexedDB 真正寫完，再告訴使用者「已儲存」。
+  // 之前是 fire-and-forget，快速切換/離開時可能看起來像完全沒存。
+  const skuSavedRaw=JSON.stringify(DB);
+  saveDB({skipCloudSync:true});
+  try{
+    await idbSet('patchDB_v3',skuSavedRaw);
+    LS_CACHE.set('patchDB_v3',skuSavedRaw);
+    const verifyRaw=await idbGet('patchDB_v3');
+    if(verifyRaw!==skuSavedRaw)throw new Error('儲存驗證不一致');
+  }catch(e){
+    console.error('SKU 規則儲存失敗',e);
+    toast('❌ SKU 規則沒有存成功，請再試一次','error');
+    return false;
+  }
+
   skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
+
+  if(keepEditing){
+    // 儲存後留在原畫面，不重新 render SKU 編輯區。
+    // 避免整塊 DOM 被重建造成「畫面跳掉／剛輸入的看起來消失」。
+    skuEditMode=true;
+
+    // 更新目前草稿的基準代碼，避免下一次儲存重複執行 rename。
+    (skuTypesDraft||[]).forEach(r=>{
+      r.code=String(r.code||'').trim().toUpperCase();
+      r._origCode=r.code;
+    });
+
+    populateTypeDropdowns();
+    if(document.getElementById('cat-sidebar'))renderCatSidebar();
+    if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+    if(document.getElementById('settings-category-list'))renderCategoryManager();
+    if(document.getElementById('p-type-subcat'))refreshTypeSubcatSelect('p','p-type','');
+    if(document.getElementById('edit-type-subcat'))refreshTypeSubcatSelect('edit','edit-type',editingId||'');
+
+    if(typeof window.syncToSupabase==='function'){
+      clearTimeout(_autoSyncTimer);
+      _autoSyncTimer=setTimeout(()=>window.syncToSupabase(true),2500);
+    }
+
+    updateSkuUndoButton();
+    const savedTime=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    toast((renamePairs.length?'✅ 已儲存並同步分類':'✅ SKU 規則已儲存')+' · '+savedTime,'success');
+    return true;
+  }
+
+  skuEditMode=false;
+  skuTypesDraft=null;skuSizesDraft=null;skuCatsDraft=null;skuColorsDraft=null;
+  skuTypeSubcatsDraft=null;skuTypeDetailsDraft=null;
   renderSkuPage();
-  // SKU 規則與分類共用同一份資料：儲存後所有分類 UI 立即刷新。
   populateTypeDropdowns();
   if(document.getElementById('cat-sidebar'))renderCatSidebar();
   if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
@@ -4654,6 +4707,7 @@ function saveSkuEdits(){
   if(document.getElementById('p-type-subcat'))refreshTypeSubcatSelect('p','p-type','');
   if(document.getElementById('edit-type-subcat'))refreshTypeSubcatSelect('edit','edit-type',editingId||'');
   toast(renamePairs.length?'✅ SKU 與商品分類已一起更新':'✅ SKU 規則已儲存，分類已同步','success');
+  return true;
 }
 function cancelSkuEdits(){
   skuEditMode=false;
@@ -4826,6 +4880,10 @@ function _shortcutFindSaveButton(){
   return buttons.find(btn=>btn.classList.contains('btn-primary'))||buttons[0];
 }
 function shortcutSaveCurrentContext(){
+  // SKU 規則：快捷鍵只儲存，不離開編輯模式。
+  if(typeof currentPage!=='undefined'&&currentPage==='sku'&&typeof skuEditMode!=='undefined'&&skuEditMode){
+    return saveSkuEdits({keepEditing:true})!==false;
+  }
   const btn=_shortcutFindSaveButton();
   if(!btn){toast('目前沒有可以儲存的內容 🌸');return false;}
   btn.click();
@@ -9555,7 +9613,14 @@ document.addEventListener('keydown', function(e){
     else if(top.id)closeModal(top.id);
     return;
   }
-  // 沒有彈窗開著的話：
+  // 沒有彈窗開著的話：SKU 規則正在編輯時，Esc 直接退出編輯模式。
+  // 已經按過儲存的內容會保留；尚未儲存的草稿會放棄。
+  if(typeof currentPage!=='undefined'&&currentPage==='sku'&&typeof skuEditMode!=='undefined'&&skuEditMode){
+    e.preventDefault();
+    cancelSkuEdits();
+    toast('已退出 SKU 規則編輯','success');
+    return;
+  }
   if(typeof batchMode!=='undefined'&&batchMode){
     // 正在拖框選的話，Esc 先取消這次框選、還原成拖之前的選取狀態
     if(typeof marqueeActive!=='undefined'&&marqueeActive){
