@@ -799,6 +799,11 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #print-labels-container,#print-labels-container *{visibility:visible;}
   #print-labels-container{display:flex!important;flex-wrap:wrap;position:absolute;top:0;left:0;width:100%;}
 }
+
+@media(max-width:700px){
+  #sku-type-subcats-wrap > div[style*="grid-template-columns:repeat(2"]{grid-template-columns:1fr!important}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1036,7 +1041,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       <div style="background:var(--cream2);border-radius:var(--radius-sm);padding:16px;border:1.5px solid var(--cream3)">
         <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--text3);font-weight:700;margin-bottom:4px">布貼</div><div style="font-family:monospace;font-size:15px;color:var(--brown);font-weight:700">A0101M-0100-001</div><div style="font-size:11px;color:var(--text3);margin-top:3px">系列(A/B) + 大類(2碼) + 子類(2碼) + 尺寸 + 主色(2碼) + 次色(2碼) - 流水號</div></div>
         <div class="divider"></div>
-        <div><div style="font-size:11px;color:var(--text3);font-weight:700;margin-bottom:4px">其他商品</div><div style="font-family:monospace;font-size:15px;color:var(--brown);font-weight:700">RB01M-0201-001</div><div style="font-size:11px;color:var(--text3);margin-top:3px">類型(2碼) + 款式(2碼) + 尺寸 + 主色(2碼) + 次色(2碼) - 流水號</div></div>
+        <div><div style="font-size:11px;color:var(--text3);font-weight:700;margin-bottom:4px">織帶（RB）</div><div style="font-family:monospace;font-size:15px;color:var(--brown);font-weight:700">RB0101-1216-001</div><div style="font-size:11px;color:var(--text3);margin-top:3px">織帶樣式(2碼) + 扣具款式(2碼) + 織帶顏色(2碼) + 扣具顏色(2碼) - 流水號</div></div>
       </div>
     </div>
     <div class="sku-section">
@@ -1898,7 +1903,7 @@ function migrateThemeClassificationRules(){
   });
   return changed;
 }
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const migratedSockType=migrateSockTypeSTtoSK();const migratedTheme=migrateThemeClassificationRules();if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const migratedSockType=migrateSockTypeSTtoSK();const migratedTheme=migrateThemeClassificationRules();if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
 let _autoSyncTimer=null;
 // 商品新增的管道很多（手動新增、複製、匯入、匯入時自動建立...），有些沒有幫忙寫上 sortOrder，
 // 導致「預設排序」拿到的是 undefined→當作0→大家全部並列在最前面，看某個小分類的時候特別明顯（全部因為東西多，比較不會發現）
@@ -2877,7 +2882,12 @@ function autoSkuFromProductName(prefix,name,typeFieldId,productId){
   const catEl=document.getElementById(prefix+'-sku-catpart');
   const detailEl=document.getElementById(prefix+'-sku-detailpart');
   if(typeRule&&typeEl)typeEl.value=typeRule.code;
-  if(catRule&&catEl){
+  if(typeRule&&typeRule.code==='RB'){
+    const widthCode=typeof inferTypeSubcatCode==='function'?inferTypeSubcatCode('RB',text):'';
+    const hardwareCode=typeof inferRibbonHardwareCode==='function'?inferRibbonHardwareCode(text):'';
+    if(widthCode&&catEl)catEl.value=widthCode;
+    if(hardwareCode&&detailEl)detailEl.value=hardwareCode;
+  }else if(catRule&&catEl){
     catEl.value=catRule.code;
     const inferredDetail=holidayDetail||inferSkuDetailFromName(catRule.code,text);
     if(inferredDetail&&detailEl)detailEl.value=inferredDetail;
@@ -3143,8 +3153,19 @@ let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', c
 let activeTypeSubcat='all';
 let sidebarSubcatEditorType=null;
 const DEFAULT_TYPE_SUBCATS={
-  RB:[{code:'01',label:'寬版'},{code:'02',label:'細版'},{code:'03',label:'掛繩'},{code:'99',label:'其他'}]
+  RB:[
+    {code:'01',label:'寬版'},
+    {code:'02',label:'細版'},
+    {code:'03',label:'寬吊繩'},
+    {code:'04',label:'細吊繩'},
+    {code:'99',label:'其他'}
+  ]
 };
+const RIBBON_HARDWARE_RULES=[
+  {code:'01',label:'圓尾環扣'},
+  {code:'02',label:'圓尾小環扣'},
+  {code:'03',label:'方尾環扣'}
+];
 const LEGACY_RIBBON_SUBCAT={wide:'01',thin:'02',lanyard:'03',other:'99'};
 function cloneTypeSubcatMap(map){return JSON.parse(JSON.stringify(map||{}));}
 function getAllTypeSubcatsMap(){
@@ -3152,12 +3173,22 @@ function getAllTypeSubcatsMap(){
   const saved=DB.typeSubcats&&typeof DB.typeSubcats==='object'?DB.typeSubcats:{};
   Object.keys(saved).forEach(type=>{
     base[type]=(saved[type]||[]).map(r=>({code:String(r.code||''),label:String(r.label||'')})).filter(r=>r.code&&r.label);
-    // 舊版 RB 預設名稱太長：只把舊的預設字樣換成「寬版／細版」，使用者自己改過的名稱維持原樣。
-    if(type==='RB')base[type]=base[type].map(r=>{
-      if(r.code==='01'&&['寬布條','寬織帶'].includes(r.label))return {...r,label:'寬版'};
-      if(r.code==='02'&&['細布條','細織帶','窄布條','窄織帶'].includes(r.label))return {...r,label:'細版'};
-      return r;
-    });
+    // RB 商品子分類只管帶身型態；扣具款式另外放在 SKU 細類規則。
+    if(type==='RB'){
+      base[type]=base[type].map(r=>{
+        if(r.code==='01'&&['寬布條','寬織帶','寬版','圓尾環扣'].includes(r.label))return {...r,label:'寬版'};
+        if(r.code==='02'&&['細布條','細織帶','窄布條','窄織帶','細版','圓尾小環扣'].includes(r.label))return {...r,label:'細版'};
+        if(r.code==='03'&&['方尾環扣','掛繩','寬吊繩'].includes(r.label))return {...r,label:'寬吊繩'};
+        if(r.code==='04'&&['細吊繩'].includes(r.label))return {...r,label:'細吊繩'};
+        return r;
+      });
+      if(!base[type].some(r=>r.code==='03'))base[type].splice(Math.min(2,base[type].length),0,{code:'03',label:'寬吊繩'});
+      if(!base[type].some(r=>r.code==='04')){
+        const idx99=base[type].findIndex(r=>r.code==='99');
+        const at=idx99===-1?base[type].length:idx99;
+        base[type].splice(at,0,{code:'04',label:'細吊繩'});
+      }
+    }
   });
   return base;
 }
@@ -3166,12 +3197,21 @@ function getTypeSubcatLabel(type,code){const r=getTypeSubcats(type).find(x=>x.co
 function inferTypeSubcatCode(type,name){
   const n=String(name||'').toLowerCase();
   if(type==='RB'){
+    // 吊繩要先判斷，避免「寬／細」字樣先被一般寬版／細版吃掉。
+    if(/寬吊繩|寬掛繩|寬頸繩|wide\s*(lanyard|strap)|thick\s*(lanyard|strap)/.test(n))return '03';
+    if(/細吊繩|細掛繩|窄吊繩|窄掛繩|slim\s*(lanyard|strap)|thin\s*(lanyard|strap)|narrow\s*(lanyard|strap)/.test(n))return '04';
     if(/寬布條|寬織帶|寬版|寬款|粗布條|粗織帶|加寬|wide|thick|38mm|32mm|30mm|25mm/.test(n))return '01';
     if(/細布條|細織帶|窄布條|窄織帶|細版|窄版|細款|窄款|slim|thin|narrow|20mm|15mm|12mm|10mm/.test(n))return '02';
-    if(/掛繩|吊繩|頸繩|脖繩|手機繩|手機掛繩|證件繩|證件帶|識別證帶|手腕繩|腕帶|鑰匙帶|鑰匙繩|lanyard|neck\s*strap|wrist\s*strap|key\s*strap/.test(n))return '03';
   }
   const rows=getTypeSubcats(type);const direct=rows.find(r=>r.code!=='99'&&r.label&&n.includes(String(r.label).toLowerCase()));if(direct)return direct.code;
   const other=rows.find(r=>r.code==='99');return other?other.code:'';
+}
+function inferRibbonHardwareCode(name){
+  const n=String(name||'').toLowerCase();
+  if(/圓尾.*小環扣|圓尾.*小圓扣|小環扣|小圓扣|small\s*ring|mini\s*ring/.test(n))return '02';
+  if(/方尾.*環扣|方尾.*圓扣|方尾|square\s*(tail|end)|rect(?:angle|angular)\s*(tail|end)/.test(n))return '03';
+  if(/圓尾.*環扣|圓尾.*圓扣|圓尾|round\s*(tail|end)|ring\s*loop/.test(n))return '01';
+  return '';
 }
 function getProductTypeSubcat(p){
   if(!p||!p.type)return '';
@@ -4022,6 +4062,7 @@ const DEFAULT_SKU_COLORS=[
   {code:'11',label:'棕',hex:'#744210'},{code:'12',label:'粉紅',hex:'#f687b3'},
   {code:'13',label:'粉綠',hex:'#9ae6b4'},{code:'14',label:'粉藍',hex:'#90cdf4'},
   {code:'15',label:'金',hex:'#d4af37'},{code:'16',label:'銀',hex:'#c0c0c0'},
+  {code:'17',label:'螢光綠',hex:'#C6FF00'},
   {code:'99',label:'三色以上',hex:''},{code:'00',label:'無色',hex:''}
 ];
 let skuEditMode=false, skuCatsDraft=null, skuColorsDraft=null, skuTypesDraft=null, skuSizesDraft=null, skuTypeSubcatsDraft=null;
@@ -4162,7 +4203,11 @@ function renderSkuTypeSubcats(){
   const wrap=document.getElementById('sku-type-subcats-wrap');if(!wrap)return;const types=(skuEditMode?skuTypesDraft:getSkuTypes()).filter(t=>t.code&&t.label);
   wrap.innerHTML=types.map(t=>{const type=t.code,rows=skuEditMode?getSkuDraftTypeSubcats(type):getTypeSubcats(type),title=getTypeDisplayLabel(type);if(!skuEditMode&&!rows.length)return '';
     const rowHtml=rows.length?rows.map((r,i)=>{if(!skuEditMode)return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream2)"><span class="code-badge">${r.code}</span><span style="font-size:12px;font-weight:700;flex:1">${r.label}</span></div>`;return `<div draggable="true" ondragstart="startSkuSubcatDrag(event,'${type}',${i})" ondragover="event.preventDefault();this.style.borderColor='var(--brown)'" ondragleave="this.style.borderColor='transparent'" ondrop="dropSkuSubcatDrag(event,'${type}',${i})" style="display:grid;grid-template-columns:18px 54px minmax(0,1fr) 32px;gap:7px;align-items:center;padding:5px 0;border:1px solid transparent;border-radius:8px"><span title="拖曳排序" style="cursor:grab;color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span><input class="form-input" maxlength="4" value="${String(r.code||'').replace(/"/g,'&quot;')}" style="font-size:11px;text-align:center;padding:7px 6px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].code=this.value"><input class="form-input" value="${String(r.label||'').replace(/"/g,'&quot;')}" style="font-size:11px;padding:7px 9px" oninput="getSkuDraftTypeSubcats('${type}')[${i}].label=this.value"><button class="remove-btn" onclick="removeSkuTypeSubcatRow('${type}',${i})">×</button></div>`;}).join(''):`<div style="font-size:11px;color:var(--text3);padding:4px 0">還沒有子分類</div>`;
-    return `<div style="border:1.5px solid var(--cream3);border-radius:12px;padding:10px 12px;margin-bottom:9px;background:var(--surface)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:${rows.length?'5px':'0'}"><span style="font-family:monospace;font-size:10px;color:var(--text3);font-weight:800">${type}</span><span style="font-size:12px;font-weight:800;color:var(--text)">${title}</span></div>${rowHtml}${skuEditMode?`<button type="button" class="btn btn-secondary btn-sm" style="margin-top:7px" onclick="addSkuTypeSubcatRow('${type}')">＋ 新增子分類</button>`:''}</div>`;}).join('')||'<div style="font-size:11px;color:var(--text3)">先新增商品類型，再設定子分類。</div>';
+    const mainCard=`<div style="border:1.5px solid var(--cream3);border-radius:12px;padding:10px 12px;background:var(--surface)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:${rows.length?'5px':'0'}"><span style="font-family:monospace;font-size:10px;color:var(--text3);font-weight:800">${type}</span><span style="font-size:12px;font-weight:800;color:var(--text)">${title}</span></div>${rowHtml}${skuEditMode?`<button type="button" class="btn btn-secondary btn-sm" style="margin-top:7px" onclick="addSkuTypeSubcatRow('${type}')">＋ 新增子分類</button>`:''}</div>`;
+    if(type!=='RB')return `<div style="margin-bottom:9px">${mainCard}</div>`;
+    const hardwareRows=RIBBON_HARDWARE_RULES.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream2)"><span class="code-badge">${r.code}</span><span style="font-size:12px;font-weight:700;flex:1">${r.label}</span></div>`).join('');
+    const hardwareCard=`<div style="border:1.5px solid var(--cream3);border-radius:12px;padding:10px 12px;background:var(--surface)"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-family:monospace;font-size:10px;color:var(--text3);font-weight:800">RB</span><span style="font-size:12px;font-weight:800;color:var(--text)">扣具款式</span></div>${hardwareRows}</div>`;
+    return `<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:9px">${mainCard}${hardwareCard}</div>`;}).join('')||'<div style="font-size:11px;color:var(--text3)">先新增商品類型，再設定子分類。</div>';
 }
 function addSkuTypeSubcatRow(type){runSkuDraftAction('新增 '+type+' 子分類',()=>{const rows=getSkuDraftTypeSubcats(type),row={code:'',label:''},i=rows.findIndex(r=>r.code==='99');if(i<0)rows.push(row);else rows.splice(i,0,row);},renderSkuTypeSubcats);}
 function removeSkuTypeSubcatRow(type,i){const rows=getSkuDraftTypeSubcats(type),row=rows[i];if(!row)return;const used=row.code?countProductsUsingTypeSubcat(type,row.code):0,go=()=>runSkuDraftAction('刪除 '+type+' 子分類',()=>getSkuDraftTypeSubcats(type).splice(i,1),renderSkuTypeSubcats);if(used)customConfirm(`「${row.label||row.code}」目前有 ${used} 件商品正在使用。刪除後會改到「其他」(99)；如果沒有 99，則會變成未分類。確定刪除嗎？`,go);else go();}
