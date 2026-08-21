@@ -1333,6 +1333,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
         <div class="form-group"><label class="form-label">庫存狀態</label><div id="p-status-wrap" style="position:relative"><button type="button" onclick="toggleCustomSelect('p-status')" class="form-select" style="font-size:13px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between"><span id="p-status-label">⭐ 正常可賣</span><span style="font-size:10px;color:var(--text3);flex-shrink:0">▾</span></button><input type="hidden" id="p-status" value="ok" data-options='[{"value":"ok","label":"⭐ 正常可賣"},{"value":"pending","label":"⏳ 待入庫"}]'><div id="p-status-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.12);max-height:240px;overflow-y:auto;padding:4px"></div></div></div>
       </div>
       <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="p-note" placeholder="供應商、來源..."></div>
+      <div class="form-group"><label class="form-label">商品連結</label><div style="display:flex;gap:6px"><input type="text" class="form-input" id="p-link" placeholder="https://item.taobao.com/..." style="font-size:12px;font-family:monospace;min-width:0;flex:1" inputmode="url" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" oninput="updateProductLinkOpenButton()"><button type="button" id="p-link-open-btn" onclick="openProductFormLink()" class="btn btn-sm" style="white-space:nowrap;flex-shrink:0;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--text3);cursor:default">🔗 開啟</button></div></div>
       <div class="form-group">
         <label class="form-label">商品圖片</label>
         <div class="img-upload-zone" onclick="document.getElementById('img-input').click()">
@@ -5998,8 +5999,26 @@ function touchDragFinish(e){
 document.addEventListener('pointerup',touchDragFinish);
 document.addEventListener('pointercancel',touchDragFinish);
 let editingId=null,pendingImg=null;
-function openAddProduct(){editingId=null;pendingImg=null;document.getElementById('product-modal-title').textContent='✨ 新增商品';['p-name','p-sku','p-cost','p-price','p-stock','p-min-stock','p-note','p-ribbon-length','p-ring-width','p-total-length'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});document.getElementById('p-type').value='PA';document.getElementById('p-size').value='0';document.getElementById('p-status').value='ok';['p-type','p-size','p-status'].forEach(syncCustomSelectLabel);refreshTypeSubcatSelect('p','p-type','', '');hydrateProductSkuParts('p','',document.getElementById('p-type').value,'p-type','');syncRibbonSizeFields('p');document.getElementById('img-preview').style.display='none';document.getElementById('img-placeholder').style.display='block';updateCostUsd();openModal('modal-product');}
-function openEditProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;editingId=id;pendingImg=p.img||null;document.getElementById('product-modal-title').textContent='✏️ 編輯商品';document.getElementById('p-name').value=p.name||'';document.getElementById('p-sku').value=p.sku||'';document.getElementById('p-type').value=p.type||'PA';document.getElementById('p-size').value=p.size||'0';document.getElementById('p-cost').value=p.cost?Number(p.cost).toFixed(2):'';document.getElementById('p-price').value=p.price?Number(p.price).toFixed(2):'';document.getElementById('p-stock').value=p.stock||0;document.getElementById('p-min-stock').value=p.minStock||5;document.getElementById('p-note').value=p.note||'';document.getElementById('p-status').value=p.status||'ok';document.getElementById('p-ribbon-length').value=p.ribbonLength||'';document.getElementById('p-ring-width').value=p.ringWidth||'';document.getElementById('p-total-length').value=p.totalLength||'';['p-type','p-size','p-status'].forEach(syncCustomSelectLabel);refreshTypeSubcatSelect('p','p-type',id,getProductTypeSubcat(p));hydrateProductSkuParts('p',p.sku||'',p.type||'PA','p-type',id);syncRibbonSizeFields('p');if(p.img){document.getElementById('img-preview').src=p.img;document.getElementById('img-preview').style.display='block';document.getElementById('img-placeholder').style.display='none';}updateCostUsd();openModal('modal-product');}
+function updateProductLinkOpenButton(){
+  const input=document.getElementById('p-link');
+  const btn=document.getElementById('p-link-open-btn');
+  if(!input||!btn)return;
+  const has=!!input.value.trim();
+  btn.style.borderColor=has?'var(--brown)':'var(--cream3)';
+  btn.style.background=has?'var(--brown)':'var(--cream2)';
+  btn.style.color=has?'#fff':'var(--text3)';
+  btn.style.cursor=has?'pointer':'default';
+}
+function openProductFormLink(){
+  const input=document.getElementById('p-link');
+  const raw=input?input.value.trim():'';
+  if(!raw)return;
+  const url=/^https?:\/\//i.test(raw)?raw:'https://'+raw;
+  window.open(url,'_blank','noopener');
+}
+
+function openAddProduct(){editingId=null;pendingImg=null;document.getElementById('product-modal-title').textContent='✨ 新增商品';['p-name','p-sku','p-cost','p-price','p-stock','p-min-stock','p-note','p-link','p-ribbon-length','p-ring-width','p-total-length'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});document.getElementById('p-type').value='PA';document.getElementById('p-size').value='0';document.getElementById('p-status').value='ok';['p-type','p-size','p-status'].forEach(syncCustomSelectLabel);refreshTypeSubcatSelect('p','p-type','', '');hydrateProductSkuParts('p','',document.getElementById('p-type').value,'p-type','');syncRibbonSizeFields('p');document.getElementById('img-preview').style.display='none';document.getElementById('img-placeholder').style.display='block';updateCostUsd();updateProductLinkOpenButton();openModal('modal-product');}
+function openEditProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;editingId=id;pendingImg=p.img||null;document.getElementById('product-modal-title').textContent='✏️ 編輯商品';document.getElementById('p-name').value=p.name||'';document.getElementById('p-sku').value=p.sku||'';document.getElementById('p-type').value=p.type||'PA';document.getElementById('p-size').value=p.size||'0';document.getElementById('p-cost').value=p.cost?Number(p.cost).toFixed(2):'';document.getElementById('p-price').value=p.price?Number(p.price).toFixed(2):'';document.getElementById('p-stock').value=p.stock||0;document.getElementById('p-min-stock').value=p.minStock||5;document.getElementById('p-note').value=p.note||'';document.getElementById('p-link').value=p.link||'';document.getElementById('p-status').value=p.status||'ok';document.getElementById('p-ribbon-length').value=p.ribbonLength||'';document.getElementById('p-ring-width').value=p.ringWidth||'';document.getElementById('p-total-length').value=p.totalLength||'';['p-type','p-size','p-status'].forEach(syncCustomSelectLabel);refreshTypeSubcatSelect('p','p-type',id,getProductTypeSubcat(p));hydrateProductSkuParts('p',p.sku||'',p.type||'PA','p-type',id);syncRibbonSizeFields('p');if(p.img){document.getElementById('img-preview').src=p.img;document.getElementById('img-preview').style.display='block';document.getElementById('img-placeholder').style.display='none';}updateCostUsd();updateProductLinkOpenButton();openModal('modal-product');}
 
 function syncRibbonSizeFields(prefix){
   const typeEl=document.getElementById(prefix==='p'?'p-type':'edit-type');
@@ -6209,7 +6228,7 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
-  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);delete p.link;delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
+  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
   const wasEditing=!!editingId;
   saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
   // 儲存不等於離開：第一次新增完成後立刻切成編輯這一筆，之後再按儲存只會更新同一商品，不會重複新增。
@@ -6522,7 +6541,7 @@ function openStockModal(id){
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">備註</div>
       <input type="text" id="edit-note" value="${p.note||''}" class="form-input" style="font-size:13px" placeholder="其他備註...">
     </div>
-    <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（標籤、瑕疵庫存...）<span id="stock-advanced-arrow-${id}">▾</span></div>
+    <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（標籤、瑕疵庫存、商品連結...）<span id="stock-advanced-arrow-${id}">▾</span></div>
     <div class="stock-advanced-section" id="stock-advanced-${id}">
       ${(()=>{
         const turnover=getTurnoverDaysText(p);
@@ -6552,6 +6571,13 @@ function openStockModal(id){
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">🔗 淘寶匯入別名（以後匯入這些名稱會自動連結到這個商品；連錯了可以在這裡移除）</div>
         <div style="display:flex;flex-wrap:wrap;gap:5px">${p.sourceAliases.map(a=>`<span class="tag-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--lavender-light);color:#6b5aad;border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${a.replace(/</g,'&lt;')}<span onclick="removeProductAlias('${p.id}','${a.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')" style="cursor:pointer;color:#6b5aad;font-weight:700">×</span></span>`).join('')}</div>
       </div>`:''}
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" oninput="updateEditLinkOpenButton()">
+          <button type="button" id="edit-link-open-btn" onclick="openEditProductLink()" class="btn btn-sm" style="white-space:nowrap;flex-shrink:0;border:1.5px solid ${p.link?'var(--brown)':'var(--cream3)'};background:${p.link?'var(--brown)':'var(--cream2)'};color:${p.link?'#fff':'var(--text3)'};cursor:${p.link?'pointer':'default'}">🔗 開啟</button>
+        </div>
+      </div>
     </div>
 
     <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
@@ -6568,6 +6594,24 @@ function openStockModal(id){
   document.getElementById('stock-modal-body').innerHTML='<div>'+mainHTML+'</div>'+skuRefHTML;
   openModal('modal-stock');
 }
+function updateEditLinkOpenButton(){
+  const input=document.getElementById('edit-link');
+  const btn=document.getElementById('edit-link-open-btn');
+  if(!input||!btn)return;
+  const has=!!input.value.trim();
+  btn.style.borderColor=has?'var(--brown)':'var(--cream3)';
+  btn.style.background=has?'var(--brown)':'var(--cream2)';
+  btn.style.color=has?'#fff':'var(--text3)';
+  btn.style.cursor=has?'pointer':'default';
+}
+function openEditProductLink(){
+  const input=document.getElementById('edit-link');
+  const raw=input?input.value.trim():'';
+  if(!raw)return;
+  const url=/^https?:\/\//i.test(raw)?raw:'https://'+raw;
+  window.open(url,'_blank','noopener');
+}
+
 function handleStockImgDrop(e,id){
   const f=e.dataTransfer.files[0];
   if(!f||!f.type.startsWith('image/'))return;
@@ -6673,6 +6717,8 @@ async function saveFromStock(id){
   p.note=document.getElementById('edit-note').value.trim();
   const tagChips=document.querySelectorAll('#edit-tags-chips .tag-chip');
   p.tags=tagChips.length?[...tagChips].map(c=>c.dataset.tag):undefined;
+  p.link=document.getElementById('edit-link')?.value.trim()||'';
+  updateEditLinkOpenButton();
   if(window.pendingStockImg&&window.uploadImageIfNeeded){
     p.img=await window.uploadImageIfNeeded(id,window.pendingStockImg);
     window.pendingStockImg=null;
@@ -6680,7 +6726,7 @@ async function saveFromStock(id){
     p.img='';
   }
   window.pendingStockImgRemoved=false;
-  delete p.link;delete p.color;delete p.style;
+  delete p.color;delete p.style;
   p.updatedAt=Date.now();
   const after=JSON.parse(JSON.stringify(p));
   // 改名的話，把舊採購單裡「當初沒連結productId、只能用名字對應」的項目補上連結，
