@@ -957,7 +957,7 @@ table td{
   visibility:hidden;
 }
 .product-card .price-stack .price-tag{
-  font-size:15px!important;
+  font-size:14px!important;
   line-height:1!important;
   font-weight:800!important;
 }
@@ -971,6 +971,33 @@ table td{
 #product-grid:not(.view-list) .product-card .product-meta{
   margin-top:0!important;
   transform:translateY(-10px);
+}
+
+
+
+/* 商品卡底部再往上收：縮小底部留白 */
+#product-grid:not(.view-list) .product-card .product-info{
+  padding-bottom:2px!important;
+}
+@media (max-width:768px){
+  #product-grid:not(.view-list) .product-card .product-info{
+    padding-bottom:2px!important;
+  }
+}
+
+
+/* 商品卡資訊整理：店家不顯示，底部庫存/價格位置更一致 */
+#product-grid .pc-supplier{
+  display:none!important;
+}
+#product-grid:not(.view-list) .product-card .product-info{
+  gap:0!important;
+}
+#product-grid:not(.view-list) .product-card .pc-catcode{
+  margin-bottom:2px!important;
+}
+#product-grid:not(.view-list) .product-card .product-meta{
+  min-height:32px;
 }
 
 </style>
@@ -5812,7 +5839,6 @@ function renderProducts(){
         <div class="product-sku" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}${p.color?' · '+p.color:''}${p.style?' · '+p.style:''}</div>
         ${getProductTypeSubcat(p)?`<div style="margin:2px 0 3px"><span style="font-size:8.5px;background:var(--cream2);color:var(--brown);border-radius:8px;padding:1px 6px;font-weight:700">${getTypeSubcatLabel(p.type,getProductTypeSubcat(p))||'其他'}</span></div>`:''}
         ${missing.length>0?`<div class="pc-missing" style="font-size:9px;color:var(--red);font-weight:700">缺：${missing.join('·')}</div>`:''}
-        ${p.supplier?`<div class="pc-supplier" style="font-size:9px;color:var(--text3);margin-bottom:2px">${p.supplier}</div>`:''}
         ${(()=>{const catLabel=p.sku?getCatLabel(p.sku,p.type):'';return catLabel?`<div class="pc-catcode" style="font-size:9px;color:var(--text3);margin-bottom:4px;font-family:monospace">${catLabel}</div>`:'';})()}
         ${soldCount>0?`<div style="font-size:9px;color:var(--brown);font-weight:700;margin-bottom:2px">🔥 已售出 ${soldCount} 件</div>`:''}
         ${(()=>{const t=getInTransitInfo(p.id);return t?`<div style="font-size:9px;color:var(--brown);font-weight:700;margin-bottom:2px">🚚 在途 ${t.qty} 件${t.eta?'・'+t.eta.slice(5)+' 到':''}</div>`:'';})()}
