@@ -1,3 +1,20 @@
+<!-- cart + - x glyphs moved up 1px | 2026-08-21 23:29:42 -->
+<!-- product toolbar: trash/import swapped + icon-only buttons round | 2026-08-21 22:54:43 -->
+<!-- align bottom right actions with upper round buttons | 2026-08-21 22:51:21 -->
+<!-- alias/link buttons converted to round icon-only buttons | 2026-08-21 22:49:53 -->
+<!-- bottom action groups inset from both sides | 2026-08-21 22:47:10 -->
+<!-- compact side buttons: same height as fields, smaller width | 2026-08-21 22:44:27 -->
+<!-- side action buttons match save size 112x48 | 2026-08-21 22:41:40 -->
+<!-- note input height unified to 40px | 2026-08-21 22:40:20 -->
+<!-- unify tag / taobao alias / product link row heights | 2026-08-21 22:38:12 -->
+<!-- polished bottom actions + aligned alias/link rows | 2026-08-21 22:35:05 -->
+<!-- SKU dual focus: category detail + product subcategory | 2026-08-21 22:19:05 -->
+<!-- SKU detail token focus fix: highlight 01亞洲 etc, not whole 05 FD row | 2026-08-21 21:57:15 -->
+<!-- SKU focus changed: subcategory row only | 2026-08-21 21:53:23 -->
+<!-- manual Taobao alias input added | 2026-08-21 21:49:25 -->
+<!-- restore Taobao source aliases section | 2026-08-21 21:23:02 -->
+<!-- adaptive classification/size layout | 2026-08-21 21:16:20 -->
+<!-- seed image cleanup v3: blocks cloud rehydration until blank image sync completes | 2026-08-21 20:52:01 -->
 <!-- seed product legacy images cleared once | 2026-08-21 20:31:32 -->
 <!-- BUILTIN MASTER: confirmed UI/features baked directly into index.html | 2026-08-21 20:25:21 -->
 <!-- builtin embedded images removed | 2026-08-21 19:58:51 -->
@@ -1044,42 +1061,43 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 #product-grid .pc-supplier{display:none!important;}
 
-/* 商品詳情：分類獨立一行；尺寸整組放下一行 */
-.stock-type-row>div{width:100%;}
-.stock-size-row{width:100%;}
-.stock-size-row>div{width:100%;}
-.stock-size-row #edit-standard-size-group{max-width:50%;}
-.stock-size-row #edit-ribbon-size-group{width:100%;}
-.stock-size-row .ribbon-size-grid.compact{
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:10px!important;
-}
-@media(max-width:768px){
-  .stock-size-row #edit-standard-size-group{max-width:100%;}
-  .stock-size-row .ribbon-size-grid.compact{grid-template-columns:1fr!important;}
-}
 
-/* SKU 規則：自動定位使用淡背景 + 左側咖啡短線 */
-#stock-rule-left-cats .stock-rule-cat-row,
-#stock-rule-left-subcats .stock-rule-subcat-row,
-#stock-rule-left-subcats .stock-rule-type-group{
+/* SKU 規則：只高亮實際子分類，不再整組選中 */
+#stock-rule-left-subcats .stock-rule-subcat-row{
   position:relative;
   border-radius:7px;
   transition:background .15s;
 }
-#stock-rule-left-cats .stock-rule-auto-focus,
-#stock-rule-left-subcats .stock-rule-auto-focus{
+#stock-rule-left-subcats .stock-rule-subcat-row.stock-rule-auto-focus{
   background:rgba(139,111,71,.08)!important;
   box-shadow:none!important;
 }
-#stock-rule-left-cats .stock-rule-auto-focus::before,
-#stock-rule-left-subcats .stock-rule-subcat-row.stock-rule-auto-focus::before,
-#stock-rule-left-subcats .stock-rule-type-group.stock-rule-auto-focus::before{
+#stock-rule-left-subcats .stock-rule-subcat-row.stock-rule-auto-focus::before{
   content:'';
   position:absolute;
   left:-5px;
-  top:5px;
-  bottom:5px;
+  top:3px;
+  bottom:3px;
+  width:3px;
+  border-radius:3px;
+  background:var(--brown);
+  opacity:.9;
+}
+/* 若商品沒有商品子分類，才退回標示大類/子類中的分類列 */
+#stock-rule-left-cats .stock-rule-cat-row{
+  position:relative;
+  border-radius:7px;
+  transition:background .15s;
+}
+#stock-rule-left-cats .stock-rule-cat-row.stock-rule-auto-focus{
+  background:rgba(139,111,71,.08)!important;
+}
+#stock-rule-left-cats .stock-rule-cat-row.stock-rule-auto-focus::before{
+  content:'';
+  position:absolute;
+  left:-5px;
+  top:3px;
+  bottom:3px;
   width:3px;
   border-radius:3px;
   background:var(--brown);
@@ -1135,6 +1153,350 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .cart-price-input{width:78px!important;min-width:78px!important;padding-left:8px!important;padding-right:8px!important;}
 }
 
+
+
+/* 商品詳情：一般商品分類+尺寸同排；RB 織帶尺寸獨立下一排 */
+.stock-class-size-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-items:end;
+  margin-bottom:10px;
+}
+.stock-class-size-wrap .stock-type-cell,
+.stock-class-size-wrap .stock-size-cell{min-width:0;}
+.stock-class-size-wrap .stock-size-cell #edit-standard-size-group{display:block;}
+.stock-class-size-wrap .stock-size-cell #edit-ribbon-size-group{display:none;}
+.stock-class-size-wrap.is-rb{
+  grid-template-columns:1fr;
+  align-items:stretch;
+}
+.stock-class-size-wrap.is-rb .stock-size-cell{
+  grid-column:1 / -1;
+}
+.stock-class-size-wrap.is-rb .stock-size-cell #edit-standard-size-group{display:none!important;}
+.stock-class-size-wrap.is-rb .stock-size-cell #edit-ribbon-size-group{display:block!important;width:100%;}
+.stock-class-size-wrap.is-rb .ribbon-size-grid.compact{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+@media(max-width:768px){
+  .stock-class-size-wrap{grid-template-columns:1fr!important;}
+  .stock-class-size-wrap .stock-size-cell{grid-column:1/-1;}
+  .stock-class-size-wrap.is-rb .ribbon-size-grid.compact{grid-template-columns:1fr!important;}
+}
+
+
+
+/* 淘寶匯入別名：手動新增 */
+.manual-alias-add-row .manual-alias-input{
+  flex:1 1 auto;
+  min-width:0;
+}
+.manual-alias-add-row .btn{
+  flex:0 0 auto;
+  padding-left:12px;
+  padding-right:12px;
+}
+@media(max-width:768px){
+  .manual-alias-add-row{
+    align-items:stretch;
+  }
+}
+
+
+
+/* SKU 規則：大類/子類模式只高亮 SKU 真正使用的細分類，例如 01亞洲 */
+#stock-rule-left-cats .stock-rule-detail-token{
+  position:relative;
+  display:inline-block;
+  padding:0 2px;
+  border-radius:3px;
+  transition:background .15s,color .15s;
+}
+#stock-rule-left-cats .stock-rule-detail-token.stock-rule-detail-focus{
+  background:rgba(139,111,71,.11)!important;
+  color:var(--brown)!important;
+  font-weight:700!important;
+  padding-left:6px;
+}
+#stock-rule-left-cats .stock-rule-detail-token.stock-rule-detail-focus::before{
+  content:'';
+  position:absolute;
+  left:1px;
+  top:1px;
+  bottom:1px;
+  width:2px;
+  border-radius:2px;
+  background:var(--brown);
+}
+
+
+
+/* 商品詳情：底部操作列重新整理，避免「樓梯感」 */
+.stock-bottom-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+}
+.stock-bottom-actions .stock-action-btn{
+  height:48px!important;
+  min-height:48px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  line-height:1!important;
+  border-radius:24px!important;
+  box-sizing:border-box!important;
+}
+.stock-bottom-actions .stock-action-undo{
+  width:88px!important;
+  min-width:88px!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  background:var(--surface)!important;
+  color:var(--text2)!important;
+  border:1.5px solid var(--cream3)!important;
+  box-shadow:none!important;
+  font-weight:600!important;
+}
+.stock-bottom-actions .stock-action-done{
+  width:100px!important;
+  min-width:100px!important;
+  background:var(--surface)!important;
+  color:var(--text2)!important;
+  border:1.5px solid var(--cream3)!important;
+  box-shadow:none!important;
+}
+.stock-bottom-actions .stock-action-save{
+  width:112px!important;
+  min-width:112px!important;
+  background:var(--brown)!important;
+  color:#fff!important;
+  border:1.5px solid var(--brown)!important;
+  box-shadow:none!important;
+}
+.stock-bottom-actions .stock-action-save:hover{
+  background:#7a6040!important;
+}
+
+  .stock-bottom-actions{
+    gap:6px!important;
+  }
+  .stock-bottom-actions .stock-action-undo{width:82px!important;min-width:82px!important;}
+  .stock-bottom-actions .stock-action-done{width:92px!important;min-width:92px!important;}
+  .stock-bottom-actions .stock-action-save{width:102px!important;min-width:102px!important;}
+}
+
+
+
+/* 商品詳情：標籤 / 淘寶別名 / 商品連結 三排高度統一 */
+.stock-detail-inline-row{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  width:100%!important;
+}
+.stock-detail-inline-row input.form-input{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding-top:7px!important;
+  padding-bottom:7px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+.stock-detail-inline-row button{
+  height:40px!important;
+  min-height:40px!important;
+  margin:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+}
+/* 標籤的 + 維持小圓按鈕；下面兩顆同高但依文字保留較寬 */
+.stock-detail-inline-row .stock-detail-tag-btn{
+  width:40px!important;
+  min-width:40px!important;
+  padding:0!important;
+  border-radius:20px!important;
+}
+.stock-detail-inline-row .stock-detail-side-btn{
+  width:112px!important;
+  min-width:112px!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  border-radius:20px!important;
+}
+@media(max-width:768px){
+  .stock-detail-inline-row .stock-detail-side-btn{
+    width:96px!important;
+    min-width:96px!important;
+  }
+}
+
+
+
+/* 備註欄高度與標籤 / 淘寶別名 / 商品連結一致 */
+.stock-note-input{
+  height:40px!important;
+  min-height:40px!important;
+  padding-top:7px!important;
+  padding-bottom:7px!important;
+  box-sizing:border-box!important;
+}
+
+
+
+/* 淘寶別名「＋新增」與商品連結「🔗 開啟」：尺寸跟儲存一致 */
+.stock-detail-inline-row .stock-detail-side-btn{
+  width:112px!important;
+  min-width:112px!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  border-radius:24px!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:768px){
+  .stock-detail-inline-row .stock-detail-side-btn{
+    width:112px!important;
+    min-width:112px!important;
+    height:48px!important;
+    min-height:48px!important;
+  }
+}
+
+
+
+/* 淘寶別名「＋新增」與商品連結「🔗 開啟」：
+   跟輸入框一樣高，但寬度收窄，不要看起來太大 */
+.stock-detail-inline-row .stock-detail-side-btn{
+  height:40px!important;
+  min-height:40px!important;
+  width:92px!important;
+  min-width:92px!important;
+  padding-left:10px!important;
+  padding-right:10px!important;
+  border-radius:20px!important;
+  box-sizing:border-box!important;
+  font-size:12px!important;
+}
+@media(max-width:768px){
+  .stock-detail-inline-row .stock-detail-side-btn{
+    height:40px!important;
+    min-height:40px!important;
+    width:88px!important;
+    min-width:88px!important;
+  }
+}
+
+
+
+/* 商品詳情底部操作列：左右兩組都往內縮一點 */
+#stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
+  padding-left:12px!important;
+  padding-right:12px!important;
+}
+@media(max-width:768px){
+  #stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
+    padding-left:8px!important;
+    padding-right:8px!important;
+  }
+}
+
+
+
+/* 淘寶別名新增 / 商品連結開啟：改成跟標籤 + 一樣的單獨圓形 icon */
+.stock-detail-inline-row .stock-detail-icon-btn{
+  width:40px!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:16px!important;
+  line-height:1!important;
+  flex:0 0 40px!important;
+}
+@media(max-width:768px){
+  .stock-detail-inline-row .stock-detail-icon-btn{
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    flex-basis:40px!important;
+  }
+}
+
+
+
+/* 商品詳情底部右側操作列：右緣與上方圓形欄位按鈕對齊 */
+#stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
+  padding-right:0!important;
+}
+#stock-modal-body .stock-bottom-actions{
+  margin-right:0!important;
+}
+@media(max-width:768px){
+  #stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
+    padding-right:0!important;
+  }
+}
+
+
+
+/* 商品庫工具列：所有純 icon 按鈕統一正圓 */
+#page-products .section-header .toolbar-icon-round{
+  width:42px!important;
+  min-width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 42px!important;
+  box-sizing:border-box!important;
+  line-height:1!important;
+}
+#page-products .section-header .toolbar-icon-round.view-btn{
+  width:42px!important;
+  min-width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+}
+@media(max-width:768px){
+  #page-products .section-header .toolbar-icon-round{
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    flex-basis:40px!important;
+  }
+}
+
+
+
+/* 開單商品列：＋ / － / × 的符號視覺往上 1px；中間數字不動 */
+.cart-action-glyph{
+  display:inline-block!important;
+  transform:translateY(-1px)!important;
+  line-height:1!important;
+  pointer-events:none!important;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1153,7 +1515,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   <button class="nav-link" onclick="showPage('reports',this)"><span class="ui-editable" data-ui-key="nav-reports" onclick="handleUIEditableClick(event,this)">📊 報表</span></button>
   <button class="nav-link" onclick="showPage('customers',this)"><span class="ui-editable" data-ui-key="nav-customers" onclick="handleUIEditableClick(event,this)">🧸 顧客</span></button>
   <button class="nav-link" onclick="showPage('sku',this)"><span class="ui-editable" data-ui-key="nav-sku" onclick="handleUIEditableClick(event,this)">📖 SKU規則</span></button>
-  <div style="margin-left:auto;position:relative;display:flex;align-items:center;gap:6px">
+  <div class="stock-bottom-actions" style="margin-left:auto;position:relative;display:flex;align-items:center;gap:6px">
     <button class="nav-link" style="color:var(--text3);" onclick="openSettings()" title="設定">⚙️ 設定</button>
     <input type="file" id="batch-img-input" accept="image/*" multiple style="display:none;" onchange="handleBatchUpload(this)">
     <input type="file" id="batch-row-img-input" accept="image/*" style="display:none;" onchange="handleBatchRowImgFile(this)">
@@ -1200,15 +1562,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     <div class="section-title">📦 商品庫</div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="renderProducts()"></div>
-      <button class="btn btn-secondary btn-icon" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
-      <button class="btn btn-secondary btn-icon" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
+      <button class="btn btn-secondary btn-icon toolbar-icon-round" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
+      <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
 
-      <div style="display:flex;gap:4px"><button class="view-btn active" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
+      <div style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
-      <button class="btn btn-secondary" onclick="openProductImport()">📥 匯入商品</button>
-      <button class="btn btn-secondary btn-icon" onclick="openProductTrash()" title="已刪商品" style="padding:9px 14px">🗑</button>
+      <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openProductTrash()" title="已刪商品">🗑</button>
+      <button class="btn btn-secondary" onclick="openProductImport()">🛸 匯入商品</button>
       <button class="btn btn-primary" onclick="openAddProduct()">+ 新增商品</button>
     </div>
   </div>
@@ -1277,7 +1639,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
 <!-- ORDERS -->
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">📥 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon" onclick="openOrderTrash()" title="已刪採購單" style="padding:9px 14px">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-list"></div>
@@ -1458,10 +1820,10 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       </div>
     </div>
     <div id="sku-edit-save-actions" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:18px;padding-top:18px;border-top:1.5px solid var(--cream3)">
-      <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()">💫 復原</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="sku-undo-btn" onclick="skuUndoEdit()" class="stock-action-btn stock-action-undo">💫 復原</button>
       <button type="button" class="btn btn-secondary btn-sm" onclick="cancelSkuEdits()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
       <button type="button" class="btn btn-secondary btn-sm" onclick="saveSkuEdits({keepEditing:true})">💾 儲存變更</button>
-      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits({keepEditing:false})">✓ 完成</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveSkuEdits({keepEditing:false})" class="stock-action-btn stock-action-done">✓ 完成</button>
     </div>
   </div>
 </div>
@@ -1545,8 +1907,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
         <div class="form-group"><label class="form-label">庫存警戒線</label><input type="number" class="form-input" id="p-min-stock" placeholder="5"></div>
         <div class="form-group"><label class="form-label">庫存狀態</label><div id="p-status-wrap" style="position:relative"><button type="button" onclick="toggleCustomSelect('p-status')" class="form-select" style="font-size:13px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between"><span id="p-status-label">⭐ 正常可賣</span><span style="font-size:10px;color:var(--text3);flex-shrink:0">▾</span></button><input type="hidden" id="p-status" value="ok" data-options='[{"value":"ok","label":"⭐ 正常可賣"},{"value":"pending","label":"⏳ 待入庫"}]'><div id="p-status-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:60;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.12);max-height:240px;overflow-y:auto;padding:4px"></div></div></div>
       </div>
-      <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="p-note" placeholder="供應商、來源..."></div>
-      <div class="form-group"><label class="form-label">商品連結</label><div style="display:flex;gap:6px"><input type="text" class="form-input" id="p-link" placeholder="https://item.taobao.com/..." style="font-size:12px;font-family:monospace;min-width:0;flex:1" inputmode="url" oninput="updateProductLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true"><button type="button" id="p-link-open-btn" onclick="openProductFormLink()" class="btn btn-sm" style="white-space:nowrap;flex-shrink:0;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--text3);cursor:default">🔗 開啟</button></div></div>
+      <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input stock-note-input" id="p-note" placeholder="供應商、來源..."></div>
+      <div class="form-group"><label class="form-label">商品連結</label><div style="display:flex;gap:6px"><input type="text" class="form-input" id="p-link" placeholder="https://item.taobao.com/..." style="font-size:12px;font-family:monospace;min-width:0;flex:1" inputmode="url" oninput="updateProductLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true"><button type="button" id="p-link-open-btn" onclick="openProductFormLink()" class="btn btn-sm" style="white-space:nowrap;flex-shrink:0;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--text3);cursor:default" class="stock-inline-action-btn">🔗 開啟</button></div></div>
       <div class="form-group">
         <label class="form-label">商品圖片</label>
         <div class="img-upload-zone" onclick="document.getElementById('img-input').click()">
@@ -1696,7 +2058,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 <div class="modal-overlay hidden" id="modal-product-import">
   <div class="modal" style="max-width:900px;width:95vw">
     <div class="modal-header">
-      <div class="modal-title">📥 匯入商品</div>
+      <div class="modal-title">🛸 匯入商品</div>
       <button class="modal-close" onclick="closeModal('modal-product-import')">×</button>
     </div>
     <div class="modal-body" style="max-height:84vh;overflow:auto">
@@ -2315,27 +2677,35 @@ function cleanupLegacyGeneratedProductNote(p){
 
 
 
+
+
 const BUILTIN_SEED_PRODUCT_IDS=new Set(["p001", "p002", "p003", "p004", "p005", "p006", "p007", "p008", "p009", "p010", "p011", "p012", "p013", "p014", "p015", "p016", "p017", "p018", "p019", "p020", "p021", "p022", "p023", "p024", "p025", "p026", "p027", "p028", "p029", "p030", "p031", "p032", "p033", "p034", "p035", "p036", "p037", "p038", "p039", "p040", "p041", "p042", "p043", "p044", "p045"]);
-function clearLegacySeedProductImagesOnce(){
-  try{
-    const flag='andhug_seed_images_cleared_v2';
-    if(localStorage.getItem(flag)==='1')return false;
-    let changed=false;
-    if(Array.isArray(DB.products)){
-      DB.products.forEach(p=>{
-        if(!p||!BUILTIN_SEED_PRODUCT_IDS.has(String(p.id||'')))return;
-        if(p.img){
-          p.img='';
-          changed=true;
-        }
-      });
-    }
-    localStorage.setItem(flag,'1');
-    return changed;
-  }catch(e){
-    console.warn('clearLegacySeedProductImagesOnce failed',e);
-    return false;
+const SEED_IMAGE_CLEANUP_KEY='andhug_seed_images_cleanup_v3';
+
+function seedImageCleanupPending(){
+  try{ return localStorage.getItem(SEED_IMAGE_CLEANUP_KEY)!=='done'; }
+  catch(e){ return true; }
+}
+
+function clearSeedImagesInMemory(){
+  if(!seedImageCleanupPending())return false;
+  let changed=false;
+  const now=Date.now();
+  if(Array.isArray(DB.products)){
+    DB.products.forEach(p=>{
+      if(!p||!BUILTIN_SEED_PRODUCT_IDS.has(String(p.id||'')))return;
+      if(p.img){
+        p.img='';
+        p.updatedAt=now;
+        changed=true;
+      }
+    });
   }
+  return changed;
+}
+
+function finishSeedImageCleanup(){
+  try{ localStorage.setItem(SEED_IMAGE_CLEANUP_KEY,'done'); }catch(e){}
 }
 
 function normalizeProductToCurrentSchema(p){
@@ -2345,6 +2715,7 @@ function normalizeProductToCurrentSchema(p){
   if(!Array.isArray(p.suppliers))p.suppliers=p.supplier?[p.supplier]:[];
   p.supplier=p.suppliers[0]||p.supplier||'';
   if(typeof p.link!=='string')p.link='';
+  if(!Array.isArray(p.sourceAliases))p.sourceAliases=[];
   if(p.type!=='RB'){
     delete p.ribbonLength;
     delete p.ringWidth;
@@ -2376,10 +2747,10 @@ if(Array.isArray(DB.products))DB.products.forEach(p=>{
   normalizeProductToCurrentSchema(p);
   cleanupLegacyGeneratedProductNote(p);
 });
-const _seedImgsCleared=clearLegacySeedProductImagesOnce();
-if(_seedImgsCleared){
-  try{localStorage.setItem('andhugDB',JSON.stringify(DB));}catch(e){}
+if(clearSeedImagesInMemory()){
+  try{lsSet('patchDB_v3',JSON.stringify(DB));}catch(e){}
 }
+
 
 if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
 let _autoSyncTimer=null;
@@ -6651,41 +7022,60 @@ function switchStockRuleLeftTab(tab){
 
 function clearStockRuleAutoFocus(){
   document.querySelectorAll('#stock-rule-left-cats .stock-rule-auto-focus,#stock-rule-left-subcats .stock-rule-auto-focus').forEach(el=>el.classList.remove('stock-rule-auto-focus'));
+  document.querySelectorAll('#stock-rule-left-cats .stock-rule-detail-focus').forEach(el=>el.classList.remove('stock-rule-detail-focus'));
 }
 function autoJumpStockSkuRule(product){
   if(!product)return;
   clearStockRuleAutoFocus();
+
   const type=String(product.type||'').trim().toUpperCase();
   const subcat=String(getProductTypeSubcat(product)||'').trim();
   const parts=parseProductSkuParts(product.sku||'',type);
   const cat=String(parts?.cat||'').trim();
+  const detail=String(parts?.detail||'').trim();
 
-  if(subcat){
-    switchStockRuleLeftTab('subcats');
-    requestAnimationFrame(()=>{
-      const pane=document.getElementById('stock-rule-left-subcats');
-      const row=[...document.querySelectorAll('#stock-rule-left-subcats .stock-rule-subcat-row')]
-        .find(el=>el.dataset.ruleType===type&&el.dataset.ruleSubcat===subcat);
-      const target=row||[...document.querySelectorAll('#stock-rule-left-subcats .stock-rule-type-group')]
-        .find(el=>el.dataset.ruleType===type);
-      if(target){
-        target.classList.add('stock-rule-auto-focus');
-        if(pane)pane.scrollTop=Math.max(0,target.offsetTop-pane.offsetTop-18);
-      }
-    });
-    return;
-  }
-
+  // ① 大類 / 子類：永遠定位 SKU 真正使用的分類
   switchStockRuleLeftTab('cats');
   requestAnimationFrame(()=>{
     const pane=document.getElementById('stock-rule-left-cats');
-    const target=[...document.querySelectorAll('#stock-rule-left-cats .stock-rule-cat-row')]
-      .find(el=>el.dataset.ruleCat===cat);
-    if(target){
-      target.classList.add('stock-rule-auto-focus');
-      if(pane)pane.scrollTop=Math.max(0,target.offsetTop-pane.offsetTop-18);
+    const detailTarget=[...document.querySelectorAll('#stock-rule-left-cats .stock-rule-detail-token')]
+      .find(el=>el.dataset.ruleCat===cat&&el.dataset.ruleDetail===detail);
+
+    if(detailTarget){
+      detailTarget.classList.add('stock-rule-detail-focus');
+      const row=detailTarget.closest('.stock-rule-cat-row');
+      if(pane&&row)pane.scrollTop=Math.max(0,row.offsetTop-pane.offsetTop-18);
+    }else{
+      const catTarget=[...document.querySelectorAll('#stock-rule-left-cats .stock-rule-cat-row')]
+        .find(el=>el.dataset.ruleCat===cat);
+      if(catTarget){
+        catTarget.classList.add('stock-rule-auto-focus');
+        if(pane)pane.scrollTop=Math.max(0,catTarget.offsetTop-pane.offsetTop-18);
+      }
+    }
+
+    // ② 商品子分類：有設定時也一起標示，不清掉①
+    if(subcat){
+      switchStockRuleLeftTab('subcats');
+      requestAnimationFrame(()=>{
+        const subPane=document.getElementById('stock-rule-left-subcats');
+        const subTarget=[...document.querySelectorAll('#stock-rule-left-subcats .stock-rule-subcat-row')]
+          .find(el=>el.dataset.ruleType===type&&el.dataset.ruleSubcat===subcat);
+
+        if(subTarget){
+          subTarget.classList.add('stock-rule-auto-focus');
+          if(subPane)subPane.scrollTop=Math.max(0,subTarget.offsetTop-subPane.offsetTop-18);
+        }
+      });
     }
   });
+}
+
+
+function updateStockClassSizeLayout(){
+  const type=(document.getElementById('edit-type')?.value||'').toUpperCase();
+  const wrap=document.getElementById('stock-class-size-wrap');
+  if(wrap)wrap.classList.toggle('is-rb',type==='RB');
 }
 
 function openStockModal(id){
@@ -6737,7 +7127,12 @@ function openStockModal(id){
             ${getSkuCats().map(x=>`<div class="stock-rule-cat-row" data-rule-cat="${smartImportEsc(x.code)}" style="margin-bottom:4px">
               <div style="padding:2px 0">
                 <div style="font-family:monospace;font-weight:800;font-size:9px;color:#fff;background:var(--brown);border-radius:4px;padding:1px 5px;display:inline-block;margin-bottom:1px">${smartImportEsc(x.code)} ${smartImportEsc(x.label)}</div>
-                <div style="color:var(--text3);font-size:8px;line-height:1.6;display:flex;flex-wrap:wrap;gap:1px 4px">${String(x.sub||'').split(/\s*[·／\/]\s*/).filter(Boolean).map(s=>`<span style="white-space:nowrap">${smartImportEsc(s.trim())}</span>`).join('')}</div>
+                <div style="color:var(--text3);font-size:8px;line-height:1.6;display:flex;flex-wrap:wrap;gap:1px 4px">${String(x.sub||'').split(/\s*[·／\/]\s*/).filter(Boolean).map(s=>{
+                  const _label=s.trim();
+                  const _m=_label.match(/^(\d{2})/);
+                  const _detail=_m?_m[1]:'';
+                  return `<span class="stock-rule-detail-token" data-rule-cat="${smartImportEsc(x.code)}" data-rule-detail="${smartImportEsc(_detail)}" style="white-space:nowrap">${smartImportEsc(_label)}</span>`;
+                }).join('')}</div>
               </div>
             </div>`).join('')}
           </div>
@@ -6837,20 +7232,22 @@ function openStockModal(id){
         </div>`;
       })()}</div>`}
     </div>
-    <div class="stock-type-row" style="margin-bottom:10px">
+    <div class="stock-class-size-wrap" id="stock-class-size-wrap">
+      <div class="stock-type-cell">
 <div>
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">分類</div>
         ${customSelectHtml('edit-type',getVisibleCategoryTypes().map(t=>({value:t,label:getCatIcon(t)+' '+getTypeDisplayLabel(t)})),p.type,`syncSkuTypePartFromType('edit','edit-type','${id}');refreshTypeSubcatSelect('edit','edit-type','${id}');syncRibbonSizeFields('edit')`)}
       </div>
-    </div>
-    <div class="stock-size-row" style="margin-bottom:10px">
+      </div>
+      <div class="stock-size-cell">
       <div>
         <div id="edit-standard-size-group" class="${p.type==='RB'?'hidden':''}">
           <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">尺寸</div>
           ${customSelectHtml('edit-size',[
             {value:'0',label:'無尺寸'},{value:'XS',label:'XS'},{value:'S',label:'S'},{value:'M',label:'M'},{value:'L',label:'L'},{value:'XL',label:'XL'},{value:'XX',label:'XXL'}
           ],p.size||'0',`autoFillEditPriceBySize('${id}')`)}
-        </div>
+          </div>
+    </div>
         <div id="edit-ribbon-size-group" class="${p.type==='RB'?'':'hidden'}">
           <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">尺寸</div>
           <div class="ribbon-size-grid compact">
@@ -6884,7 +7281,7 @@ function openStockModal(id){
     </div>
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">備註</div>
-      <input type="text" id="edit-note" value="${p.note||''}" class="form-input" style="font-size:13px" placeholder="其他備註...">
+      <input type="text" id="edit-note" value="${p.note||''}" class="form-input stock-note-input" style="font-size:13px" placeholder="其他備註...">
     </div>
     <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（標籤、瑕疵庫存、商品連結...）<span id="stock-advanced-arrow-${id}">▾</span></div>
     <div class="stock-advanced-section" id="stock-advanced-${id}">
@@ -6907,20 +7304,31 @@ function openStockModal(id){
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">標籤</div>
         <div id="edit-tags-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span class="tag-chip" data-tag="${t.replace(/"/g,'&quot;')}" style="display:inline-flex;align-items:center;gap:4px;background:var(--cream2);color:var(--text2);border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${t}<span onclick="removeEditTag(this)" style="cursor:pointer;color:var(--text3);font-weight:700">×</span></span>`).join('')}</div>
-        <div style="display:flex;gap:6px">
+        <div class="stock-detail-inline-row stock-tag-row" style="display:flex;gap:6px">
           <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="addEditTag()">+</button>
+          <button type="button" class="btn btn-secondary btn-sm stock-detail-tag-btn" onclick="addEditTag()">+</button>
         </div>
       </div>
-      ${p.sourceAliases&&p.sourceAliases.length?`<div style="margin-bottom:10px">
+      <div class="product-source-alias-section" style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">🔗 淘寶匯入別名（以後匯入這些名稱會自動連結到這個商品；連錯了可以在這裡移除）</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px">${p.sourceAliases.map(a=>`<span class="tag-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--lavender-light);color:#6b5aad;border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${a.replace(/</g,'&lt;')}<span onclick="removeProductAlias('${p.id}','${a.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')" style="cursor:pointer;color:#6b5aad;font-weight:700">×</span></span>`).join('')}</div>
-      </div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${(p.sourceAliases&&p.sourceAliases.length)
+            ?p.sourceAliases.map(a=>`<span class="tag-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--lavender-light);color:#6b5aad;border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${a.replace(/</g,'&lt;')}<span onclick="removeProductAlias('${p.id}','${a.replace(/'/g,"\'").replace(/"/g,'&quot;')}')" style="cursor:pointer;color:#6b5aad;font-weight:700">×</span></span>`).join('')
+            :'<span style="font-size:11px;color:var(--text3)">目前沒有匯入別名</span>'}
+        </div>
+        <div class="manual-alias-add-row stock-detail-inline-row" style="display:flex;gap:6px;margin-top:7px">
+          <input id="manual-alias-input-${p.id}" class="form-input manual-alias-input" type="text"
+            placeholder="輸入淘寶商品名稱..."
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addManualProductAlias('${p.id}');}">
+          <button type="button" class="btn btn-secondary btn-sm stock-detail-side-btn stock-detail-icon-btn" onclick="addManualProductAlias('${p.id}')" aria-label="新增淘寶匯入別名" title="新增">＋</button>
+        </div>
+      </div>
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
-        <div style="display:flex;gap:6px">
+        <div class="stock-detail-inline-row stock-link-row" style="display:flex;gap:6px">
           <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" oninput="updateEditLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
-          <button type="button" id="edit-link-open-btn" onclick="openEditProductLink()" class="btn btn-sm" style="white-space:nowrap;flex-shrink:0;border:1.5px solid ${p.link?'var(--brown)':'var(--cream3)'};background:${p.link?'var(--brown)':'var(--cream2)'};color:${p.link?'#fff':'var(--text3)'};cursor:${p.link?'pointer':'default'}">🔗 開啟</button>
+          <button type="button" id="edit-link-open-btn" onclick="openEditProductLink()" class="btn btn-sm stock-detail-side-btn stock-detail-icon-btn" aria-label="開啟商品連結" title="開啟商品連結" style="white-space:nowrap;flex-shrink:0;border:1.5px solid ${p.link?'var(--brown)':'var(--cream3)'};background:${p.link?'var(--brown)':'var(--cream2)'};color:${p.link?'#fff':'var(--text3)'};cursor:${p.link?'pointer':'default'}">🔗</button>
         </div>
       </div>
     </div>
@@ -6938,6 +7346,7 @@ function openStockModal(id){
     </div>`;
   document.getElementById('stock-modal-body').innerHTML='<div>'+mainHTML+'</div>'+skuRefHTML;
   openModal('modal-stock');
+  updateStockClassSizeLayout();
   autoJumpStockSkuRule(p);
 }
 function updateEditLinkOpenButton(){
@@ -8699,6 +9108,45 @@ function findProductByAlias(rawName){
   return DB.products.find(p=>(p.sourceAliases||[]).includes(trimmed))||null;
 }
 // 連錯商品的別名要能移除，不然一旦連錯，以後每次匯入同樣的名字都會一直錯下去
+
+async function addManualProductAlias(productId){
+  const p=DB.products.find(x=>x.id===productId);
+  if(!p)return;
+  const input=document.getElementById('manual-alias-input-'+productId);
+  if(!input)return;
+  const alias=String(input.value||'').trim();
+  if(!alias)return;
+  if(!Array.isArray(p.sourceAliases))p.sourceAliases=[];
+
+  const normalized=alias.toLocaleLowerCase('zh-TW').replace(/\s+/g,' ').trim();
+  const exists=p.sourceAliases.some(a=>String(a||'').toLocaleLowerCase('zh-TW').replace(/\s+/g,' ').trim()===normalized);
+  if(exists){
+    showToast?.('這個別名已經有了');
+    input.select();
+    return;
+  }
+
+  pushUndo?.('新增淘寶匯入別名');
+  p.sourceAliases.push(alias);
+  p.updatedAt=Date.now();
+
+  try{
+    saveDB();
+  }catch(e){
+    console.warn('save alias failed',e);
+  }
+
+  // 重新打開商品詳情，立即看到新 chip
+  openStockModal(productId);
+
+  // 若雲端同步可用，就一併同步
+  try{
+    if(typeof window.syncToSupabase==='function')await window.syncToSupabase(true);
+  }catch(e){
+    console.warn('sync alias failed',e);
+  }
+}
+
 function removeProductAlias(productId,alias){
   const p=DB.products.find(x=>x.id===productId);
   if(!p||!p.sourceAliases)return;
@@ -10116,7 +10564,7 @@ function renderCart(){
         </div>
       </div>
     </div>
-    <div class="qty-control"><button class="qty-btn" onclick="changeQty(${i},-1)">−</button><span class="qty-num">${c.qty}</span><button class="qty-btn" onclick="changeQty(${i},1)">+</button><button class="qty-btn" style="color:var(--red);border-color:#fca5a5" onclick="removeFromCart(${i})">×</button></div>
+    <div class="qty-control"><button class="qty-btn" onclick="changeQty(${i},-1)"><span class="cart-action-glyph">−</span></button><span class="qty-num">${c.qty}</span><button class="qty-btn" onclick="changeQty(${i},1)"><span class="cart-action-glyph">+</span></button><button class="qty-btn" style="color:var(--red);border-color:#fca5a5" onclick="removeFromCart(${i})"><span class="cart-action-glyph">×</span></button></div>
   </div>`;
   }).join('');
   const soldItems=cart.filter(c=>c.saleType!=='sample');
@@ -11749,6 +12197,7 @@ __bootSteps.push(function(){
         if(!Array.isArray(p.suppliers))p.suppliers=[];
         if(typeof p.supplier!=='string')p.supplier=p.suppliers[0]||'';
         if(typeof p.link!=='string')p.link='';
+        if(!Array.isArray(p.sourceAliases))p.sourceAliases=[];
         return p;
       };
       SEED_PRODUCTS.forEach(raw=>{
@@ -12060,7 +12509,7 @@ function adjVariantStock(productId,variantId,delta){
           <button class="btn btn-secondary btn-sm" onclick="batchSetField('cost')">📦 進貨</button>
           <button class="btn btn-secondary btn-sm" onclick="batchSetField('stock')">🔢 庫存</button>
         </div>
-        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="saveBatchEdit()">💾 全部儲存</button>
+        <button class="btn btn-primary btn-sm stock-action-btn stock-action-save" style="margin-left:auto" onclick="saveBatchEdit()">💾 全部儲存</button>
       </div>
       <div style="overflow-x:auto">
         <table id="batch-table" style="width:100%;border-collapse:collapse;font-size:12px"></table>
@@ -12505,6 +12954,9 @@ function mergeCloudProductRecord(cp) {
     return false;
   }
   const remote = cloudProductToLocal(cp);
+  if(seedImageCleanupPending() && BUILTIN_SEED_PRODUCT_IDS.has(String(remote.id||''))){
+    remote.img='';
+  }
   if (!local) {
     // 這筆本機沒有，先別急著當成「雲端新資料」直接加回來——
     // 有可能是她剛剛才在本機刪掉、但刪除的動作還沒同步上去，這時候拉到的雲端資料其實是刪除前的舊狀態，
@@ -12527,6 +12979,11 @@ function mergeCloudProductRecord(cp) {
   if (!fieldsEqual(local.suppliers, remote.suppliers) && cloudIsNewer) { local.suppliers = remote.suppliers; changed = true; }
   if (changed || cloudIsNewer) local.updatedAt = Math.max(local.updatedAt || 0, remote.updatedAt || 0);
   DB.__syncBaseline.products[cp.id] = snapshotFields(local, PRODUCT_SCALAR_FIELDS); // 合併完，這就是新的基準
+  if(seedImageCleanupPending() && BUILTIN_SEED_PRODUCT_IDS.has(String(local.id||'')) && local.img){
+    local.img='';
+    local.updatedAt=Date.now();
+    changed=true;
+  }
   return changed;
 }
 function mergeCloudOrderRecord(co) {
@@ -12598,7 +13055,24 @@ window.pullFromSupabase = async function(silent) {
     let changed = false;
     (cloudProducts || []).forEach(cp => { if (mergeCloudProductRecord(cp)) changed = true; });
     (cloudOrders || []).forEach(co => { if (mergeCloudOrderRecord(co)) changed = true; });
+
+    const seedImageChanged=clearSeedImagesInMemory();
+    if(seedImageChanged)changed=true;
     if (changed) afterCloudMergeApplied(silent);
+
+    // 45 個內建商品的舊圖片清掉後，立刻把「空圖片」同步回雲端。
+    // 只有同步完成才標記 cleanup done，避免下一次雲端又把咖哩圖拉回來。
+    if(seedImageCleanupPending()){
+      try{
+        lsSet('patchDB_v3',JSON.stringify(DB));
+        if(typeof window.syncToSupabase==='function'){
+          await window.syncToSupabase(true);
+        }
+        finishSeedImageCleanup();
+      }catch(cleanErr){
+        console.warn('seed image cleanup sync failed; will retry next pull',cleanErr);
+      }
+    }
   } catch (e) {
     console.error('從雲端拉取失敗:', e);
     // 安靜失敗就好，push 端已經有錯誤提示了，拉取這邊不用再打擾她一次
@@ -13147,6 +13621,16 @@ document.addEventListener('click',function(e){
   if(!pop||pop.classList.contains('hidden'))return;
   if(e.target.closest('.import-help-info')||e.target.closest('#import-help-popover'))return;
   pop.classList.add('hidden');
+});
+
+
+
+const stockClassSizeDelegatedChange=true;
+document.addEventListener('change',function(e){
+  if(e.target&&e.target.id==='edit-type'){
+    const wrap=document.getElementById('stock-class-size-wrap');
+    if(wrap)wrap.classList.toggle('is-rb',String(e.target.value||'').toUpperCase()==='RB');
+  }
 });
 
 </script>
