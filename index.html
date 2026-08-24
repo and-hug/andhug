@@ -1,3 +1,4 @@
+<!-- import icons unified to UFO -->
 <!-- toolbar trash icon resized + view icons centered | 2026-08-21 23:54:29 -->
 <!-- cart + - x glyphs moved up 1px | 2026-08-21 23:29:42 -->
 <!-- product toolbar: trash/import swapped + icon-only buttons round | 2026-08-21 22:54:43 -->
@@ -530,6 +531,18 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
         linear-gradient(currentColor 0 0) 0 0/13px 2px no-repeat,
         linear-gradient(currentColor 0 0) 0 50%/13px 2px no-repeat,
         linear-gradient(currentColor 0 0) 0 100%/13px 2px no-repeat;}
+
+
+
+  /* 開單頁：格狀／更多／列表 改成正圓 */
+  #page-sales .section-header .view-btn{
+      border-radius:999px!important;
+      width:36px!important;min-width:36px!important;max-width:36px!important;
+      height:36px!important;min-height:36px!important;max-height:36px!important;
+      flex:0 0 36px!important;
+      padding:0!important;
+      display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  }
 
   /* 只有商品庫這頁按鈕多到塞不下，才把「新增」收成圖示 */
   #page-products .section-header .btn-primary{
@@ -1472,14 +1485,30 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   box-sizing:border-box!important;
   line-height:1!important;
 }
-#page-products .section-header .toolbar-icon-round.view-btn{
+#page-products .section-header .toolbar-icon-round.view-btn,
+#page-sales .section-header .toolbar-icon-round.view-btn{
   width:36px!important;
   min-width:36px!important;
   height:36px!important;
   min-height:36px!important;
 }
+#page-sales .section-header .toolbar-icon-round{
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 36px!important;
+  box-sizing:border-box!important;
+  line-height:1!important;
+}
 @media(max-width:768px){
-  #page-products .section-header .toolbar-icon-round{
+  #page-products .section-header .toolbar-icon-round,
+  #page-sales .section-header .toolbar-icon-round{
     width:34px!important;
     min-width:34px!important;
     height:34px!important;
@@ -1718,7 +1747,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   </div>
   <div class="cart-layout">
     <div>
-      <div class="section-header"><div class="section-title">🏪 選商品</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div style="display:flex;gap:4px"><button class="view-btn active" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀">⊞</button><button class="view-btn" id="svbtn-large" onclick="setSaleView('large')" title="更多">⊟</button><button class="view-btn" id="svbtn-list" onclick="setSaleView('list')" title="列表">☰</button></div></div></div>
+      <div class="section-header"><div class="section-title">🏪 選商品</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表">☰</button></div></div></div>
       <div class="sale-cat-layout" style="display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:stretch">
         <div>
           <div id="sale-cat-sidebar" class="sticky-sidebar"></div>
@@ -2146,7 +2175,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
         <div id="product-import-table-wrap" style="max-height:50vh;overflow-y:auto"></div>
         <div style="display:flex;gap:8px;margin-top:14px">
           <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="cancelProductImport()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-          <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="confirmProductImport()">確認匯入</button>
+          <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="confirmProductImport()">🛸 確認匯入</button>
         </div>
       </div>
     </div>
@@ -2310,7 +2339,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
             <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
-            <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入成採購單</button>
+            <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px">🛸 匯入成採購單</button>
           </div>
         </div>
       </div>
