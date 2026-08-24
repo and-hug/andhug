@@ -1,4 +1,9 @@
-<!-- import icons unified to UFO -->
+<!-- MERGED LATEST: preserve all prior changes + UFO import icons | 2026-08-24 21:50:53 -->
+<!-- RB sidebar: label + nearby SKU code + right-side count | 2026-08-24 21:29:52 -->
+<!-- RB sidebar subcategory SKU codes shown at right | 2026-08-24 21:25:30 -->
+<!-- view icons moved up another 1px | 2026-08-24 20:46:35 -->
+<!-- view icons all shifted up 1px | 2026-08-24 20:28:49 -->
+<!-- product card left edges aligned to stock badge | 2026-08-24 20:25:02 -->
 <!-- toolbar trash icon resized + view icons centered | 2026-08-21 23:54:29 -->
 <!-- cart + - x glyphs moved up 1px | 2026-08-21 23:29:42 -->
 <!-- product toolbar: trash/import swapped + icon-only buttons round | 2026-08-21 22:54:43 -->
@@ -1539,15 +1544,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 /* 三個檢視 icon 精準置中 */
 #vbtn-grid::before,
 #svbtn-grid::before{
-  transform:translate(-50%,-50%)!important;
+  transform:translate(-50%,calc(-50% - 2px))!important;
 }
 #vbtn-large::before,
 #svbtn-large::before{
-  transform:translate(-50%,calc(-50% - .5px))!important;
+  transform:translate(-50%,calc(-50% - 1.5px))!important;
 }
 #vbtn-list::before,
 #svbtn-list::before{
-  transform:translate(-50%,calc(-50% - 1px))!important;
+  transform:translate(-50%,calc(-50% - 2px))!important;
 }
 
 
@@ -1588,6 +1593,39 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   width:34px!important;min-width:34px!important;max-width:34px!important;
   height:34px!important;min-height:34px!important;max-height:34px!important;flex-basis:34px!important;
 }}
+
+
+/* 商品卡：名稱 / SKU / 分類 / 缺資料 / 庫存 badge 左邊線全部對齊 */
+#product-grid:not(.view-list) .product-card .product-info{
+  padding-left:10px!important;
+}
+#product-grid:not(.view-list) .product-card .product-name,
+#product-grid:not(.view-list) .product-card .product-sku,
+#product-grid:not(.view-list) .product-card .pc-flow,
+#product-grid:not(.view-list) .product-card .product-meta{
+  margin-left:0!important;
+  padding-left:0!important;
+}
+#product-grid:not(.view-list) .product-card .product-meta{
+  justify-content:space-between!important;
+}
+#product-grid:not(.view-list) .product-card .stock-badge{
+  margin-left:0!important;
+}
+
+
+/* RB 側欄：名稱維持原本完整顯示，SKU code 緊貼名稱；最右保留數量 */
+.cat-sidebar-item .cat-subcat-label-wrap{
+  flex:0 1 auto;
+  min-width:0;
+}
+.cat-sidebar-item .cat-subcat-label-wrap > span:first-child{
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+.cat-sidebar-item .rb-subcat-code{
+  flex-shrink:0;
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -4987,7 +5025,7 @@ function renderCatSidebar(){
       const typeProducts=DB.products.filter(p=>p.type===t);
       if(typeSubs.length){
         rows+=`<div class="cat-sidebar-item ${activeTypeSubcat==='all'?'active':''}" onclick="setTypeSubcat('${t}','all')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="dropToTypeSubcat(event,'${t}','all')" style="padding-left:28px;font-size:12px;"><span style="font-weight:700;color:${activeTypeSubcat==='all'?'var(--brown)':'var(--text3)'}">全部</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${typeProducts.length||''}</span></div>`;
-        typeSubs.forEach(st=>{const cnt=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code).length;rows+=`<div class="cat-sidebar-item ${activeTypeSubcat===st.code?'active':''}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span style="font-weight:700;color:${activeTypeSubcat===st.code?'var(--brown)':'var(--text3)'}">${st.label}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span></div>`;});
+        typeSubs.forEach(st=>{const cnt=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code).length;rows+=`<div class="cat-sidebar-item ${activeTypeSubcat===st.code?'active':''}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="font-weight:700;color:${activeTypeSubcat===st.code?'var(--brown)':'var(--text3)'};white-space:nowrap">${st.label}</span>${t==='RB'?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${st.code}</span>`:''}</span><span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span></div>`;});
       }
       rows+=`<div class="cat-sidebar-item" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="padding-left:28px;font-size:11.5px;color:var(--brown);font-weight:700;opacity:.9"><span style="font-size:14px">＋</span><span>新增子類</span></div>`;
       if(sidebarSubcatEditorType===t){const nextCode=getNextTypeSubcatCode(t)||'';rows+=`<div style="margin:2px 10px 8px 28px;padding:8px;background:var(--cream2);border-radius:9px;border:1px solid var(--cream3)"><div style="display:flex;gap:5px;margin-bottom:5px"><input id="sidebar-subcat-code-${t}" class="form-input" value="${nextCode}" maxlength="2" inputmode="numeric" placeholder="01" style="width:48px;flex-shrink:0;font-size:11px;text-align:center;padding:6px 4px;font-family:monospace"><input id="sidebar-subcat-name-${t}" class="form-input" placeholder="子類名稱" onkeydown="if(event.key==='Enter')addSidebarTypeSubcat('${t}')" style="min-width:0;font-size:11px;padding:6px 7px"></div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addSidebarTypeSubcat('${t}')" style="flex:1;justify-content:center;font-size:10.5px;padding:6px">新增</button><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="padding:6px 8px;font-size:10.5px">取消</button></div></div>`;}
