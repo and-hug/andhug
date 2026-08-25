@@ -1,3 +1,4 @@
+<!-- move whole product/sales view switcher up 2px | 2026-08-25 22:24:44 -->
 <!-- FIX view icon position with top offset, not transform stacking | 2026-08-25 22:01:10 -->
 <!-- product + sales view icons moved up 1px more | 2026-08-25 21:59:36 -->
 <!-- restored cat logo on latest accumulated version | 2026-08-25 18:30:11 -->
@@ -1670,6 +1671,16 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   margin:0!important;
 }
 
+
+
+/* 商品庫 + 開單：這次移動整組圓形 view 按鈕，不是只移裡面的 icon */
+#page-products .view-switcher-align,
+#page-sales .view-switcher-align{
+  position:relative!important;
+  top:-2px!important;
+  align-self:center!important;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -1739,7 +1750,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
 
-      <div style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
+      <div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openProductTrash()" title="已刪商品">🗑</button>
@@ -1828,7 +1839,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   </div>
   <div class="cart-layout">
     <div>
-      <div class="section-header"><div class="section-title">🏪 選商品</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表">☰</button></div></div></div>
+      <div class="section-header"><div class="section-title">🏪 選商品</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表">☰</button></div></div></div>
       <div class="sale-cat-layout" style="display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:stretch">
         <div>
           <div id="sale-cat-sidebar" class="sticky-sidebar"></div>
