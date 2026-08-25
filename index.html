@@ -1,3 +1,4 @@
+<!-- force product/sales view buttons true circles | 2026-08-25 03:46:11 -->
 <!-- MERGED LATEST: preserve all prior changes + UFO import icons | 2026-08-24 21:50:53 -->
 <!-- RB sidebar: label + nearby SKU code + right-side count | 2026-08-24 21:29:52 -->
 <!-- RB sidebar subcategory SKU codes shown at right | 2026-08-24 21:25:30 -->
@@ -1625,6 +1626,41 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 .cat-sidebar-item .rb-subcat-code{
   flex-shrink:0;
+}
+
+
+
+/* 商品庫 / 開單：格狀、更多、列表三顆強制真正正圓 */
+#vbtn-grid,#vbtn-large,#vbtn-list,
+#svbtn-grid,#svbtn-large,#svbtn-list{
+  width:36px!important;
+  min-width:36px!important;
+  max-width:36px!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  aspect-ratio:1 / 1!important;
+  flex:0 0 36px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:9999px!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+@media(max-width:768px){
+  #vbtn-grid,#vbtn-large,#vbtn-list,
+  #svbtn-grid,#svbtn-large,#svbtn-list{
+    width:34px!important;
+    min-width:34px!important;
+    max-width:34px!important;
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+    flex-basis:34px!important;
+  }
 }
 
 </style>
