@@ -1502,6 +1502,19 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   height:36px!important;
   min-height:36px!important;
 }
+
+/* 2026-08-25 fix: align outer circles first, then move icons up 1px */
+.view-switcher-align{display:flex!important;gap:4px!important;align-items:center!important;}
+#page-products .view-switcher-align .view-btn,
+#page-sales .view-switcher-align .view-btn{
+  position:relative!important;
+  top:-1px!important; /* move the whole circle up so the outer ring aligns with neighbors */
+  margin:0!important;
+}
+#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
+#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
+  transform:translate(-50%,calc(-50% - 1px))!important; /* then lift the inner icon 1px */
+}
 #page-sales .section-header .toolbar-icon-round{
   width:36px!important;
   min-width:36px!important;
