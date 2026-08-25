@@ -1,3 +1,4 @@
+<!-- reverted product/sales view buttons to original style | 2026-08-25 22:52:09 -->
 <!-- move whole product/sales view switcher up 2px | 2026-08-25 22:24:44 -->
 <!-- FIX view icon position with top offset, not transform stacking | 2026-08-25 22:01:10 -->
 <!-- product + sales view icons moved up 1px more | 2026-08-25 21:59:36 -->
@@ -1692,6 +1693,60 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   position:relative!important;
   top:-2px!important;
   align-self:center!important;
+}
+
+
+
+/* REVERT：商品庫 / 開單的格狀・更多・列表，改回最原本樣式 */
+#page-products .view-switcher-align,
+#page-sales .view-switcher-align{
+  position:static!important;
+  top:auto!important;
+  transform:none!important;
+  align-self:auto!important;
+}
+
+#vbtn-grid,#vbtn-large,#vbtn-list,
+#svbtn-grid,#svbtn-large,#svbtn-list{
+  width:32px!important;
+  min-width:32px!important;
+  max-width:32px!important;
+  height:32px!important;
+  min-height:32px!important;
+  max-height:32px!important;
+  aspect-ratio:auto!important;
+  flex:0 0 32px!important;
+  padding:0 0 2px 0!important;
+  margin:0!important;
+  border-radius:8px!important;
+  overflow:visible!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+
+/* 商品庫 / 開單：只把三個 icon 往上移 1px，外框完全不動 */
+#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
+#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
+  top:calc(50% - 1px)!important;
+  left:50%!important;
+  transform:translate(-50%,-50%)!important;
+  margin:0!important;
+}
+
+@media(max-width:768px){
+  #vbtn-grid,#vbtn-large,#vbtn-list,
+  #svbtn-grid,#svbtn-large,#svbtn-list{
+    width:36px!important;
+    min-width:36px!important;
+    max-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    max-height:36px!important;
+    flex-basis:36px!important;
+    border-radius:8px!important;
+  }
 }
 
 </style>
