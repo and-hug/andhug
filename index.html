@@ -1,3 +1,7 @@
+<!-- subcat count badges moved down another 1px | 2026-08-25 -->
+<!-- subcat count badges moved down 1px | 2026-08-25 -->
+<!-- sale card stock down 1px + price down 2px; subcat count badges pinned top-right no outer ring | 2026-08-25 -->
+<!-- CLEAN VIEW ICON POSITIONING: one outer rule + one ::before rule | 2026-08-25 -->
 <!-- reverted product/sales view buttons to original style | 2026-08-25 22:52:09 -->
 <!-- move whole product/sales view switcher up 2px | 2026-08-25 22:24:44 -->
 <!-- FIX view icon position with top offset, not transform stacking | 2026-08-25 22:01:10 -->
@@ -420,7 +424,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid.view-list,#sale-product-grid.view-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
 @media (max-width:1180px){#product-grid.view-list,#sale-product-grid.view-list{grid-template-columns:1fr;gap:8px;}}
 #product-grid.view-list .product-card,#sale-product-grid.view-list .product-card{display:flex!important;flex-direction:row!important;align-items:center!important;height:auto!important;min-height:84px!important;border-radius:12px!important;}
-#product-grid.view-list .product-img,#sale-product-grid.view-list .product-img{width:64px!important;height:64px!important;aspect-ratio:unset!important;flex:0 0 64px!important;border-radius:10px!important;margin:8px 0 8px 8px!important;}
+#product-grid.view-list .product-img,#sale-product-grid.view-list .product-img{width:76px!important;height:76px!important;aspect-ratio:unset!important;flex:0 0 76px!important;border-radius:10px!important;margin:4px 0 4px 8px!important;}
 #product-grid.view-list .product-info,#sale-product-grid.view-list .product-info{position:relative!important;display:block!important;flex:1 1 auto!important;min-width:0!important;padding:8px 142px 14px 10px!important;}
 #product-grid.view-list .product-name,#sale-product-grid.view-list .product-name{display:block!important;font-size:14px!important;line-height:1.35!important;margin:0 0 2px!important;min-width:0!important;text-align:left!important;}
 #product-grid.view-list .product-sku,#sale-product-grid.view-list .product-sku{display:block!important;font-size:11px!important;line-height:1.35!important;margin:0 0 2px!important;color:var(--text3)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-family:monospace!important;text-align:left!important;}
@@ -507,43 +511,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #batch-btn{font-size:0!important;}
   #batch-btn::before{content:'✏️';font-size:15px;line-height:1;}
 
-  /* ---- 圖示一律用 CSS 畫，不用文字字元 ----
-     ⊞ ⊟ ☰ 和 + 都是 Unicode 符號，各自的字身高度、基線位置都不同，
-     三顆並排時垂直一定對不齊，而且左右留白也不對稱 —— 那是字型檔決定的，
-     CSS 調不動。改成絕對定位 + transform 對齊幾何中心，四顆統一 13px。 */
-  #vbtn-grid,#vbtn-large,#vbtn-list,
-  #svbtn-grid,#svbtn-large,#svbtn-list{position:relative;font-size:0!important;}
-  #vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
-  #svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
-      content:'';position:absolute;top:50%;left:50%;
-      transform:translate(-50%,-50%);}
-  /* 格狀：2×2 */
-  #vbtn-grid::before,#svbtn-grid::before{width:13px;height:13px;
-      background:
-        linear-gradient(currentColor 0 0) 0 0/5px 5px no-repeat,
-        linear-gradient(currentColor 0 0) 100% 0/5px 5px no-repeat,
-        linear-gradient(currentColor 0 0) 0 100%/5px 5px no-repeat,
-        linear-gradient(currentColor 0 0) 100% 100%/5px 5px no-repeat;}
-  /* 更多：3×3 */
-  #vbtn-large::before,#svbtn-large::before{width:13px;height:13px;
-      background:
-        linear-gradient(currentColor 0 0) 0 0/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 50% 0/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 100% 0/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 0 50%/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 50% 50%/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 100% 50%/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 0 100%/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 50% 100%/3px 3px no-repeat,
-        linear-gradient(currentColor 0 0) 100% 100%/3px 3px no-repeat;}
-  /* 列表：三條線 */
-  #vbtn-list::before,#svbtn-list::before{width:13px;height:13px;
-      background:
-        linear-gradient(currentColor 0 0) 0 0/13px 2px no-repeat,
-        linear-gradient(currentColor 0 0) 0 50%/13px 2px no-repeat,
-        linear-gradient(currentColor 0 0) 0 100%/13px 2px no-repeat;}
-
-
 
   /* 開單頁：格狀／更多／列表 改成正圓 */
   #page-sales .section-header .view-btn{
@@ -614,13 +581,13 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #subcat-filters button,#sale-subcat-filters button{
       font-size:10px!important;padding:4px 8px!important;
       border-radius:8px!important;font-weight:700;line-height:1.4;}
-  /* 計數改成行內小字。原本是浮在右上角的實心圓點，16 顆同時出現太吵，
-     也逼得標籤要多留 padding 才不被切到。 */
+  /* 分類計數固定貼在右上角，稍微外凸；不使用米色外圈。 */
   #subcat-filters button > span,#sale-subcat-filters button > span{
-      position:static!important;top:auto!important;right:auto!important;
-      background:none!important;color:inherit!important;opacity:.55;
-      font-size:9px!important;padding:0!important;min-width:0!important;
-      margin-left:4px;font-weight:800;}
+      position:absolute!important;top:-5px!important;right:-5px!important;
+      background:var(--brown)!important;color:#fff!important;opacity:1!important;
+      border-radius:999px!important;font-size:8.5px!important;
+      padding:0 4px!important;min-width:14px!important;line-height:14px!important;
+      margin-left:0!important;font-weight:800!important;box-shadow:none!important;}
   .filter-bar{flex-wrap:wrap;overflow:visible;margin-bottom:0;
       width:100%;min-width:0;max-width:100%;gap:5px;align-content:flex-start;align-items:flex-start;}
   .filter-chip{flex-shrink:0;}
@@ -1504,18 +1471,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   min-height:36px!important;
 }
 
-/* 2026-08-25 fix: align outer circles first, then move icons up 1px */
+/* View switcher layout only; positioning is defined once near the end of this stylesheet. */
 .view-switcher-align{display:flex!important;gap:4px!important;align-items:center!important;}
-#page-products .view-switcher-align .view-btn,
-#page-sales .view-switcher-align .view-btn{
-  position:relative!important;
-  top:-1px!important; /* move the whole circle up so the outer ring aligns with neighbors */
-  margin:0!important;
-}
-#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
-#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
-  transform:translate(-50%,calc(-50% - 1px))!important; /* then lift the inner icon 1px */
-}
 #page-sales .section-header .toolbar-icon-round{
   width:36px!important;
   min-width:36px!important;
@@ -1601,23 +1558,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }}
 
 
-/* 商品卡：名稱 / SKU / 分類 / 缺資料 / 庫存 badge 左邊線全部對齊 */
-#product-grid:not(.view-list) .product-card .product-info{
-  padding-left:10px!important;
-}
-#product-grid:not(.view-list) .product-card .product-name,
-#product-grid:not(.view-list) .product-card .product-sku,
-#product-grid:not(.view-list) .product-card .pc-flow,
-#product-grid:not(.view-list) .product-card .product-meta{
-  margin-left:0!important;
-  padding-left:0!important;
-}
-#product-grid:not(.view-list) .product-card .product-meta{
-  justify-content:space-between!important;
-}
-#product-grid:not(.view-list) .product-card .stock-badge{
-  margin-left:0!important;
-}
 
 
 /* RB 側欄：名稱維持原本完整顯示，SKU code 緊貼名稱；最右保留數量 */
@@ -1670,41 +1610,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
 
 
-/* FIX: 商品庫 + 開單的 view icon 直接用 top 定位，避免舊 transform 規則看起來沒變 */
-#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
-#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
-  top:calc(50% - 2px)!important;
-  left:50%!important;
-  transform:translate(-50%,-50%)!important;
-}
-
-/* 三種圖示各自保持幾何中心，不再另外疊加不同 transform */
-#vbtn-grid::before,#svbtn-grid::before,
-#vbtn-large::before,#svbtn-large::before,
-#vbtn-list::before,#svbtn-list::before{
-  margin:0!important;
-}
-
-
-
-/* 商品庫 + 開單：這次移動整組圓形 view 按鈕，不是只移裡面的 icon */
-#page-products .view-switcher-align,
-#page-sales .view-switcher-align{
-  position:relative!important;
-  top:-2px!important;
-  align-self:center!important;
-}
-
-
-
-/* REVERT：商品庫 / 開單的格狀・更多・列表，改回最原本樣式 */
-#page-products .view-switcher-align,
-#page-sales .view-switcher-align{
-  position:static!important;
-  top:auto!important;
-  transform:none!important;
-  align-self:auto!important;
-}
 
 #vbtn-grid,#vbtn-large,#vbtn-list,
 #svbtn-grid,#svbtn-large,#svbtn-list{
@@ -1726,15 +1631,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   box-sizing:border-box!important;
 }
 
-/* 商品庫 / 開單：只把三個 icon 往上移 1px，外框完全不動 */
-#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
-#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
-  top:calc(50% - 1px)!important;
-  left:50%!important;
-  transform:translate(-50%,-50%)!important;
-  margin:0!important;
-}
-
 @media(max-width:768px){
   #vbtn-grid,#vbtn-large,#vbtn-list,
   #svbtn-grid,#svbtn-large,#svbtn-list{
@@ -1747,6 +1643,711 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     flex-basis:36px!important;
     border-radius:8px!important;
   }
+}
+
+
+/* FINAL view-icon rules — desktop and narrowed/mobile layouts use the same original Unicode icon look. */
+/* Keep the outer button fixed; move only the original ⊞ ⊟ ☰ glyph itself. */
+#vbtn-grid,#vbtn-large,#vbtn-list,
+#svbtn-grid,#svbtn-large,#svbtn-list{
+  position:relative!important;
+  top:0!important;
+  font-size:14px!important;
+  line-height:1!important;
+  padding:0!important;
+}
+#vbtn-grid .view-glyph,#vbtn-large .view-glyph,#vbtn-list .view-glyph,
+#svbtn-grid .view-glyph,#svbtn-large .view-glyph,#svbtn-list .view-glyph{
+  display:inline-block!important;
+  line-height:1!important;
+  transform:translateY(-1px)!important;
+  pointer-events:none!important;
+}
+#vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
+#svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+/* Narrowed/mobile layout keeps its existing button size, but uses the SAME Unicode glyphs as desktop. */
+@media(max-width:768px){
+  #vbtn-grid,#vbtn-large,#vbtn-list,
+  #svbtn-grid,#svbtn-large,#svbtn-list{
+    font-size:14px!important;
+    padding:0!important;
+  }
+  #vbtn-grid .view-glyph,#vbtn-large .view-glyph,#vbtn-list .view-glyph,
+  #svbtn-grid .view-glyph,#svbtn-large .view-glyph,#svbtn-list .view-glyph{
+    display:inline-block!important;
+    transform:translateY(-1px)!important;
+  }
+  #vbtn-grid::before,#vbtn-large::before,#vbtn-list::before,
+  #svbtn-grid::before,#svbtn-large::before,#svbtn-list::before{
+    content:none!important;
+    display:none!important;
+    background:none!important;
+  }
+}
+
+
+/* NARROW TOOLBAR: keep search + the three view buttons on one row.
+   Desktop remains unchanged. On narrow layouts, the view switcher sits to the
+   right of search instead of consuming a separate row. */
+@media(max-width:768px){
+  #page-sales .sale-search-toolbar,
+  #page-products .product-search-toolbar{
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    flex-wrap:wrap!important;
+  }
+
+  #page-sales .sale-search-toolbar > .search-wrap,
+  #page-products .product-search-toolbar > .search-wrap{
+    order:0!important;
+    flex:1 1 150px!important;
+    width:auto!important;
+    min-width:0!important;
+  }
+
+  #page-sales .sale-search-toolbar > .view-switcher-align,
+  #page-products .product-search-toolbar > .view-switcher-align{
+    order:1!important;
+    flex:0 0 auto!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:4px!important;
+    margin:0!important;
+  }
+
+  /* Product Library has extra toolbar buttons. Put those after the compact
+     search + view row, while Sales has only search + view buttons here. */
+  #page-products .product-search-toolbar > :not(.search-wrap):not(.view-switcher-align){
+    order:2!important;
+  }
+}
+
+
+
+
+/* ================================================================
+   LOCKED PRODUCT CARD TYPOGRAPHY + ALIGNMENT
+   單一最終來源：之後只改這一區，避免 base / mobile / late !important 互相覆寫
+   ================================================================ */
+
+/* 商品庫：整個商品清單維持往上 2px */
+#product-grid{
+  position:relative!important;
+  top:-2px!important;
+}
+
+/* 商品庫：格狀 / 更多檢視 */
+#product-grid:not(.view-list) .product-card .product-info{
+  padding:8px 10px 10px!important;
+}
+#product-grid:not(.view-list) .product-card .product-name{
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.32!important;
+  margin-left:0!important;
+  padding-left:0!important;
+}
+#product-grid:not(.view-list) .product-card .product-sku{
+  font-size:10px!important;
+  font-weight:700!important;
+  line-height:1.15!important;
+  margin-left:0!important;
+  padding-left:0!important;
+}
+#product-grid:not(.view-list) .product-card .pc-flow{
+  margin-left:0!important;
+  padding-left:0!important;
+}
+#product-grid:not(.view-list) .product-card .pc-missing{
+  font-size:9px!important;
+  font-weight:700!important;
+}
+#product-grid:not(.view-list) .product-card .pc-cost{
+  position:relative!important;
+  top:6px!important;
+  font-size:10px!important;
+  font-weight:700!important;
+  line-height:1.1!important;
+}
+#product-grid:not(.view-list) .product-card .product-meta{
+  margin-left:0!important;
+  padding-left:0!important;
+  justify-content:space-between!important;
+  align-items:flex-end!important;
+}
+#product-grid:not(.view-list) .product-card .stock-badge{
+  margin-left:-1px!important;
+  font-weight:700!important;
+}
+#product-grid:not(.view-list) .product-card .price-tag{
+  margin-right:-1px!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+
+
+/* 商品庫格狀檢視：所有資訊文字統一粗體，只改字重 */
+#product-grid:not(.view-list) .product-card .product-name,
+#product-grid:not(.view-list) .product-card .product-sku,
+#product-grid:not(.view-list) .product-card .pc-subcat-code,
+#product-grid:not(.view-list) .product-card .pc-catcode,
+#product-grid:not(.view-list) .product-card .pc-sold,
+#product-grid:not(.view-list) .product-card .pc-defect,
+#product-grid:not(.view-list) .product-card .pc-stale,
+#product-grid:not(.view-list) .product-card .pc-transit,
+#product-grid:not(.view-list) .product-card .pc-pending,
+#product-grid:not(.view-list) .product-card .pc-tags span,
+#product-grid:not(.view-list) .product-card .pc-missing,
+#product-grid:not(.view-list) .product-card .pc-cost,
+#product-grid:not(.view-list) .product-card .stock-badge,
+#product-grid:not(.view-list) .product-card .price-tag{
+  font-weight:700!important;
+}
+
+/* 開單商品卡：固定版面微調（只改開單，不影響商品庫） */
+#sale-product-grid:not(.view-list) .product-card .product-info{
+  padding-bottom:10px!important; /* 桌面版：底部往上收 2px */
+}
+#sale-product-grid:not(.view-list) .product-card .product-name{
+  margin-left:-1px!important;
+  font-size:12px!important;
+  font-weight:700!important;
+}
+#sale-product-grid:not(.view-list) .product-card .stock-badge{
+  margin-left:-2px!important; /* 在目前位置再往左 1px */
+  position:relative!important;
+  top:1px!important; /* 9件再往下 1px */
+  font-weight:700!important;
+}
+#sale-product-grid:not(.view-list) .product-card .price-tag{
+  margin-right:-3px!important; /* 在目前位置再往右 2px */
+  position:relative!important;
+  top:2px!important; /* 售價再往下 2px */
+  font-size:13px!important;
+  font-weight:700!important;
+}
+
+/* 縮小版：只允許這裡改成較緊湊尺寸，字重不再被前面的 media 規則改掉 */
+@media(max-width:768px){
+  #sale-product-grid:not(.view-list) .product-card .product-info{
+    padding-bottom:7px!important; /* 縮小版原本 9px，底部同樣收 2px */
+  }
+  #product-grid:not(.view-list) .product-card .product-name,
+  #sale-product-grid:not(.view-list) .product-card .product-name{
+    font-size:12px!important;
+    font-weight:700!important;
+  }
+  #product-grid:not(.view-list) .product-card .product-sku{
+    font-size:9px!important;
+    font-weight:700!important;
+  }
+  #product-grid:not(.view-list) .product-card .pc-missing{
+    font-size:9px!important;
+    font-weight:700!important;
+  }
+  #product-grid:not(.view-list) .product-card .pc-cost{
+    font-size:10px!important;
+    font-weight:700!important;
+  }
+  #product-grid:not(.view-list) .product-card .stock-badge,
+  #sale-product-grid:not(.view-list) .product-card .stock-badge{
+    font-size:9.5px!important;
+    font-weight:700!important;
+  }
+  #product-grid:not(.view-list) .product-card .price-tag,
+  #sale-product-grid:not(.view-list) .product-card .price-tag{
+    font-size:13px!important;
+    font-weight:700!important;
+  }
+}
+/* ================================================================
+   LOCKED LIST VIEW TYPOGRAPHY = GRID VIEW
+   列表檢視只改排版；所有商品資訊字級／字重跟格狀完全一致
+   ================================================================ */
+#product-grid.view-list .product-card .product-name,
+#sale-product-grid.view-list .product-card .product-name{
+  font-size:12px!important;
+  font-weight:700!important;
+}
+#product-grid.view-list .product-card .product-sku,
+#sale-product-grid.view-list .product-card .product-sku{
+  font-size:10px!important;
+  font-weight:700!important;
+  font-family:monospace!important;
+}
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode{
+  font-family:monospace!important;
+  font-size:9px!important;
+  font-weight:400!important;
+  line-height:1.18!important;
+  color:var(--text3)!important;
+}
+#product-grid.view-list .product-card .pc-sold,
+#product-grid.view-list .product-card .pc-defect,
+#product-grid.view-list .product-card .pc-stale,
+#product-grid.view-list .product-card .pc-transit,
+#product-grid.view-list .product-card .pc-pending{
+  font-size:9px!important;
+  line-height:1.18!important;
+}
+#product-grid.view-list .product-card .pc-transit{
+  color:var(--brown)!important;
+  font-weight:700!important;
+}
+#product-grid.view-list .product-card .pc-pending{
+  color:#7c65aa!important;
+  font-weight:700!important;
+}
+#product-grid.view-list .product-card .pc-missing{
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1.18!important;
+  color:var(--red)!important;
+}
+#product-grid.view-list .product-card .pc-cost{
+  font-size:10px!important;
+  font-weight:700!important;
+  line-height:1.1!important;
+  color:var(--text3)!important;
+}
+#product-grid.view-list .product-card .stock-badge,
+#sale-product-grid.view-list .product-card .stock-badge{
+  font-weight:700!important;
+}
+#product-grid.view-list .product-card .price-tag,
+#sale-product-grid.view-list .product-card .price-tag{
+  font-size:13px!important;
+  font-weight:700!important;
+}
+
+/* 商品庫列表：資訊排列跟格狀完全一致，只改成橫向卡片 */
+#product-grid.view-list .product-card .product-info{
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  padding:8px 14px 10px 10px!important;
+}
+#product-grid.view-list .product-card .pc-flow{
+  margin-top:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  min-width:0!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+}
+#product-grid.view-list .product-card .pc-cost{
+  position:relative!important;
+  top:4px!important;
+  margin-left:auto!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .product-meta{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  margin-top:1px!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .stock-badge{
+  margin-left:-1px!important;
+}
+#product-grid.view-list .product-card .price-tag{
+  margin-right:-1px!important;
+}
+
+/* 列表檢視：1件上方的左側商品資訊整組往右 1px；庫存 badge / 右側價格不動 */
+#product-grid.view-list .product-card .product-name,
+#product-grid.view-list .product-card .product-sku,
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode,
+#product-grid.view-list .product-card .pc-sold,
+#product-grid.view-list .product-card .pc-defect,
+#product-grid.view-list .product-card .pc-stale,
+#product-grid.view-list .product-card .pc-transit,
+#product-grid.view-list .product-card .pc-pending,
+#product-grid.view-list .product-card .pc-missing{
+  position:relative!important;
+  left:1px!important;
+}
+
+
+
+/* 開單列表卡：簡化版商品卡固定排版 */
+#sale-product-grid.view-list .product-img{
+  margin:8px!important;
+}
+#sale-product-grid.view-list .product-info{
+  padding:8px 96px 12px 10px!important;
+}
+#sale-product-grid.view-list .product-name{
+  position:relative!important;
+  top:2px!important;
+}
+#sale-product-grid.view-list .product-meta{
+  right:15px!important;
+  top:10px!important;
+  bottom:auto!important;
+  transform:none!important;
+  display:flex!important;
+  flex-direction:column-reverse!important;
+  align-items:flex-end!important;
+  justify-content:flex-start!important;
+  gap:6px!important;
+}
+#sale-product-grid.view-list .product-meta .stock-badge{
+  margin:0!important;
+  position:relative!important;
+  left:4px!important;
+}
+
+
+/* 商品庫「更多」檢視：只改這個檢視的卡片排版 */
+#product-grid .stock-more-number{display:none!important;}
+#product-grid.view-large .product-card .product-info{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  padding:8px 9px 9px!important;
+  min-width:0!important;
+}
+#product-grid.view-large .product-card .product-name{
+  display:block!important;
+  margin:0 0 6px!important;
+  padding:0!important;
+  min-height:0!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1.3!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#product-grid.view-large .product-card .product-sku{
+  display:none!important;
+}
+#product-grid.view-large .product-card .pc-flow{
+  display:block!important;
+  margin:0 0 7px!important;
+  padding:0!important;
+  min-width:0!important;
+}
+#product-grid.view-large .product-card .pc-subcat-code,
+#product-grid.view-large .product-card .pc-catcode{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  min-width:0!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1.15!important;
+  color:var(--text3)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#product-grid.view-large .product-card .pc-missing-cost-row{
+  display:contents!important;
+}
+#product-grid.view-large .product-card .pc-missing-cost-row > span:not(.pc-cost),
+#product-grid.view-large .product-card .pc-missing,
+#product-grid.view-large .product-card .pc-sold,
+#product-grid.view-large .product-card .pc-defect,
+#product-grid.view-large .product-card .pc-stale,
+#product-grid.view-large .product-card .pc-transit,
+#product-grid.view-large .product-card .pc-pending,
+#product-grid.view-large .product-card .pc-tags{
+  display:none!important;
+}
+#product-grid.view-large .product-card .pc-cost{
+  display:block!important;
+  position:absolute!important;
+  right:9px!important;
+  bottom:21px!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1.15!important;
+  color:var(--text3)!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-large .product-card .product-meta{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:5px!important;
+  margin-top:auto!important;
+  padding:0!important;
+}
+#product-grid.view-large .product-card .stock-default-text{display:none!important;}
+#product-grid.view-large .product-card .stock-more-number{display:inline!important;}
+#product-grid.view-large .product-card .stock-badge{
+  margin:0!important;
+  padding:3px 8px!important;
+  font-size:10px!important;
+  font-weight:700!important;
+}
+#product-grid.view-large .product-card .price-tag{
+  margin:0!important;
+  padding:0!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+
+/* 商品庫「更多」：進貨價固定緊貼售價正上方 */
+#product-grid .more-cost{display:none!important;}
+#product-grid .more-price-stack{display:contents;}
+#product-grid.view-large .product-card .pc-cost{display:none!important;}
+#product-grid.view-large .product-card .more-price-stack{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  gap:0!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:1!important;
+}
+#product-grid.view-large .product-card .more-cost{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  color:var(--text3)!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-large .product-card .more-price-stack .price-tag{
+  margin:0!important;
+  padding:0!important;
+  line-height:1!important;
+}
+
+
+/* 商品庫「格狀」：整體卡片縮小一點，只影響這個檢視 */
+@media (min-width:769px){
+  #product-grid.view-grid{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+}
+
+
+/* 商品庫「列表」：分類＋缺少資訊同一行，整體資訊更集中；只影響列表 */
+#product-grid.view-list .product-card .product-info{
+  padding:6px 14px 7px 10px!important;
+  justify-content:center!important;
+}
+#product-grid.view-list .product-card .product-name{
+  margin-bottom:1px!important;
+}
+#product-grid.view-list .product-card .product-sku{
+  margin-bottom:1px!important;
+}
+#product-grid.view-list .product-card .pc-flow{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  grid-auto-rows:min-content!important;
+  column-gap:4px!important;
+  row-gap:1px!important;
+  align-items:baseline!important;
+  margin:0!important;
+  padding:0!important;
+}
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode{
+  grid-row:1!important;
+  grid-column:1!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row{
+  display:contents!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row > span:empty{
+  display:none!important;
+}
+#product-grid.view-list .product-card .pc-missing{
+  grid-row:1!important;
+  grid-column:2!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-cost{
+  grid-row:1!important;
+  grid-column:3!important;
+  position:relative!important;
+  top:0!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-sold,
+#product-grid.view-list .product-card .pc-defect,
+#product-grid.view-list .product-card .pc-stale,
+#product-grid.view-list .product-card .pc-transit,
+#product-grid.view-list .product-card .pc-pending,
+#product-grid.view-list .product-card .pc-tags{
+  grid-column:1 / -1!important;
+  margin:0!important;
+}
+#product-grid.view-list .product-card .product-meta{
+  margin-top:2px!important;
+}
+
+
+/* 比價：商品名稱 / SKU / 標籤整組在目前位置再往下 1px */
+#compare-modal .compare-product-head-info{
+  position:relative!important;
+  top:1px!important;
+}
+
+
+/* 商品庫列表最終：缺少資訊緊跟分類；進貨價在售價正上方 */
+#product-grid.view-list .product-card .pc-flow{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  grid-auto-rows:min-content!important;
+  column-gap:4px!important;
+  row-gap:1px!important;
+  align-items:baseline!important;
+  margin:0!important;
+  padding:0!important;
+}
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode{
+  grid-row:1!important;
+  grid-column:1!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row{
+  display:contents!important;
+}
+#product-grid.view-list .product-card .pc-missing{
+  grid-row:1!important;
+  grid-column:2!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-cost{
+  display:none!important;
+}
+#product-grid.view-list .product-card .more-price-stack{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  gap:0!important;
+  margin-left:auto!important;
+  line-height:1!important;
+}
+#product-grid.view-list .product-card .more-cost{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  font-size:10px!important;
+  font-weight:700!important;
+  line-height:1.05!important;
+  color:var(--text3)!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .more-cost::before{
+  content:'進貨 ';
+}
+#product-grid.view-list .product-card .more-price-stack .price-tag{
+  margin:0!important;
+}
+
+/* 商品庫列表：分類 + 缺少資訊固定同一排 */
+.pc-missing-inline-list{display:none;}
+#product-grid.view-list .product-card .pc-flow{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:1.18!important;
+}
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode{
+  display:inline-block!important;
+  vertical-align:baseline!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-missing-inline-list{
+  display:inline-block!important;
+  vertical-align:baseline!important;
+  position:relative!important;
+  left:1px!important;
+  margin-left:4px!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1.18!important;
+  color:var(--red)!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row .pc-missing{
+  display:none!important;
+}
+#product-grid.view-list .product-card .pc-missing-cost-row{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  height:0!important;
+  overflow:hidden!important;
+}
+#product-grid.view-list .product-card .pc-sold,
+#product-grid.view-list .product-card .pc-defect,
+#product-grid.view-list .product-card .pc-stale,
+#product-grid.view-list .product-card .pc-transit,
+#product-grid.view-list .product-card .pc-pending,
+#product-grid.view-list .product-card .pc-tags{
+  display:block!important;
+  margin:0!important;
+}
+
+
+/* 商品庫列表：分類＋缺少資訊整排往下靠近庫存 badge */
+#product-grid.view-list .product-card .pc-subcat-code,
+#product-grid.view-list .product-card .pc-catcode,
+#product-grid.view-list .product-card .pc-missing-inline-list{
+  position:relative!important;
+  top:4px!important;
+}
+
+
+/* 商品庫列表：商品名稱＋SKU 整組往下 1px */
+#product-grid.view-list .product-card .product-name,
+#product-grid.view-list .product-card .product-sku{
+  position:relative!important;
+  top:1px!important;
 }
 
 </style>
@@ -1812,13 +2413,13 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 <div class="page" id="page-products">
   <div class="section-header">
     <div class="section-title">📦 商品庫</div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div class="product-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="renderProducts()"></div>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
 
-      <div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表">☰</button></div>
+      <div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表"><span class="view-glyph">☰</span></button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
       <button class="btn btn-secondary" onclick="openStocktakeModal()">📋 盤點</button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openProductTrash()" title="已刪商品">🗑</button>
@@ -1867,6 +2468,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
           </button>
           <div id="price-compare-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:80;min-width:220px"></div>
         </div>
+        <button type="button" onclick="clearPriceCompareSelection()" title="清除目前所有比價商品" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 11px;font-size:12px;font-family:inherit;color:var(--red);background:var(--surface);cursor:pointer;font-weight:700;white-space:nowrap">全部清除</button>
         <button class="modal-close" onclick="closeModal('modal-price-compare')">×</button>
       </div>
     </div>
@@ -1907,7 +2509,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   </div>
   <div class="cart-layout">
     <div>
-      <div class="section-header"><div class="section-title">🏪 選商品</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀">⊞</button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多">⊟</button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表">☰</button></div></div></div>
+      <div class="section-header"><div class="section-title">🏪 選商品</div><div class="sale-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="renderSaleProducts()"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表"><span class="view-glyph">☰</span></button></div></div></div>
       <div class="sale-cat-layout" style="display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:stretch">
         <div>
           <div id="sale-cat-sidebar" class="sticky-sidebar"></div>
@@ -1953,7 +2555,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
                 <input type="number" id="cart-discount-input" min="0" max="100" placeholder="自訂%" style="width:100%;box-sizing:border-box;font-size:11px;font-family:inherit;background:var(--surface);border:1.5px solid var(--cream3);padding:4px 6px;border-radius:8px;font-weight:700;text-align:center" onchange="setDiscount(this.value)">
               </div>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;font-weight:700"><span style="color:var(--text)">應收</span><span id="cart-total" style="font-family:'Nunito',sans-serif;font-weight:800;color:var(--brown);font-size:18px">$0</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:16px;margin-bottom:6px;font-weight:700"><span style="color:var(--text)">應收</span><span id="cart-total" style="font-family:'Nunito',sans-serif;font-weight:800;color:var(--brown);font-size:18px">$0</span></div>
             <div style="display:none;justify-content:space-between;font-size:13px;margin-bottom:14px;font-weight:600"><span style="color:var(--text2)">毛利</span><span id="cart-profit-show" style="font-family:'Nunito',sans-serif;font-weight:800;color:#3d8a58">$0</span></div>
           </div>
           <button class="btn btn-primary" style="width:100%;justify-content:center;border-radius:12px;padding:12px;display:flex;align-items:center;gap:6px" id="confirm-sale-btn" onclick="confirmSale()"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="#fff" stroke-width="2"/><path d="M6.5,12.5 L10,16 L17.5,8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>確認成交</button>
@@ -3837,6 +4439,8 @@ function getTypeLabel(t){
 function getTypeDisplayLabel(t){
   const label=getUILabel('catlabel-'+t,getTypeLabel(t));
   let cleaned=String(label||'').replace(/\s+[A-Za-z][A-Za-z0-9 &'’()./+\-]*$/,'').trim();
+  // PA 分類畫面簡稱統一顯示「布貼」；SKU 規則與辨識別名仍維持原本內容。
+  if(t==='PA'&&['刺繡布貼','刺绣布贴','刺繡貼','刺绣贴','繡章','绣章','布貼','布贴'].includes(cleaned))cleaned='布貼';
   // RB 的畫面名稱統一用短一點的「織帶」。輸入商品名稱時仍會辨識「布條、掛繩、手機繩」等大量別名。
   // 只統一既有預設名稱；如果使用者自己在 SKU 規則把 RB 改成別的自訂名稱，不會硬蓋掉。
   if(t==='RB'&&['織帶','織帶/掛繩','織帶／掛繩','布條/掛繩','布條／掛繩','布條掛繩'].includes(cleaned))cleaned='織帶';
@@ -5919,7 +6523,7 @@ function renderSubcatFilters(){
         background:${isActive?'var(--brown)':'var(--cream2)'};
         color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--text3)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
-      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:6px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:0 0 0 2px var(--cream2)">${cnt}</span>`:''}
+      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
     </button>`;
   }).join('');
 }
@@ -6194,6 +6798,48 @@ function dropToCat(event,newType){
 
 let priceCompareSelectedIds=[];
 let priceCompareDefaultOrder=[];
+let priceCompareRows=[];
+
+function resetPriceCompareRows(ids=priceCompareSelectedIds){
+  const arr=(ids||[]).map(String);
+  priceCompareRows=[];
+  for(let i=0;i<arr.length;i+=5)priceCompareRows.push(arr.slice(i,i+5));
+  if(!priceCompareRows.length&&arr.length)priceCompareRows=[arr.slice()];
+}
+function syncPriceCompareIdsFromRows(){
+  const validIds=new Set((DB.products||[]).map(p=>String(p.id)));
+  const seen=new Set();
+  priceCompareRows=(priceCompareRows||[])
+    .map(r=>(r||[]).map(String).filter(id=>id&&validIds.has(id)&&!seen.has(id)&&(seen.add(id),true)));
+  while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+  priceCompareSelectedIds=priceCompareRows.flat();
+}
+function ensurePriceCompareRows(){
+  const validIds=new Set((DB.products||[]).map(p=>String(p.id)));
+  const selected=[...new Set((priceCompareSelectedIds||[]).map(String))].filter(id=>validIds.has(id));
+  priceCompareSelectedIds=selected;
+  const selectedSet=new Set(selected);
+  const seen=new Set();
+  // 保留手動分排：不要因為上排有空位，就把下排商品自動往前／往上補。
+  // 只清掉不存在／未選取／重複的商品；既有 row 邊界保留。
+  let rows=(priceCompareRows||[]).map(r=>(r||[]).map(String).filter(id=>selectedSet.has(id)&&!seen.has(id)&&(seen.add(id),true)));
+  if(!rows.length&&selected.length)rows=[[]];
+  selected.forEach(id=>{
+    if(seen.has(id))return;
+    if(!rows.length)rows=[[]];
+    let target=rows.length-1;
+    if(rows[target].length>=5){
+      if(rows.length<2){rows.push([]);target=rows.length-1;}
+      else target=rows.findIndex(r=>r.length<5);
+    }
+    if(target<0)target=rows.length-1;
+    rows[target].push(id);
+    seen.add(id);
+  });
+  // 最多兩排；只移除最尾端完全空白的排，不把第二排往第一排補位。
+  while(rows.length>1 && rows[rows.length-1].length===0)rows.pop();
+  priceCompareRows=rows.slice(0,2);
+}
 
 function openBatchPriceCompare(){
   const ids=[...batchSelected];
@@ -6205,8 +6851,9 @@ function openBatchPriceCompare(){
     toast('比價最多選 10 個商品，請先減少選取','error');
     return;
   }
-  priceCompareSelectedIds=ids.map(String);
+  priceCompareSelectedIds=[...new Set(ids.map(String))].filter(id=>(DB.products||[]).some(p=>String(p.id)===id));
   priceCompareDefaultOrder=[...priceCompareSelectedIds];
+  resetPriceCompareRows(priceCompareSelectedIds);
   priceCompareSortMode='default';
   const sortLabel=document.getElementById('price-compare-sort-label');
   if(sortLabel)sortLabel.textContent='📋 預設順序';
@@ -6219,6 +6866,7 @@ function openBatchPriceCompare(){
 function openPriceCompareModal(){
   priceCompareSelectedIds=[];
   priceCompareDefaultOrder=[];
+  priceCompareRows=[];
   priceCompareSortMode='default';
   const sortLabel=document.getElementById('price-compare-sort-label');
   if(sortLabel)sortLabel.textContent='📋 預設順序';
@@ -6228,17 +6876,46 @@ function openPriceCompareModal(){
   renderPriceCompareResult();
   openModal('modal-price-compare');
 }
+function clearPriceCompareSelection(){
+  priceCompareSelectedIds=[];
+  priceCompareDefaultOrder=[];
+  priceCompareRows=[];
+  priceCompareSortMode='default';
+  const sortLabel=document.getElementById('price-compare-sort-label');
+  if(sortLabel)sortLabel.textContent='📋 預設順序';
+  const menu=document.getElementById('price-compare-sort-menu');
+  if(menu)menu.classList.add('hidden');
+  renderPriceComparePicker();
+  renderPriceCompareResult();
+}
 function togglePriceCompareProduct(id){
   const sid=String(id);
+  ensurePriceCompareRows();
+  syncPriceCompareIdsFromRows();
   const i=priceCompareSelectedIds.indexOf(sid);
   if(i>=0){
-    priceCompareSelectedIds.splice(i,1);
+    priceCompareRows=priceCompareRows.map(r=>r.filter(x=>x!==sid));
+    while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+    syncPriceCompareIdsFromRows();
   }else{
     if(priceCompareSelectedIds.length>=10){
       toast('最多比較 10 個商品','error');
       return;
     }
-    priceCompareSelectedIds.push(sid);
+    // 新增商品只補現有空位，不推動／重排原本商品。
+    // 例如上排 4、下排 5，再新增 1 個時，直接補到上排第 5 格。
+    if(!priceCompareRows.length)priceCompareRows=[[]];
+    let targetRow=priceCompareRows.findIndex(r=>(r||[]).length<5);
+    if(targetRow<0 && priceCompareRows.length<2){
+      priceCompareRows.push([]);
+      targetRow=priceCompareRows.length-1;
+    }
+    if(targetRow<0){
+      toast('最多比較 10 個商品','error');
+      return;
+    }
+    priceCompareRows[targetRow].push(sid);
+    syncPriceCompareIdsFromRows();
   }
   renderPriceComparePicker();
   renderPriceCompareResult();
@@ -6280,6 +6957,7 @@ function renderPriceComparePicker(){
 }
 
 
+let priceCompareDraggingId='';
 let priceCompareSortMode='default';
 const PRICE_COMPARE_SORT_OPTIONS=[
   ['default','📋 預設順序'],
@@ -6339,6 +7017,7 @@ function setPriceCompareSort(mode){
   }
 
   priceCompareSelectedIds=decorated.map(x=>String(x.p.id));
+  resetPriceCompareRows(priceCompareSelectedIds);
   const label=document.getElementById('price-compare-sort-label');
   const opt=PRICE_COMPARE_SORT_OPTIONS.find(x=>x[0]===mode);
   if(label)label.textContent=opt?opt[1]:'📋 預設順序';
@@ -6348,15 +7027,62 @@ function setPriceCompareSort(mode){
   renderPriceComparePicker();
 }
 function movePriceCompareItem(fromId,toId,after){
-  const arr=priceCompareSelectedIds.map(String),from=String(fromId),to=String(toId);
+  const from=String(fromId),to=String(toId);
   if(from===to)return;
-  const fi=arr.indexOf(from); if(fi<0)return;
-  arr.splice(fi,1);
-  let ti=arr.indexOf(to); if(ti<0)return;
-  if(after)ti++;
-  arr.splice(ti,0,from);
-  priceCompareSelectedIds=arr;
-  priceCompareDefaultOrder=[...arr];
+  ensurePriceCompareRows();
+  let fromRow=-1,fromIdx=-1,toRow=-1,toIdx=-1;
+  priceCompareRows.forEach((row,ri)=>{
+    const fi=row.indexOf(from),ti=row.indexOf(to);
+    if(fi>=0){fromRow=ri;fromIdx=fi;}
+    if(ti>=0){toRow=ri;toIdx=ti;}
+  });
+  if(fromRow<0||toRow<0)return;
+
+  // 跨排且目標排已滿 5 個時，不再禁止拖曳：直接和目標商品互換位置。
+  // 這樣 5+5 的情況也能自由調整上下排，不會出現「移不動」的狀況。
+  if(fromRow!==toRow&&priceCompareRows[toRow].length>=5){
+    priceCompareRows[fromRow][fromIdx]=to;
+    priceCompareRows[toRow][toIdx]=from;
+  }else{
+    priceCompareRows[fromRow].splice(fromIdx,1);
+    if(fromRow===toRow&&fromIdx<toIdx)toIdx--;
+    if(after)toIdx++;
+    priceCompareRows[toRow].splice(Math.max(0,toIdx),0,from);
+  }
+
+  while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+  syncPriceCompareIdsFromRows();
+  priceCompareDefaultOrder=[...priceCompareSelectedIds];
+  priceCompareSortMode='default';
+  const label=document.getElementById('price-compare-sort-label');
+  if(label)label.textContent='📋 預設順序';
+  renderPriceCompareResult();
+  renderPriceComparePicker();
+}
+function movePriceCompareItemToNextRow(fromId){
+  const from=String(fromId);
+  ensurePriceCompareRows();
+  let fromRow=priceCompareRows.findIndex(r=>r.includes(from));
+  if(fromRow<0)return;
+  let targetRow=fromRow+1;
+  if(targetRow>=priceCompareRows.length){
+    if(priceCompareRows.length>=2){
+      targetRow=1;
+    }else{
+      priceCompareRows.push([]);
+      targetRow=priceCompareRows.length-1;
+    }
+  }
+  if(targetRow===fromRow)return;
+  if(priceCompareRows[targetRow].length>=5){
+    toast('下面這一排已經有 5 個商品','error');
+    return;
+  }
+  priceCompareRows[fromRow]=priceCompareRows[fromRow].filter(id=>id!==from);
+  priceCompareRows[targetRow].push(from);
+  while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+  syncPriceCompareIdsFromRows();
+  priceCompareDefaultOrder=[...priceCompareSelectedIds];
   priceCompareSortMode='default';
   const label=document.getElementById('price-compare-sort-label');
   if(label)label.textContent='📋 預設順序';
@@ -6364,13 +7090,17 @@ function movePriceCompareItem(fromId,toId,after){
   renderPriceComparePicker();
 }
 function priceCompareDragStart(e,id){
+  priceCompareDraggingId=String(id);
   e.dataTransfer.effectAllowed='move';
   e.dataTransfer.setData('text/plain',String(id));
   e.currentTarget.style.opacity='.55';
+  document.querySelectorAll('[data-price-compare-row-drop]').forEach(el=>{el.style.opacity='1';});
 }
 function priceCompareDragEnd(e){
+  priceCompareDraggingId='';
   e.currentTarget.style.opacity='';
   document.querySelectorAll('[data-price-compare-drop]').forEach(el=>{el.style.boxShadow='';el.style.background='';});
+  document.querySelectorAll('[data-price-compare-row-drop]').forEach(el=>{el.style.boxShadow='';el.style.background='';el.style.opacity='.72';});
 }
 function priceCompareDragOver(e){
   e.preventDefault();
@@ -6381,13 +7111,25 @@ function priceCompareDragOver(e){
 }
 function priceCompareDrop(e,toId){
   e.preventDefault();
-  movePriceCompareItem(e.dataTransfer.getData('text/plain'),toId,e.currentTarget.dataset.dropAfter==='1');
+  e.stopPropagation();
+  movePriceCompareItem(e.dataTransfer.getData('text/plain')||priceCompareDraggingId,toId,e.currentTarget.dataset.dropAfter==='1');
+}
+function priceCompareRowDropOver(e){
+  e.preventDefault();
+  e.currentTarget.style.background='var(--cream2)';
+  e.currentTarget.style.boxShadow='inset 0 0 0 2px var(--brown-light)';
+}
+function priceCompareDropToNextRow(e){
+  e.preventDefault();
+  e.stopPropagation();
+  movePriceCompareItemToNextRow(e.dataTransfer.getData('text/plain')||priceCompareDraggingId);
 }
 function renderPriceCompareResult(){
   const result=document.getElementById('price-compare-result');
   const empty=document.getElementById('price-compare-empty');
   if(!result||!empty)return;
 
+  ensurePriceCompareRows();
   const products=priceCompareSelectedIds
     .map(id=>DB.products.find(p=>String(p.id)===id))
     .filter(Boolean);
@@ -6403,6 +7145,7 @@ function renderPriceCompareResult(){
   result.classList.remove('hidden');
 
   const stats=products.map(p=>getPriceCompareStats(p));
+  const productIndex=new Map(products.map((p,i)=>[String(p.id),i]));
   const validCosts=stats.map((s,i)=>({i,v:s.costCny})).filter(x=>x.v>0);
   const minCostIdx=validCosts.length ? validCosts.reduce((a,b)=>b.v<a.v?b:a).i : -1;
   const validMargins=stats.map((s,i)=>({i,v:s.margin})).filter(x=>Number.isFinite(x.v));
@@ -6416,22 +7159,22 @@ function renderPriceCompareResult(){
     ${vals.map((v,i)=>`<td style="padding:11px 14px;font-size:12px;border-bottom:1px solid var(--cream3);${i<vals.length-1?'border-right:1px solid #f3ede3;':''}text-align:center;font-weight:${opt.bold?'800':'700'};color:${opt.color?opt.color(v,i):'var(--text)'}">${v}</td>`).join('')}
   </tr>`;
 
-  const chunkSize = 5;
-  const blocks = [];
+  const rows=priceCompareRows
+    .map(ids=>ids.map(id=>DB.products.find(p=>String(p.id)===String(id))).filter(Boolean))
+    .filter(r=>r.length);
+  const blocks=[];
 
-  for(let startIdx=0; startIdx<products.length; startIdx+=chunkSize){
-    const blockProducts = products.slice(startIdx, startIdx + chunkSize);
-    const blockStats = stats.slice(startIdx, startIdx + chunkSize);
-
-    const head = blockProducts.map((p,i)=>{
-      const globalIdx = startIdx + i;
+  rows.forEach((blockProducts,rowIdx)=>{
+    const blockStats=blockProducts.map(p=>stats[productIndex.get(String(p.id))]);
+    const head=blockProducts.map((p,i)=>{
+      const globalIdx=productIndex.get(String(p.id));
       return `<th draggable="true" data-price-compare-drop="1"
         ondragstart="priceCompareDragStart(event,'${p.id}')"
         ondragend="priceCompareDragEnd(event)"
         ondragover="priceCompareDragOver(event)"
         ondragleave="this.style.boxShadow='';this.style.background='#fff'"
         ondrop="priceCompareDrop(event,'${p.id}')"
-        title="拖曳調整比較順序"
+        title="拖曳調整比較位置；也可以拖到下一排"
         style="box-sizing:border-box;text-align:left;padding:8px 8px;border-bottom:1.5px solid var(--cream3);${i<blockProducts.length-1?'border-right:1px solid #f3ede3;':''}vertical-align:top;background:#fff;cursor:grab;transition:.12s;position:relative">
         <div style="position:relative;padding-right:22px;box-sizing:border-box">
           <button type="button" draggable="false" onclick="event.stopPropagation();togglePriceCompareProduct('${p.id}')" onmousedown="event.stopPropagation()" title="從比較中移除" aria-label="從比較中移除" style="position:absolute;right:0;top:0;z-index:2;width:18px;height:18px;border:1px solid var(--cream3);border-radius:999px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-size:10px;font-weight:500;line-height:1">
@@ -6442,13 +7185,13 @@ function renderPriceCompareResult(){
               ? `<img src="${p.img}" alt="" style="grid-column:1;width:48px;height:48px;border-radius:11px;object-fit:cover;border:1px solid var(--cream3);background:#fff">`
               : `<span style="grid-column:1;width:48px;height:48px;border-radius:11px;border:1px solid var(--cream3);background:#fff;display:flex;align-items:center;justify-content:center">📦</span>`
             }
-            <div style="grid-column:2;min-width:0;height:48px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;padding-right:2px;box-sizing:border-box;transform:translateY(-1px)">
-              <div style="display:flex;gap:3px;flex-wrap:nowrap;min-height:15px;align-items:center;max-width:100%;overflow:hidden">
-                ${globalIdx===minCostIdx?'<span style="font-size:8px;background:#dff4e4;color:#3d8a58;border-radius:8px;padding:1px 5px;font-weight:800;white-space:nowrap;line-height:1.35">最低進價</span>':''}
-                ${globalIdx===maxMarginIdx?'<span style="font-size:8px;background:#f7efc7;color:#8a6a00;border-radius:8px;padding:1px 5px;font-weight:800;white-space:nowrap;line-height:1.35">最高毛利</span>':''}
-              </div>
+            <div style="grid-column:2;min-width:0;min-height:48px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1px;padding-right:2px;box-sizing:border-box;position:relative;top:2px">
               <div style="font-size:11px;font-weight:800;line-height:1.25;word-break:break-word;max-height:27px;overflow:hidden">${p.name}</div>
               <div style="font-size:9px;color:var(--text3);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">${p.sku||'無SKU'}</div>
+              ${(globalIdx===minCostIdx||globalIdx===maxMarginIdx)?`<div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center;max-width:100%;margin-top:2px">
+                ${globalIdx===minCostIdx?'<span style="font-size:8px;background:#dff4e4;color:#3d8a58;border-radius:8px;padding:1px 5px;font-weight:800;white-space:nowrap;line-height:1.35">低進價</span>':''}
+                ${globalIdx===maxMarginIdx?'<span style="font-size:8px;background:#f7efc7;color:#8a6a00;border-radius:8px;padding:1px 5px;font-weight:800;white-space:nowrap;line-height:1.35">高毛利</span>':''}
+              </div>`:''}
             </div>
           </div>
         </div>
@@ -6456,7 +7199,7 @@ function renderPriceCompareResult(){
     }).join('');
 
     blocks.push(`
-      <div style="overflow:auto;border:1px solid var(--cream3);border-radius:14px;background:#fff;${startIdx>0?'margin-top:12px;':''}">
+      <div style="overflow:auto;border:1px solid var(--cream3);border-radius:14px;background:#fff;${rowIdx>0?'margin-top:12px;':''}">
         <table style="border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%;min-width:${compareLabelColWidth + blockProducts.length*compareProductMinWidth}px">
           <colgroup>
             <col style="width:${compareLabelColWidth}px">
@@ -6468,10 +7211,10 @@ function renderPriceCompareResult(){
                 <div style="display:flex;align-items:center;justify-content:flex-start;gap:4px;width:auto;position:relative">
                   <span>比較項目</span>
                   <span style="position:relative;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto">
-                    <button type="button" class="hint-info-btn" onclick="event.stopPropagation();document.getElementById('price-compare-drag-tip-${startIdx}').classList.toggle('hidden')" title="查看說明" aria-label="查看說明">
+                    <button type="button" class="hint-info-btn" onclick="event.stopPropagation();document.getElementById('price-compare-drag-tip-${rowIdx}').classList.toggle('hidden')" title="查看說明" aria-label="查看說明">
                       <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 8.8v5.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
                     </button>
-                    <div id="price-compare-drag-tip-${startIdx}" class="hidden" style="position:absolute;top:24px;right:0;width:min(260px,76vw);font-size:10.5px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:8px 10px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60;font-weight:500;white-space:normal">拖曳上方商品名稱，就可以把想比較的商品排在旁邊。</div>
+                    <div id="price-compare-drag-tip-${rowIdx}" class="hidden" style="position:absolute;top:24px;right:0;width:min(280px,76vw);font-size:10.5px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:8px 10px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60;font-weight:500;white-space:normal">左右拖曳可以換順序；拖到下一排的商品上，可以單獨移到下面。</div>
                   </span>
                 </div>
               </th>
@@ -6493,9 +7236,19 @@ function renderPriceCompareResult(){
         </table>
       </div>
     `);
-  }
+  });
 
-  result.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px">${blocks.join('')}</div>`;
+  const canCreateSecondRow=rows.length===1 && rows[0].length>1;
+  const rowDrop=canCreateSecondRow?`
+    <div data-price-compare-row-drop="1"
+      ondragover="priceCompareRowDropOver(event)"
+      ondragleave="this.style.boxShadow='';this.style.background='transparent'"
+      ondrop="priceCompareDropToNextRow(event)"
+      style="height:28px;border:1.5px dashed var(--cream3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);opacity:.72;transition:.12s">
+      拖到這裡放到下一排
+    </div>`:'';
+
+  result.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px">${blocks.join('')}${rowDrop}</div>`;
 }
 
 
@@ -6597,6 +7350,7 @@ function renderProducts(){
         <div class="pc-flow">
           ${getProductTypeSubcat(p)?`<div class="pc-subcat-code">${getProductTypeSubcat(p)}/${p.type||''}</div>`:''}
           ${(()=>{const catLabel=p.sku?getCatLabel(p.sku,p.type):'';return (!getProductTypeSubcat(p)&&catLabel)?`<div class="pc-catcode">${catLabel}</div>`:'';})()}
+          ${missing.length>0?`<span class="pc-missing-inline-list">缺：${missing.join('·')}</span>`:''}
           ${soldCount>0?`<div class="pc-sold">🔥 已售出 ${soldCount} 件</div>`:''}
           ${p.defectStock>0?`<div class="pc-defect">⚠️ 瑕疵庫存 ${p.defectStock} 件</div>`:''}
           ${p.tags&&p.tags.length?`<div class="pc-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>`:''}
@@ -6613,9 +7367,9 @@ function renderProducts(){
 
         <div class="product-meta">
           <span class="stock-badge ${getProductStock(p)<=0?'stock-out':getProductStock(p)<=(p.minStock||5)?'stock-low':'stock-ok'}">
-            ${getProductStock(p)<=0?'缺貨':`${getProductStock(p)} 件`}
+            <span class="stock-default-text">${getProductStock(p)<=0?'缺貨':`${getProductStock(p)} 件`}</span><span class="stock-more-number">${getProductStock(p)}</span>
           </span>
-          <span class="price-tag">$${(p.price||0).toFixed(2)}</span>
+          <span class="more-price-stack">${(p.cost||0)>0?`<span class="more-cost">¥${(p.cost||0).toFixed(2)}</span>`:''}<span class="price-tag">$${(p.price||0).toFixed(2)}</span></span>
         </div>
       </div></div>`;
   }).join('');
@@ -10751,7 +11505,7 @@ function renderSaleSubcatFilters(){
         background:${isActive?'var(--brown)':'var(--cream2)'};
         color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--cream4)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
-      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:6px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:0 0 0 2px var(--cream2)">${cnt}</span>`:''}
+      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
     </button>`;
   }).join('');
 }
