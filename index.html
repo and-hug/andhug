@@ -1145,14 +1145,14 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   padding-right:4px;overscroll-behavior:contain;
 }
 #modal-smart-import .smart-import-review-footer{
-  flex:0 0 auto!important;position:relative;z-index:4;margin:0 -20px -20px!important;
-  padding:12px 20px 16px!important;border-top:1.5px solid var(--cream3)!important;
-  background:var(--cream)!important;box-shadow:0 -8px 18px rgba(61,47,31,.06);
+  flex:0 0 auto!important;position:relative;z-index:4;margin:12px 0 0!important;
+  padding:12px 0 0!important;border-top:1.5px solid var(--cream3)!important;
+  background:var(--cream)!important;box-shadow:none!important;
 }
 @media(max-width:768px){
   #modal-smart-import .modal{max-height:calc(100vh - 20px)!important;}
   #modal-smart-import .smart-import-review-footer{
-    margin-left:-14px!important;margin-right:-14px!important;margin-bottom:-14px!important;padding:10px 14px 14px!important;
+    margin:10px 0 0!important;padding:10px 0 0!important;
   }
 }
 
@@ -3213,7 +3213,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
       <div class="modal-title">🛸 匯入採購表 <button type="button" class="hint-info-btn import-help-info" aria-label="匯入說明" title="匯入說明" onclick="event.stopPropagation();toggleImportHelp(event)">i</button></div>
       <button class="modal-close" onclick="closeModal('modal-smart-import')">×</button>
     </div>
-    <div class="modal-body" style="max-height:84vh;overflow:auto">
+    <div class="modal-body">
       <div id="smart-import-step-upload">
         <div id="smart-import-dropzone" style="border:2px dashed var(--cream3);border-radius:14px;padding:24px;text-align:center;margin-bottom:16px;transition:all .15s;cursor:pointer" onclick="document.getElementById('smart-import-any-input').click()">
           <div style="font-size:28px;margin-bottom:6px">🛸</div>
@@ -3222,9 +3222,9 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         </div>
         <input type="file" id="smart-import-any-input" accept=".xlsx,.xls,.csv,image/*,.pdf,application/pdf" multiple style="display:none" onchange="handleSmartImportFiles(this.files)">
         <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn btn-secondary" style="flex:1;min-width:100px" onclick="document.getElementById('smart-import-excel-input').click()">📄 上傳 Excel / CSV</button>
-          <button class="btn btn-secondary" style="flex:1;min-width:100px" onclick="document.getElementById('smart-import-image-input').click()">📷 上傳截圖</button>
-          <button class="btn btn-secondary" style="flex:1;min-width:100px" onclick="document.getElementById('smart-import-pdf-input').click()">📑 上傳 PDF</button>
+          <button class="btn btn-secondary" style="flex:1;min-width:100px;justify-content:center;text-align:center" onclick="document.getElementById('smart-import-excel-input').click()">📄 上傳 Excel / CSV</button>
+          <button class="btn btn-secondary" style="flex:1;min-width:100px;justify-content:center;text-align:center" onclick="document.getElementById('smart-import-image-input').click()">📷 上傳截圖</button>
+          <button class="btn btn-secondary" style="flex:1;min-width:100px;justify-content:center;text-align:center" onclick="document.getElementById('smart-import-pdf-input').click()">📑 上傳 PDF</button>
         </div>
         <input type="file" id="smart-import-excel-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleSmartImportExcel(this)">
         <input type="file" id="smart-import-image-input" accept="image/*" multiple style="display:none" onchange="handleSmartImportImage(this)">
@@ -3241,9 +3241,9 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
             <button class="btn btn-secondary btn-sm hidden" id="smart-import-group-toggle-btn" onclick="toggleSmartImportGroupSelectMode()" title="舊版多列組合功能">🔗 組合</button>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-secondary" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-            <button class="btn btn-secondary" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
-            <button class="btn btn-primary" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px">🛸 匯入成採購單</button>
+            <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-smart-import')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
+            <button class="btn btn-secondary btn-sm" onclick="saveSmartImportDraft()" style="display:flex;align-items:center;gap:6px">📝 儲存草稿</button>
+            <button class="btn btn-primary btn-sm" onclick="confirmSmartImport()" style="display:flex;align-items:center;gap:6px">🛸 匯入成採購單</button>
           </div>
         </div>
       </div>
@@ -9364,10 +9364,20 @@ function pdfRowToTokens(rowItems){
 // 淘寶 PDF 的付款詳情常會跨到下一頁；下一頁不一定再印一次「付款詳情」標題，
 // 所以不能只靠看到標題後停止，還要把明顯的付款欄位一律排除。
 const SMART_IMPORT_NON_PRODUCT_RE=/(付款详情|付款詳情|商品总价|商品總價|运费|運費|快递|快遞|店铺优惠|店鋪優惠|支付优惠|支付優惠|支付手续费|支付手續費|官方立减|官方立減|淘金币|淘金幣|购物金|購物金|会员红包|會員紅包|红包|紅包|首单礼金|首單禮金|实付款|實付款|订单信息|訂單信息|订单编号|訂單編號|付款时间|付款時間|创建时间|創建時間|收货信息|收貨信息|物流信息|物流資訊)/i;
+// 淘寶訂單頁首的收貨地址很容易比商品標題更長；地址絕對不能拿來當商品名稱。
+const SMART_IMPORT_ADDRESS_RE=/(?:省|市|自治區|自治区|縣|县|區|区|鎮|镇|鄉|乡|村|街道|大道|路|巷|弄|號|号|棟|栋|樓|楼|室).{0,18}(?:號|号|棟|栋|樓|楼|室|路|街|村|鎮|镇|區|区)?/i;
+const SMART_IMPORT_PHONE_RE=/(?:\+?86[-\s]?)?1\d{2}[\s*-]*\d{3,4}[\s*-]*\d{4}|\d{2,4}[-\s]\d{6,8}/;
+function isSmartImportAddressLike(v){
+  const s=String(v||'').trim();
+  if(!s)return false;
+  const addressHits=(s.match(/省|市|縣|县|區|区|鎮|镇|鄉|乡|村|街道|大道|路|巷|弄|號|号|棟|栋|樓|楼|室/g)||[]).length;
+  return SMART_IMPORT_PHONE_RE.test(s)||addressHits>=3||SMART_IMPORT_ADDRESS_RE.test(s)&&addressHits>=2;
+}
 function isSmartImportNonProductText(v){
   const s=String(v||'').trim();
   if(!s)return true;
   if(/^\d+\s*\/\s*\d+$/.test(s))return true; // PDF 頁碼 1/2、2/2
+  if(isSmartImportAddressLike(s))return true;
   return SMART_IMPORT_NON_PRODUCT_RE.test(s);
 }
 function cleanSmartImportItems(items){
@@ -9411,6 +9421,8 @@ function parsePdfRowsToItems(rows){
     const base=parts[baseIndex];
     const variantParts=parts.slice(baseIndex+1).filter(v=>{
       if(v===base||serviceRe.test(v)||isSmartImportNonProductText(v))return false;
+      // 淘寶商品卡附近常有單獨的款號/件數數字；純數字不是商品名稱的一部分。
+      if(/^\d+(?:[./-]\d+)*$/.test(v))return false;
       return v.length<=40;
     });
     return convertSimplifiedToTraditional([base,...variantParts].join(' ').replace(/\s+/g,' ').trim());
