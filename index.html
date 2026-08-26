@@ -2475,6 +2475,18 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+
+<style id="grid-text-offset-fix">
+/* 商品庫格狀：名稱 / SKU / 分類 / 缺少資訊整體往右 1px（2026-08-26） */
+#product-grid.view-grid .product-card .product-name,
+#product-grid.view-grid .product-card .product-sku,
+#product-grid.view-grid .product-card .pc-subcat-code,
+#product-grid.view-grid .product-card .pc-catcode,
+#product-grid.view-grid .product-card .pc-missing{
+  position:relative!important;
+  left:1px!important;
+}
+</style>
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -14992,13 +15004,3 @@ document.addEventListener('change',function(e){
 
 </body>
 </html>
-
-/* 商品庫格狀：名稱 / SKU / 分類 / 缺少資訊整體往右 1px（2026-08-26） */
-#product-grid.view-grid .product-card .product-name,
-#product-grid.view-grid .product-card .product-sku,
-#product-grid.view-grid .product-card .pc-subcat-code,
-#product-grid.view-grid .product-card .pc-catcode,
-#product-grid.view-grid .product-card .pc-missing{
-  position:relative!important;
-  left:1px!important;
-}
