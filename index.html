@@ -62,6 +62,19 @@
   --radius:16px;--radius-sm:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
+/* 全站捲軸：and hug 奶油奶茶風格 */
+html,body,*{scrollbar-width:thin;scrollbar-color:#d8cec4 #f4f0ea;}
+*::-webkit-scrollbar{width:10px;height:10px;}
+*::-webkit-scrollbar-track{background-color:#f4f0ea!important;border-radius:999px;}
+*::-webkit-scrollbar-thumb{background-color:#d8cec4!important;border:2px solid #f4f0ea!important;border-radius:999px;min-height:34px;box-shadow:inset 0 0 0 1px rgba(120,110,100,.08);}
+*::-webkit-scrollbar-thumb:hover{background-color:#c7b9ad!important;}
+*::-webkit-scrollbar-corner{background-color:#f4f0ea!important;}
+/* 側欄／彈窗／表格等可捲動區域：避免 macOS/瀏覽器預設灰色蓋回來 */
+.sticky-sidebar,.modal,.table-wrap,.settings-panel,.cart-panel,[class*="scroll"],[style*="overflow-y:auto"],[style*="overflow-y: auto"]{scrollbar-width:thin;scrollbar-color:#d8cec4 #f4f0ea;}
+.sticky-sidebar::-webkit-scrollbar,.modal::-webkit-scrollbar,.table-wrap::-webkit-scrollbar,.settings-panel::-webkit-scrollbar,.cart-panel::-webkit-scrollbar{width:10px;height:10px;}
+.sticky-sidebar::-webkit-scrollbar-track,.modal::-webkit-scrollbar-track,.table-wrap::-webkit-scrollbar-track,.settings-panel::-webkit-scrollbar-track,.cart-panel::-webkit-scrollbar-track{background:#f4f0ea!important;border-radius:999px;}
+.sticky-sidebar::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb,.table-wrap::-webkit-scrollbar-thumb,.settings-panel::-webkit-scrollbar-thumb,.cart-panel::-webkit-scrollbar-thumb{background:#d8cec4!important;border:2px solid #f4f0ea!important;border-radius:999px;}
+.sticky-sidebar::-webkit-scrollbar-thumb:hover,.modal::-webkit-scrollbar-thumb:hover,.table-wrap::-webkit-scrollbar-thumb:hover,.settings-panel::-webkit-scrollbar-thumb:hover,.cart-panel::-webkit-scrollbar-thumb:hover{background:#c7b9ad!important;}
 body{font-family:'Noto Sans TC','Nunito',sans-serif;background-color:var(--cream);color:var(--text);min-height:100vh;background-image:var(--body-gradient,none),radial-gradient(circle at 20% 20%,rgba(244,167,185,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(168,213,186,0.08) 0%,transparent 50%);background-attachment:fixed;}
 /* 瀏覽器對 button/input/select/textarea 預設不會繼承頁面字體（要另外設定），
    之前很多地方各自忘記加、字體長得不一樣（有的變成瀏覽器預設字），統一在這裡補一次，
@@ -3554,6 +3567,54 @@ function migrateSockTypeSTtoSK(){
   }
   return changed;
 }
+function migrateClothingTypeGTtoCL(){
+  let changed=false;
+  const swapArray=(key)=>{
+    if(!Array.isArray(DB[key]))return;
+    const next=[];
+    DB[key].forEach(v=>{const nv=v==='GT'?'CL':v;if(nv!==v)changed=true;if(!next.includes(nv))next.push(nv);});
+    DB[key]=next;
+  };
+  (DB.products||[]).forEach(p=>{
+    if(p.type==='GT'){p.type='CL';changed=true;}
+    const sku=String(p.sku||'');
+    if(/^GT/i.test(sku)){p.sku='CL'+sku.slice(2);p.updatedAt=Date.now();changed=true;}
+  });
+  if(Array.isArray(DB.skuTypes)){
+    const gt=DB.skuTypes.find(r=>r&&String(r.code||'').toUpperCase()==='GT');
+    const cl=DB.skuTypes.find(r=>r&&String(r.code||'').toUpperCase()==='CL');
+    if(gt){
+      if(cl)DB.skuTypes=DB.skuTypes.filter(r=>r!==gt);
+      else{gt.code='CL';if(!gt.label||/Garment/i.test(gt.label))gt.label='服飾 Clothing';}
+      changed=true;
+    }
+  }
+  if(Array.isArray(DB.customTypes)){
+    DB.customTypes.forEach(r=>{if(r&&String(r.code||'').toUpperCase()==='GT'){r.code='CL';changed=true;}});
+    const seen=new Set();
+    DB.customTypes=DB.customTypes.filter(r=>{if(!r||!r.code)return true;const c=String(r.code).toUpperCase();if(seen.has(c)){changed=true;return false;}seen.add(c);return true;});
+  }
+  ['typeSubcats','typeDetails'].forEach(key=>{
+    if(DB[key]&&typeof DB[key]==='object'&&DB[key].GT){
+      if(!DB[key].CL)DB[key].CL=DB[key].GT;
+      else{
+        const codes=new Set((DB[key].CL||[]).map(r=>r.code));
+        (DB[key].GT||[]).forEach(r=>{if(!codes.has(r.code)){DB[key].CL.push(r);codes.add(r.code);}});
+      }
+      delete DB[key].GT;
+      changed=true;
+    }
+  });
+  swapArray('hiddenTypes');
+  swapArray('deletedTypes');
+  swapArray('catOrder');
+  if(DB.uiOverrides&&Object.prototype.hasOwnProperty.call(DB.uiOverrides,'catlabel-GT')){
+    if(!Object.prototype.hasOwnProperty.call(DB.uiOverrides,'catlabel-CL'))DB.uiOverrides['catlabel-CL']=DB.uiOverrides['catlabel-GT'];
+    delete DB.uiOverrides['catlabel-GT'];
+    changed=true;
+  }
+  return changed;
+}
 // 題材與節慶要分開：只有明確節日文字，或「鬼怪＋典型萬聖節道具」才算節慶。
 // 單純幽靈／鬼怪＝CH 角色 02；單純愛心＝SY 符號 01，不會自動被塞進節慶。
 function inferHolidayDetailFromName(name){
@@ -3671,7 +3732,7 @@ function normalizeProductToCurrentSchema(p){
   return p;
 }
 
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const migratedSockType=migrateSockTypeSTtoSK();const migratedTheme=migrateThemeClassificationRules();if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();const migratedTheme=migrateThemeClassificationRules();if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];
 // 舊資料遷移：只要商品曾出現在採購單，就把該店家加入「常用供應商」。
 // 若備註只是舊系統自動寫的「供應商 · 日期」，就清掉，不碰真正手動備註。
 if(Array.isArray(DB.orders)&&Array.isArray(DB.products)){
@@ -3699,7 +3760,7 @@ if(clearSeedImagesInMemory()){
 }
 
 
-if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
+if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedClothingType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
 let _autoSyncTimer=null;
 // 商品新增的管道很多（手動新增、複製、匯入、匯入時自動建立...），有些沒有幫忙寫上 sortOrder，
 // 導致「預設排序」拿到的是 undefined→當作0→大家全部並列在最前面，看某個小分類的時候特別明顯（全部因為東西多，比較不會發現）
@@ -3716,6 +3777,7 @@ function backfillMissingSortOrders(){
 }
 function saveDB(options={}){
   migrateSockTypeSTtoSK();
+  migrateClothingTypeGTtoCL();
   backfillMissingSortOrders();
   const persistPromise=lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
@@ -4478,7 +4540,7 @@ function renderOverview(){
   }
 }
 function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
-const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',SK:'襪子',GT:'服飾',ZZ:'組合'};
+const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',SK:'襪子',CL:'服飾',ZZ:'組合'};
 // ---- 分類管理：隱藏／刪除／新增分類（自訂分類存在 DB.customTypes，隱藏存在 DB.hiddenTypes，真的刪除的內建分類存在 DB.deletedTypes）----
 function getAllCategoryTypes(){
   // SKU 規則的「商品類型」就是分類系統的來源。
@@ -4555,7 +4617,7 @@ const SKU_NAME_TYPE_RULES=[
   {code:'PO',re:/小袋子|小袋|袋子|收納袋|收纳袋|零錢包|零钱包|拉鍊袋|拉链袋|束口袋|筆袋|笔袋|化妝包|化妆包|工具袋|配件袋|小收納包|小收纳包|小包|pouch|zip(?:per)?\s*pouch|coin\s*purse|drawstring\s*bag/i},
   {code:'BG',re:/包包|背包|後背包|后背包|手提包|手提袋|托特包|托特袋|帆布袋|購物袋|购物袋|肩背包|側背包|侧背包|斜背包|腰包|旅行袋|環保袋|环保袋|tote(?:\s*bag)?|backpack|shoulder\s*bag|crossbody\s*bag|handbag|shopping\s*bag|canvas\s*bag/i},
   {code:'SK',re:/襪子|袜子|短襪|短袜|長襪|长袜|中筒襪|中筒袜|高筒襪|高筒袜|船襪|船袜|踝襪|踝袜|運動襪|运动袜|棉襪|棉袜|sock(?:s)?|ankle\s*socks|crew\s*socks/i},
-  {code:'GT',re:/服飾|服饰|衣服|上衣|短袖|長袖|长袖|T恤|Ｔ恤|踢恤|襯衫|衬衫|衛衣|卫衣|帽T|帽踢|連帽衣|连帽衣|外套|夾克|夹克|背心|裙子|短裙|洋裝|洋装|褲子|裤子|短褲|短裤|帽子|服裝|服装|garment|apparel|clothing|t[- ]?shirt|tee|shirt|hoodie|sweatshirt|jacket|dress|skirt|pants|shorts/i},
+  {code:'CL',re:/服飾|服饰|衣服|上衣|短袖|長袖|长袖|T恤|Ｔ恤|踢恤|襯衫|衬衫|衛衣|卫衣|帽T|帽踢|連帽衣|连帽衣|外套|夾克|夹克|背心|裙子|短裙|洋裝|洋装|褲子|裤子|短褲|短裤|帽子|服裝|服装|garment|apparel|clothing|t[- ]?shirt|tee|shirt|hoodie|sweatshirt|jacket|dress|skirt|pants|shorts/i},
   {code:'ZZ',re:/組合商品|组合商品|組合|组合|套組|套组|套裝|套装|禮盒|礼盒|組合包|组合包|成套|搭配組|搭配组|bundle|combo|gift\s*set|value\s*set|set\s*of\s*\d+/i}
 ]
 const SKU_NAME_CATEGORY_RULES=[
@@ -4931,12 +4993,15 @@ function addCustomCategoryFromSidebar(){
     if(box)box.classList.add('hidden');
   }
 }
-const CAT_ICONS={PA:'🪡',PB:'🧸',RB:'🎀',PO:'👜',BG:'👝',SK:'🧦',GT:'👕',ZZ:'📦'};
+const CAT_ICONS={PA:'🪡',PB:'🧸',RB:'🎀',PO:'👜',BG:'👝',SK:'🧦',CL:'👕',ZZ:'📦'};
 const SIZE_LABELS={0:'無尺寸',XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XX:'XXL'};
 const SIZE_PRICES={XS:0.5,S:1,M:2,L:3,XL:4,XX:5};
 // 取得商品建議售價：毛布貼(PB)多 $1
 function getSizePrice(size,type){const base=SIZE_PRICES[size];if(base===undefined)return null;return (type==='PB')?base+1:base;}
-let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', catSizesCollapsed=false;
+let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', catSizesCollapsed=false, allStatusExpanded=true;
+function isProductIncomplete(p){return !p.cost||p.cost===0||!p.sku||!p.img;}
+function isProductComplete(p){return !isProductIncomplete(p);}
+function toggleAllStatusGroup(event){if(event)event.stopPropagation();allStatusExpanded=!allStatusExpanded;renderCatSidebar();}
 let nativeProductDragId=null; // 原生拖曳的穩定備援 ID，直到 dragend 才清掉
 let activeTypeSubcat='all';
 let sidebarSubcatEditorType=null;
@@ -4948,6 +5013,34 @@ const DEFAULT_TYPE_SUBCATS={
     {code:'02',label:'細版'},
     {code:'03',label:'寬吊繩'},
     {code:'04',label:'細吊繩'},
+    {code:'99',label:'其他'}
+  ],
+  BG:[
+    {code:'01',label:'筆袋'},
+    {code:'02',label:'化妝包'},
+    {code:'03',label:'Tote Bag'},
+    {code:'04',label:'小包'},
+    {code:'05',label:'大包'},
+    {code:'06',label:'收納袋'},
+    {code:'07',label:'束口袋'},
+    {code:'99',label:'其他'}
+  ],
+  SK:[
+    {code:'01',label:'短襪'},
+    {code:'02',label:'中筒襪'},
+    {code:'03',label:'長襪'},
+    {code:'04',label:'船襪'},
+    {code:'05',label:'褲襪'},
+    {code:'99',label:'其他'}
+  ],
+  CL:[
+    {code:'01',label:'上衣'},
+    {code:'02',label:'外套'},
+    {code:'03',label:'下身'},
+    {code:'04',label:'洋裝'},
+    {code:'05',label:'帽子'},
+    {code:'06',label:'圍巾'},
+    {code:'07',label:'手套'},
     {code:'99',label:'其他'}
   ]
 };
@@ -4967,15 +5060,14 @@ function getAllTypeSubcatsMap(){
   Object.keys(saved).forEach(type=>{
     base[type]=(saved[type]||[]).map(r=>({code:String(r.code||''),label:String(r.label||'')})).filter(r=>r.code&&r.label);
     // 已儲存的商品子分類名稱永遠以使用者手動設定為準。
-    // 系統只補「缺少的代碼」，不再改任何既有 label。
-    if(type==='RB'){
-      if(!base[type].some(r=>r.code==='03'))base[type].splice(Math.min(2,base[type].length),0,{code:'03',label:'寬吊繩'});
-      if(!base[type].some(r=>r.code==='04')){
-        const idx99=base[type].findIndex(r=>r.code==='99');
-        const at=idx99===-1?base[type].length:idx99;
-        base[type].splice(at,0,{code:'04',label:'細吊繩'});
-      }
-    }
+    // 系統只補預設表中「缺少的代碼」，不覆蓋任何既有 label。
+    const defaults=DEFAULT_TYPE_SUBCATS[type]||[];
+    defaults.forEach(def=>{
+      if(base[type].some(r=>r.code===def.code))return;
+      const idx99=base[type].findIndex(r=>r.code==='99');
+      const at=def.code==='99'||idx99===-1?base[type].length:idx99;
+      base[type].splice(at,0,{code:def.code,label:def.label});
+    });
   });
   return base;
 }
@@ -4999,6 +5091,31 @@ function inferTypeSubcatCode(type,name){
     if(/細吊繩|細掛繩|窄吊繩|窄掛繩|slim\s*(lanyard|strap)|thin\s*(lanyard|strap)|narrow\s*(lanyard|strap)/.test(n))return '04';
     if(/寬布條|寬織帶|寬版|寬款|粗布條|粗織帶|加寬|wide|thick|38mm|32mm|30mm|25mm/.test(n))return '01';
     if(/細布條|細織帶|窄布條|窄織帶|細版|窄版|細款|窄款|slim|thin|narrow|20mm|15mm|12mm|10mm/.test(n))return '02';
+  }
+  if(type==='BG'){
+    if(/筆袋|笔袋|pencil\s*case/.test(n))return '01';
+    if(/化妝包|化妆包|cosmetic\s*(bag|pouch)|makeup\s*(bag|pouch)/.test(n))return '02';
+    if(/tote\s*bag|托特包|托特袋/.test(n))return '03';
+    if(/小包|mini\s*bag|small\s*bag/.test(n))return '04';
+    if(/大包|large\s*bag|big\s*bag/.test(n))return '05';
+    if(/收納袋|收纳袋|收納包|收纳包|organizer\s*(bag|pouch)/.test(n))return '06';
+    if(/束口袋|drawstring\s*bag/.test(n))return '07';
+  }
+  if(type==='SK'){
+    if(/短襪|短袜|ankle\s*socks?|quarter\s*socks?/.test(n))return '01';
+    if(/中筒襪|中筒袜|crew\s*socks?|mid\s*calf/.test(n))return '02';
+    if(/長襪|长袜|長筒襪|长筒袜|knee\s*high|over\s*the\s*knee/.test(n))return '03';
+    if(/船襪|船袜|隱形襪|隐形袜|no\s*show|liner\s*socks?/.test(n))return '04';
+    if(/褲襪|裤袜|絲襪|丝袜|tights?|pantyhose/.test(n))return '05';
+  }
+  if(type==='CL'){
+    if(/上衣|t[-\s]?shirt|tee|shirt|襯衫|衬衫|背心|tank\s*top|sweater|毛衣/.test(n))return '01';
+    if(/外套|jacket|coat|hoodie|連帽|连帽/.test(n))return '02';
+    if(/下身|褲|裤|pants?|shorts?|短褲|短裤|裙|skirt/.test(n))return '03';
+    if(/洋裝|洋装|連身裙|连身裙|dress/.test(n))return '04';
+    if(/帽子|cap|hat|beanie/.test(n))return '05';
+    if(/圍巾|围巾|scarf/.test(n))return '06';
+    if(/手套|gloves?/.test(n))return '07';
   }
   const rows=getTypeSubcats(type);const direct=rows.find(r=>r.code!=='99'&&r.label&&n.includes(String(r.label).toLowerCase()));if(direct)return direct.code;
   const other=rows.find(r=>r.code==='99');return other?other.code:'';
@@ -5048,6 +5165,31 @@ function getProductTypeSubcat(p){
   return inferTypeSubcatCode(p.type,p.name);
 }
 function setTypeSubcat(type,code){activeCat=type;activeTypeSubcat=code;activeSize='all';activeSubcat='all';catSizesCollapsed=false;requestProductsRender();}
+let bgSizeEditorSubcat=null;
+function getBgSubcatSizes(code){
+  const saved=DB.bgSubcatSizes&&typeof DB.bgSubcatSizes==='object'?DB.bgSubcatSizes[code]:null;
+  if(Array.isArray(saved)&&saved.length)return saved.map(v=>String(v||'').trim()).filter(Boolean);
+  return ['S','M','L'];
+}
+function toggleBgSizeEditor(code){
+  bgSizeEditorSubcat=bgSizeEditorSubcat===code?null:code;
+  renderCatSidebar();
+  if(bgSizeEditorSubcat===code)setTimeout(()=>document.getElementById('bg-size-new-'+code)?.focus(),0);
+}
+function addBgSubcatSize(code){
+  const el=document.getElementById('bg-size-new-'+code);if(!el)return;
+  const value=String(el.value||'').trim().toUpperCase().replace(/\s+/g,' ');
+  if(!value){toast('請輸入尺寸名稱','error');return;}
+  if(value.length>12){toast('尺寸名稱請控制在 12 個字元內','error');return;}
+  const current=getBgSubcatSizes(code);
+  if(current.some(v=>v.toUpperCase()===value.toUpperCase())){toast('這個尺寸已經存在','error');return;}
+  if(!DB.bgSubcatSizes||typeof DB.bgSubcatSizes!=='object')DB.bgSubcatSizes={};
+  const before=JSON.parse(JSON.stringify(DB.bgSubcatSizes));
+  DB.bgSubcatSizes[code]=current.concat(value);
+  const after=JSON.parse(JSON.stringify(DB.bgSubcatSizes));
+  pushUndo({label:`新增尺寸「${value}」`,undo:()=>{DB.bgSubcatSizes=JSON.parse(JSON.stringify(before));saveDB();renderCatSidebar();},redo:()=>{DB.bgSubcatSizes=JSON.parse(JSON.stringify(after));saveDB();renderCatSidebar();}});
+  saveDB();bgSizeEditorSubcat=null;renderCatSidebar();toast(`✅ 已新增尺寸「${value}」`,'success');
+}
 function getNextTypeSubcatCode(type){const used=new Set(getTypeSubcats(type).map(r=>String(r.code||'').trim()));for(let i=1;i<=98;i++){const code=String(i).padStart(2,'0');if(!used.has(code))return code;}return '';}
 function toggleSidebarSubcatEditor(type){sidebarSubcatEditorType=sidebarSubcatEditorType===type?null:type;renderCatSidebar();if(sidebarSubcatEditorType===type)setTimeout(()=>{const el=document.getElementById('sidebar-subcat-name-'+type);if(el)el.focus();},0);}
 function addSidebarTypeSubcat(type){
@@ -5757,34 +5899,42 @@ function renderCatSidebar(){
     <span onclick="toggleDeletedCatsBox()" style="font-size:10.5px;color:var(--brown);cursor:pointer;text-decoration:underline">🗑 已刪除的分類，找回來</span>
     <div id="sidebar-deletedcats-box" class="hidden" style="margin-top:6px;background:var(--cream2);border-radius:10px;padding:8px"></div>
   </div>`:''}
-    <div class="cat-sidebar-item ${activeCat==='all'?'active':''}" onclick="setCat('all')"
-      ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
-      ondragleave="this.classList.remove('drag-over')"
-      ondrop="dropToCat(event,'all')">
-      <span>📋</span><span class="ui-editable" data-ui-key="catlabel-all" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-all','全部')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${DB.products.length}</span>
-    </div>`;
-  const incompleteCount=DB.products.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img).length;
-  if(incompleteCount>0){
-    rows+=`<div class="cat-sidebar-item ${activeCat==='__incomplete__'?'active':''}" onclick="setCat('__incomplete__')"
-      style="${activeCat==='__incomplete__'?'':'color:var(--red);'}">
-      <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
-    </div>`;
-  }
-  rows+=`<div class="cat-sidebar-item ${activeCat==='__hot__'?'active':''}" onclick="setCat('__hot__')">
-    <span>🔥</span><span class="ui-editable" data-ui-key="catlabel-hot" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-hot','熱銷商品')}</span>
-  </div>`;
-  const lastSoldForCount=getLastSoldMap();
-  const staleCount=DB.products.filter(p=>{
-    if(p.status!=='ok')return false;
-    const last=lastSoldForCount[p.id];
-    if(!last)return true;
-    return (Date.now()-new Date(last).getTime())/86400000>30;
-  }).length;
-  if(staleCount>0){
-    rows+=`<div class="cat-sidebar-item ${activeCat==='__stale__'?'active':''}" onclick="setCat('__stale__')">
-      <span>🐌</span><span class="ui-editable" data-ui-key="catlabel-stale" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-stale','滯銷商品')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${staleCount}</span>
-    </div>`;
-  }
+    ${(()=>{
+      const lastSoldForCount=getLastSoldMap();
+      const staleCount=DB.products.filter(p=>{
+        if(p.status!=='ok')return false;
+        const last=lastSoldForCount[p.id];
+        if(!last)return true;
+        return (Date.now()-new Date(last).getTime())/86400000>30;
+      }).length;
+      const incompleteCount=DB.products.filter(isProductIncomplete).length;
+      const completeCount=DB.products.filter(isProductComplete).length;
+      let topRows=`<div class="cat-sidebar-item ${activeCat==='__hot__'?'active':''}" onclick="setCat('__hot__')">
+        <span>🔥</span><span class="ui-editable" data-ui-key="catlabel-hot" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-hot','熱銷商品')}</span>
+      </div>`;
+      if(staleCount>0){
+        topRows+=`<div class="cat-sidebar-item ${activeCat==='__stale__'?'active':''}" onclick="setCat('__stale__')">
+          <span>🐌</span><span class="ui-editable" data-ui-key="catlabel-stale" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-stale','滯銷商品')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${staleCount}</span>
+        </div>`;
+      }
+      topRows+=`<div class="cat-sidebar-item ${activeCat==='all'?'active':''}" onclick="setCat('all');toggleAllStatusGroup(event)"
+        ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="dropToCat(event,'all')">
+        <span>📋</span><span class="ui-editable" data-ui-key="catlabel-all" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-all','全部')}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${DB.products.length}</span>
+      </div>`;
+      if(allStatusExpanded){
+        topRows+=`<div class="cat-sidebar-item ${activeCat==='__incomplete__'?'active':''}" onclick="setCat('__incomplete__')"
+          style="padding-left:28px;${activeCat==='__incomplete__'?'':'color:var(--red);'}">
+          <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
+        </div>`;
+        topRows+=`<div class="cat-sidebar-item ${activeCat==='__complete__'?'active':''}" onclick="setCat('__complete__')" style="padding-left:28px">
+          <span>🌸</span><span class="ui-editable" data-ui-key="catlabel-complete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-complete','已完善')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${completeCount}</span>
+        </div>`;
+      }
+      return topRows;
+    })()}`;
   types.forEach((t,idx)=>{
     const isActive=activeCat===t;
     const clickAttr=catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:(catReorderMode?'':`setCat('${t}')`);
@@ -5822,10 +5972,24 @@ function renderCatSidebar(){
       const typeProducts=DB.products.filter(p=>p.type===t);
       if(typeSubs.length){
         rows+=`<div class="cat-sidebar-item ${activeTypeSubcat==='all'?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="all" onclick="setTypeSubcat('${t}','all')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','all')" style="padding-left:28px;font-size:12px;"><span style="font-weight:700;color:${activeTypeSubcat==='all'?'var(--brown)':'var(--text3)'}">全部</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${typeProducts.length||''}</span></div>`;
-        typeSubs.forEach(st=>{const cnt=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code).length;rows+=`<div class="cat-sidebar-item ${activeTypeSubcat===st.code?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="${st.code}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="font-weight:700;color:${activeTypeSubcat===st.code?'var(--brown)':'var(--text3)'};white-space:nowrap">${st.label}</span>${t==='RB'?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${st.code}</span>`:''}</span><span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span></div>`;});
+        typeSubs.forEach(st=>{
+          const subProducts=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code);
+          const cnt=subProducts.length;
+          rows+=`<div class="cat-sidebar-item ${activeTypeSubcat===st.code&&activeSize==='all'?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="${st.code}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="font-weight:700;color:${activeTypeSubcat===st.code?'var(--brown)':'var(--text3)'};white-space:nowrap">${st.label}</span>${(t==='RB'||t==='BG'||t==='SK'||t==='CL')?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${st.code}</span>`:''}</span><span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span></div>`;
+          if(t==='BG'&&activeTypeSubcat===st.code){
+            getBgSubcatSizes(st.code).forEach(s=>{
+              const sizeCnt=subProducts.filter(p=>(p.size||'0')===s).length;
+              rows+=`<div class="cat-sidebar-item ${activeSize===s?'active':''}" onclick="event.stopPropagation();setSize('${s.replace(/'/g,"\\'")}')" style="padding-left:50px;font-size:11.5px;"><span style="font-family:monospace;font-weight:800;color:${activeSize===s?'var(--brown)':'var(--text3)'}">${s}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${sizeCnt||''}</span></div>`;
+            });
+            rows+=`<div class="cat-sidebar-item" onclick="event.stopPropagation();toggleBgSizeEditor('${st.code}')" style="padding-left:50px;font-size:11px;color:var(--brown);font-weight:700;opacity:.9"><span style="font-size:13px">＋</span><span>新增尺寸</span></div>`;
+            if(bgSizeEditorSubcat===st.code){
+              rows+=`<div style="margin:2px 10px 7px 50px;padding:7px;background:var(--cream2);border-radius:9px;border:1px solid var(--cream3);display:flex;gap:5px"><input id="bg-size-new-${st.code}" class="form-input" placeholder="例如 XL / Mini" maxlength="12" onkeydown="if(event.key==='Enter')addBgSubcatSize('${st.code}')" style="min-width:0;font-size:11px;padding:6px 7px"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addBgSubcatSize('${st.code}')" style="padding:6px 9px;font-size:10.5px">新增</button></div>`;
+            }
+          }
+        });
       }
       rows+=`<div class="cat-sidebar-item" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="padding-left:28px;font-size:11.5px;color:var(--brown);font-weight:700;opacity:.9"><span style="font-size:14px">＋</span><span>新增子類</span></div>`;
-      if(sidebarSubcatEditorType===t){const nextCode=getNextTypeSubcatCode(t)||'';rows+=`<div style="margin:2px 10px 8px 28px;padding:8px;background:var(--cream2);border-radius:9px;border:1px solid var(--cream3)"><div style="display:flex;gap:5px;margin-bottom:5px"><input id="sidebar-subcat-code-${t}" class="form-input" value="${nextCode}" maxlength="2" inputmode="numeric" placeholder="01" style="width:48px;flex-shrink:0;font-size:11px;text-align:center;padding:6px 4px;font-family:monospace"><input id="sidebar-subcat-name-${t}" class="form-input" placeholder="子類名稱" onkeydown="if(event.key==='Enter')addSidebarTypeSubcat('${t}')" style="min-width:0;font-size:11px;padding:6px 7px"></div><div style="display:flex;gap:5px"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addSidebarTypeSubcat('${t}')" style="flex:1;justify-content:center;font-size:10.5px;padding:6px">新增</button><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="padding:6px 8px;font-size:10.5px">取消</button></div></div>`;}
+      if(sidebarSubcatEditorType===t){const nextCode=getNextTypeSubcatCode(t)||'';rows+=`<div style="margin:2px 0 8px 0;padding:8px 7px;background:var(--cream2);border-radius:9px;border:1px solid var(--cream3);width:100%;box-sizing:border-box"><div style="display:flex;gap:5px;margin-bottom:6px;width:100%;min-width:0"><input id="sidebar-subcat-code-${t}" class="form-input" value="${nextCode}" maxlength="2" inputmode="numeric" placeholder="01" style="width:44px;flex:0 0 44px;font-size:11px;text-align:center;padding:6px 3px;font-family:monospace"><input id="sidebar-subcat-name-${t}" class="form-input" placeholder="子類名稱" onkeydown="if(event.key==='Enter')addSidebarTypeSubcat('${t}')" style="flex:1 1 0;width:0;min-width:0;font-size:11px;padding:6px 7px"></div><div style="display:flex;gap:5px;width:100%;min-width:0"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addSidebarTypeSubcat('${t}')" style="flex:1 1 0;min-width:0;justify-content:center;font-size:10.5px;padding:6px">新增</button><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="flex:1 1 0;min-width:0;justify-content:center;padding:6px;font-size:10.5px">取消</button></div></div>`;}
     }
   });
   rows+=`<div class="cat-sidebar-item" onclick="toggleSidebarAddCat()" style="color:var(--brown);font-weight:700">
@@ -5850,7 +6014,7 @@ function renderSizeFilters(){
   if(!el){console.log('size-filters not found');return;}
   console.log('activeCat=',activeCat);
   // Show size filters whenever a specific category is selected
-  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__stale__'){el.innerHTML='';return;}
+  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__complete__'||activeCat==='__stale__'){el.innerHTML='';return;}
   const allSizes=['0','XS','S','M','L','XL','XX'];
   const usedSizes=[...new Set(DB.products.filter(p=>p.type===activeCat).map(p=>p.size||'0'))];
   if(usedSizes.length<=1&&usedSizes[0]==='0'){el.innerHTML='';return;}
@@ -5890,7 +6054,7 @@ const DEFAULT_SKU_TYPES=[
   {code:'PO',label:'小袋子 Pouch'},
   {code:'BG',label:'包包 Bag'},
   {code:'SK',label:'襪子 Sock'},
-  {code:'GT',label:'服飾 Garment'},
+  {code:'CL',label:'服飾 Clothing'},
   {code:'ZZ',label:'組合商品 Bundle'}
 ];
 const DEFAULT_SKU_CATS=[
@@ -6573,13 +6737,13 @@ document.addEventListener('change',function(e){
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
-  if(!['PA','PB','all','__incomplete__'].includes(activeCat)){el.innerHTML='';return;}
+  if(!['PA','PB','all','__incomplete__','__complete__'].includes(activeCat)){el.innerHTML='';return;}
   // Always show all 15 categories
   const ALL_CODES=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','99'];
   // Count products per code
   // 01/AN、02/OC... 是布貼題材分類，只屬於 PA / PB；RB 等其他商品即使 SKU 中也有相同數字碼，不應混進來。
   const patchProducts=(DB.products||[]).filter(p=>p.type==='PA'||p.type==='PB');
-  const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img):DB.products.filter(p=>p.type===activeCat);
+  const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(isProductIncomplete):activeCat==='__complete__'?patchProducts.filter(isProductComplete):DB.products.filter(p=>p.type===activeCat);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
   el.innerHTML=ALL_CODES.map(c=>{
@@ -7593,7 +7757,9 @@ function renderProducts(){
   let ps=DB.products;
   const lastSoldMap=getLastSoldMap();
   if(activeCat==='__incomplete__'){
-    ps=ps.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img);
+    ps=ps.filter(isProductIncomplete);
+  } else if(activeCat==='__complete__'){
+    ps=ps.filter(isProductComplete);
   } else if(activeCat==='__hot__'){
     ps=ps.filter(p=>(salesMap[p.id]||0)>0);
   } else if(activeCat==='__stale__'){
