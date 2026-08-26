@@ -109,7 +109,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .pc-quick-trash{opacity:0;transition:opacity .15s;}
 .pc-quick-trash:hover{background:var(--red-light)!important;color:var(--red)!important;border-color:var(--red)!important;}
 .product-img{width:100%;aspect-ratio:1;background:var(--cream2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.product-img img{width:100%;height:100%;object-fit:contain;padding:8px;}
+.product-img img{width:100%;height:100%;object-fit:cover;padding:0;border-radius:inherit;background:transparent;}
 .product-img .no-img{font-size:36px;}
 .product-info{padding:6px 12px 12px;display:flex;flex-direction:column;flex:1;}
 .product-name{font-size:12px;font-weight:700;margin-bottom:3px;line-height:1.4;}
@@ -600,7 +600,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .product-card{border-width:1px;border-radius:14px;
       box-shadow:0 1px 5px rgba(61,47,31,.05);}
   .product-img{aspect-ratio:5/4;}
-  .product-img img{padding:7px;}
+  .product-img img{padding:0;border-radius:inherit;background:transparent;object-fit:cover;}
   .product-img .no-img{font-size:20px;opacity:.45;}
   .product-info{padding:8px 9px 9px;}
   .pc-supplier,.pc-catcode{display:none;}
@@ -796,6 +796,23 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .filter-chip:hover{border-color:var(--cream3);color:var(--text2);}
   .view-btn:hover{border-color:var(--cream3);}
 }
+
+/* 拖移方格：沿用 index copy 3.html 原本商品卡格式；只影響拖曳影子 */
+.drag-old-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;opacity:1;background:transparent;left:0;top:0;will-change:transform;transition:none;overflow:visible;}
+.drag-old-ghost .drag-old-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--cream3);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.25);position:relative;display:flex;flex-direction:column;width:100%;height:100%;box-sizing:border-box;}
+.drag-old-ghost .drag-old-card .product-img{width:100%!important;aspect-ratio:1!important;height:auto!important;flex:0 0 auto!important;margin:0!important;border-radius:0!important;background:var(--cream2)!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;}
+.drag-old-ghost .drag-old-card .product-img img{width:100%!important;height:100%!important;object-fit:cover!important;padding:0!important;border-radius:inherit!important;background:transparent!important;}
+.drag-old-ghost .drag-old-card .product-img .no-img{font-size:36px!important;}
+.drag-old-ghost .drag-old-card .product-info{padding:6px 12px 12px!important;display:flex!important;flex-direction:column!important;flex:1!important;min-width:0!important;position:static!important;}
+.drag-old-ghost .drag-old-card .product-name{font-size:12px!important;font-weight:700!important;margin:0 0 3px!important;line-height:1.4!important;position:static!important;left:auto!important;top:auto!important;display:block!important;min-height:0!important;overflow:hidden!important;}
+.drag-old-ghost .drag-old-card .product-sku{font-size:10px!important;color:var(--text3)!important;margin:0 0 8px!important;font-family:monospace!important;font-weight:400!important;line-height:normal!important;position:static!important;left:auto!important;top:auto!important;display:block!important;}
+.drag-old-ghost .drag-old-card .product-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-top:auto!important;position:static!important;inset:auto!important;transform:none!important;width:auto!important;flex-direction:row!important;gap:0!important;padding:0!important;border:0!important;white-space:normal!important;}
+.drag-old-ghost .drag-old-card .stock-badge{font-size:10px!important;padding:3px 8px!important;border-radius:10px!important;font-weight:700!important;margin:0!important;position:static!important;}
+.drag-old-ghost .drag-old-card .price-tag{font-size:11px!important;color:var(--text3)!important;font-weight:600!important;margin:0!important;position:static!important;top:auto!important;}
+.drag-old-ghost .drag-old-card .pc-quick-trash,.drag-old-ghost .drag-old-card .pc-flow{display:none!important;}
+.drag-old-ghost .stock-more-number,.drag-old-ghost .more-cost{display:none!important;}
+.drag-old-ghost .more-price-stack{display:contents!important;}
+
 /* 列印商品標籤：平常完全隱藏，只有在瀏覽器列印時才顯示，其餘畫面全部隱藏 */
 #print-labels-container{display:none;}
 /* 拖曳排序時的貓咪探頭：往哪邊插入就往哪邊探出來；格子左右探頭時貓臉轉90度側過來，貓臉左右對稱所以左右只需相反方向旋轉即可、不用另畫翻轉版 */
@@ -2350,6 +2367,108 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   top:1px!important;
 }
 
+
+/* 商品庫列表卡：本次最終微調 */
+#product-grid.view-list .product-card{
+  background:var(--cream)!important;
+}
+#product-grid.view-list .product-card .product-name,
+#product-grid.view-list .product-card .product-sku{
+  position:relative!important;
+  top:3px!important;
+}
+#product-grid.view-list .product-card .product-name{
+  font-size:13px!important;
+}
+#product-grid.view-list .product-card .more-price-stack{
+  position:relative!important;
+  top:-1px!important;
+}
+#product-grid.view-list .product-card .more-cost{
+  font-size:9px!important;
+  line-height:1.18!important;
+}
+
+
+/* 拖曳影子：只固定文字樣式，不改拖曳核心邏輯 */
+body > .product-card .product-name{font-family:inherit!important;font-size:13px!important;font-weight:700!important;line-height:1.35!important;}
+body > .product-card .product-sku{font-family:monospace!important;font-size:10px!important;font-weight:700!important;line-height:1.35!important;}
+body > .product-card .pc-subcat-code,body > .product-card .pc-catcode{font-family:monospace!important;font-size:9px!important;}
+body > .product-card .pc-missing{font-family:inherit!important;font-size:9px!important;font-weight:700!important;}
+body > .product-card .pc-cost{font-family:inherit!important;font-size:10px!important;font-weight:700!important;}
+body > .product-card .stock-badge{font-family:inherit!important;font-weight:700!important;}
+body > .product-card .price-tag{font-family:inherit!important;font-size:13px!important;font-weight:700!important;}
+
+
+/* 商品庫列表：卡片背景固定純白 */
+#product-grid.view-list .product-card{
+  background:#fff!important;
+}
+
+
+/* 商品庫列表：左側圖片貼齊並放滿左側區塊 */
+#product-grid.view-list .product-img{
+  width:84px!important;
+  height:auto!important;
+  min-height:84px!important;
+  align-self:stretch!important;
+  flex:0 0 84px!important;
+  margin:0!important;
+  border-radius:12px 0 0 12px!important;
+}
+#product-grid.view-list .product-img img{
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  object-fit:cover!important;
+  border-radius:inherit!important;
+}
+
+/* 商品庫列表：左側圖片改成更接近正方形，文字稍微往右 */
+#product-grid.view-list .product-img{
+  width:96px!important;
+  height:96px!important;
+  min-height:96px!important;
+  align-self:center!important;
+  flex:0 0 96px!important;
+  margin:8px 0 8px 8px!important;
+  border-radius:12px!important;
+}
+#product-grid.view-list .product-img img{
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  object-fit:cover!important;
+  border-radius:12px!important;
+}
+#product-grid.view-list .product-info{
+  padding-left:14px!important;
+}
+
+/* 商品庫列表：正方形圖片放滿左側，不留白 */
+#product-grid.view-list .product-img{
+  width:112px!important;
+  height:112px!important;
+  min-height:112px!important;
+  flex:0 0 112px!important;
+  align-self:stretch!important;
+  margin:0!important;
+  border-radius:12px 0 0 12px!important;
+  overflow:hidden!important;
+}
+#product-grid.view-list .product-img img{
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  margin:0!important;
+  object-fit:cover!important;
+  display:block!important;
+  border-radius:inherit!important;
+}
+#product-grid.view-list .product-info{
+  padding-left:16px!important;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
@@ -2475,7 +2594,18 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     <div class="modal-body" style="max-height:84vh;overflow:auto">
       <div style="display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start" id="price-compare-layout">
         <div style="border:1.5px solid var(--cream3);border-radius:12px;background:var(--surface);overflow:hidden">
-          <div style="padding:10px;border-bottom:1px solid var(--cream3)">
+          <div style="padding:10px;border-bottom:1px solid var(--cream3);display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:7px">
+              <span style="font-size:11px;font-weight:800;color:var(--text2);flex-shrink:0">分類</span>
+              <div id="price-compare-category-wrap" style="position:relative;flex:1;min-width:0">
+                <button type="button" id="price-compare-category-btn" onclick="toggleCustomSelect('price-compare-category')" style="width:100%;height:32px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);color:var(--text2);padding:5px 9px 5px 10px;font-size:11px;font-weight:700;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;text-align:left">
+                  <span id="price-compare-category-label">📋 全部</span>
+                  <span style="font-size:9px;color:var(--text3);flex-shrink:0">▾</span>
+                </button>
+                <input type="hidden" id="price-compare-category" value="all" onchange="renderPriceComparePicker()" data-options="[]">
+                <div id="price-compare-category-menu" class="hidden" style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:90;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 8px 22px rgba(139,111,71,.16);padding:5px;max-height:250px;overflow-y:auto"></div>
+              </div>
+            </div>
             <input id="price-compare-search" type="text" class="form-input" placeholder="搜尋商品名稱 / SKU..." oninput="renderPriceComparePicker()" style="font-size:12px">
           </div>
           <div id="price-compare-picker" style="max-height:54vh;overflow-y:auto;padding:6px"></div>
@@ -6859,6 +6989,9 @@ function openBatchPriceCompare(){
   if(sortLabel)sortLabel.textContent='📋 預設順序';
   const search=document.getElementById('price-compare-search');
   if(search)search.value='';
+  const catSel=document.getElementById('price-compare-category');
+  if(catSel)catSel.value='all';
+  renderPriceCompareCategorySelect();
   renderPriceComparePicker();
   renderPriceCompareResult();
   openModal('modal-price-compare');
@@ -6872,6 +7005,9 @@ function openPriceCompareModal(){
   if(sortLabel)sortLabel.textContent='📋 預設順序';
   const search=document.getElementById('price-compare-search');
   if(search)search.value='';
+  const catSel=document.getElementById('price-compare-category');
+  if(catSel)catSel.value='all';
+  renderPriceCompareCategorySelect();
   renderPriceComparePicker();
   renderPriceCompareResult();
   openModal('modal-price-compare');
@@ -6933,11 +7069,29 @@ function getPriceCompareStats(p){
   const margin=sale>0?(profit/sale*100):0;
   return {latest,min,max,costCny,costUsd,sale,profit,margin,stock:getProductStock(p)};
 }
+function renderPriceCompareCategorySelect(){
+  const input=document.getElementById('price-compare-category');
+  if(!input)return;
+  const current=input.value||'all';
+  const counts={};
+  (DB.products||[]).forEach(p=>{const t=String(p.type||'');if(t)counts[t]=(counts[t]||0)+1;});
+  const types=getVisibleCategoryTypes().filter(t=>(counts[t]||0)>0);
+  const options=[{value:'all',label:`📋 全部 (${(DB.products||[]).length})`}].concat(
+    types.map(t=>({value:t,label:`${getCatIcon(t)} ${getTypeDisplayLabel(t)} (${counts[t]||0})`}))
+  );
+  input.dataset.options=JSON.stringify(options).replace(/'/g,'&#39;');
+  input.value=options.some(o=>o.value===current)?current:'all';
+  const label=document.getElementById('price-compare-category-label');
+  const cur=options.find(o=>o.value===input.value)||options[0];
+  if(label)label.textContent=cur?cur.label:'';
+}
+
 function renderPriceComparePicker(){
   const wrap=document.getElementById('price-compare-picker');
   if(!wrap)return;
   const q=String(document.getElementById('price-compare-search')?.value||'').trim().toLowerCase();
-  let rows=(DB.products||[]).filter(p=>!q||String((p.name||'')+' '+(p.sku||'')).toLowerCase().includes(q));
+  const cat=String(document.getElementById('price-compare-category')?.value||'all');
+  let rows=(DB.products||[]).filter(p=>(cat==='all'||String(p.type||'')===cat)&&(!q||String((p.name||'')+' '+(p.sku||'')).toLowerCase().includes(q)));
   rows=rows.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','zh-Hant'));
   if(!rows.length){
     wrap.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3);font-size:12px">找不到商品</div>';
@@ -6987,9 +7141,10 @@ function togglePriceCompareSortMenu(){
 function renderPriceCompareSortMenu(){
   const menu=document.getElementById('price-compare-sort-menu');
   if(!menu)return;
-  menu.innerHTML=PRICE_COMPARE_SORT_OPTIONS.map(([v,label])=>`
-    <button type="button" onclick="setPriceCompareSort('${v}')" style="width:100%;border:none;background:${priceCompareSortMode===v?'var(--cream2)':'transparent'};color:${priceCompareSortMode===v?'var(--brown)':'var(--text2)'};font-weight:${priceCompareSortMode===v?'800':'600'};padding:8px 9px;border-radius:8px;text-align:left;cursor:pointer;font-family:inherit;font-size:11.5px">${label}</button>
-  `).join('');
+  menu.innerHTML=PRICE_COMPARE_SORT_OPTIONS.map(([v,label])=>{
+    const active=priceCompareSortMode===v;
+    return `<button type="button" onclick="setPriceCompareSort('${v}')" style="width:100%;border:none;background:${active?'var(--cream2)':'transparent'};color:${active?'var(--brown)':'var(--text2)'};font-weight:${active?'800':'600'};padding:8px 10px;border-radius:8px;text-align:left;cursor:pointer;font-family:inherit;font-size:11.5px;transition:background .12s ease" onmouseover="if(!${active})this.style.background='var(--cream2)'" onmouseout="if(!${active})this.style.background='transparent'">${label}</button>`;
+  }).join('');
 }
 function setPriceCompareSort(mode){
   priceCompareSortMode=mode;
@@ -7030,27 +7185,59 @@ function movePriceCompareItem(fromId,toId,after){
   const from=String(fromId),to=String(toId);
   if(from===to)return;
   ensurePriceCompareRows();
-  let fromRow=-1,fromIdx=-1,toRow=-1,toIdx=-1;
-  priceCompareRows.forEach((row,ri)=>{
-    const fi=row.indexOf(from),ti=row.indexOf(to);
-    if(fi>=0){fromRow=ri;fromIdx=fi;}
-    if(ti>=0){toRow=ri;toIdx=ti;}
-  });
-  if(fromRow<0||toRow<0)return;
 
-  // 跨排且目標排已滿 5 個時，不再禁止拖曳：直接和目標商品互換位置。
-  // 這樣 5+5 的情況也能自由調整上下排，不會出現「移不動」的狀況。
-  if(fromRow!==toRow&&priceCompareRows[toRow].length>=5){
-    priceCompareRows[fromRow][fromIdx]=to;
-    priceCompareRows[toRow][toIdx]=from;
-  }else{
-    priceCompareRows[fromRow].splice(fromIdx,1);
-    if(fromRow===toRow&&fromIdx<toIdx)toIdx--;
+  const fromRow=priceCompareRows.findIndex(r=>r.map(String).includes(from));
+  const toRow=priceCompareRows.findIndex(r=>r.map(String).includes(to));
+  if(fromRow<0||toRow<0)return;
+  const fromIdx=priceCompareRows[fromRow].map(String).indexOf(from);
+  const toIdxOriginal=priceCompareRows[toRow].map(String).indexOf(to);
+  if(fromIdx<0||toIdxOriginal<0)return;
+
+  // 同一排：真正的插入排序，其他商品依序補位／讓位。
+  if(fromRow===toRow){
+    const row=priceCompareRows[fromRow];
+    row.splice(fromIdx,1);
+    let toIdx=row.map(String).indexOf(to);
+    if(toIdx<0)return;
     if(after)toIdx++;
-    priceCompareRows[toRow].splice(Math.max(0,toIdx),0,from);
+    row.splice(Math.max(0,Math.min(row.length,toIdx)),0,from);
+  }else{
+    // 跨排：保留兩排的手動結構，不再 flatten 後每 5 個重新切。
+    // 這樣上排 5 個拖 1 個到下排時，上排真的會留下 4 個。
+    const source=priceCompareRows[fromRow];
+    const target=priceCompareRows[toRow];
+    source.splice(fromIdx,1);
+
+    let insertAt=target.map(String).indexOf(to);
+    if(insertAt<0)insertAt=target.length;
+    if(after)insertAt++;
+    insertAt=Math.max(0,Math.min(target.length,insertAt));
+    target.splice(insertAt,0,from);
+
+    // 目標排超過 5 個時才做連鎖推位；優先把溢出的商品推回來源排的空位。
+    if(target.length>5){
+      const overflow = insertAt<target.length-1 ? target.pop() : target.shift();
+      if(overflow!==from){
+        if(fromRow<toRow) source.push(overflow);
+        else source.unshift(overflow);
+      }else{
+        // 若剛插入的商品本身落在溢出端，改推另一端，確保拖曳商品真的留在目標排。
+        if(insertAt<target.length){
+          const other=target.pop();
+          target.splice(Math.min(insertAt,target.length),0,from);
+          if(fromRow<toRow)source.push(other);else source.unshift(other);
+        }else{
+          const other=target.shift();
+          target.push(from);
+          if(fromRow<toRow)source.push(other);else source.unshift(other);
+        }
+      }
+    }
   }
 
-  while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+  // 清掉空排，但保留至少一排；最多仍維持既有 10 個商品限制。
+  priceCompareRows=priceCompareRows.filter(r=>r.length);
+  if(!priceCompareRows.length)priceCompareRows=[[]];
   syncPriceCompareIdsFromRows();
   priceCompareDefaultOrder=[...priceCompareSelectedIds];
   priceCompareSortMode='default';
@@ -7062,25 +7249,28 @@ function movePriceCompareItem(fromId,toId,after){
 function movePriceCompareItemToNextRow(fromId){
   const from=String(fromId);
   ensurePriceCompareRows();
-  let fromRow=priceCompareRows.findIndex(r=>r.includes(from));
+  const fromRow=priceCompareRows.findIndex(r=>r.map(String).includes(from));
   if(fromRow<0)return;
-  let targetRow=fromRow+1;
-  if(targetRow>=priceCompareRows.length){
-    if(priceCompareRows.length>=2){
-      targetRow=1;
-    }else{
-      priceCompareRows.push([]);
-      targetRow=priceCompareRows.length-1;
-    }
+
+  // 只處理往下移：若還沒有第二排就建立；有第二排就直接加入第二排。
+  // 關鍵：不再把兩排攤平重切，因此上排 5 個也能真的拖 1 個到下排。
+  if(fromRow!==0)return;
+  if(!priceCompareRows[1])priceCompareRows[1]=[];
+  const source=priceCompareRows[0];
+  const target=priceCompareRows[1];
+  const idx=source.map(String).indexOf(from);
+  if(idx<0)return;
+  source.splice(idx,1);
+  target.push(from);
+
+  // 若下排原本已滿 5 個，將下排最前面的商品推回上排空位，形成連鎖推位而非直接 swap。
+  if(target.length>5){
+    const overflow=target.shift();
+    source.push(overflow);
   }
-  if(targetRow===fromRow)return;
-  if(priceCompareRows[targetRow].length>=5){
-    toast('下面這一排已經有 5 個商品','error');
-    return;
-  }
-  priceCompareRows[fromRow]=priceCompareRows[fromRow].filter(id=>id!==from);
-  priceCompareRows[targetRow].push(from);
-  while(priceCompareRows.length>1&&priceCompareRows[priceCompareRows.length-1].length===0)priceCompareRows.pop();
+
+  priceCompareRows=priceCompareRows.filter(r=>r.length);
+  if(!priceCompareRows.length)priceCompareRows=[[]];
   syncPriceCompareIdsFromRows();
   priceCompareDefaultOrder=[...priceCompareSelectedIds];
   priceCompareSortMode='default';
@@ -7089,30 +7279,140 @@ function movePriceCompareItemToNextRow(fromId){
   renderPriceCompareResult();
   renderPriceComparePicker();
 }
+let priceCompareDragVisual={row:-1,index:-1};
+let priceComparePreviewKey='';
+function clearPriceComparePushPreview(immediate=false){
+  priceComparePreviewKey='';
+  // 拖曳預覽只動最上面的商品標題 th；tbody 資料列完全固定不動。
+  document.querySelectorAll('[data-price-compare-table] thead [data-price-compare-drop]').forEach(cell=>{
+    cell.style.position='relative';
+    cell.style.transition=immediate?'none':'left .12s cubic-bezier(.2,.8,.2,1)';
+    cell.style.left='0px';
+    cell.style.opacity='1';
+  });
+  if(immediate){
+    requestAnimationFrame(()=>document.querySelectorAll('[data-price-compare-table] thead [data-price-compare-drop]').forEach(cell=>{
+      cell.style.transition='';
+      cell.style.left='';
+      cell.style.opacity='';
+    }));
+  }
+}
+function setPriceCompareColumnOffset(table,colIndex,px){
+  if(!table||colIndex<0)return;
+  // 只位移商品標題，不碰供應商／進貨價／售價／毛利等下面資料格。
+  const cells=[...table.querySelectorAll('thead [data-price-compare-drop]')];
+  const cell=cells[colIndex];
+  if(!cell)return;
+  cell.style.position='relative';
+  cell.style.transition='left .12s cubic-bezier(.2,.8,.2,1)';
+  cell.style.left=(px||0)+'px';
+}
+function shiftPriceCompareColumn(table,colIndex,px){
+  setPriceCompareColumnOffset(table,colIndex,px);
+}
+function resetPriceComparePreviewOffsets(){
+  document.querySelectorAll('[data-price-compare-table]').forEach(table=>{
+    const cells=[...table.querySelectorAll('thead [data-price-compare-drop]')];
+    cells.forEach((_,i)=>setPriceCompareColumnOffset(table,i,0));
+  });
+}
+function previewPriceComparePush(targetEl,after){
+  // 拖曳途中不再位移任何 table 的 th / td。
+  // 只保留滑鼠的原生拖曳影子與目標插入提示；真正排序等 drop 後一次 rerender。
+  if(!targetEl||priceCompareDragVisual.row<0)return;
+  priceComparePreviewKey=priceCompareDragVisual.row+':' + priceCompareDragVisual.index + '>' + targetEl.dataset.priceCompareRow + ':' + targetEl.dataset.priceCompareIndex + ':' + (after?'1':'0');
+  resetPriceComparePreviewOffsets();
+}
+
 function priceCompareDragStart(e,id){
+  clearPriceComparePushPreview(true);
   priceCompareDraggingId=String(id);
+  priceCompareDragVisual={
+    row:Number(e.currentTarget.dataset.priceCompareRow),
+    index:Number(e.currentTarget.dataset.priceCompareIndex)
+  };
   e.dataTransfer.effectAllowed='move';
   e.dataTransfer.setData('text/plain',String(id));
-  e.currentTarget.style.opacity='.55';
+  e.currentTarget.style.opacity='1';
   document.querySelectorAll('[data-price-compare-row-drop]').forEach(el=>{el.style.opacity='1';});
 }
 function priceCompareDragEnd(e){
   priceCompareDraggingId='';
+  priceCompareDragVisual={row:-1,index:-1};
+  clearPriceComparePushPreview(true);
   e.currentTarget.style.opacity='';
   document.querySelectorAll('[data-price-compare-drop]').forEach(el=>{el.style.boxShadow='';el.style.background='';});
   document.querySelectorAll('[data-price-compare-row-drop]').forEach(el=>{el.style.boxShadow='';el.style.background='';el.style.opacity='.72';});
 }
+function getPriceCompareDropAfterForCell(el,e){
+  if(!el)return false;
+  const toRow=Number(el.dataset.priceCompareRow);
+  const toIdx=Number(el.dataset.priceCompareIndex);
+  const fromRow=Number(priceCompareDragVisual.row);
+  const fromIdx=Number(priceCompareDragVisual.index);
+
+  // 同一排改成方向式插入：拖到右邊任何一格＝插在它後面；
+  // 拖到左邊任何一格＝插在它前面。這樣相鄰格不必再精準瞄準半格。
+  if(Number.isFinite(fromRow)&&Number.isFinite(fromIdx)&&fromRow===toRow&&fromIdx!==toIdx){
+    return toIdx>fromIdx;
+  }
+
+  // 跨排才保留左右半格判斷，方便指定插在目標前或後。
+  const r=el.getBoundingClientRect();
+  return (e.clientX-r.left)>=r.width/2;
+}
 function priceCompareDragOver(e){
   e.preventDefault();
-  const el=e.currentTarget,r=el.getBoundingClientRect();
-  el.dataset.dropAfter=((e.clientX-r.left)>r.width/2)?'1':'0';
-  el.style.boxShadow=el.dataset.dropAfter==='1'?'inset -3px 0 0 var(--brown)':'inset 3px 0 0 var(--brown)';
+  e.stopPropagation();
+  const el=e.currentTarget;
+  const after=getPriceCompareDropAfterForCell(el,e);
+  el.dataset.dropAfter=after?'1':'0';
+  el.style.boxShadow=after?'inset -3px 0 0 var(--brown)':'inset 3px 0 0 var(--brown)';
   el.style.background='var(--cream2)';
+  previewPriceComparePush(el,after);
 }
 function priceCompareDrop(e,toId){
   e.preventDefault();
   e.stopPropagation();
   movePriceCompareItem(e.dataTransfer.getData('text/plain')||priceCompareDraggingId,toId,e.currentTarget.dataset.dropAfter==='1');
+}
+// 讓整個比較表格（不只最上面的商品 th）都能接住跨排拖曳。
+// 依滑鼠 X 位置找到最近的商品欄，判斷插在它前面或後面。
+function getPriceCompareTableDropTarget(table,e){
+  if(!table)return null;
+  const cells=[...table.querySelectorAll('thead [data-price-compare-drop]')];
+  if(!cells.length)return null;
+  const x=e.clientX;
+  let best=cells[0],bestDist=Infinity;
+  cells.forEach(cell=>{
+    const r=cell.getBoundingClientRect();
+    const cx=r.left+r.width/2;
+    const dist=Math.abs(x-cx);
+    if(dist<bestDist){bestDist=dist;best=cell;}
+  });
+  return {cell:best,after:getPriceCompareDropAfterForCell(best,e)};
+}
+function priceCompareTableDragOver(e,rowIdx){
+  if(!priceCompareDraggingId)return;
+  e.preventDefault();
+  const table=e.currentTarget;
+  const hit=getPriceCompareTableDropTarget(table,e);
+  if(!hit)return;
+  hit.cell.dataset.dropAfter=hit.after?'1':'0';
+  hit.cell.style.boxShadow=hit.after?'inset -3px 0 0 var(--brown)':'inset 3px 0 0 var(--brown)';
+  hit.cell.style.background='var(--cream2)';
+  previewPriceComparePush(hit.cell,hit.after);
+}
+function priceCompareTableDrop(e,rowIdx){
+  if(!priceCompareDraggingId)return;
+  e.preventDefault();
+  const table=e.currentTarget;
+  const hit=getPriceCompareTableDropTarget(table,e);
+  if(!hit)return;
+  const toId=priceCompareRows?.[Number(rowIdx)]?.[Number(hit.cell.dataset.priceCompareIndex)];
+  if(toId==null)return;
+  movePriceCompareItem(e.dataTransfer.getData('text/plain')||priceCompareDraggingId,String(toId),hit.after);
 }
 function priceCompareRowDropOver(e){
   e.preventDefault();
@@ -7168,7 +7468,7 @@ function renderPriceCompareResult(){
     const blockStats=blockProducts.map(p=>stats[productIndex.get(String(p.id))]);
     const head=blockProducts.map((p,i)=>{
       const globalIdx=productIndex.get(String(p.id));
-      return `<th draggable="true" data-price-compare-drop="1"
+      return `<th draggable="true" data-price-compare-drop="1" data-price-compare-row="${rowIdx}" data-price-compare-index="${i}"
         ondragstart="priceCompareDragStart(event,'${p.id}')"
         ondragend="priceCompareDragEnd(event)"
         ondragover="priceCompareDragOver(event)"
@@ -7200,7 +7500,10 @@ function renderPriceCompareResult(){
 
     blocks.push(`
       <div style="overflow:auto;border:1px solid var(--cream3);border-radius:14px;background:#fff;${rowIdx>0?'margin-top:12px;':''}">
-        <table style="border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%;min-width:${compareLabelColWidth + blockProducts.length*compareProductMinWidth}px">
+        <table data-price-compare-table="${rowIdx}"
+          ondragover="priceCompareTableDragOver(event,${rowIdx})"
+          ondrop="priceCompareTableDrop(event,${rowIdx})"
+          style="border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%;min-width:${compareLabelColWidth + blockProducts.length*compareProductMinWidth}px">
           <colgroup>
             <col style="width:${compareLabelColWidth}px">
             ${blockProducts.map(()=>'<col>').join('')}
@@ -7214,7 +7517,7 @@ function renderPriceCompareResult(){
                     <button type="button" class="hint-info-btn" onclick="event.stopPropagation();document.getElementById('price-compare-drag-tip-${rowIdx}').classList.toggle('hidden')" title="查看說明" aria-label="查看說明">
                       <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 8.8v5.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
                     </button>
-                    <div id="price-compare-drag-tip-${rowIdx}" class="hidden" style="position:absolute;top:24px;right:0;width:min(280px,76vw);font-size:10.5px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:8px 10px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60;font-weight:500;white-space:normal">左右拖曳可以換順序；拖到下一排的商品上，可以單獨移到下面。</div>
+                    <div id="price-compare-drag-tip-${rowIdx}" class="hidden" style="position:absolute;top:24px;right:0;width:min(280px,76vw);font-size:10.5px;line-height:1.6;color:var(--text2);background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;padding:8px 10px;box-shadow:0 6px 20px rgba(139,111,71,.18);z-index:60;font-weight:500;white-space:normal">拖曳到商品前後會插入排序；後面的商品會依序往後推，滿 5 個會自動推到下一排。</div>
                   </span>
                 </div>
               </th>
@@ -7238,14 +7541,15 @@ function renderPriceCompareResult(){
     `);
   });
 
-  const canCreateSecondRow=rows.length===1 && rows[0].length>1;
-  const rowDrop=canCreateSecondRow?`
+  // 往下拖的落點要一直存在：以前第二排一出現就把這個區塊隱藏，導致無法再往下移。
+  const canMoveToNextRow=rows.length>=1 && rows[0].length>0;
+  const rowDrop=canMoveToNextRow?`
     <div data-price-compare-row-drop="1"
       ondragover="priceCompareRowDropOver(event)"
       ondragleave="this.style.boxShadow='';this.style.background='transparent'"
       ondrop="priceCompareDropToNextRow(event)"
       style="height:28px;border:1.5px dashed var(--cream3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);opacity:.72;transition:.12s">
-      拖到這裡放到下一排
+      拖到這裡移到下一排
     </div>`:'';
 
   result.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px">${blocks.join('')}${rowDrop}</div>`;
@@ -7416,24 +7720,63 @@ let ptrDragCardEl=null, ptrDragIsBatch=false, ptrGhostMode='full';
 // 把影子變成「全尺寸＋貓咪探頭」的樣子（單張拖曳排序用）
 function applyGhostFullStyle(ghost,cardEl){
   ghost.innerHTML='';
-  ghost.className='product-card'; // 需要這個 class 才有正確的排版（圖片＋文字直排）
-  const clone=cardEl.cloneNode(true);
-  while(clone.firstChild)ghost.appendChild(clone.firstChild);
+  ghost.className='drag-old-ghost';
   const rect=cardEl.getBoundingClientRect();
   ghost.style.width=rect.width+'px';
   ghost.style.height=rect.height+'px';
-  ghost.style.borderRadius='';
-  ghost.style.overflow='hidden'; // 貓咪鬍鬚線要被卡片邊緣裁掉，只露出探頭的部分
   ghost.style.border='none';
-  ghost.style.boxShadow='0 4px 16px rgba(0,0,0,.25)';
+  ghost.style.borderRadius='0';
+  ghost.style.overflow='visible';
+  ghost.style.background='transparent';
+  ghost.style.boxShadow='none';
+
+  // 舊檔拖移方格的內容格式：圖片＋名稱＋SKU＋庫存／售價；不帶最新版額外資訊
+  const oldCard=document.createElement('div');
+  oldCard.className='drag-old-card';
+  const imgEl=cardEl.querySelector('.product-img');
+  if(imgEl) oldCard.appendChild(imgEl.cloneNode(true));
+  const info=document.createElement('div');
+  info.className='product-info';
+  const nameEl=cardEl.querySelector('.product-name');
+  if(nameEl) info.appendChild(nameEl.cloneNode(true));
+  const skuEl=cardEl.querySelector('.product-sku');
+  if(skuEl) info.appendChild(skuEl.cloneNode(true));
+  // 拖移影子的底部不要整段 clone，因為原卡同時藏著不同檢視用的備用文字，
+  // 離開 #product-grid 後那些隱藏規則會失效，會出現「9件9 / $1.00$0.00」重複內容。
+  const srcMeta=cardEl.querySelector('.product-meta');
+  if(srcMeta){
+    const meta=document.createElement('div');
+    meta.className='product-meta';
+    const srcStock=srcMeta.querySelector('.stock-badge');
+    if(srcStock){
+      const stock=document.createElement('span');
+      stock.className=srcStock.className;
+      const defaultStock=srcStock.querySelector('.stock-default-text');
+      stock.textContent=defaultStock?defaultStock.textContent:srcStock.textContent.trim();
+      meta.appendChild(stock);
+    }
+    const srcPrice=srcMeta.querySelector('.price-tag');
+    if(srcPrice){
+      const price=document.createElement('span');
+      price.className='price-tag';
+      price.textContent=srcPrice.textContent.trim();
+      meta.appendChild(price);
+    }
+    info.appendChild(meta);
+  }
+  oldCard.appendChild(info);
+  ghost.appendChild(oldCard);
+
   ptrGhostHalfW=rect.width/2;
   ptrGhostHalfH=rect.height/2;
   ptrGhostW=rect.width;
   ptrGhostH=rect.height;
+
+  // 貓咪完全沿用 index copy 3.html 原本版本
   const cat=document.createElement('div');
   cat.className='ghost-cat';
-  cat.textContent='🐱';
-  ghost.appendChild(cat);
+  cat.innerHTML='<img src="data:image/png;base64,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" style="display:block;width:34px;height:auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))" alt="">';
+  oldCard.appendChild(cat);
   ptrCatEl=cat;
   ptrLastDirKey=null;
   ptrGhostMode='full';
@@ -7460,14 +7803,7 @@ function applyGhostSmallStyle(ghost,cardEl){
   ptrGhostW=size;ptrGhostH=size;
   // 徽章數字要跟真的會被拖走的那批一致：只有「這張本來就在已選清單裡、而且選了不只一張」才算整批拖走，
   // 拖一張還沒被選過的卡片（就算旁邊剛好有別的已選商品）只算 1 件，不能直接看 batchSelected.size
-  const dragIds=getDragIds();
-  const selCount=dragIds.length>1?dragIds.length:0;
-  if(selCount){
-    const badge=document.createElement('div');
-    badge.style.cssText='position:absolute;top:-8px;right:-8px;background:var(--brown);color:#fff;border-radius:10px;font-size:9px;font-weight:800;padding:0 4px;min-width:14px;height:14px;line-height:14px;text-align:center;box-shadow:0 0 0 2px var(--cream2);font-family:inherit';
-    badge.textContent=selCount;
-    ghost.appendChild(badge);
-  }
+  // 拖曳影子不顯示批次數字徽章；批次拖移功能本身維持不變。
   ptrCatEl=null;
   ptrGhostMode='small';
 }
@@ -11996,7 +12332,14 @@ function renderCustomSelectMenu(id){
   if(!input||!menu)return;
   const options=JSON.parse(input.dataset.options.replace(/&#39;/g,"'"));
   const cur=input.value;
-  menu.innerHTML=options.map(o=>`<div onclick="pickCustomSelect('${id}','${o.value}')" style="padding:8px 10px;font-size:12px;border-radius:7px;cursor:pointer;color:${cur===o.value?'var(--brown)':'var(--text2)'};font-weight:${cur===o.value?'800':'500'}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${o.label}</div>`).join('');
+  const isCompareCat=id==='price-compare-category';
+  menu.innerHTML=options.map(o=>{
+    const active=cur===o.value;
+    if(isCompareCat){
+      return `<button type="button" onclick="pickCustomSelect('${id}','${o.value}')" style="width:100%;border:none;background:${active?'var(--cream2)':'transparent'};color:${active?'var(--brown)':'var(--text2)'};font-weight:${active?'800':'600'};padding:8px 10px;border-radius:8px;text-align:left;cursor:pointer;font-family:inherit;font-size:11.5px;display:flex;align-items:center;gap:7px;transition:background .12s ease" onmouseover="if(!${active})this.style.background='var(--cream2)'" onmouseout="if(!${active})this.style.background='transparent'">${o.label}</button>`;
+    }
+    return `<div onclick="pickCustomSelect('${id}','${o.value}')" style="padding:8px 10px;font-size:12px;border-radius:7px;cursor:pointer;color:${active?'var(--brown)':'var(--text2)'};font-weight:${active?'800':'500'}" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${o.label}</div>`;
+  }).join('');
 }
 function pickCustomSelect(id,value){
   const input=document.getElementById(id);
@@ -14649,3 +14992,13 @@ document.addEventListener('change',function(e){
 
 </body>
 </html>
+
+/* 商品庫格狀：名稱 / SKU / 分類 / 缺少資訊整體往右 1px（2026-08-26） */
+#product-grid.view-grid .product-card .product-name,
+#product-grid.view-grid .product-card .product-sku,
+#product-grid.view-grid .product-card .pc-subcat-code,
+#product-grid.view-grid .product-card .pc-catcode,
+#product-grid.view-grid .product-card .pc-missing{
+  position:relative!important;
+  left:1px!important;
+}
