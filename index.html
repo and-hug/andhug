@@ -6686,7 +6686,9 @@ function renderSubcatFilters(){
   // Always show all 15 categories
   const ALL_CODES=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','99'];
   // Count products per code
-  const prods=activeCat==='all'?DB.products:activeCat==='__incomplete__'?DB.products.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img):DB.products.filter(p=>p.type===activeCat);
+  // 01/AN、02/OC... 是布貼題材分類，只屬於 PA / PB；RB 等其他商品即使 SKU 中也有相同數字碼，不應混進來。
+  const patchProducts=(DB.products||[]).filter(p=>p.type==='PA'||p.type==='PB');
+  const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(p=>!p.cost||p.cost===0||!p.sku||!p.img):DB.products.filter(p=>p.type===activeCat);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
   el.innerHTML=ALL_CODES.map(c=>{
@@ -6912,21 +6914,33 @@ function dropToSubcat(event,newSubcat){
   event.stopPropagation();
   const ids=getDragIds(event);
   if(!ids.length)return;
-  const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku}:null;}).filter(Boolean);
-  let count=0;
-  ids.forEach(id=>{
-    const p=DB.products.find(x=>x.id===id);
-    if(!p||!p.sku)return;
-    const prefix=p.sku.slice(0,2);
-    const suffix=p.sku.slice(4);
-    p.sku=prefix+newSubcat+suffix;
+  const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku,type:p.type}:null;}).filter(Boolean);
+  const applyOne=(p)=>{
+    if(!p)return false;
+    // 舊商品：維持原本做法，只改 SKU 第 3–4 碼。
+    if(p.sku&&p.sku.length>=4){
+      p.sku=p.sku.slice(0,2)+newSubcat+p.sku.slice(4);
+      p.updatedAt=Date.now();
+      return true;
+    }
+    // 智慧匯入／新建商品可能還沒有 SKU。上方 01/AN、02/OC... 本來就是靠 SKU 分類，
+    // 所以第一次拖進去時建立一組完整的初始 SKU，之後就跟一般商品完全相同。
+    let type=String(p.type||activeCat||'PA').toUpperCase();
+    if(!['PA','PB'].includes(type))type='PA';
+    const detail=(typeof inferSkuDetailFromName==='function'?(inferSkuDetailFromName(newSubcat,p.name)||'99'):'99');
+    const color='9900';
+    const serial=(typeof getNextSkuSerial==='function'?(getNextSkuSerial(type,newSubcat,detail,color,p.id)||'001'):'001');
+    p.type=type;
+    p.sku=`${type}${newSubcat}${detail}-${color}-${serial}`;
     p.updatedAt=Date.now();
-    count++;
-  });
+    return true;
+  };
+  let count=0;
+  ids.forEach(id=>{const p=DB.products.find(x=>x.id===id);if(applyOne(p))count++;});
   if(!count)return;
   pushUndo({label:`移動 ${count} 件子類`,
-    undo:()=>{snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x)x.sku=s.sku;});saveDB();renderProducts();renderSubcatFilters();},
-    redo:()=>{ids.forEach(id=>{const p=DB.products.find(x=>x.id===id);if(p&&p.sku)p.sku=p.sku.slice(0,2)+newSubcat+p.sku.slice(4);});saveDB();renderProducts();renderSubcatFilters();}});
+    undo:()=>{snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x){x.sku=s.sku;x.type=s.type;}});saveDB();renderProducts();renderSubcatFilters();if(document.getElementById('cat-sidebar'))renderCatSidebar();},
+    redo:()=>{ids.forEach(id=>applyOne(DB.products.find(x=>x.id===id)));saveDB();renderProducts();renderSubcatFilters();if(document.getElementById('cat-sidebar'))renderCatSidebar();}});
   saveDB();renderProducts();renderSubcatFilters();if(document.getElementById('cat-sidebar'))renderCatSidebar();
   const subLabel=(typeof SUBCAT_MAP!=='undefined'&&SUBCAT_MAP[newSubcat])?SUBCAT_MAP[newSubcat].split(' ')[0]:newSubcat;
   toast(`已移動 ${count} 件到 ${newSubcat}/${subLabel}（⌘Z 撤銷）`,'success');
@@ -7656,7 +7670,7 @@ function renderProducts(){
   }
   if(activeSize!=='all')ps=ps.filter(p=>(p.size||'0')===activeSize);
   if(activeCat!=='all'&&activeTypeSubcat!=='all')ps=ps.filter(p=>getProductTypeSubcat(p)===activeTypeSubcat);
-  if(activeSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.slice(2,4)===activeSubcat);
+  if(activeSubcat!=='all')ps=ps.filter(p=>(p.type==='PA'||p.type==='PB')&&p.sku&&p.sku.slice(2,4)===activeSubcat);
   if(q)ps=ps.filter(p=>(p.name+p.sku+(p.note||'')+((p.tags||[]).join(' '))+(p.color||'')+(p.style||'')).toLowerCase().includes(q));
   const stockMinEl=document.getElementById('stock-range-min'),stockMaxEl=document.getElementById('stock-range-max');
   const stockMin=stockMinEl&&stockMinEl.value!==''?parseInt(stockMinEl.value):null;
