@@ -2487,6 +2487,44 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   left:1px!important;
 }
 </style>
+
+<style id="top-toolbar-small-buttons-20260826">
+/* 商品庫＋採購單：上方所有操作按鈕統一縮小 */
+#page-products .section-header .product-search-toolbar .btn:not(.toolbar-icon-round),
+#page-orders .section-header .btn:not(.toolbar-icon-round){
+  padding:6px 12px!important;
+  font-size:11px!important;
+  border-radius:18px!important;
+  min-height:30px!important;
+  line-height:1.2!important;
+}
+#page-products #sort-mode-btn,
+#page-orders #order-sort-btn{
+  padding:6px 10px!important;
+  font-size:11px!important;
+  border-radius:9px!important;
+  min-height:30px!important;
+  gap:5px!important;
+}
+#page-products .section-header .toolbar-icon-round,
+#page-products .section-header #vbtn-grid,
+#page-products .section-header #vbtn-large,
+#page-products .section-header #vbtn-list,
+#page-orders .section-header .order-trash-round{
+  width:30px!important;
+  min-width:30px!important;
+  max-width:30px!important;
+  height:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  flex:0 0 30px!important;
+  padding:0!important;
+  font-size:11px!important;
+}
+#page-products .section-header .view-glyph{font-size:14px!important;}
+#page-products .section-header .product-search-toolbar{gap:6px!important;}
+#page-orders .section-header>div:last-child{gap:6px!important;}
+</style>
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -2989,10 +3027,10 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         <button type="button" class="btn btn-primary btn-sm hidden" id="order-group-toggle-btn" onclick="finishOrderRowGroupSelection()">✓ 完成組合</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-secondary hidden" id="order-back-btn" onclick="backToOrderDetail()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情</button>
-        <button class="btn btn-secondary" onclick="closeModal('modal-order')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-        <button class="btn btn-secondary" id="order-save-draft-btn" onclick="saveOrderFormDraft()">📝 儲存草稿</button>
-        <button type="button" class="btn btn-primary" id="order-save-btn" onclick="saveOrder(event)">💾 儲存採購單</button>
+        <button class="btn btn-secondary btn-sm hidden" id="order-back-btn" onclick="backToOrderDetail()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情</button>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-order')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
+        <button class="btn btn-secondary btn-sm" id="order-save-draft-btn" onclick="saveOrderFormDraft()">📝 儲存草稿</button>
+        <button type="button" class="btn btn-primary btn-sm" id="order-save-btn" onclick="saveOrder(event)">💾 儲存採購單</button>
       </div>
     </div>
   </div>
@@ -3233,7 +3271,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         <div id="smart-import-progress" class="hidden" style="margin-top:16px;text-align:center;color:var(--text3);font-size:13px">辨識中，請稍候...</div>
       </div>
       <div id="smart-import-step-review" class="hidden smart-import-review-layout">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:10px">辨識結果如下，請檢查一下有沒有抓錯，可以直接修改或刪除：</div>
         <div id="smart-import-list"></div>
         <div class="smart-import-review-footer" style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -6856,15 +6893,23 @@ document.addEventListener('keydown',function(e){
 });
 
 // 拖移輔助：批次模式拖到的卡片如果在已選清單裡，整批一起拖；否則只拖單張
-function getDragIds(){
-  if(batchMode && dragProductId && batchSelected.has(dragProductId) && batchSelected.size>1){
+function getDragIds(event){
+  // 優先使用目前全域拖曳 ID；若瀏覽器在跨區域拖曳時把狀態丟掉，
+  // 再從 dataTransfer 取回商品 ID，確保拖到分類／子分類仍能真正落下。
+  let currentId=dragProductId;
+  if(!currentId&&event&&event.dataTransfer){
+    try{currentId=event.dataTransfer.getData('text/plain')||event.dataTransfer.getData('application/x-product-id')||'';}catch(e){}
+  }
+  if(batchMode && currentId && batchSelected.has(currentId) && batchSelected.size>1){
     return [...batchSelected];
   }
-  return dragProductId ? [dragProductId] : [];
+  return currentId ? [currentId] : [];
 }
 
 function dropToSubcat(event,newSubcat){
-  const ids=getDragIds();
+  event.preventDefault();
+  event.stopPropagation();
+  const ids=getDragIds(event);
   if(!ids.length)return;
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku}:null;}).filter(Boolean);
   let count=0;
@@ -6881,11 +6926,12 @@ function dropToSubcat(event,newSubcat){
   pushUndo({label:`移動 ${count} 件子類`,
     undo:()=>{snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x)x.sku=s.sku;});saveDB();renderProducts();renderSubcatFilters();},
     redo:()=>{ids.forEach(id=>{const p=DB.products.find(x=>x.id===id);if(p&&p.sku)p.sku=p.sku.slice(0,2)+newSubcat+p.sku.slice(4);});saveDB();renderProducts();renderSubcatFilters();}});
-  saveDB();renderProducts();renderSubcatFilters();
-  toast(`已移動 ${count} 件到 ${newSubcat}/${SUBCAT_MAP[newSubcat].split(' ')[0]}（⌘Z 撤銷）`,'success');
+  saveDB();renderProducts();renderSubcatFilters();if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  const subLabel=(typeof SUBCAT_MAP!=='undefined'&&SUBCAT_MAP[newSubcat])?SUBCAT_MAP[newSubcat].split(' ')[0]:newSubcat;
+  toast(`已移動 ${count} 件到 ${newSubcat}/${subLabel}（⌘Z 撤銷）`,'success');
 }
 function dropToTypeSubcat(event,newType,newSubtype){
-  event.preventDefault();document.querySelectorAll('.cat-sidebar-item').forEach(el=>el.classList.remove('drag-over'));const ids=getDragIds();if(!ids.length)return;
+  event.preventDefault();event.stopPropagation();document.querySelectorAll('.cat-sidebar-item').forEach(el=>el.classList.remove('drag-over'));const ids=getDragIds(event);if(!ids.length)return;
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,type:p.type,sku:p.sku,typeSubcat:p.typeSubcat,ribbonSubtype:p.ribbonSubtype}:null;}).filter(Boolean);
   const apply=()=>ids.forEach(id=>{const p=DB.products.find(x=>x.id===id);if(!p)return;if(p.type!==newType){if(p.sku&&p.sku.length>=2)p.sku=newType+p.sku.slice(2);else if(!p.sku)p.sku=newType;p.type=newType;}if(newSubtype==='all')delete p.typeSubcat;else p.typeSubcat=newSubtype;if(p.type==='RB')delete p.ribbonSubtype;p.updatedAt=Date.now();});
   apply();pushUndo({label:`整理 ${ids.length} 件商品子分類`,undo:()=>{snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(!x)return;x.type=s.type;x.sku=s.sku;if(s.typeSubcat===undefined)delete x.typeSubcat;else x.typeSubcat=s.typeSubcat;if(s.ribbonSubtype===undefined)delete x.ribbonSubtype;else x.ribbonSubtype=s.ribbonSubtype;});saveDB();renderCatSidebar();renderProducts();},redo:()=>{apply();saveDB();renderCatSidebar();renderProducts();}});
@@ -6895,7 +6941,7 @@ function dropToRibbonSubtype(event,newSubtype){return dropToTypeSubcat(event,'RB
 function dropToSize(event,newType,newSize){
   event.preventDefault();
   document.querySelectorAll('.cat-sidebar-item').forEach(el=>el.classList.remove('drag-over'));
-  const ids=getDragIds();
+  const ids=getDragIds(event);
   if(!ids.length)return;
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,type:p.type,size:p.size,sku:p.sku}:null;}).filter(Boolean);
   ids.forEach(id=>{
@@ -7652,7 +7698,7 @@ function renderProducts(){
     // 框選（畫框選取多張）改回只能從空白處拖曳啟動，不能再從卡片上面拖，避免兩個手勢互相搶
     const canDragThis=true;
     return `<div class="product-card" id="pcard-${p.id}" draggable="true"
-      ondragstart="dragProductId='${p.id}';event.dataTransfer.effectAllowed='move';this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target').forEach(el=>el.classList.remove('drag-over-target'))"
+      ondragstart="dragProductId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target').forEach(el=>el.classList.remove('drag-over-target'))"
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target')" ondrop="dropReorderProduct(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
@@ -9841,10 +9887,21 @@ function renderSmartImportReview(){
   dl.innerHTML=DB.products.map(p=>`<option value="${(p.name||'').replace(/"/g,'&quot;')}">`).join('');
   const list=document.getElementById('smart-import-list');
   const rowHtmls=smartImportItems.map((it,i)=>{
-    // 先試試看名字完全一樣的商品；沒有的話，再查查看有沒有記過「這個原始名字對應到哪個商品」的別名
-    // （例如淘寶賣場叫「13号可乐」，她自己叫「白色Coffee杯」，之前手動連過一次之後這裡就能自動比對到）
-    const matchedP=DB.products.find(p=>p.name===it.name)||findProductByAlias(it.name);
-    if(matchedP)it.productId=matchedP.id; else delete it.productId;
+    // 智慧匯入時：上面的大框給她打自己的正式商品名；下面小字保留淘寶/原始名稱當參考。
+    // 如果之前已經連過別名，這裡就直接帶出她自己的商品名；沒連過的話，上面先留白讓她自己打。
+    const lookupName=(it.rawName||it.name||'').trim();
+    let matchedP=(lookupName?DB.products.find(p=>p.name===lookupName):null)||findProductByAlias(lookupName);
+    if(!matchedP&&it.name&&it.rawName&&it.name!==it.rawName){
+      matchedP=DB.products.find(p=>p.name===it.name)||null;
+    }
+    if(matchedP){
+      it.productId=matchedP.id;
+      if(!it.name||it.name===lookupName)it.name=matchedP.name;
+    }else{
+      delete it.productId;
+      if(it.rawName&&it.name===it.rawName)it.name='';
+    }
+    const displayName=(it.rawName&&(!it.name||it.name===it.rawName))?'':(it.name||'');
     const imgSrc=it.img||(matchedP&&matchedP.img?matchedP.img:'');
     return `
     <div class="order-item-row smart-import-review-row">
@@ -9852,8 +9909,8 @@ function renderSmartImportReview(){
       ${smartImportBundleToggleHtml(i,it)}
       ${smartImportPhotoSlotHtml(i,imgSrc)}
       <div class="oi-suggest-wrap smart-import-review-name">
-        <input type="text" class="form-input" value="${(it.name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入可自動帶出現有商品">
-        ${it.rawName&&it.rawName!==it.name?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:2px">原始：${it.rawName}</div>`:''}
+        <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
+        ${it.rawName?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:5px;line-height:1.35">${it.rawName}</div>`:''}
         <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
       </div>
       <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
@@ -9997,9 +10054,9 @@ function smartImportShowSuggestions(input,i){
   wrap.appendChild(list);
 }
 function smartImportSelectSuggestion(input,i,productId,productName){
-  // 記住這次連結：原始名字（通常是淘寶那種名字）如果跟她自己的商品名稱不一樣，存成別名，
-  // 下次匯入同樣賣場的同一款商品、原始名字沒變的話，這裡就能自動比對到，不用每次手動連
-  const rawName=input.value.trim();
+  // 記住這次連結：優先存匯入時抓到的原始名字（通常是淘寶那種名字）當別名；
+  // 這樣上面的正式商品名稱可以改成她自己的名字，下面仍保留原始名稱做自動配對。
+  const rawName=(smartImportItems[i]&&smartImportItems[i].rawName?smartImportItems[i].rawName:input.value).trim();
   if(rawName&&rawName!==productName)saveProductAlias(productId,rawName);
   input.value=productName;
   smartImportItems[i].name=productName;
@@ -15012,6 +15069,7 @@ document.addEventListener('change',function(e){
   <div><strong>Excel/CSV</strong>：直接讀取表格內容，準確度高</div>
   <div><strong>截圖</strong>：用瀏覽器內建文字辨識（OCR），免費但準確度普通，辨識完務必檢查一遍再匯入</div>
   <div><strong>PDF</strong>：先試著直接讀取文字，讀不到（掃描檔）就自動改用 OCR 辨識每一頁，一樣建議辨識完檢查一遍</div>
+  <div><strong>辨識結果</strong>：抓到的內容可以直接在清單裡修改或刪除，匯入前請再檢查一次</div>
 </div>
 
 </body>
