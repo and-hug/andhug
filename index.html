@@ -5860,14 +5860,14 @@ function getCatLabel(sku,type){
   // 01/AN、02/OC... 這套「布貼題材分類」只屬於 PA / PB。
   // RB 等其他商品的 SKU 第 3~4 碼有自己的意思，不能再誤解成布貼分類。
   if(!['PA','PB'].includes(String(type||'').toUpperCase()))return '';
-  const CAT_MAP={'01':'AN 動物','02':'OC 海洋','03':'CH 角色','04':'PT 植物','05':'FD 食物','06':'DR 飲料','07':'SY 符號','08':'EM 物品','09':'TR 運輸','10':'TX 文字','11':'LT 字母','12':'BL 球類','13':'SP 運動','14':'SE 節慶','15':'UN 宇宙','99':'SP 特別'};
+  const CAT_MAP={'01':'AN 動物','02':'OC 海洋','03':'CH 角色','04':'PT 植物','05':'FD 食物','06':'DR 飲料','07':'SY 符號','08':'EM 物品','09':'TR 運輸','10':'TX 文字','11':'LT 字母','12':'BL 球類','13':'SP 運動','14':'SE 節慶','15':'UN 宇宙','99':'SC 特別'};
   if(!sku||sku.length<4)return '';
   const code=sku.slice(2,4);
   return CAT_MAP[code]?code+'/'+CAT_MAP[code].split(' ')[0]:'';
 }
 let currentView='grid';
 let activeSubcat='all';
-const SUBCAT_MAP={'01':'AN 動物','02':'OC 海洋','03':'CH 角色','04':'PT 植物','05':'FD 食物','06':'DR 飲料','07':'SY 符號','08':'EM 物品','09':'TR 運輸','10':'TX 文字','11':'LT 字母','12':'BL 球類','13':'SP 運動','14':'SE 節慶','15':'UN 宇宙','99':'SP 特別'};
+const SUBCAT_MAP={'01':'AN 動物','02':'OC 海洋','03':'CH 角色','04':'PT 植物','05':'FD 食物','06':'DR 飲料','07':'SY 符號','08':'EM 物品','09':'TR 運輸','10':'TX 文字','11':'LT 字母','12':'BL 球類','13':'SP 運動','14':'SE 節慶','15':'UN 宇宙','99':'SC 特別'};
 // ---- SKU 規則參考頁：大類/顏色可以自行編輯、新增（存在 DB.skuCats / DB.skuColors，沒有的話用預設值）----
 // 這個表純粹是給自己對照用的參考資料，不會影響商品分類側邊欄實際的運作邏輯
 const DEFAULT_SKU_SIZES=[
@@ -5905,7 +5905,7 @@ const DEFAULT_SKU_CATS=[
   {code:'13',label:'SP 運動',sub:'01水上 / 02極限 / 03武術 / 99其他'},
   {code:'14',label:'SE 節慶',sub:'01農曆新年 / 02情人節 / 03復活節 / 04萬聖節 / 05感恩節 / 06聖誕節 / 99其他'},
   {code:'15',label:'UN 宇宙',sub:'01星球太空 / 02星座 / 03外星世界 / 04天氣自然 / 99其他'},
-  {code:'99',label:'SP 特別',sub:'01聯名 / 02限定 / 03訂製 / 99其他'}
+  {code:'99',label:'SC 特別',sub:'01聯名 / 02限定 / 03訂製 / 99其他'}
 ];
 const DEFAULT_SKU_COLORS=[
   {code:'01',label:'白',hex:'#ffffff'},{code:'02',label:'黑',hex:'#222222'},
@@ -9116,7 +9116,7 @@ function resumeImportDraft(id){
     document.getElementById('o-note').value=d.note||'';
     document.getElementById('order-items-list').innerHTML='';
     resetOrderGroupSelectMode();
-    (d.items||[]).forEach(it=>addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost,it.img));
+    (d.items||[]).forEach(it=>addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost,it.img,it.variantId,it.variantLabel));
     regroupOrderItemRowsFromItems(d.items);
     if(!d.items||!d.items.length)addOrderItem();
     updateOrderTotalPreview();
@@ -9373,14 +9373,184 @@ function isSmartImportNonProductText(v){
   if(isSmartImportAddressLike(s))return true;
   return SMART_IMPORT_NON_PRODUCT_RE.test(s);
 }
+function smartImportFindExistingProductByName(names){
+  const arr=Array.isArray(names)?names:[names];
+  for(const n of arr){
+    const exact=(DB.products||[]).find(p=>p.name===n);
+    if(exact)return exact;
+  }
+  for(const n of arr){
+    const hit=(DB.products||[]).find(p=>String(p.name||'').includes(n));
+    if(hit)return hit;
+  }
+  return null;
+}
+function smartImportCatalogNameSuggestion(rawText){
+  const text=convertSimplifiedToTraditional(String(rawText||'')).replace(/\s+/g,' ').trim();
+  if(!text)return null;
+  // 先從現有商品庫裡找「原始淘寶名稱確實包含的商品核心名稱」。
+  // 例如「搞怪白色幽靈（自粘貼）」可以直接對到「白色幽靈布貼」。
+  const candidates=(DB.products||[]).map(p=>{
+    const n=String(p.name||'').trim();
+    const core=n.replace(/(?:刺繡)?布貼$|毛布貼$|貼布$|貼紙$/,'').trim();
+    return {p,core};
+  }).filter(x=>x.core.length>=2&&text.includes(x.core))
+    .sort((a,b)=>b.core.length-a.core.length);
+  return candidates.length?candidates[0].p:null;
+}
+function smartImportBuildSuggestedName(it){
+  if(!it)return it;
+  const raw=convertSimplifiedToTraditional(String(it.rawName||it.name||'')).replace(/\s+/g,' ').trim();
+  if(!raw)return it;
+
+  // 使用者已經自己改過名稱時，絕對不要再蓋掉。
+  if(it._nameTouched)return it;
+
+  delete it._suggestedVariant;
+  delete it._possibleBundle;
+  delete it._nameSuggestionNote;
+
+  const exact=(DB.products||[]).find(p=>p.name===raw)||findProductByAlias(raw);
+  if(exact){
+    it.name=exact.name;
+    it.productId=exact.id;
+    it._nameSuggestionNote='已找到現有商品';
+    return it;
+  }
+
+  // 先利用自己的商品庫取名；命中時只「建議」，不是直接入庫。
+  const catalogHit=smartImportCatalogNameSuggestion(raw);
+  if(catalogHit){
+    it.name=catalogHit.name;
+    it._nameSuggestionNote='依你的商品庫建議名稱，可直接修改';
+  }
+
+  const ghost=/幽靈/i.test(raw);
+  const ghostSet=ghost&&/(?:組合\s*三枚|三枚\s*(?:組|一組)|3\s*枚)/i.test(raw);
+  if(ghostSet){
+    it.name='幽靈三枚組';
+    it._possibleBundle=true;
+    it._nameSuggestionNote='建議名稱；看起來可能是組合商品，可按左側 🔗 再細分';
+    return it;
+  }
+  if(ghost){
+    if(/幽靈貓|貓.*幽靈|幽靈.*貓/i.test(raw))it.name='幽靈貓布貼';
+    else if(/白色?.{0,4}幽靈|幽靈.{0,4}白色?/i.test(raw))it.name='白色幽靈布貼';
+    else if(/黑色?.{0,4}幽靈|幽靈.{0,4}黑色?/i.test(raw))it.name='黑色幽靈布貼';
+    if(it.name)it._nameSuggestionNote='依商品內容建議名稱，可直接修改';
+    return it;
+  }
+
+  const isLetter=/(?:英文字母|字母|alphabet|letter)/i.test(raw);
+  if(isLetter){
+    let suggested='英文字母布貼';
+    if(/黑底白字/i.test(raw))suggested='黑底白字字母布貼';
+    else if(/白底黑字/i.test(raw))suggested='白底黑字字母布貼';
+    else if(/1\s*(?:cm|厘米|公分)/i.test(raw)&&/(?:迷你|小號|黑色)/i.test(raw))suggested=/黑/i.test(raw)?'1cm迷你黑字母布貼':'1cm迷你字母布貼';
+    it.name=suggested;
+
+    const set26=/(?:26\s*(?:枚|個)|A\s*[-–—~至到]\s*Z|26\s*(?:枚)?\s*(?:一套|組合))/i.test(raw);
+    if(set26){
+      it._suggestedVariant='A–Z';
+      it._possibleBundle=true;
+      it._nameSuggestionNote='建議名稱；辨識到 A–Z 套組，可確認後再按 🔗 細分';
+    }else{
+      const vm=raw.match(/(?:黑底白字|白底黑字)?\s*([A-Z])\s*(?:\([^)]*\))?$/i);
+      if(vm)it._suggestedVariant=vm[1].toUpperCase();
+      it._nameSuggestionNote='依商品內容建議名稱，可直接修改';
+    }
+    return it;
+  }
+
+  // 沒有特定規則，但商品庫有很像的既有品名時就保留那個建議。
+  if(catalogHit)return it;
+
+  // 最後才做保守的通用整理：只移除明顯的電商服務字，不亂猜商品本體。
+  let shortName=raw
+    .replace(/[（(](?:自粘貼|自黏貼|熨燙款|熨燙貼|魔術貼款|背膠款)[）)]/gi,'')
+    .replace(/(?:自粘貼|自黏貼|熨燙款|補丁貼|幼兒園姓名布貼|姓名牌飄帶)/gi,'')
+    .replace(/\s+/g,' ').trim();
+  if(shortName.length>32)shortName=''; // 太長代表沒有把握，寧可留白讓她自己確認。
+  if(shortName){
+    it.name=shortName;
+    it._nameSuggestionNote='自動整理的建議名稱，可直接修改';
+  }else if(it.rawName){
+    it.name='';
+    it._nameSuggestionNote='沒有把握，請確認名稱';
+  }
+  return it;
+}
+function smartImportApplyNameSuggestions(items){
+  return (items||[]).map(it=>smartImportBuildSuggestedName(it));
+}
+// 智慧匯入：在「建議名稱」之後，再把內容可以確定的套組自動細分。
+// 細分結果只先放在確認畫面；使用者仍可直接改名稱、數量、刪除子項或取消組合。
+function smartImportAutoSplitKnownSet(it){
+  if(!it||Array.isArray(it.bundleItems)&&it.bundleItems.length)return it;
+  const raw=convertSimplifiedToTraditional(String(it.rawName||it.name||'')).replace(/\s+/g,' ').trim();
+  if(!raw)return it;
+
+  // 幽靈三枚組：目前已知內容為白色幽靈 + 黑色幽靈 + 幽靈貓，各 1 個。
+  if(/幽靈/i.test(raw)&&/(?:組合\s*三枚|三枚\s*(?:組|一組)|3\s*枚)/i.test(raw)){
+    const defs=[
+      ['白色幽靈布貼',['白色幽靈布貼','白幽靈布貼']],
+      ['黑色幽靈布貼',['黑色幽靈布貼','黑幽靈布貼']],
+      ['幽靈貓布貼',['幽靈貓布貼','幽灵貓布貼','幽靈猫布貼']]
+    ];
+    it.bundleItems=defs.map(([fallback,names])=>{
+      const product=smartImportFindExistingProductByName(names);
+      return {name:product?product.name:fallback,qty:1,productId:product?product.id:undefined,img:product&&product.img?product.img:''};
+    });
+    it._possibleBundle=true;
+    it._autoBundleNotice='已自動細分：白色幽靈、黑色幽靈、幽靈貓，各 1 個；你可以先確認再匯入';
+    it._nameSuggestionNote='已辨識為幽靈三枚組並自動細分，可直接修改';
+    return it;
+  }
+
+  // 英文字母 26 枚套組：把進貨套組拆成 A–Z 款式，但仍連到同一個字母主商品。
+  if(/(?:英文字母|字母|alphabet|letter)/i.test(raw)&&/(?:26\s*(?:枚|個)|A\s*[-–—~至到]\s*Z|26\s*(?:枚)?\s*(?:一套|組合))/i.test(raw)){
+    const products=(DB.products||[]).filter(x=>Array.isArray(x.variants)&&x.variants.length>=26&&/(?:英文字母|字母)/i.test(String(x.name||'')));
+    let product=products.find(x=>String(x.name||'')===String(it.name||''));
+    if(!product){
+      const styleTokens=[];
+      if(/黑底白字/i.test(raw))styleTokens.push('黑底白字');
+      if(/白底黑字/i.test(raw))styleTokens.push('白底黑字');
+      if(/1\s*(?:cm|厘米|公分)/i.test(raw))styleTokens.push('1cm');
+      if(styleTokens.length)product=products.find(x=>styleTokens.every(t=>String(x.name||'').includes(t)));
+    }
+    if(!product)product=products[0];
+    if(product){
+      const vars=(product.variants||[]).filter(v=>/^[A-Z]$/i.test(String(v.label||''))).sort((a,b)=>String(a.label).localeCompare(String(b.label)));
+      if(vars.length>=26){
+        it.bundleItems=vars.slice(0,26).map(v=>({
+          name:`${product.name} (${String(v.label).toUpperCase()})`,
+          qty:1,
+          productId:product.id,
+          variantId:v.id,
+          variantLabel:String(v.label).toUpperCase(),
+          img:product.img||''
+        }));
+        it._possibleBundle=true;
+        it._autoBundleNotice='已自動細分：A–Z 各 1 個；原本買幾套，匯入後每個字母就增加幾個';
+        it._nameSuggestionNote='已辨識為 A–Z 26枚套組並自動細分，可直接修改';
+      }
+    }
+  }
+  return it;
+}
+function smartImportApplyAutoSplit(items){
+  return (items||[]).map(it=>smartImportAutoSplitKnownSet(it));
+}
 function cleanSmartImportItems(items){
-  return (items||[]).filter(it=>{
+  const cleaned=(items||[]).filter(it=>{
     const name=String(it&&it.name||'').trim();
     if(!name||isSmartImportNonProductText(name))return false;
     // 避免只剩符號／金額字樣被當商品
     if(/^(?:[-–—\s]|USD|RMB|CNY|¥|￥|\d+[.,]?\d*)+$/i.test(name))return false;
     return true;
   });
+  const suggested=smartImportApplyNameSuggestions(cleaned);
+  return smartImportApplyAutoSplit(suggested);
 }
 // 專門處理「淘寶/電商訂單詳情」這種表格：左邊商品資訊常常分成好幾行（標題／款式／備註），
 // 右邊對應的現價／原價／數量也各自分成好幾行、對齊在同樣的高度。
@@ -9663,6 +9833,7 @@ function smartImportBundlePanelHtml(i,it){
   return `<div class="si-bundle-panel">
     <div style="font-size:11px;font-weight:800;color:var(--brown)">🔗「${smartImportEsc(it.name||'這個商品')}」裡面包含：</div>
     <div style="font-size:9px;color:var(--text3);margin-top:2px">匯入採購單時會自動拆成以下商品，並放在同一個組合框內；原本總價會平均分配，不會重複計算。</div>
+    ${it._autoBundleNotice?`<div style="font-size:9px;color:#3d8a58;font-weight:800;margin-top:4px">✨ ${smartImportEsc(it._autoBundleNotice)}</div>`:''}
     ${rows||'<div style="font-size:10px;color:var(--text3);padding:8px 0 2px">還沒有組合商品，按下面新增。</div>'}
     <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="smartImportAddBundlePart(${i})">＋ 新增組合商品</button>
   </div>`;
@@ -9733,7 +9904,9 @@ function smartImportUpdateBundlePart(i,j,field,value){
 function smartImportBundleLinkedTag(part){
   if(!part||!part.productId)return '';
   const p=DB.products.find(x=>x.id===part.productId);
-  return p?`🔗 已連結:${smartImportEsc(p.name)}`:'';
+  if(!p)return '';
+  const variant=part.variantLabel?` · ${smartImportEsc(part.variantLabel)}`:'';
+  return `🔗 已連結:${smartImportEsc(p.name)}${variant}`;
 }
 function smartImportBundleShowSuggestions(input,i,j){
   const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
@@ -9745,7 +9918,11 @@ function smartImportBundleShowSuggestions(input,i,j){
   const tag=wrap.querySelector('.oi-linked-tag');
   if(part.productId){
     const linked=DB.products.find(x=>x.id===part.productId);
-    if(!linked||linked.name!==q){delete part.productId;if(tag)tag.innerHTML='';}
+    const expectedName=part.variantLabel&&linked?`${linked.name} (${part.variantLabel})`:linked&&linked.name;
+    if(!linked||(q!==linked.name&&q!==expectedName)){
+      delete part.productId;delete part.variantId;delete part.variantLabel;
+      if(tag)tag.innerHTML='';
+    }
   }
   // 沒有輸入關鍵字時完全不顯示清單，避免一點欄位就把全部商品擠到右側。
   if(!q)return;
@@ -9772,7 +9949,7 @@ function smartImportSelectBundleSuggestion(input,i,j,productId){
   const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
   const p=DB.products.find(x=>x.id===productId);
   if(!part||!p)return;
-  part.name=p.name;part.productId=p.id;input.value=p.name;
+  part.name=p.name;part.productId=p.id;delete part.variantId;delete part.variantLabel;input.value=p.name;
   if(!part.img&&p.img){
     part.img=p.img;
     const key=`${i}-${j}`;
@@ -9812,6 +9989,8 @@ function expandSmartImportBundleItems(items){
         cost:sharedUnitCost,
         qty:(Math.max(1,parseInt(it.qty)||1))*perSetQty,
         productId:matched?matched.id:undefined,
+        variantId:part.variantId||undefined,
+        variantLabel:part.variantLabel||undefined,
         groupId:gid,
         groupLabel:it.name||parts.map(x=>x.name).join('、'),
         groupImg:it.img||'',
@@ -9822,6 +10001,14 @@ function expandSmartImportBundleItems(items){
   return expanded;
 }
 function renderSmartImportReview(){
+  // 先取建議名稱，再把能確定內容的套組自動細分；都只先顯示在確認畫面，可自行修改。
+  (smartImportItems||[]).forEach(it=>{
+    smartImportBuildSuggestedName(it);
+    smartImportAutoSplitKnownSet(it);
+    if(it&&it._autoBundleNotice&&Array.isArray(it.bundleItems)&&it.bundleItems.length){
+      smartImportBundleExpanded.add(smartImportBundleKey(it));
+    }
+  });
   document.getElementById('smart-import-step-upload').classList.add('hidden');
   document.getElementById('smart-import-step-review').classList.remove('hidden');
   // 建立商品名稱自動完成清單，方便把匯入的品名直接對應到現有商品
@@ -9857,8 +10044,9 @@ function renderSmartImportReview(){
       ${smartImportPhotoSlotHtml(i,imgSrc)}
       <div class="oi-suggest-wrap smart-import-review-name">
         <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
-        ${it.rawName?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:5px;line-height:1.35">${it.rawName}</div>`:''}
-        <div class="oi-linked-tag">${matchedP?`🔗 已連結:${matchedP.name}`:''}</div>
+        ${it._nameSuggestionNote?`<div style="font-size:9px;color:${it._possibleBundle?'var(--brown)':'#3d8a58'};margin-top:3px;padding-left:5px;line-height:1.35;font-weight:800">✨ ${smartImportEsc(it._nameSuggestionNote)}${it._suggestedVariant?` · 款式：${smartImportEsc(it._suggestedVariant)}`:''}</div>`:''}
+        ${it.rawName?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:5px;line-height:1.35">原始：${smartImportEsc(it.rawName)}</div>`:''}
+        <div class="oi-linked-tag">${matchedP?`🔗 已連結:${smartImportEsc(matchedP.name)}`:''}</div>
       </div>
       <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
       <div class="smart-import-qty-cell" style="position:relative;display:inline-block"><input type="number" id="si-qty-${i}" class="form-input sibp-qty-input" value="${it.qty}" min="1" style="font-size:12px;text-align:center;width:60px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportQty(${i},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportQty(${i},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div>
@@ -10055,7 +10243,7 @@ function confirmSmartImport(){
   openAddOrder();
   document.getElementById('order-items-list').innerHTML='';
   valid.forEach(it=>{
-    addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost,it.img);
+    addOrderItemFilled(it.name,it.cost,it.qty,false,it.productId,it.originalCost,it.img,it.variantId,it.variantLabel);
   });
   regroupOrderItemRowsFromItems(valid);
   enableOrderBackToSmartImport();
@@ -10190,13 +10378,15 @@ function orderItemQtyControlHtml(id,qty,readonly){
   const disabled=readonly?' disabled':'';
   return `<div class="order-form-qty-wrap"><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${ro}><div class="order-form-qty-step"><button type="button" onclick="stepOrderItemQty('${id}',1)"${disabled}>▲</button><button type="button" onclick="stepOrderItemQty('${id}',-1)"${disabled}>▼</button></div></div>`;
 }
-function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img){
+function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img,variantId,variantLabel){
   const id=uid();
   const list=document.getElementById('order-items-list');
   const div=document.createElement('div');
   div.className='order-item-row order-form-review-row';
   div.id='oi-'+id;
   if(img)div.dataset.img=img;
+  if(variantId)div.dataset.variantId=variantId;
+  if(variantLabel)div.dataset.variantLabel=variantLabel;
   if(readonly)div.dataset.original='1'; // 標記「這一列本來就是這張單既有的項目」，儲存時用這個判斷是否為新增，不要用名稱比對（同名也可能是想再新增一批）
   const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:24px;text-align:left"':'style="font-size:12px;padding-left:24px;text-align:left"';
   const linkedIdAttr=(!readonly&&productId)?` data-linked-id="${productId}"`:'';
@@ -10210,7 +10400,7 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img){
     const p=DB.products.find(x=>x.id===productId);
     if(p){
       const tag=div.querySelector('.oi-linked-tag');
-      if(tag)tag.innerHTML=`🔗 已連結:${p.name}`;
+      if(tag)tag.innerHTML=`🔗 已連結:${p.name}${variantLabel?' · '+variantLabel:''}`;
     }
   }
 }
@@ -10557,7 +10747,7 @@ function openEditOrder(id){
   document.getElementById('o-note').value=o.note||'';
   document.getElementById('order-items-list').innerHTML='';
   resetOrderGroupSelectMode();
-  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId,i.originalCost,i.img));
+  (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId,i.originalCost,i.img,i.variantId,i.variantLabel));
   regroupOrderItemRowsFromItems(o.items);
   if(!o.items||!o.items.length)addOrderItem();
   updateOrderTotalPreview();
@@ -10607,6 +10797,16 @@ function applyOrderItemsWAC(items,fn){
       ? DB.products.find(x=>x.id===item.productId)
       : DB.products.find(x=>x.name===item.name);
     if(!p)return;
+    if(item.variantId&&Array.isArray(p.variants)){
+      const v=p.variants.find(x=>x.id===item.variantId);
+      fn(p,item.cost,item.qty);
+      if(v){
+        if(fn===reverseWAC)v.stock=Math.max(0,(v.stock||0)-item.qty);
+        else v.stock=(v.stock||0)+item.qty;
+        // p.stock 已由 WAC 依總庫存更新；正常情況下會等於 variants 加總。
+      }
+      return;
+    }
     fn(p,item.cost,item.qty);
   });
 }
@@ -11066,6 +11266,8 @@ function collectOrderFormItemsForDraft(){
     if(name){
       const linkedId=nameInput.dataset&&nameInput.dataset.linkedId;
       const item={name,cost,qty,productId:linkedId||''};
+      if(row.dataset.variantId)item.variantId=row.dataset.variantId;
+      if(row.dataset.variantLabel)item.variantLabel=row.dataset.variantLabel;
       const origVal=parseFloat(row.querySelector('.oi-origcost-input')?.value);
       if(origVal>0)item.originalCost=origVal;
       if(row.dataset.img)item.img=row.dataset.img;
@@ -11187,6 +11389,8 @@ function saveOrder(event){
       const linkedId=nameInput.dataset&&nameInput.dataset.linkedId;
       const p=linkedId?DB.products.find(x=>x.id===linkedId):DB.products.find(x=>x.name===name);
       const item={id:uid(),name,cost,qty,productId:p?p.id:''};
+      if(row.dataset.variantId)item.variantId=row.dataset.variantId;
+      if(row.dataset.variantLabel)item.variantLabel=row.dataset.variantLabel;
       const origVal=parseFloat(row.querySelector('.oi-origcost-input')?.value);
       if(origVal>0)item.originalCost=origVal;
       if(row.dataset.img)item.img=row.dataset.img;
