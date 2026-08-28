@@ -6,6 +6,7 @@
 <title>🧸 布貼庫存系統</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+
 :root {
   --cream:#faf7f2;--cream2:#f3ede3;--cream3:#ebe3d5;--cream4:#ddd3c0;
   --brown:#8b6f47;--brown-light:#b89a72;
@@ -32,18 +33,18 @@ html,body,*{scrollbar-width:thin;scrollbar-color:#d8cec4 #f4f0ea;}
 *::-webkit-scrollbar-thumb:hover{background-color:#c7b9ad!important;}
 *::-webkit-scrollbar-corner{background-color:#f4f0ea!important;}
 
-.sticky-sidebar,.modal,.table-wrap,.settings-panel,.cart-panel,[class*="scroll"],[style*="overflow-y:auto"],[style*="overflow-y: auto"]{scrollbar-width:thin;scrollbar-color:#d8cec4 #f4f0ea;}
-.sticky-sidebar::-webkit-scrollbar,.modal::-webkit-scrollbar,.table-wrap::-webkit-scrollbar,.settings-panel::-webkit-scrollbar,.cart-panel::-webkit-scrollbar{width:10px;height:10px;}
-.sticky-sidebar::-webkit-scrollbar-track,.modal::-webkit-scrollbar-track,.table-wrap::-webkit-scrollbar-track,.settings-panel::-webkit-scrollbar-track,.cart-panel::-webkit-scrollbar-track{background:#f4f0ea!important;border-radius:999px;}
-.sticky-sidebar::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb,.table-wrap::-webkit-scrollbar-thumb,.settings-panel::-webkit-scrollbar-thumb,.cart-panel::-webkit-scrollbar-thumb{background:#d8cec4!important;border:2px solid #f4f0ea!important;border-radius:999px;}
-.sticky-sidebar::-webkit-scrollbar-thumb:hover,.modal::-webkit-scrollbar-thumb:hover,.table-wrap::-webkit-scrollbar-thumb:hover,.settings-panel::-webkit-scrollbar-thumb:hover,.cart-panel::-webkit-scrollbar-thumb:hover{background:#c7b9ad!important;}
+.sticky-sidebar,.modal,.cart-panel,[class*="scroll"],[style*="overflow-y:auto"],[style*="overflow-y: auto"]{scrollbar-width:thin;scrollbar-color:#d8cec4 #f4f0ea;}
+.sticky-sidebar::-webkit-scrollbar,.modal::-webkit-scrollbar,.cart-panel::-webkit-scrollbar{width:10px;height:10px;}
+.sticky-sidebar::-webkit-scrollbar-track,.modal::-webkit-scrollbar-track,.cart-panel::-webkit-scrollbar-track{background:#f4f0ea!important;border-radius:999px;}
+.sticky-sidebar::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb,.cart-panel::-webkit-scrollbar-thumb{background:#d8cec4!important;border:2px solid #f4f0ea!important;border-radius:999px;}
+.sticky-sidebar::-webkit-scrollbar-thumb:hover,.modal::-webkit-scrollbar-thumb:hover,.cart-panel::-webkit-scrollbar-thumb:hover{background:#c7b9ad!important;}
 body{font-family:'Noto Sans TC','Nunito',sans-serif;background-color:var(--cream);color:var(--text);min-height:100vh;background-image:var(--body-gradient,none),radial-gradient(circle at 20% 20%,rgba(244,167,185,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(168,213,186,0.08) 0%,transparent 50%);background-attachment:fixed;}
 
 button,input,select,textarea{font-family:inherit;}
 
 .stock-advanced-toggle{display:none;}
 
-body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .cart-items-box,body.theme-glass .checkout-box,body.theme-glass .settings-panel,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
+body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .cart-items-box,body.theme-glass .checkout-box,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:2px solid var(--cream3);display:flex;align-items:center;padding:0 24px;height:60px;gap:4px;}
 .nav-brand{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--brown);margin-right:20px;white-space:nowrap;}
 .nav-link{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
@@ -96,8 +97,6 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .filter-bar{display:flex;gap:8px;margin-bottom:3px;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;}
 #subcat-filters,#sale-subcat-filters{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;align-items:flex-start;margin-top:2px;}
 #subcat-filters button,#sale-subcat-filters button{flex:0 0 calc(12.5% - 7px);box-sizing:border-box;min-width:0;white-space:nowrap;}
-body.theme-dark #subcat-filters,body.theme-dark #sale-subcat-filters{background:var(--surface);border:1.5px solid var(--cream3);box-shadow:none;}
-body.theme-dark #subcat-filters button,body.theme-dark #sale-subcat-filters button{box-shadow:none;}
 .ui-edit-mode-active .ui-editable{outline:1.5px dashed transparent;border-radius:4px;padding:1px 3px;transition:outline-color .15s;}
 .ui-edit-mode-active .ui-editable:hover{outline-color:var(--brown-light);cursor:pointer;background:rgba(139,111,71,0.08);}
 .search-wrap{position:relative;}
@@ -121,11 +120,10 @@ body.theme-dark #subcat-filters button,body.theme-dark #sale-subcat-filters butt
 .hint-info-btn svg{width:12px;height:12px;display:block;}
 .hint-info-btn:hover{opacity:.88;}
 .hidden{display:none !important;}
-.modal-overlay.hidden{display:none;}
 .modal{background:var(--cream);border-radius:20px;border:2px solid var(--cream3);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
 .modal-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;}
 .modal-title{font-size:16px;font-weight:800;color:var(--text);}
-.modal-close{width:32px;height:32px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--cream3);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.modal-close{width:32px;height:32px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
 .modal-close:hover{background:var(--cream3);}
 .modal-body{padding:20px 24px 24px;}
 .form-group{margin-bottom:14px;}
@@ -218,7 +216,6 @@ body.theme-dark #subcat-filters button,body.theme-dark #sale-subcat-filters butt
 .cart-qty-step button:disabled{opacity:.32;cursor:not-allowed;}
 .cart-remove-btn{width:34px;height:34px;box-sizing:border-box;border-radius:10px;background:var(--surface);border:1.5px solid #fca5a5;color:var(--red);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;padding:0;}
 .cart-remove-btn:hover{background:var(--red-light);}
-.qty-num{font-size:13px;font-weight:700;min-width:22px;text-align:center;}
 .stock-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:6px;}
 .stock-row.ok-row{background:var(--cream2);border-left:4px solid var(--cream3);}
 .stock-icon{font-size:18px;width:24px;text-align:center;}
@@ -260,7 +257,9 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-item-group .oi-group-check{display:none!important;}
 .si-bundle-toggle{width:32px;height:32px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;flex:0 0 32px;cursor:pointer;transition:all .15s;padding:0}
 .si-bundle-toggle:hover,.si-bundle-toggle.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
-.smart-import-review-row{grid-template-columns:32px 32px minmax(0,1fr) 76px 60px 32px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
+.smart-import-review-row{grid-template-columns:32px 26px 32px minmax(0,1fr) 76px 60px 32px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
+.smart-import-item-no{height:32px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;box-sizing:border-box}
+.si-bundle-item-no{height:38px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:9px;font-weight:900;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;box-sizing:border-box;white-space:nowrap}
 .smart-import-review-row .form-input,.si-bundle-component .form-input{height:32px;box-sizing:border-box}
 .smart-import-review-row>[id^="si-img-slot-"]{width:32px!important;height:32px!important;margin-top:0;border-radius:9px!important}
 .si-bundle-component>[id^="sibp-img-slot-"]{height:38px!important;margin-top:0;border-radius:9px!important}
@@ -309,25 +308,26 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 input.oi-qty-input::-webkit-inner-spin-button,input.oi-qty-input::-webkit-outer-spin-button,input.oi-cost-input::-webkit-inner-spin-button,input.oi-cost-input::-webkit-outer-spin-button,input.oi-origcost-input::-webkit-inner-spin-button,input.oi-origcost-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:textfield;appearance:textfield}
 .order-form-review-row .lock-icon{width:30px;height:30px!important;margin-top:2px;border-radius:9px;box-sizing:border-box}
-.si-bundle-panel{grid-column:1/-1;margin:0 0 16px 80px;padding:12px;border:1.5px dashed var(--cream4);border-radius:12px;background:var(--cream1);min-width:0}
-.si-bundle-component{display:grid;grid-template-columns:44px minmax(0,1fr) 90px 44px;gap:10px;align-items:start;margin-top:9px}
+.si-bundle-panel{grid-column:1/-1;margin:0 0 16px 114px;padding:12px;border:1.5px dashed var(--cream4);border-radius:12px;background:var(--cream1);min-width:0}
+.si-bundle-component{display:grid;grid-template-columns:36px 44px minmax(0,1fr) 90px 44px;gap:10px;align-items:start;margin-top:9px}
 .si-bundle-search-wrap{position:relative;min-width:0}
 .si-bundle-search-wrap>.oi-linked-tag{min-height:16px;margin-top:3px}
 .si-bundle-search-wrap .oi-suggest-list{top:calc(100% + 2px);left:0;right:0;border-color:var(--cream4);border-radius:12px;background:var(--surface);box-shadow:none;z-index:160}
 .si-bundle-search-wrap .oi-suggest-item{padding:8px 10px;border-bottom:1px solid var(--cream2)}
 .si-bundle-search-wrap .oi-suggest-item:last-child{border-bottom:none}
 @media(max-width:700px){
-  .smart-import-review-row{grid-template-columns:32px 32px minmax(0,1fr) 32px!important;gap:8px!important}
+  .smart-import-review-row{grid-template-columns:32px 26px 32px minmax(0,1fr) 32px!important}
   .smart-import-review-row>.si-bundle-toggle{grid-column:1;grid-row:1}
-  .smart-import-review-row>[id^="si-img-slot-"]{grid-column:2;grid-row:1}
-  .smart-import-review-name{grid-column:3;grid-row:1}
-  .smart-import-price-cell{grid-column:1/3;grid-row:2}
-  .smart-import-qty-cell{grid-column:3;grid-row:2}
-  .smart-import-review-row>.remove-btn{grid-column:4;grid-row:1}
+  .smart-import-review-row>.smart-import-item-no{grid-column:2;grid-row:1}
+  .smart-import-review-row>[id^="si-img-slot-"]{grid-column:3;grid-row:1}
+  .smart-import-review-name{grid-column:4;grid-row:1}
+  .smart-import-price-cell{grid-column:1/4;grid-row:2}
+  .smart-import-qty-cell{grid-column:4;grid-row:2}
+  .smart-import-review-row>.remove-btn{grid-column:5;grid-row:1}
   .si-bundle-panel{margin-left:0}
-  .si-bundle-component{grid-template-columns:44px minmax(0,1fr) 84px 44px;gap:8px}
+  .si-bundle-component{grid-template-columns:32px 44px minmax(0,1fr) 84px 44px;gap:8px}
   .order-items-header{display:none}
-  .order-form-review-row{grid-template-columns:40px 40px minmax(0,1fr) 36px;gap:8px}
+  .order-form-review-row{grid-template-columns:40px 40px minmax(0,1fr) 36px}
   .order-form-review-row>.order-row-group-icon{grid-column:1;grid-row:1}
   .order-form-review-row>[id^="oi-img-slot-"]{grid-column:2;grid-row:1}
   .order-form-review-name{grid-column:3;grid-row:1}
@@ -345,7 +345,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .oi-suggest-empty{padding:8px 10px;font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .oi-linked-tag{font-size:10px;color:var(--brown);font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px;}
 .oi-linked-tag.oi-new{color:var(--text3);font-weight:600;}
-.remove-btn{width:34px;height:38px;border-radius:8px;background:var(--red-light);border:1.5px solid #fca5a5;color:var(--red);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.remove-btn{width:34px;height:38px;border-radius:8px;background:var(--red-light);border:1.5px solid #fca5a5;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .modal-close,.remove-btn{position:relative;font-size:0!important;line-height:0;padding:0!important}
 .modal-close::before,.modal-close::after,.remove-btn::before,.remove-btn::after{content:'';position:absolute;left:50%;top:50%;width:11px;height:1.5px;background:currentColor;border-radius:999px;pointer-events:none;transform-origin:center}
 .modal-close::before,.remove-btn::before{transform:translate(-50%,-50%) rotate(45deg)}
@@ -468,26 +468,21 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #price-compare-layout{grid-template-columns:1fr!important}
   #price-compare-picker{max-height:240px!important}
 
-
   .stock-advanced-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:9px 2px;font-size:12px;font-weight:700;color:var(--text2);border-top:1.5px solid var(--cream2);margin-top:8px;margin-bottom:6px;}
   .stock-advanced-section{display:none;}
   .stock-advanced-section.expanded{display:block;}
-
 
   html,body{overflow-x:hidden;}
 
   .modal,.cart-panel,#auto-backup-list,#smart-import-list,#order-trash-body{overflow-x:hidden;}
 
-
   button,.btn{-webkit-appearance:none;appearance:none;}
 
   .nav-btn-faux-disabled{pointer-events:none;}
 
-
   .products-layout-wrap > *,.sale-cat-layout > *,.cart-layout > *{min-width:0;}
   .products-left-col,.products-right-col{min-width:0;max-width:100%;}
   .product-card{min-width:0;}
-
 
   nav{height:54px;padding:0 10px;gap:2px;overflow-x:auto;overflow-y:hidden;
       border-bottom-width:1px;
@@ -497,7 +492,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .nav-brand img{height:14px;}
   .nav-link{padding:6px 11px;font-size:12px;flex-shrink:0;}
   nav > div[style*="margin-left:auto"]{margin-left:4px!important;flex-shrink:0;}
-
 
   .page{padding:64px 10px 80px;}
 
@@ -521,7 +515,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #batch-btn{font-size:0!important;}
   #batch-btn::before{content:'✏️';font-size:15px;line-height:1;}
 
-
   #page-sales .section-header .view-btn{
       border-radius:999px!important;
       width:36px!important;min-width:36px!important;max-width:36px!important;
@@ -530,7 +523,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       padding:0!important;
       display:inline-flex!important;align-items:center!important;justify-content:center!important;
   }
-
 
   #page-products .section-header .btn-primary{
       font-size:0!important;position:relative;letter-spacing:0;}
@@ -548,13 +540,11 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .section-title{width:100%;font-size:14px;}
   .divider{margin:12px 0;}
 
-
   .search-wrap{flex:1 1 100%;}
   .search-input{width:100%;height:36px;border-radius:10px;font-weight:400;}
   .search-input::placeholder{font-weight:400;}
   .btn{padding:8px 14px;font-size:12px;}
   .btn-sm{padding:6px 12px;font-size:11px;}
-
 
   .stats-bar{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
   .stat-card{padding:14px;}
@@ -563,7 +553,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .form-row,.form-row-3{grid-template-columns:1fr;gap:12px;}
   .order-card{padding:12px 14px;gap:10px;}
   .alert-card{padding:10px 12px;font-size:12px;}
-
 
   .products-layout-wrap{grid-template-columns:104px 1fr!important;gap:10px!important;}
   .sale-cat-layout{grid-template-columns:96px 1fr!important;gap:10px!important;}
@@ -578,7 +567,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
       white-space:normal;line-height:1.25;border-left-width:3px;}
   .cat-sidebar-item > span[style*="margin-left:auto"]{
       font-size:10px!important;font-weight:700;flex-shrink:0;}
-
 
   .sticky-bar{position:static;top:auto;z-index:auto;
       background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
@@ -607,7 +595,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .product-img img{padding:0;border-radius:inherit;background:transparent;object-fit:cover;}
   .product-img .no-img{font-size:20px;opacity:.45;}
   .product-info{padding:8px 9px 9px;}
-  .pc-supplier,.pc-catcode{display:none;}
+  .pc-catcode{display:none;}
   .product-name{font-size:12px;font-weight:700;line-height:1.35;
       margin-bottom:2px!important;overflow-wrap:anywhere;}
   .product-sku{font-size:9px;letter-spacing:-.2px;margin-bottom:4px;overflow-wrap:anywhere;}
@@ -620,7 +608,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #product-grid.view-list .product-info,#sale-product-grid.view-list .product-info{gap:6px;padding:7px 10px;}
   #product-grid.view-list .product-name,#sale-product-grid.view-list .product-name{flex:1 1 100%;min-width:0;font-size:12px;}
   #product-grid.view-list .product-meta,#sale-product-grid.view-list .product-meta{margin-left:0;}
-
 
   .today-bar{grid-template-columns:1fr;gap:8px;margin-bottom:14px;}
   .today-stat{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;text-align:left;}
@@ -694,7 +681,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   #page-sales{padding-bottom:80px;}
   .cart-thumb{width:38px;height:38px;}
 
-
   .rate-bar{flex-wrap:wrap;gap:8px;padding:10px 12px;}
   .sku-table{display:block;overflow-x:auto;white-space:nowrap;
       -webkit-overflow-scrolling:touch;}
@@ -713,7 +699,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .order-accordion-head{padding:10px 12px;gap:8px;}
   .order-accordion-body{padding:0 12px 12px;}
 
-
   .modal-overlay{padding:8px;align-items:flex-end;}
   .modal{max-width:100%!important;max-height:92vh;border-radius:18px;}
   .modal-header{padding:16px 16px 0;}
@@ -724,10 +709,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .settings-btn-row .btn{flex:1 1 auto;justify-content:center;}
   .variant-btn{min-width:44px;padding:9px 10px;}
 
-
   #report-summary-cards,#report-alltime-stats{grid-template-columns:1fr 1fr!important;gap:10px!important;}
   #customer-list{grid-template-columns:1fr!important;}
-
 
   .batch-toolbar{left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));transform:none;
       justify-content:center;flex-wrap:wrap;padding:8px 12px;gap:8px;}
@@ -736,23 +719,19 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .empty{padding:40px 16px;}
   .empty-icon{font-size:38px;}
 
-
   .stat-label,.section-title,.form-label,.settings-row-label,.modal-title,
   .order-accordion-head,.today-stat-label{overflow-wrap:anywhere;}
 .section-header .view-btn{color:var(--text2);}
   .section-header .view-btn.active{color:#fff;}
 
-
   .cart-qty-spinner{width:62px;height:26px;}
   .cart-remove-btn{width:36px;height:36px;font-size:16px;}
   .adj-btn{width:32px;height:32px;font-size:16px;}
-  .modal-close{width:36px;height:36px;font-size:17px;}
+  .modal-close{width:36px;height:36px;}
 .discount-btn{padding:7px 12px;font-size:12px;}
   .view-btn{width:36px;height:36px;}
 
-
   #subcat-filters:empty,#sale-subcat-filters:empty{display:none!important;padding:0;}
-
 
   .form-input,.form-select,.search-input{font-size:16px!important;}
 
@@ -764,7 +743,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .search-input{font-size:14px!important;}
 }
 
-
 @media (max-width:480px){
   #product-grid.view-grid,#sale-product-grid.view-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
   #product-grid.view-large,#sale-product-grid.view-large{grid-template-columns:repeat(4,1fr);gap:5px;}
@@ -773,7 +751,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .product-sku{font-size:9.5px;}
   .stat-value{font-size:19px;}
 }
-
 
 @media (max-width:768px) and (hover:none){
   .product-card:hover{transform:none;box-shadow:0 1px 5px rgba(61,47,31,.05);
@@ -784,7 +761,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .cat-sidebar-item.active:hover{background:var(--cream2);color:var(--brown);}
 .view-btn:hover{border-color:var(--cream3);}
 }
-
 
 .drag-old-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;opacity:1;background:transparent;left:0;top:0;will-change:transform;transition:none;overflow:visible;}
 .drag-old-ghost .drag-old-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--cream3);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.25);position:relative;display:flex;flex-direction:column;width:100%;height:100%;box-sizing:border-box;}
@@ -800,7 +776,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .drag-old-ghost .drag-old-card .pc-quick-trash,.drag-old-ghost .drag-old-card .pc-flow{display:none!important;}
 .drag-old-ghost .stock-more-number,.drag-old-ghost .more-cost{display:none!important;}
 .drag-old-ghost .more-price-stack{display:contents!important;}
-
 
 #print-labels-container{display:none;}
 
@@ -824,7 +799,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 @media(max-width:700px){
   #sku-type-subcats-wrap > div[style*="grid-template-columns:repeat(2"]{grid-template-columns:1fr!important}
 }
-
 
 .cart-price-input,
 .oi-cost-input,
@@ -869,7 +843,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   margin:0;
 }
 
-
 .ribbon-size-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -906,7 +879,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .ribbon-size-grid.compact{grid-template-columns:1fr;}
 }
 
-
 .product-size-row{
   width:100%;
   margin-bottom:14px;
@@ -936,7 +908,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     grid-template-columns:1fr!important;
   }
 }
-
 
 #product-grid:not(.view-list) .product-card .product-info{
   display:flex!important;
@@ -1051,8 +1022,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid:not(.view-list) .product-card .price-tag{
   font-size:12px!important;
 }
-#product-grid .pc-supplier{display:none!important;}
-
 
 #stock-rule-left-subcats .stock-rule-subcat-row{
   position:relative;
@@ -1095,7 +1064,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   opacity:.9;
 }
 
-
 .import-help-info{
   width:18px!important;height:18px!important;min-width:18px!important;padding:0!important;
   margin-left:5px!important;border:1.5px solid var(--cream3)!important;border-radius:50%!important;
@@ -1109,7 +1077,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   box-shadow:0 10px 28px rgba(61,47,31,.16);font-size:11px;line-height:1.65;
 }
 .import-help-popover.hidden{display:none!important;}
-
 
 #modal-smart-import .modal{
   display:flex!important;flex-direction:column!important;max-height:calc(100vh - 40px)!important;overflow:hidden!important;
@@ -1126,24 +1093,24 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;
   padding-right:4px;overscroll-behavior:contain;
 }
+.smart-import-check-summary{
+  flex:0 0 auto;margin:0 0 9px;padding:8px 10px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);font-size:10.5px;line-height:1.55;color:var(--text2);
+}
+.smart-import-check-summary.warn{border-color:#e8c889;background:var(--yellow-light);color:#7d6220;}
+.smart-import-check-summary.ok{border-color:var(--mint);background:var(--mint-light);color:#3d6b4f;}
+.smart-import-page-badge{display:inline-flex;align-items:center;gap:3px;margin-top:3px;padding:1px 6px;border-radius:999px;background:var(--cream2);border:1px solid var(--cream3);font-size:8.5px;font-weight:800;color:var(--text3);white-space:nowrap;}
+.smart-import-row-needs-check{border-radius:11px;background:rgba(245,216,118,.11);}
 #modal-smart-import .smart-import-review-footer{
   flex:0 0 auto!important;position:relative;z-index:4;margin:12px 0 0!important;
   padding:12px 0 0!important;border-top:1.5px solid var(--cream3)!important;
   background:var(--cream)!important;box-shadow:none!important;
 }
-@media(max-width:768px){
-  #modal-smart-import .modal{max-height:calc(100vh - 20px)!important;}
-  #modal-smart-import .smart-import-review-footer{
-    margin:10px 0 0!important;padding:10px 0 0!important;
-  }
-}
-
-
 .cart-price-input{width:72px!important;min-width:72px!important;}
 @media(max-width:768px){
+  #modal-smart-import .modal{max-height:calc(100vh - 20px)!important;}
+  #modal-smart-import .smart-import-review-footer{margin:10px 0 0!important;padding:10px 0 0!important;}
   .cart-price-input{width:78px!important;min-width:78px!important;padding-left:8px!important;padding-right:8px!important;}
 }
-
 
 .stock-class-size-wrap{
   display:grid;
@@ -1175,7 +1142,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .stock-class-size-wrap.is-rb .ribbon-size-grid.compact{grid-template-columns:1fr!important;}
 }
 
-
 .manual-alias-add-row .manual-alias-input{
   flex:1 1 auto;
   min-width:0;
@@ -1190,7 +1156,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     align-items:stretch;
   }
 }
-
 
 #stock-rule-left-cats .stock-rule-detail-token{
   position:relative;
@@ -1216,12 +1181,11 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   background:var(--brown);
 }
 
-
 .stock-bottom-actions{
   display:flex!important;
   align-items:center!important;
   justify-content:flex-end!important;
-  gap:8px!important;
+  gap:6px!important;
 }
 .stock-bottom-actions .stock-action-btn{
   height:48px!important;
@@ -1235,8 +1199,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   box-sizing:border-box!important;
 }
 .stock-bottom-actions .stock-action-undo{
-  width:88px!important;
-  min-width:88px!important;
+  width:82px!important;
+  min-width:82px!important;
   padding-left:12px!important;
   padding-right:12px!important;
   background:var(--surface)!important;
@@ -1246,16 +1210,16 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   font-weight:600!important;
 }
 .stock-bottom-actions .stock-action-done{
-  width:100px!important;
-  min-width:100px!important;
+  width:92px!important;
+  min-width:92px!important;
   background:var(--surface)!important;
   color:var(--text2)!important;
   border:1.5px solid var(--cream3)!important;
   box-shadow:none!important;
 }
 .stock-bottom-actions .stock-action-save{
-  width:112px!important;
-  min-width:112px!important;
+  width:102px!important;
+  min-width:102px!important;
   background:var(--brown)!important;
   color:#fff!important;
   border:1.5px solid var(--brown)!important;
@@ -1263,14 +1227,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 .stock-bottom-actions .stock-action-save:hover{
   background:#7a6040!important;
-}
-
-  .stock-bottom-actions{
-    gap:6px!important;
-  }
-  .stock-bottom-actions .stock-action-undo{width:82px!important;min-width:82px!important;}
-  .stock-bottom-actions .stock-action-done{width:92px!important;min-width:92px!important;}
-  .stock-bottom-actions .stock-action-save{width:102px!important;min-width:102px!important;}
 }
 
 
@@ -1317,38 +1273,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   box-sizing:border-box!important;
 }
 
-.stock-detail-inline-row .stock-detail-side-btn{
-  height:40px!important;
-  min-height:40px!important;
-  width:92px!important;
-  min-width:92px!important;
-  padding-left:10px!important;
-  padding-right:10px!important;
-  border-radius:20px!important;
-  box-sizing:border-box!important;
-  font-size:12px!important;
-}
-@media(max-width:768px){
-  .stock-detail-inline-row .stock-detail-side-btn{
-    height:40px!important;
-    min-height:40px!important;
-    width:88px!important;
-    min-width:88px!important;
-  }
-}
-
-
 #stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
   padding-left:12px!important;
-  padding-right:12px!important;
+  padding-right:0!important;
 }
 @media(max-width:768px){
   #stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
     padding-left:8px!important;
-    padding-right:8px!important;
   }
 }
-
 
 .stock-detail-inline-row .stock-detail-icon-btn{
   width:40px!important;
@@ -1374,14 +1307,9 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   }
 }
 
-
-#stock-modal-body > div > div[style*="justify-content:space-between"][style*="align-items:center"]{
-  padding-right:0!important;
-}
 #stock-modal-body .stock-bottom-actions{
   margin-right:0!important;
 }
-
 
 #page-products .section-header .toolbar-icon-round{
   width:36px!important;
@@ -1404,7 +1332,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   height:36px!important;
   min-height:36px!important;
 }
-
 
 .view-switcher-align{display:flex!important;gap:4px!important;align-items:center!important;}
 #page-sales .section-header .toolbar-icon-round{
@@ -1432,7 +1359,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   }
 }
 
-
 .cart-action-glyph{
   display:inline-block!important;
   transform:translateY(-1px)!important;
@@ -1440,11 +1366,9 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   pointer-events:none!important;
 }
 
-
 #page-products .section-header button[onclick="openProductTrash()"]{
   font-size:13px!important;
 }
-
 
 #page-orders .order-trash-round{
   width:36px!important;
@@ -1469,7 +1393,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   }
 }
 
-
 #page-orders .section-header .order-trash-round{
   width:36px!important;min-width:36px!important;max-width:36px!important;
   height:36px!important;min-height:36px!important;max-height:36px!important;
@@ -1482,7 +1405,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   width:34px!important;min-width:34px!important;max-width:34px!important;
   height:34px!important;min-height:34px!important;max-height:34px!important;flex-basis:34px!important;
 }}
-
 
 .cat-sidebar-item .cat-subcat-label-wrap{
   flex:0 1 auto;
@@ -1529,7 +1451,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   }
 }
 
-
 #vbtn-grid,#vbtn-large,#vbtn-list,
 #svbtn-grid,#svbtn-large,#svbtn-list{
   position:relative!important;
@@ -1552,7 +1473,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   background:none!important;
 }
 
-
 @media(max-width:768px){
   #vbtn-grid,#vbtn-large,#vbtn-list,
   #svbtn-grid,#svbtn-large,#svbtn-list{
@@ -1565,7 +1485,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     transform:translateY(-1px)!important;
   }
 }
-
 
 @media(max-width:768px){
   #page-sales .sale-search-toolbar,
@@ -1595,18 +1514,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
     margin:0!important;
   }
 
-
   #page-products .product-search-toolbar > :not(.search-wrap):not(.view-switcher-align){
     order:2!important;
   }
 }
 
-
 #product-grid{
   position:relative!important;
   top:-2px!important;
 }
-
 
 #product-grid:not(.view-list) .product-card .product-info{
   padding:8px 10px 10px!important;
@@ -1656,7 +1572,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   font-weight:700!important;
 }
 
-
 #product-grid:not(.view-list) .product-card .product-name,
 #product-grid:not(.view-list) .product-card .product-sku,
 #product-grid:not(.view-list) .product-card .pc-subcat-code,
@@ -1673,7 +1588,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid:not(.view-list) .product-card .price-tag{
   font-weight:700!important;
 }
-
 
 #sale-product-grid:not(.view-list) .product-card .product-info{
   padding-bottom:10px!important;
@@ -1696,7 +1610,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   font-size:13px!important;
   font-weight:700!important;
 }
-
 
 @media(max-width:768px){
   #sale-product-grid:not(.view-list) .product-card .product-info{
@@ -1768,12 +1681,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   line-height:1.18!important;
   color:var(--red)!important;
 }
-#product-grid.view-list .product-card .pc-cost{
-  font-size:10px!important;
-  font-weight:700!important;
-  line-height:1.1!important;
-  color:var(--text3)!important;
-}
 #product-grid.view-list .product-card .stock-badge,
 #sale-product-grid.view-list .product-card .stock-badge{
   font-weight:700!important;
@@ -1783,7 +1690,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   font-size:13px!important;
   font-weight:700!important;
 }
-
 
 #product-grid.view-list .product-card .product-info{
   display:flex!important;
@@ -1834,7 +1740,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   margin-right:-1px!important;
 }
 
-
 #product-grid.view-list .product-card .product-name,
 #product-grid.view-list .product-card .product-sku,
 #product-grid.view-list .product-card .pc-subcat-code,
@@ -1848,7 +1753,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   position:relative!important;
   left:1px!important;
 }
-
 
 #sale-product-grid.view-list .product-img{
   margin:8px!important;
@@ -1876,7 +1780,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   position:relative!important;
   left:4px!important;
 }
-
 
 #product-grid .stock-more-number{display:none!important;}
 #product-grid.view-large .product-card .product-info{
@@ -1934,19 +1837,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid.view-large .product-card .pc-tags{
   display:none!important;
 }
-#product-grid.view-large .product-card .pc-cost{
-  display:block!important;
-  position:absolute!important;
-  right:9px!important;
-  bottom:21px!important;
-  margin:0!important;
-  padding:0!important;
-  font-size:9px!important;
-  font-weight:700!important;
-  line-height:1.15!important;
-  color:var(--text3)!important;
-  white-space:nowrap!important;
-}
 #product-grid.view-large .product-card .product-meta{
   display:flex!important;
   flex-direction:row!important;
@@ -1972,7 +1862,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   line-height:1!important;
   white-space:nowrap!important;
 }
-
 
 #product-grid .more-cost{display:none!important;}
 #product-grid .more-price-stack{display:contents;}
@@ -2003,14 +1892,12 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   line-height:1!important;
 }
 
-
 @media (min-width:769px){
   #product-grid.view-grid{
     grid-template-columns:repeat(6,minmax(0,1fr))!important;
     gap:10px!important;
   }
 }
-
 
 #product-grid.view-list .product-card .product-info{
   padding:6px 14px 7px 10px!important;
@@ -2021,52 +1908,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 #product-grid.view-list .product-card .product-sku{
   margin-bottom:1px!important;
-}
-#product-grid.view-list .product-card .pc-flow{
-  display:grid!important;
-  grid-template-columns:auto minmax(0,1fr) auto!important;
-  grid-auto-rows:min-content!important;
-  column-gap:4px!important;
-  row-gap:1px!important;
-  align-items:baseline!important;
-  margin:0!important;
-  padding:0!important;
-}
-#product-grid.view-list .product-card .pc-subcat-code,
-#product-grid.view-list .product-card .pc-catcode{
-  grid-row:1!important;
-  grid-column:1!important;
-  margin:0!important;
-  white-space:nowrap!important;
-}
-#product-grid.view-list .product-card .pc-missing-cost-row{
-  display:contents!important;
-}
-#product-grid.view-list .product-card .pc-missing-cost-row > span:empty{
-  display:none!important;
-}
-#product-grid.view-list .product-card .pc-missing{
-  grid-row:1!important;
-  grid-column:2!important;
-  margin:0!important;
-  white-space:nowrap!important;
-}
-#product-grid.view-list .product-card .pc-cost{
-  grid-row:1!important;
-  grid-column:3!important;
-  position:relative!important;
-  top:0!important;
-  margin:0!important;
-  white-space:nowrap!important;
-}
-#product-grid.view-list .product-card .pc-sold,
-#product-grid.view-list .product-card .pc-defect,
-#product-grid.view-list .product-card .pc-stale,
-#product-grid.view-list .product-card .pc-transit,
-#product-grid.view-list .product-card .pc-pending,
-#product-grid.view-list .product-card .pc-tags{
-  grid-column:1 / -1!important;
-  margin:0!important;
 }
 #product-grid.view-list .product-card .product-meta{
   margin-top:2px!important;
@@ -2099,7 +1940,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid.view-list .product-card .more-price-stack .price-tag{
   margin:0!important;
 }
-
 
 .pc-missing-inline-list{display:none;}
 #product-grid.view-list .product-card .pc-flow{
@@ -2147,14 +1987,12 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   margin:0!important;
 }
 
-
 #product-grid.view-list .product-card .pc-subcat-code,
 #product-grid.view-list .product-card .pc-catcode,
 #product-grid.view-list .product-card .pc-missing-inline-list{
   position:relative!important;
   top:4px!important;
 }
-
 
 #product-grid.view-list .product-card .product-name,
 #product-grid.view-list .product-card .product-sku{
@@ -2173,7 +2011,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   line-height:1.18!important;
 }
 
-
 body > .product-card .product-name{font-family:inherit!important;font-size:13px!important;font-weight:700!important;line-height:1.35!important;}
 body > .product-card .product-sku{font-family:monospace!important;font-size:10px!important;font-weight:700!important;line-height:1.35!important;}
 body > .product-card .pc-subcat-code,body > .product-card .pc-catcode{font-family:monospace!important;font-size:9px!important;}
@@ -2182,11 +2019,9 @@ body > .product-card .pc-cost{font-family:inherit!important;font-size:10px!impor
 body > .product-card .stock-badge{font-family:inherit!important;font-weight:700!important;}
 body > .product-card .price-tag{font-family:inherit!important;font-size:13px!important;font-weight:700!important;}
 
-
 #product-grid.view-list .product-card{
   background:#fff!important;
 }
-
 
 #product-grid.view-list .product-img{
   width:112px!important;
@@ -2219,7 +2054,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 
 <style id="grid-text-offset-fix">
-/* 商品庫格狀：名稱 / SKU / 分類 / 缺少資訊整體往右 1px（2026-08-26） */
+
 #product-grid.view-grid .product-card .product-name,
 #product-grid.view-grid .product-card .product-sku,
 #product-grid.view-grid .product-card .pc-subcat-code,
@@ -2231,7 +2066,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </style>
 
 <style id="top-toolbar-small-buttons-20260826">
-/* 商品庫＋採購單：上方所有操作按鈕統一縮小 */
+
 #page-products .section-header .product-search-toolbar .btn:not(.toolbar-icon-round),
 #page-orders .section-header .btn:not(.toolbar-icon-round){
   padding:7px 14px!important;
@@ -2288,7 +2123,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </nav>
 <div class="toast-container" id="toastContainer"></div>
 
-
 <div class="page active" id="page-overview">
   <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px">📦 庫存概況</div>
   <div class="stats-bar" style="margin-bottom:20px">
@@ -2319,7 +2153,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="page" id="page-products">
   <div class="section-header">
@@ -2361,7 +2194,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-price-compare" onclick="if(event.target===this)closeModal('modal-price-compare')">
   <div class="modal" style="max-width:1320px;width:min(1320px,98vw)">
@@ -2413,7 +2245,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="page" id="page-orders">
   <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
@@ -2421,7 +2252,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div id="order-list"></div>
   <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
 </div>
-
 
 <div class="page" id="page-sales">
   <div class="today-bar">
@@ -2500,7 +2330,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="page" id="page-reports">
   <div class="section-header">
     <div class="section-title">📊 銷售報表</div>
@@ -2543,7 +2372,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="page" id="page-customers">
   <div class="section-header">
     <div class="section-title">🧸 顧客</div>
@@ -2552,7 +2380,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="search-wrap" style="margin-bottom:16px"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋姓名 / 電話..." id="customer-search" oninput="renderCustomers()"></div>
   <div id="customer-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px"></div>
 </div>
-
 
 <div class="page" id="page-sku">
   <div class="sku-panel">
@@ -2616,7 +2443,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-sale-history">
   <div class="modal" style="max-width:760px">
     <div class="modal-header">
@@ -2643,7 +2469,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-product">
   <div class="modal">
@@ -2713,7 +2538,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-stock">
   <div class="modal" style="max-width:1100px">
     <div class="modal-header">
@@ -2724,7 +2548,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-order">
   <div class="modal" style="max-width:680px">
@@ -2790,11 +2613,9 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-order-detail">
   <div class="modal" style="max-width:680px"><div class="modal-header"><div class="modal-title" id="order-detail-title">採購單詳情</div><button class="modal-close" onclick="closeModal('modal-order-detail')">×</button></div><div class="modal-body" id="order-detail-body"></div></div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-cost-history" style="z-index:400">
   <div class="modal" style="max-width:420px">
@@ -2820,7 +2641,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-confirm-receive">
   <div class="modal" style="width:min(92vw,520px);max-width:520px!important">
     <div class="modal-header">
@@ -2841,7 +2661,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-product-import">
   <div class="modal" style="max-width:900px;width:95vw">
@@ -2878,7 +2697,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-confirm" style="z-index:400">
   <div class="modal" style="max-width:380px">
     <div class="modal-header"><div class="modal-title">⚠️ 確認</div><button class="modal-close" onclick="closeModal('modal-confirm')">×</button></div>
@@ -2891,7 +2709,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-ui-edit" style="z-index:400">
   <div class="modal" style="max-width:380px">
@@ -2924,7 +2741,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-scan" style="z-index:400">
   <div class="modal" style="max-width:420px">
     <div class="modal-header"><div class="modal-title">📷 掃描商品 QR</div><button class="modal-close" onclick="closeScanModal()">×</button></div>
@@ -2938,7 +2754,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-auto-backup">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
@@ -2951,7 +2766,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-customer">
   <div class="modal" style="max-width:420px">
@@ -2970,7 +2784,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-customer-detail">
   <div class="modal" style="max-width:520px">
@@ -3020,6 +2833,8 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         <div id="smart-import-progress" class="hidden" style="margin-top:16px;text-align:center;color:var(--text3);font-size:13px">辨識中，請稍候...</div>
       </div>
       <div id="smart-import-step-review" class="hidden smart-import-review-layout">
+        <div id="smart-import-total" style="font-size:11px;font-weight:800;color:var(--text2);margin:0 0 6px 2px">Total: 0 款 / 0 件 / ¥0.00</div>
+        <div id="smart-import-check-summary" class="smart-import-check-summary hidden"></div>
         <div id="smart-import-list"></div>
         <div class="smart-import-review-footer" style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -3148,21 +2963,25 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
           <button class="btn btn-secondary btn-sm" id="logout-btn" onclick="signOutSupabase()" style="display:none;">🐾 登出</button>
         </div>
       </div>
-      <div class="settings-btn-row">
+      <div class="settings-btn-row" style="margin-bottom:8px">
         <button class="btn btn-secondary btn-sm" onclick="syncToSupabase()">☁️ 同步到雲端</button>
-        <button class="btn btn-secondary btn-sm" onclick="migrateImagesToCloud()">🖼️ 遷移圖片到雲端</button>
-        <button class="btn btn-secondary btn-sm" onclick="repairImageUrls()">🔧 修復圖片網址</button>
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('batch-img-input').click()">📦 批量上傳圖片</button>
       </div>
+      <details style="border:1px solid var(--cream3);border-radius:10px;background:var(--surface);padding:8px 10px">
+        <summary style="cursor:pointer;font-size:11px;font-weight:800;color:var(--text2);user-select:none">🧰 進階工具</summary>
+        <div class="settings-row-desc" style="margin:6px 0 8px">圖片遷移、網址修復與批量上傳通常只在維護時使用。</div>
+        <div class="settings-btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="migrateImagesToCloud()">🖼️ 遷移圖片到雲端</button>
+          <button class="btn btn-secondary btn-sm" onclick="repairImageUrls()">🔧 修復圖片網址</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('batch-img-input').click()">📦 批量上傳圖片</button>
+        </div>
+      </details>
 
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// 儲存層:IndexedDB(階段一)+ 同步快取 + 一次性 LS 遷移
-// ═══════════════════════════════════════════════════════════════
+
 const IDB_NAME='patchDB',IDB_STORE='kv',IDB_VERSION=1;
 let __idbPromise=null;
 function idbOpen(){
@@ -3184,14 +3003,12 @@ function idbDelete(key){return idbOpen().then(function(db){return new Promise(fu
 function idbAllKeys(){return idbOpen().then(function(db){return new Promise(function(res,rej){var tx=db.transaction(IDB_STORE,'readonly');var r=tx.objectStore(IDB_STORE).getAllKeys();r.onsuccess=function(){res(r.result||[]);};r.onerror=function(){rej(r.error);};});});}
 function idbClear(){return idbOpen().then(function(db){return new Promise(function(res,rej){var tx=db.transaction(IDB_STORE,'readwrite');var r=tx.objectStore(IDB_STORE).clear();r.onsuccess=function(){res();};r.onerror=function(){rej(r.error);};});});}
 
-// 同步快取(Map):啟動時從 IDB 載入,之後所有同步存取走快取,寫入時 fire-and-forget 落地 IDB
 const LS_CACHE=new Map();
 function lsGet(key){return LS_CACHE.has(key)?LS_CACHE.get(key):null;}
 function lsSet(key,value){LS_CACHE.set(key,value);return idbSet(key,value).catch(function(e){console.error('IDB 寫入失敗 ['+key+']:',e);});}
 function lsRemove(key){LS_CACHE.delete(key);idbDelete(key).catch(function(e){console.error('IDB 刪除失敗 ['+key+']:',e);});}
 function lsAllPatchKeys(){var out=[];LS_CACHE.forEach(function(_,k){if(k.indexOf('patchDB')===0)out.push(k);});return out;}
 
-// 啟動初始化:(1) 一次性 localStorage → IDB 遷移 (2) 載入所有 patchDB_* 到快取
 async function __initStorage(){
   try{
     var migrated=await idbGet('_migrated_from_ls_v1');
@@ -3210,7 +3027,6 @@ async function __initStorage(){
         await idbSet('_migrated_from_ls_v1','1');
       }
     }
-    // 載入所有 patchDB_* 到記憶體快取(同步介面的基礎)
     var allKeys=await idbAllKeys();
     for(var m=0;m<allKeys.length;m++){
       var ak=allKeys[m];
@@ -3225,26 +3041,21 @@ async function __initStorage(){
   }
 }
 
-// 偵錯/緊急工具(在 Console 用)
 window.__patchDB={
   exportAll:async function(){var keys=await idbAllKeys();var out={};for(var i=0;i<keys.length;i++){out[keys[i]]=await idbGet(keys[i]);}console.log(out);return out;},
   rollback:async function(){customConfirm('⚠️ 將清空 IndexedDB,下次開頁會從 localStorage 重新遷移。確定?',async()=>{await idbClear();toast('已清空 IDB,請重新整理頁面','success');});},
   stats:function(){var n=lsAllPatchKeys().length;var size=0;LS_CACHE.forEach(function(v){if(typeof v==='string')size+=v.length;});console.log('keys: '+n+' / 估算大小: '+(size/1024).toFixed(1)+' KB');return{keys:n,sizeKB:(size/1024).toFixed(1)};}
 };
 
-// 啟動步驟佇列:patches 與種子會 push 到這裡,等 __initStorage 完成後依序執行
 const __bootSteps=[];
 
 const BUILTIN_MASTER_VERSION='2026-08-21-master-v1';
-let DB={products:[],orders:[],sales:[],rate:0.138,rateTime:null,todaySales:{}};
-// 全站資料修改復原：任何由使用者操作觸發、最後真的改到 DB 的動作，都自動留下可撤銷快照。
-// 純介面操作（切頁、展開、複製、開連結）因為不會改 DB，所以不會污染復原紀錄。
+let DB={products:[],orders:[],rate:0.138,rateTime:null,todaySales:{}};
 let _autoUndoContext=null,_autoUndoTimer=null,_autoUndoRestoring=false;
 function _dbUndoSnapshot(){try{return JSON.stringify(DB);}catch(e){return '';}}
 function _restoreDbUndoSnapshot(json){
   if(!json)return;
   const restored=JSON.parse(json);
-  // 盡量原地還原，保留既有 product/order 物件引用；這樣舊有手寫 undo/redo 和新的全站快照復原可以安全混用。
   const reconcile=(target,source)=>{
     if(Array.isArray(source)){
       if(!Array.isArray(target))return JSON.parse(JSON.stringify(source));
@@ -3308,14 +3119,10 @@ function _beginAutoUndoContext(target,labelOverride){
   const label=labelOverride||_autoUndoLabelFromTarget(target);
   if(!label)return;
   const now=_dbUndoSnapshot();
-  // 每一次新的使用者操作都要是一筆獨立的復原紀錄。
-  // 之前 120ms 內連續按兩次按鈕時，第二次可能會被併進第一次，才會出現「只能恢復一次」。
-  // 現在只要下一個操作開始，而上一個操作已經讓 DB 改變，就先立刻結算上一筆，再開始新的紀錄。
   if(_autoUndoContext){
     if(_autoUndoContext.beforeJson!==now){
       _finalizeAutoUndoNow();
     }else{
-      // pointerdown → click 本來就是同一次操作，不要重複開新紀錄。
       if(_autoUndoContext.label==='資料修改'&&label)_autoUndoContext.label=label;
       return;
     }
@@ -3334,10 +3141,7 @@ function _makeDbSnapshotUndoEntry(label,beforeJson,afterJson){
 }
 function _scheduleAutoUndoFinalize(){
   if(_autoUndoRestoring||!_autoUndoContext)return;
-  // 同一次操作只開一個結算計時器，不要被背景 saveDB 一直重設，否則最後一筆可能永遠留在 pending。
   if(_autoUndoTimer)return;
-  // 稍微留長一點，讓同一次按鈕操作裡的 setTimeout / 微任務也能算在同一筆；
-  // 下一次 pointerdown/click 仍會先強制切開，所以快速連按也會是一按一筆。
   _autoUndoTimer=setTimeout(()=>{_autoUndoTimer=null;_finalizeAutoUndoNow();},800);
 }
 function migrateSockTypeSTtoSK(){
@@ -3434,15 +3238,12 @@ function migrateClothingTypeGTtoCL(){
   }
   return changed;
 }
-// 題材與節慶要分開：只有明確節日文字，或「鬼怪＋典型萬聖節道具」才算節慶。
-// 單純幽靈／鬼怪＝CH 角色 02；單純愛心＝SY 符號 01，不會自動被塞進節慶。
 function inferHolidayDetailFromName(name){
   const t=String(name||'');
   if(/農曆新年|农历新年|春節|春节|新年|過年|过年|紅包|红包|元宵|lunar\s*new\s*year|chinese\s*new\s*year/i.test(t))return '01';
   if(/情人節|情人节|valentine(?:'s)?|cupid|丘比特/i.test(t))return '02';
   if(/復活節|复活节|easter/i.test(t))return '03';
   if(/萬聖節|万圣节|halloween|trick\s*(?:or|&)\s*treat|jack[- ]?o['’]?[- ]?lantern|南瓜燈|南瓜灯/i.test(t))return '04';
-  // 沒寫 Halloween 時，必須同時具有「鬼怪題材」＋「典型萬聖節道具」才升成萬聖節。
   const spooky=/幽靈|幽灵|ghost|鬼魂|鬼怪|妖怪|女巫|witch|骷髏|骷髅|skull|木乃伊|mummy|吸血鬼|vampire|殭屍|僵尸|zombie|惡魔|恶魔|devil/i.test(t);
   const halloweenProp=/南瓜|pumpkin|女巫帽|witch\s*hat|糖果桶|candy\s*(?:bucket|pail)|蜘蛛網|蜘蛛网|cobweb|墓碑|tombstone|棺材|coffin/i.test(t);
   if(spooky&&halloweenProp)return '04';
@@ -3525,9 +3326,7 @@ function normalizeProductToCurrentSchema(p){
   return p;
 }
 
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];
-// 舊資料遷移：只要商品曾出現在採購單，就把該店家加入「常用供應商」。
-// 若備註只是舊系統自動寫的「供應商 · 日期」，就清掉，不碰真正手動備註。
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];
 if(Array.isArray(DB.orders)&&Array.isArray(DB.products)){
   DB.orders.forEach(o=>{
     const s=String(o.supplier||'').trim();
@@ -3552,11 +3351,8 @@ if(clearSeedImagesInMemory()){
   try{lsSet('patchDB_v3',JSON.stringify(DB));}catch(e){}
 }
 
-if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(migratedSockType||migratedClothingType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
+if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(removedLegacySales||migratedSockType||migratedClothingType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
 let _autoSyncTimer=null;
-// 商品新增的管道很多（手動新增、複製、匯入、匯入時自動建立...），有些沒有幫忙寫上 sortOrder，
-// 導致「預設排序」拿到的是 undefined→當作0→大家全部並列在最前面，看某個小分類的時候特別明顯（全部因為東西多，比較不會發現）
-// 每次存檔前先補齊，新商品照順序排在「目前最後面」，不會全部擠在最前面
 function backfillMissingSortOrders(){
   let maxSort=-10;
   DB.products.forEach(p=>{if(typeof p.sortOrder==='number')maxSort=Math.max(maxSort,p.sortOrder);});
@@ -3573,11 +3369,7 @@ function saveDB(options={}){
   backfillMissingSortOrders();
   const persistPromise=lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
-  // 如果這次是使用者剛剛按按鈕／改欄位造成的資料變更，統一收進全站復原紀錄。
   _scheduleAutoUndoFinalize();
-  // 存到本機之後，順便排一個「延遲幾秒再同步到雲端」的動作（等她連續操作停下來才真的送出，
-  // 不會每按一下就打一次 API）。之前只有「打開網頁那一刻」才會同步，代表存了新的採購單/商品，
-  // 如果沒有手動按「同步到雲端」或整個重新整理網頁，雲端跟其他裝置都看不到剛剛的變動
   if(!options.skipCloudSync&&typeof window.syncToSupabase==='function'){
     clearTimeout(_autoSyncTimer);
     _autoSyncTimer=setTimeout(()=>{window.syncToSupabase(true);},2500);
@@ -3585,7 +3377,6 @@ function saveDB(options={}){
   return persistPromise;
 }
 
-// ---- 自動備份：每隔一段時間，把當下的資料另外存一份到輪替的備份格，避免忘記手動匯出、誤刪資料時求助無門 ----
 const AUTO_BACKUP_SLOTS=8;
 const AUTO_BACKUP_INTERVAL_MS=5*60*1000; // 5 分鐘輪替備份一次；提高誤改/當機後可恢復密度
 function getAutoBackupMeta(){
@@ -3638,7 +3429,6 @@ function restoreAutoBackup(idx){
   customConfirm('要還原這份備份嗎？系統會先替「目前資料」再存一份安全備份，所以還原後仍有退路。\n\n確定要還原嗎？',()=>{
     const raw=lsGet('patchDB_autobackup_'+idx);
     if(!raw){toast('找不到這份備份','error');return;}
-    // 任何還原動作前，先把眼前這一版保留下來；避免「還原錯版本」後反而救不回來。
     const meta=getAutoBackupMeta();
     const now=Date.now();
     lsSet('patchDB_autobackup_emergency',JSON.stringify(DB));
@@ -3651,7 +3441,6 @@ function restoreAutoBackup(idx){
   });
 }
 
-// ---- 設定 ----
 function setToggleUI(prefix,on){
   const cb=document.getElementById('setting-'+prefix+'-toggle');
   const track=document.getElementById('setting-'+prefix+'-track');
@@ -3692,14 +3481,11 @@ async function refreshLocalStorageUsage(){
   totalEl.textContent='計算中…';
   if(browserEl)browserEl.textContent='';
   try{
-    // 主資料：以目前真正會存回 patchDB_v3 的 DB 內容估算 UTF-8 大小。
     const mainBytes=utf8ByteSize(JSON.stringify(DB||{}));
-    // 庫存系統總用量：把目前載入快取裡所有 patchDB_*（主資料＋自動備份等）加總。
     let patchBytes=0;
     if(typeof LS_CACHE!=='undefined'&&LS_CACHE&&typeof LS_CACHE.forEach==='function'){
       LS_CACHE.forEach((v,k)=>{if(String(k).indexOf('patchDB')===0)patchBytes+=utf8ByteSize(v);});
     }
-    // saveDB 有 debounce / 非同步寫入時，快取可能還沒更新；至少不要顯示得比主資料還小。
     patchBytes=Math.max(patchBytes,mainBytes);
     mainEl.textContent=formatStorageBytes(mainBytes);
     totalEl.textContent=formatStorageBytes(patchBytes);
@@ -3749,8 +3535,6 @@ function toggleCloudSyncFailAlertSetting(on){
   setToggleUI('cloudsyncfail',on);
   toast(on?'✅ 雲端同步失敗提醒已開啟':'雲端同步失敗提醒已關閉');
 }
-// ---- 介面編輯模式：導覽列這種寫死在畫面上的文字/圖示，可以直接點擊改內容，存進 DB.uiOverrides 裡，重新整理也不會不見 ----
-// ---- 主題色系：切換整體米棕色系以外的配色，存在 DB.settings.theme，開機時會套用 ----
 const THEMES={
   cream:{name:'🤎 米棕（預設）',cream:'#faf7f2',cream2:'#f3ede3',cream3:'#ebe3d5',cream4:'#ddd3c0',brown:'#8b6f47','brown-light':'#b89a72',text:'#3d2f1f',text2:'#7a6252',text3:'#b0998a',navBg:'rgba(250,247,242,0.93)'},
   morandi:{name:'🩶 莫蘭迪',cream:'#f7f6f4',cream2:'#eae7e2',cream3:'#d9d3ca',cream4:'#b8b0a3',brown:'#8a9a94','brown-light':'#a9b6b0',text:'#3d3d38',text2:'#6b6a62',text3:'#a09d92',navBg:'rgba(247,246,244,0.93)'},
@@ -3790,14 +3574,11 @@ function applyTheme(key){
   root.setProperty('--text3',t.text3);
   root.setProperty('--nav-bg',t.navBg);
   root.setProperty('--body-gradient',key==='gradient'?'linear-gradient(135deg, rgba(253,230,240,0.55) 0%, rgba(232,225,250,0.5) 35%, rgba(220,235,250,0.5) 70%, rgba(230,245,240,0.45) 100%)':key==='glass'?'linear-gradient(135deg, rgba(168,200,232,0.09) 0%, rgba(216,184,224,0.08) 35%, rgba(240,200,184,0.08) 70%, rgba(168,220,200,0.07) 100%)':'none');
-  // 額外的 5 種強調色（peach/pink/mint/lavender/yellow），只有霓虹主題會覆蓋，其他主題用回原本預設值
   const defAccents={peach:'#f5c4a1','peach-light':'#fef0e7',pink:'#f4a7b9','pink-light':'#fde8ee',mint:'#a8d5ba','mint-light':'#e8f7ee',lavender:'#c4b5e8','lavender-light':'#f0ecfb',yellow:'#f5d876','yellow-light':'#fef9e4'};
   const acc=t.accents||defAccents;
   Object.keys(defAccents).forEach(k=>root.setProperty('--'+k,acc[k]||defAccents[k]));
-  // 深色主題（關燈模式、霓虹）卡片/輸入框背景也要跟著變暗，不然白底黑字組合會反過來看不到
   const isDark=(key==='dark'||key==='neon');
   root.setProperty('--surface',isDark?t.cream3:key==='glass'?'rgba(255,255,255,0.55)':'#fff');
-  // 霧面透明主題：卡片、彈窗、導覽列都加上毛玻璃模糊效果，背後再襯一層漸層色塊，模糊起來才看得出來磨砂感
   document.body.classList.toggle('theme-glass',key==='glass');
   if(!DB.settings)DB.settings={};
   DB.settings.theme=key;
@@ -3859,7 +3640,6 @@ async function pickColorWithEyedropper(){
     document.getElementById('ui-edit-color-hex').value=result.sRGBHex;
     updateUIEditColorSwatch(result.sRGBHex);
   }catch(e){
-    // 使用者按 Esc 取消，不用特別提示
   }
 }
 function renderUIEditFavColors(){
@@ -3939,7 +3719,6 @@ function saveUIEditableText(){
   if(!DB.uiOverrides)DB.uiOverrides={};
   if(!DB.uiOverrideHistory)DB.uiOverrideHistory={};
   if(!DB.uiOverrideHistory[key])DB.uiOverrideHistory[key]=[];
-  // 存檔前先把目前這版推進歷史紀錄，這樣才能「回上一版」；如果這是第一次編輯，就把「原始預設」當成第 0 版存進去
   const prev=DB.uiOverrides[key]!==undefined?DB.uiOverrides[key]:(UI_DEFAULTS[key]||{text:val,color:''});
   DB.uiOverrideHistory[key].push(prev);
   if(DB.uiOverrideHistory[key].length>10)DB.uiOverrideHistory[key].shift(); // 只留最近 10 版
@@ -3978,7 +3757,6 @@ function revertToPreviousUIVersion(){
   applyUIOverrides();
   toast('⏪ 已回到上一版','success');
 }
-// 開啟網站時檢查有沒有低庫存商品，今天提醒過就不再跳（除非重新整理頁面也算沒提醒過，簡化成「同一天」判斷）
 function checkLowStockAlert(){
   if(!DB.settings||!DB.settings.lowStockAlertEnabled)return;
   if(DB.settings.lowStockDismissedDate===todayStr())return;
@@ -3998,7 +3776,6 @@ function checkLowStockAlert(){
   saveDB();
   setTimeout(()=>el.remove(),8000);
 }
-// 完全缺貨提醒：庫存已經是 0 的商品，比低庫存更急，同一天只提醒一次
 function checkOutOfStockAlert(){
   if(!DB.settings||!DB.settings.outOfStockAlertEnabled)return;
   if(DB.settings.outOfStockDismissedDate===todayStr())return;
@@ -4042,8 +3819,6 @@ function exportProductsExcel(){
         '商品名稱':p.name||'',
         'SKU':p.sku||'',
         '尺寸':p.size&&p.size!=='0'?(SIZE_LABELS[p.size]||p.size):'',
-        '顏色':p.color||'',
-        '款式':p.style||'',
         '狀態':p.status==='ok'?'正常':p.status==='pending'?'待入庫':p.status==='defect'?'瑕疵':p.status==='display'?'展示':p.status||'',
         '庫存':getProductStock(p),
         '進貨價(¥)':p.cost||0,
@@ -4054,8 +3829,6 @@ function exportProductsExcel(){
       };
     });
     var ws=XLSX.utils.json_to_sheet(rows);
-    // 沒設欄寬的話，Excel/Numbers 會用很窄的預設寬度，中文字一多就會被切斷、看起來擠成一團甚至疊字——
-    // 照每一欄實際會放的內容給一個合理的寬度
     ws['!cols']=[
       {wch:20}, // 商品名稱
       {wch:16}, // SKU
@@ -4078,7 +3851,6 @@ function exportProductsExcel(){
     toast('✅ 已下載 '+fname);
   }catch(e){alert('匯出失敗：'+e.message);}
 }
-// ---- 直接匯入新商品（不透過採購單）：讀 Excel/CSV，SKU 對得到現有商品就更新，對不到就新增 ----
 let productImportCandidates=[];
 function openProductImport(){
   productImportCandidates=[];
@@ -4237,13 +4009,10 @@ function importBackup(input){
       var meta=parsed._meta&&parsed._meta.exportedAt?('\n備份時間：'+parsed._meta.exportedAt):'';
       customConfirm('⚠️ 即將覆蓋現有所有資料，無法復原。\n\n將還原 '+keys.length+' 筆 patchDB 資料。'+meta+'\n\n確定要繼續嗎？',function(){
         try{
-          // 先清掉所有現有 patchDB_* keys（IDB 與快取），避免殘留舊 version lock
           var toDelete=lsAllPatchKeys();
           for(var i=0;i<toDelete.length;i++){lsRemove(toDelete[i]);}
-          // 寫入備份內容
           keys.forEach(function(k){lsSet(k,parsed.data[k]);});
           toast('✅ 還原完成，將重新載入頁面','success');
-          // 給 IDB 一點時間落地後再 reload
           setTimeout(function(){location.reload();},300);
         }catch(e){toast('匯入失敗：'+e.message,'error');input.value='';}
       });
@@ -4270,7 +4039,6 @@ async function fetchRate(){
   if(timeEl)timeEl.textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';
 }
 function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products'){if(currentView!=='grid'&&currentView!=='large'&&currentView!=='list')currentView='grid';sortMode=getDefaultProductSort();setView(currentView||'grid');renderProducts();}if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();
-  // 記住目前在哪一頁，重新整理網頁的時候直接回到這一頁，不要每次都跳回總覽
   try{localStorage.setItem('andhug_last_page',id);}catch(e){}
 }
 function renderOverview(){
@@ -4281,8 +4049,6 @@ function renderOverview(){
   document.getElementById('stat-today').textContent=`$${(today?.revenue||0).toFixed(0)}`;
   const invValueCny=ps.reduce((s,p)=>s+(p.cost||0)*getProductStock(p),0);
   document.getElementById('stat-inventory-value').textContent=`$${(invValueCny*DB.rate).toFixed(0)}`;
-  // 本週/本月營收/毛利：跟報表頁用同一套算法，篩範圍內的每日銷售紀錄加總。
-  // 本週固定用「週一到今天」算，比較符合一般記帳習慣的一週定義
   const now=new Date();
   const dow=(now.getDay()+6)%7; // 把星期一當作一週開始（0=週一...6=週日）
   const weekStart=new Date(now);
@@ -4312,7 +4078,6 @@ function renderOverview(){
   }else{
     ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');
   }
-  // 運送中：還沒到貨的採購單，超過14天沒到貨的用紅字標「延遲」
   const il=document.getElementById('in-transit-list');
   const inTransit=DB.orders.filter(o=>o.status!=='received').sort((a,b)=>(a.expectedDate||'9999').localeCompare(b.expectedDate||'9999'));
   if(!inTransit.length){
@@ -4330,13 +4095,9 @@ function renderOverview(){
 }
 function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
 const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',SK:'襪子',CL:'服飾',ZZ:'組合'};
-// ---- 分類管理：隱藏／刪除／新增分類（自訂分類存在 DB.customTypes，隱藏存在 DB.hiddenTypes，真的刪除的內建分類存在 DB.deletedTypes）----
 function getAllCategoryTypes(){
-  // SKU 規則的「商品類型」就是分類系統的來源。
-  // 這樣在 SKU 規則新增 / 改代碼 / 刪除類型後，商品庫左側分類與所有下拉會同步，不會各管各的。
   const skuRows=(DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:DEFAULT_SKU_TYPES)||[];
   const skuTypes=skuRows.map(r=>String(r&&r.code||'').trim().toUpperCase()).filter(Boolean);
-  // 相容舊資料：以前從側邊欄新增、但還沒同步進 skuTypes 的自訂分類仍保留。
   const custom=(DB.customTypes||[]).map(c=>String(c.code||'').trim().toUpperCase()).filter(Boolean);
   let all=[...new Set([...skuTypes,...custom])].filter(t=>!(DB.deletedTypes||[]).includes(t));
   if(DB.catOrder&&DB.catOrder.length){
@@ -4348,7 +4109,6 @@ function getAllCategoryTypes(){
   return all;
 }
 let catDragType=null;
-// 排序模式下把分類直接拖到想要的位置，一次到位；不用像按鈕那樣一格一格移
 function dropReorderCategory(targetType){
   const dragged=catDragType;
   catDragType=null;
@@ -4372,15 +4132,11 @@ function getVisibleCategoryTypes(){
   return getAllCategoryTypes().filter(t=>!(DB.hiddenTypes||[]).includes(t));
 }
 function getTypeLabel(t){
-  // SKU規則頁「商品類型」表是她可以自己編輯代碼/名稱的地方——改了那邊的名稱，
-  // 這裡要優先採用，商品庫、開單頁側邊欄、各種下拉選單才會跟著變，不然編輯規則頁等於白改
   const skuRow=(DB.skuTypes||[]).find(r=>r.code===t);
   if(skuRow&&skuRow.label)return skuRow.label;
   const custom=(DB.customTypes||[]).find(c=>c.code===t);
   return CAT_LABELS[t]||(custom?custom.label:t);
 }
-// 分類介面只顯示中文名稱；SKU 規則本身仍保留完整名稱，避免影響既有資料與規則。
-// 例如「刺繡布貼 Embroidery Patch」在分類欄只會顯示「刺繡布貼」。
 function getTypeDisplayLabel(t){
   const label=getUILabel('catlabel-'+t,getTypeLabel(t));
   let cleaned=String(label||'').replace(/\s+[A-Za-z][A-Za-z0-9 &'’()./+\-]*$/,'').trim();
@@ -5545,6 +5301,9 @@ function getCustomerStats(customerId){
   const sampleCount=(DB.samples||[]).filter(s=>s.customerId===customerId).length;
   return {total,count,lastDate,purchases:purchases.reverse(),sampleCount};
 }
+// ------------------------------------------------------------
+// 04A. CUSTOMERS
+// ------------------------------------------------------------
 function renderCustomers(){
   const list=document.getElementById('customer-list');
   if(!list)return;
@@ -5988,6 +5747,9 @@ function skuRedoEdit(){
   renderSkuPage();
   toast('↪ 已重做：'+entry.label,'success');
 }
+// ------------------------------------------------------------
+// 04B. SKU RULES / CATEGORY BUILDERS
+// ------------------------------------------------------------
 function renderSkuPage(){
   renderSkuTypesTable();
   renderSkuTypeSubcats();
@@ -7573,6 +7335,9 @@ document.addEventListener('click',function(e){
   });
 });
 
+// ------------------------------------------------------------
+// 04C. PRODUCTS / PRODUCT LIBRARY
+// ------------------------------------------------------------
 function renderProducts(){
   // 這三個元件與商品格都由同一輪 render 更新，避免切分類時重複建立整份 DOM。
   renderSortMenu();
@@ -7604,7 +7369,7 @@ function renderProducts(){
   if(activeSize!=='all')ps=ps.filter(p=>(p.size||'0')===activeSize);
   if(activeCat!=='all'&&activeTypeSubcat!=='all')ps=ps.filter(p=>getProductTypeSubcat(p)===activeTypeSubcat);
   if(activeSubcat!=='all')ps=ps.filter(p=>(p.type==='PA'||p.type==='PB')&&p.sku&&p.sku.slice(2,4)===activeSubcat);
-  if(q)ps=ps.filter(p=>(p.name+p.sku+(p.note||'')+((p.tags||[]).join(' '))+(p.color||'')+(p.style||'')).toLowerCase().includes(q));
+  if(q)ps=ps.filter(p=>(p.name+p.sku+(p.note||'')+((p.tags||[]).join(' '))).toLowerCase().includes(q));
   const stockMinEl=document.getElementById('stock-range-min'),stockMaxEl=document.getElementById('stock-range-max');
   const stockMin=stockMinEl&&stockMinEl.value!==''?parseInt(stockMinEl.value):null;
   const stockMax=stockMaxEl&&stockMaxEl.value!==''?parseInt(stockMaxEl.value):null;
@@ -7788,7 +7553,6 @@ function applyGhostFullStyle(ghost,cardEl){
   ptrLastDirKey=null;
   ptrGhostMode='full';
 }
-// 把影子變成「只留圖片的小方塊＋數量圓標」的樣子（拖去分類側邊欄用，批次跟單張共用同一套）
 function applyGhostSmallStyle(ghost,cardEl){
   ghost.innerHTML='';
   ghost.className=''; // 小圖示不需要卡片本身的排版 class，避免多餘的內距/樣式
@@ -7808,14 +7572,9 @@ function applyGhostSmallStyle(ghost,cardEl){
   ptrGhostHalfW=-16; // 負值＝往右下偏移，不是置中，讓游標指的地方（側邊欄）露出來
   ptrGhostHalfH=-16;
   ptrGhostW=size;ptrGhostH=size;
-  // 徽章數字要跟真的會被拖走的那批一致：只有「這張本來就在已選清單裡、而且選了不只一張」才算整批拖走，
-  // 拖一張還沒被選過的卡片（就算旁邊剛好有別的已選商品）只算 1 件，不能直接看 batchSelected.size
-  // 拖曳影子不顯示批次數字徽章；批次拖移功能本身維持不變。
   ptrCatEl=null;
   ptrGhostMode='small';
 }
-// 單張拖曳（非批次）時，影子跟著游標拖到哪裡即時切換樣子：
-// 拖到分類側邊欄上方縮小成小圖示，拖回商品卡片區域又變回全尺寸＋貓咪探頭
 function maybeShrinkGhostForSidebar(){
   if(ptrDragIsBatch||!ptrGhostEl||!ptrDragCardEl||ptrGhostMode==='small')return;
   applyGhostSmallStyle(ptrGhostEl,ptrDragCardEl);
@@ -7828,8 +7587,6 @@ function startDragVisual(e,cardEl){
   e.dataTransfer.setDragImage(getDragTransparentImg(),0,0);
   ptrDragCardEl=cardEl;
   ptrDragIsBatch=batchMode;
-  // 影子是一個空白容器，內容跟樣式交給 applyGhostFullStyle / applyGhostSmallStyle 填，
-  // 這樣拖曳過程中可以隨時切換內容，不用整個重新建立
   const ghost=document.createElement('div');
   ghost.style.position='fixed';
   ghost.style.pointerEvents='none';
@@ -7871,7 +7628,6 @@ function endDragVisual(){
   ptrDragCardEl=null;
   document.removeEventListener('dragover',dragMoveVisual);
 }
-// 依判斷出的插入方向，讓貓咪探頭移到對應那一邊（grid：左/右；list：上/下）
 function updateGhostArrow(after,isList){
   if(!ptrCatEl)return;
   const key=(isList?'l':'g')+(after?'a':'b');
@@ -7896,17 +7652,8 @@ function dropReorderProduct(e,targetId,cardEl){
   list.splice(after?oi+1:oi,0,moved);
   DB.products.forEach((p,i)=>{p.sortOrder=i*10;});
   saveDB();
-  // saveDB 已經會把這次變更排入唯一的雲端同步佇列；不要再額外開一個完整 upsert，
-  // 以免快速拖曳時同步請求重疊。
   renderProducts();
 }
-// ---- 手機觸控拖曳（Pointer Events + 長按觸發）----
-// HTML5 原生拖曳（ondragstart 那一套）在手機瀏覽器（尤其 iPhone Safari）幾乎完全沒反應，
-// 這裡另外用 Pointer Events 做一套給觸控用的拖曳。用「長按」而不是「移動一點距離」來判斷要不要開始拖曳，
-// 是因為手指一碰到卡片通常是想滑動整頁（捲動商品列表），如果用「移動幾px就算拖曳」會跟捲動手勢打架、
-// 容易誤觸也會讓正常捲動變頓；長按不放才觸發拖曳，短暫碰一下滑走的正常捲動完全不會被攔截。
-// 滑鼠/觸控筆繼續走原本的原生拖曳（pointerType!=='touch' 時完全不啟動這裡），兩套並存、互不干擾。
-// 只做「拖商品到分類」跟「拖商品排序」這兩個最常用的，框選跟分類排序的觸控版還沒做。
 let touchDrag=null;
 let touchDragJustFinished=false;
 const TOUCH_DRAG_HOLD_MS=380; // 長按這麼久才觸發拖曳
@@ -7923,7 +7670,6 @@ document.addEventListener('pointerdown',(e)=>{
     touchDragArm();
   },TOUCH_DRAG_HOLD_MS);
 },{passive:true});
-// 長按時間到、真的開始拖曳：建立影子、震動回饋（如果裝置支援）、鎖定這張卡當成正在拖的東西
 function touchDragArm(){
   if(!touchDrag)return;
   touchDrag.armed=true;
@@ -7956,7 +7702,6 @@ document.addEventListener('pointermove',(e)=>{
   if(!touchDrag||e.pointerId!==touchDrag.pointerId)return;
   touchDrag.lastX=e.clientX;touchDrag.lastY=e.clientY;
   if(!touchDrag.armed){
-    // 長按計時還沒到：手指如果動太多，就是想捲動頁面，取消這次長按判定，讓瀏覽器自己處理捲動
     const dx=e.clientX-touchDrag.startX,dy=e.clientY-touchDrag.startY;
     if(Math.abs(dx)>TOUCH_DRAG_CANCEL_JITTER||Math.abs(dy)>TOUCH_DRAG_CANCEL_JITTER){
       clearTimeout(touchDrag.holdTimer);
@@ -8012,7 +7757,6 @@ function touchDragFinish(e){
     }else{
       dragProductId=null;
     }
-    // 放開後有些瀏覽器還是會補一個 click，短暫擋一下避免又跳出商品編輯視窗
     touchDragJustFinished=true;
     setTimeout(()=>{touchDragJustFinished=false;},350);
   }
@@ -8063,7 +7807,6 @@ function updateCostUsd(){
   const el=document.getElementById('p-cost-usd');
   if(el)el.textContent=cost>0?`≈ $${usd}`:'';
 }
-// 這個商品過去每一次進貨、各自的單價（進貨價欄位本身是這些單價的加權平均，這裡列出每一筆原始資料）
 function getProductCostHistory(productId){
   if(!productId)return[];
   const rows=[];
@@ -8077,7 +7820,6 @@ function getProductCostHistory(productId){
   rows.sort((a,b)=>a.date.localeCompare(b.date));
   return rows;
 }
-// 從商品詳情頁的「每次進貨單價」點某一筆，直接跳去看那張採購單
 function jumpToOrderFromProduct(orderId){
   const o=DB.orders.find(x=>x.id===orderId);
   if(!o){toast('這張採購單找不到了，可能已經被刪除','error');return;}
@@ -8086,16 +7828,12 @@ function jumpToOrderFromProduct(orderId){
   showPage('orders',document.querySelector('.nav-link[onclick*="\'orders\'"]'));
   openOrderDetail(orderId);
 }
-// 商品編輯面板「每次進貨單價」按鈕：跳出獨立視窗顯示完整進貨紀錄，不會自動跳走，
-// 要看某一筆對應的採購單要另外點該筆右邊的「查看採購單」才會離開這個畫面
 function openCostHistoryModal(productId){
   const history=getProductCostHistory(productId);
   const p=DB.products.find(x=>x.id===productId);
   const body=document.getElementById('cost-history-body');
   if(!body)return;
   const thumbHtml=p&&p.img?`<img src="${p.img}" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--cream2)">`:`<span style="width:44px;height:44px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:var(--text3)">📦</span>`;
-  // 供應商比價：同一個商品跟不同賣家都買過的話，這裡先整理出「哪家平均比較便宜」，
-  // 不用自己一筆一筆對照下面的採購紀錄
   const bySupplier={};
   history.forEach(h=>{
     if(!h.supplier)return;
@@ -8147,8 +7885,6 @@ function openPriceHistoryModal(productId){
   }).join('');
   openModal('modal-price-history');
 }
-// 單一商品的月銷售歷史：把每天的銷售紀錄（DB.todaySales）依「這個商品」+「年-月」聚合起來，
-// 抓季節性規律很好用（例如聖誕節主題是不是每年12月才賣得動）
 let salesHistoryProductId=null,salesHistoryYear=null;
 function getProductMonthlySales(productId){
   const byYearMonth={}; // {'2026':{1:{qty,revenue},...}}
@@ -8220,7 +7956,6 @@ function updateEditCostUsd(){
   if(el)el.textContent=cost>0?`≈ $${usd}`:'';
 }
 function handleImgUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{pendingImg=ev.target.result;document.getElementById('img-preview').src=pendingImg;document.getElementById('img-preview').style.display='block';document.getElementById('img-placeholder').style.display='none';};r.readAsDataURL(f);}
-// 依尺寸自動帶入售價（美金）：毛布貼(PB)多 $1。售價非 0 時不覆蓋
 function autoFillPriceBySize(){
   const sz=document.getElementById('p-size').value;
   const tp=document.getElementById('p-type').value;
@@ -8243,8 +7978,6 @@ function autoFillEditPriceBySize(id){
   }
 }
 async function saveProduct(){const name=document.getElementById('p-name').value.trim();if(!name){toast('請輸入商品名稱 🌸','error');return;}
-  // 防止圖片上傳還在跑的時候被連點兩次「儲存」，導致同一個商品被新增兩筆——上傳圖片是非同步的，
-  // 這段等待期間如果沒鎖住按鈕，第二次點擊會用另一個新 id 再新增一筆一模一樣的商品
   const saveBtn=document.getElementById('save-product-btn');
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
@@ -8252,7 +7985,6 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
   const wasEditing=!!editingId;
   await saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
-  // 儲存不等於離開：第一次新增完成後立刻切成編輯這一筆，之後再按儲存只會更新同一商品，不會重複新增。
   if(!wasEditing){
     editingId=id;
     document.getElementById('product-modal-title').textContent='✏️ 編輯商品';
@@ -8265,9 +7997,6 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   }
 }
 function deleteProduct(id){const p=DB.products.find(x=>x.id===id);if(!p)return;if(!DB.productTrash)DB.productTrash=[];const trashEntry={...p,deletedAt:Date.now()};DB.productTrash.push(trashEntry);DB.products=DB.products.filter(x=>x.id!==id);pushUndo({label:'刪除 '+p.name,undo:()=>{DB.products.push(p);DB.productTrash=DB.productTrash.filter(t=>t.deletedAt!==trashEntry.deletedAt);},redo:()=>{DB.products=DB.products.filter(x=>x.id!==p.id);if(!DB.productTrash)DB.productTrash=[];DB.productTrash.push(trashEntry);}});saveDB();closeModal('modal-stock');renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();toast('🗑 已刪除（⌘Z 撤銷）','success');}
-// 複製商品：新增很像的款式（例如同款不同色）時，不用整個重新填一次。
-// 複製過來的庫存/SKU/照片都清空——SKU/庫存是這個「新款」自己的東西，照抄舊的容易搞混，讓她自己補
-// 瑕疵庫存的兩個處理方式：轉入可賣（瑕疵程度輕微、可以照原價賣）或報廢（直接算損耗，不進可賣庫存）
 function moveDefectToSellable(id){
   const p=DB.products.find(x=>x.id===id);
   if(!p||!p.defectStock)return;
@@ -8382,7 +8111,6 @@ function autoJumpStockSkuRule(product){
   const cat=String(parts?.cat||'').trim();
   const detail=String(parts?.detail||'').trim();
 
-  // ① 大類 / 子類：永遠定位 SKU 真正使用的分類
   switchStockRuleLeftTab('cats');
   requestAnimationFrame(()=>{
     const pane=document.getElementById('stock-rule-left-cats');
@@ -8402,7 +8130,6 @@ function autoJumpStockSkuRule(product){
       }
     }
 
-    // ② 商品子分類：有設定時也一起標示，不清掉①
     if(subcat){
       switchStockRuleLeftTab('subcats');
       requestAnimationFrame(()=>{
@@ -8429,7 +8156,6 @@ function openStockModal(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
   cleanupLegacyGeneratedProductNote(p);
   editingId=id; pendingImg=null; window.pendingStockImg=null; window.pendingStockImgRemoved=false;
-  // Save snapshot for undo
   window._stockSnapshot = JSON.stringify(p);
   const imgSrc=p.img||'';
   const usd=((p.cost||0)*DB.rate).toFixed(2);
@@ -8953,6 +8679,9 @@ function toggleOrderItemGroupRow(gid2){
   body.style.display=open?'none':'block';
   if(arrow)arrow.style.transform=open?'':'rotate(-180deg)';
 }
+// ------------------------------------------------------------
+// 05A. PURCHASE ORDERS
+// ------------------------------------------------------------
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
@@ -9735,6 +9464,9 @@ function parseOcrTextToItems(text){
 }
 // 上傳 PDF：先試著用 pdf.js 直接抓取文字層（一般由 Excel/表格軟體匯出的 PDF 都有文字層，準確又快）；
 // 如果某一頁抓不到文字（代表是掃描圖檔型 PDF），改成把那一頁畫成圖片，用既有的 Tesseract OCR 辨識
+// ------------------------------------------------------------
+// 05B. SMART IMPORT / PDF + OCR
+// ------------------------------------------------------------
 async function handleSmartImportPDF(input){
   const file=input.files&&input.files[0];
   if(!file)return;
@@ -9748,8 +9480,8 @@ async function handleSmartImportPDF(input){
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     const allItems=[];
-    const allPdfRows=[]; // 文字層頁面全部合併後再解析，讓「付款詳情」的停止狀態可以跨頁延續
-    const allPdfTextParts=[];
+    const allPdfRows=[]; // 只拿來整份解析付款/訂單資訊；商品改成逐頁解析，避免前一頁「付款詳情」讓後面頁面全部停止。
+    const textPageRows=[];
     smartImportMeta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,totalPaidUsd:null,feeUsd:null,rawPaymentText:''};
     for(let pageNum=1;pageNum<=pdf.numPages;pageNum++){
       progress.textContent=`讀取第 ${pageNum}/${pdf.numPages} 頁...`;
@@ -9757,11 +9489,11 @@ async function handleSmartImportPDF(input){
       const textContent=await page.getTextContent();
       const totalTextLen=(textContent.items||[]).reduce((s,it)=>s+(it.str||'').trim().length,0);
       if(totalTextLen>5){
-        // 不要每頁各自解析商品。付款詳情可能從上一頁延續到下一頁，若每頁重置狀態，
-        // 「淘金幣抵扣／官方立減」這類付款列就會在下一頁被誤當商品。
         const rows=pdfTextContentToRows(textContent);
+        // 商品逐頁解析：parsePdfRowsToItems 遇到「付款詳情」會停止該頁，
+        // 但下一頁仍會重新開始，因此多頁 PDF / 多張訂單不會在第一個付款區之後整批漏掉。
+        textPageRows.push({pageNum,rows});
         allPdfRows.push(...rows);
-        allPdfTextParts.push(rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n'));
       }else{
         // 這頁沒有文字層（掃描圖檔），畫成圖片後用 OCR 辨識
         progress.textContent=`第 ${pageNum} 頁沒有文字層，改用文字辨識（OCR）中...`;
@@ -9776,14 +9508,31 @@ async function handleSmartImportPDF(input){
           workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
           corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5'
         });
-        allItems.push(...cleanSmartImportItems(parseOcrTextToItems(text)));
+        const ocrItems=cleanSmartImportItems(parseOcrTextToItems(text)).map(it=>({...it,_pdfPage:pageNum}));
+        allItems.push(...ocrItems);
+        if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[]};
+        if(!ocrItems.length&&String(text||'').trim().length>20)smartImportMeta._pdfAudit.suspectedPages.push(pageNum);
       }
     }
-    // 文字層商品一定要整份 PDF 一次解析，不能逐頁重置。
+    // 商品逐頁解析，避免第一個「付款詳情」把整份 PDF 後面的商品全部截掉。
+    // 若某頁的座標式解析沒有抓到商品，再只針對該頁用純文字解析補一次。
+    if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[]};
+    for(const pageRec of textPageRows){
+      const rows=pageRec.rows,pageNum=pageRec.pageNum;
+      const candidateCount=smartImportEstimatePdfCandidateCount(rows);
+      let pageItems=parsePdfRowsToItems(rows);
+      if(!pageItems.length){
+        const pageText=rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n');
+        if(pageText)pageItems=parseOcrTextToItems(pageText);
+      }
+      const cleanedPage=cleanSmartImportItems(pageItems).map(it=>({...it,_pdfPage:pageNum}));
+      allItems.push(...cleanedPage);
+      if(candidateCount>cleanedPage.length&&!smartImportMeta._pdfAudit.suspectedPages.includes(pageNum)){
+        smartImportMeta._pdfAudit.suspectedPages.push(pageNum);
+      }
+    }
+    // 付款/店名/訂單編號仍維持整份 PDF 合併解析，讓付款詳情跨頁時不會漏欄位。
     if(allPdfRows.length){
-      let textItems=parsePdfRowsToItems(allPdfRows);
-      if(!textItems.length&&allPdfTextParts.length)textItems=parseOcrTextToItems(allPdfTextParts.join('\n'));
-      allItems.unshift(...cleanSmartImportItems(textItems));
       const fullMeta=parseTaobaoOrderMeta(allPdfRows);
       Object.keys(fullMeta).forEach(k=>{
         const v=fullMeta[k];
@@ -9822,6 +9571,7 @@ function smartImportBundlePanelHtml(i,it){
   if(!smartImportBundleExpanded.has(key))return '';
   if(!Array.isArray(it.bundleItems))it.bundleItems=[];
   const rows=it.bundleItems.map((part,j)=>`<div class="si-bundle-component">
+    <div class="si-bundle-item-no" title="第 ${i+1}-${j+1} 個產品">${i+1}-${j+1}</div>
     ${smartImportBundlePartPhotoSlotHtml(i,j,part.img||'')}
     <div class="si-bundle-search-wrap oi-suggest-wrap">
       <input type="text" class="form-input" value="${smartImportEsc(part.name)}" placeholder="輸入關鍵字搜尋，例如：星星" autocomplete="off" style="font-size:11px" oninput="smartImportBundleShowSuggestions(this,${i},${j})" onblur="hideOrderItemSuggestionsLater(this)">
@@ -9994,11 +9744,87 @@ function expandSmartImportBundleItems(items){
         groupId:gid,
         groupLabel:it.name||parts.map(x=>x.name).join('、'),
         groupImg:it.img||'',
-        img:part.img||(matched&&matched.img?matched.img:'')
+        img:part.img||(matched&&matched.img?matched.img:''),
+        _pdfPage:it._pdfPage||undefined
       });
     });
   });
   return expanded;
+}
+function smartImportGetReviewStats(){
+  const items=smartImportItems||[];
+  const productCount=items.length;
+  const totalQty=items.reduce((sum,it)=>sum+Math.max(1,parseInt(it&&it.qty)||1),0);
+  const totalCost=items.reduce((sum,it)=>sum+(Math.max(0,Number(it&&it.cost)||0)*Math.max(1,parseInt(it&&it.qty)||1)),0);
+  const issues=[];
+  items.forEach((it,i)=>{
+    const row=[];
+    if(!String(it&&it.name||'').trim())row.push('沒有名稱');
+    if(!(Number(it&&it.cost)>0))row.push('價格為 ¥0');
+    if(!(parseInt(it&&it.qty)>0))row.push('數量不正確');
+    if(!it.productId)row.push('尚未連結商品庫');
+    if(row.length)issues.push({index:i,reasons:row});
+  });
+  const pdfAudit=smartImportMeta&&smartImportMeta._pdfAudit?smartImportMeta._pdfAudit:null;
+  const suspectedPages=pdfAudit&&Array.isArray(pdfAudit.suspectedPages)?pdfAudit.suspectedPages:[];
+  const expectedProductTotal=smartImportMeta&&Number.isFinite(Number(smartImportMeta.totalProduct))?Number(smartImportMeta.totalProduct):null;
+  const shipping=smartImportMeta&&Number.isFinite(Number(smartImportMeta.shipping))?Number(smartImportMeta.shipping):0;
+  const discount=smartImportMeta&&Number.isFinite(Number(smartImportMeta.discount))?Number(smartImportMeta.discount):0;
+  const paid=smartImportMeta&&Number.isFinite(Number(smartImportMeta.totalPaid))?Number(smartImportMeta.totalPaid):null;
+  const calcPaid=totalCost+shipping-discount;
+  const productDiff=expectedProductTotal===null?null:totalCost-expectedProductTotal;
+  const paidDiff=paid===null?null:calcPaid-paid;
+  return {productCount,totalQty,totalCost,issues,pdfAudit,suspectedPages,expectedProductTotal,shipping,discount,paid,calcPaid,productDiff,paidDiff};
+}
+function smartImportUpdateReviewSummary(){
+  const totalEl=document.getElementById('smart-import-total');
+  const box=document.getElementById('smart-import-check-summary');
+  const st=smartImportGetReviewStats();
+  if(totalEl)totalEl.textContent=`Total: ${st.productCount} 款 / ${st.totalQty} 件 / ¥${st.totalCost.toFixed(2)}`;
+  if(!box)return;
+  const msgs=[];
+  if(st.suspectedPages.length){
+    msgs.push(`⚠️ PDF 第 ${st.suspectedPages.join('、')} 頁有疑似商品列沒有完整辨識，建議回頭檢查。`);
+  }
+  if(st.issues.length){
+    const preview=st.issues.slice(0,4).map(x=>`#${x.index+1} ${x.reasons.join('、')}`).join('；');
+    msgs.push(`需要確認 ${st.issues.length} 筆：${preview}${st.issues.length>4?'…':''}`);
+  }
+  if(st.expectedProductTotal!==null){
+    if(Math.abs(st.productDiff)<=0.02)msgs.push(`✓ 商品總價對上 PDF：¥${st.totalCost.toFixed(2)}`);
+    else msgs.push(`⚠️ 商品總價差 ¥${Math.abs(st.productDiff).toFixed(2)}（PDF ¥${st.expectedProductTotal.toFixed(2)} / 目前 ¥${st.totalCost.toFixed(2)}）`);
+  }
+  if(st.paid!==null){
+    if(Math.abs(st.paidDiff)<=0.02)msgs.push(`✓ 實付對帳一致：¥${st.paid.toFixed(2)}`);
+    else msgs.push(`⚠️ 實付差 ¥${Math.abs(st.paidDiff).toFixed(2)}（PDF ¥${st.paid.toFixed(2)} / 目前計算 ¥${st.calcPaid.toFixed(2)}）`);
+  }
+  if(!msgs.length){
+    box.className='smart-import-check-summary ok';
+    box.textContent='✓ 基本檢查完成，目前沒有發現需要特別確認的項目。';
+  }else{
+    const hasWarn=msgs.some(m=>m.startsWith('⚠️')||m.startsWith('需要確認'));
+    box.className='smart-import-check-summary '+(hasWarn?'warn':'ok');
+    box.innerHTML=msgs.map(m=>`<div>${smartImportEsc(m)}</div>`).join('');
+  }
+}
+function smartImportRefreshAfterEdit(){
+  smartImportUpdateReviewSummary();
+}
+function smartImportEstimatePdfCandidateCount(rows){
+  let count=0,stopped=false;
+  const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
+  const qtyRe=/^[xX×]\s*([\d]+)$/;
+  for(const row of rows||[]){
+    const tokens=pdfRowToTokens(row.items);
+    if(tokens.some(tok=>tok.includes('付款详情')||tok.includes('付款詳情'))){stopped=true;break;}
+    if(stopped)break;
+    const rowText=tokens.join(' ').trim();
+    if(isSmartImportNonProductText(rowText))continue;
+    const hasQty=tokens.some(t=>qtyRe.test(t));
+    const hasPrice=tokens.some(t=>priceRe.test(t));
+    if(hasQty&&hasPrice)count++;
+  }
+  return count;
 }
 function renderSmartImportReview(){
   // 先取建議名稱，再把能確定內容的套組自動細分；都只先顯示在確認畫面，可自行修改。
@@ -10020,6 +9846,7 @@ function renderSmartImportReview(){
   }
   dl.innerHTML=DB.products.map(p=>`<option value="${(p.name||'').replace(/"/g,'&quot;')}">`).join('');
   const list=document.getElementById('smart-import-list');
+  smartImportUpdateReviewSummary();
   const rowHtmls=smartImportItems.map((it,i)=>{
     // 智慧匯入時：上面的大框給她打自己的正式商品名；下面小字保留淘寶/原始名稱當參考。
     // 如果之前已經連過別名，這裡就直接帶出她自己的商品名；沒連過的話，上面先留白讓她自己打。
@@ -10037,19 +9864,22 @@ function renderSmartImportReview(){
     }
     const displayName=(it.rawName&&(!it.name||it.name===it.rawName))?'':(it.name||'');
     const imgSrc=it.img||(matchedP&&matchedP.img?matchedP.img:'');
+    const needsCheck=!String(it.name||'').trim()||!(Number(it.cost)>0)||!(parseInt(it.qty)>0)||!it.productId;
     return `
-    <div class="order-item-row smart-import-review-row">
+    <div class="order-item-row smart-import-review-row${needsCheck?' smart-import-row-needs-check':''}">
       <span class="oi-group-check" id="si-group-check-${i}" onclick="toggleSiGroupCheck(${i})"></span>
       ${smartImportBundleToggleHtml(i,it)}
+      <div class="smart-import-item-no" title="第 ${i+1} 個產品">${i+1}</div>
       ${smartImportPhotoSlotHtml(i,imgSrc)}
       <div class="oi-suggest-wrap smart-import-review-name">
-        <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i})" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
+        <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i});smartImportRefreshAfterEdit()" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
         ${it._nameSuggestionNote?`<div style="font-size:9px;color:${it._possibleBundle?'var(--brown)':'#3d8a58'};margin-top:3px;padding-left:5px;line-height:1.35;font-weight:800">✨ ${smartImportEsc(it._nameSuggestionNote)}${it._suggestedVariant?` · 款式：${smartImportEsc(it._suggestedVariant)}`:''}</div>`:''}
         ${it.rawName?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:5px;line-height:1.35">原始：${smartImportEsc(it.rawName)}</div>`:''}
+        ${it._pdfPage?`<div class="smart-import-page-badge">PDF 第 ${it._pdfPage} 頁</div>`:''}
         <div class="oi-linked-tag">${matchedP?`🔗 已連結:${smartImportEsc(matchedP.name)}`:''}</div>
       </div>
-      <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0"></div>
-      <div class="smart-import-qty-cell" style="position:relative;display:inline-block"><input type="number" id="si-qty-${i}" class="form-input sibp-qty-input" value="${it.qty}" min="1" style="font-size:12px;text-align:center;width:60px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportQty(${i},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportQty(${i},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div>
+      <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0;smartImportRefreshAfterEdit()"></div>
+      <div class="smart-import-qty-cell" style="position:relative;display:inline-block"><input type="number" id="si-qty-${i}" class="form-input sibp-qty-input" value="${it.qty}" min="1" style="font-size:12px;text-align:center;width:60px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1;smartImportRefreshAfterEdit()"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportQty(${i},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportQty(${i},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div>
       <button class="remove-btn" onclick="smartImportRemoveRow(${i})">×</button>
     </div>${smartImportBundlePanelHtml(i,it)}`;
   });
@@ -10074,6 +9904,7 @@ function renderSmartImportReview(){
     i++;
   }
   list.innerHTML=html;
+  smartImportUpdateReviewSummary();
 }
 let smartImportGroupSelectMode=false;
 let smartImportGroupSelectedIndices=new Set();
@@ -12043,21 +11874,6 @@ function clampCartDealGiftSelection(){
   if(total>required){let extra=total-required;[...cart].reverse().forEach(c=>{if(extra<=0)return;const k=cartDealItemKey(c),q=inst.giftSelection[k]||0,take=Math.min(q,extra);if(take){inst.giftSelection[k]-=take;extra-=take;if(inst.giftSelection[k]<=0)delete inst.giftSelection[k];}});}
   syncCartDealCompat();
 }
-function adjustCartDealGiftSelection(i,d){
-  const deal=getActiveSaleDeal(),c=cart[i];
-  if(!deal||deal.kind!=='buy_get'||!c)return;
-  clampCartDealSelection();
-  const k=cartDealItemKey(c),selected=Math.max(0,Number(cartDealSelection[k])||0);
-  if(!selected){toast('這個商品要先加入 Deal');return;}
-  const required=getCartDealRequiredGiftQty(deal);
-  if(required<=0){toast(`先選滿 ${getCartDealPolicy(deal).step} 件，再指定贈品`);return;}
-  const cur=Math.max(0,Number(cartDealGiftSelection[k])||0),giftTotal=getCartDealGiftQty();
-  if(d>0&&giftTotal>=required){toast(`這一輪最多指定 ${required} 件贈品`);return;}
-  const next=Math.max(0,Math.min(selected,cur+d));
-  if(next)cartDealGiftSelection[k]=next;else delete cartDealGiftSelection[k];
-  clampCartDealGiftSelection();
-  renderCart();toggleSaleDealPanel(true);
-}
 function cycleCartDealGiftSelection(i){
   const deal=getActiveSaleDeal(),c=cart[i];
   if(!deal||deal.kind!=='buy_get'||!c)return;
@@ -12314,6 +12130,9 @@ function setSaleView(v){
   var g=document.getElementById('sale-product-grid');
   if(g)g.className='view-'+v;
 }
+// ------------------------------------------------------------
+// 06A. SALES / POS / CART
+// ------------------------------------------------------------
 function renderSaleProducts(){const q=(document.getElementById('sale-search')?.value||'').toLowerCase();let ps=DB.products.filter(p=>{if(p.status!=='ok')return false;if(p.variants&&p.variants.length>0)return p.variants.some(v=>(v.stock||0)>0);return(p.stock||0)>0;});if(saleFilter!=='all')ps=ps.filter(p=>p.type===saleFilter);if(saleSize!=='all')ps=ps.filter(p=>(p.size||'0')===saleSize);if(saleSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.length>=4&&p.sku.slice(2,4)===saleSubcat);if(q)ps=ps.filter(p=>(p.name+p.sku).toLowerCase().includes(q));const g=document.getElementById('sale-product-grid');if(!g)return;g.className='view-'+currentSaleView;if(!ps.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">沒有可賣的商品</div></div>';return;}g.innerHTML=ps.map(p=>{const stk=getProductStock(p);const sc=stk<=(p.minStock||5)?'stock-low':'stock-ok';return `<div class="product-card" draggable="true" title="可拖到組合框" ondragstart="startSaleProductDealDrag(event,'${p.id}')" ondragend="endCartDealDrag(event)" onclick="handleSaleProductCardClick(event,'${p.id}')"><div class="product-img">${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span style="font-size:10px;color:var(--text3);font-weight:700">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${p.stock}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   // 手機專用：加入購物車成功時讓被點的卡片跳一下。
@@ -12718,12 +12537,6 @@ function shiftSaleHistoryDate(dir){
 function saleReceiptCustomerName(rec){
   const c=rec?.customerId?(DB.customers||[]).find(x=>x.id===rec.customerId):null;
   return c?.name||'未指定顧客';
-}
-function saleReceiptDealEligible(it,deal){
-  if(!deal)return false;
-  if(deal.target==='all')return true;
-  const p=(DB.products||[]).find(x=>x.id===it.id);
-  return !!p&&p.type===deal.target;
 }
 function buildSaleReceiptRows(rec){
   const src=(rec.rawItems||[]).map((it,idx)=>({...it,_idx:idx,qty:Number(it.qty)||0,price:Number(it.price)||0,original:(Number(it.price)||0)*(Number(it.qty)||0),dealQty:0,dealDiscount:0,dealLabels:[],otherDiscount:0,final:0}));
@@ -13332,7 +13145,6 @@ function toggleBatchMode(){
 }
 
 function updateBatchUI(){
-  // Show/hide checkboxes and update selected state for all cards
   document.querySelectorAll('[id^="pcard-"]').forEach(el=>{
     const id=el.id.replace('pcard-','');
     const sel=batchSelected.has(id);
@@ -13342,10 +13154,7 @@ function updateBatchUI(){
 }
 
 function handleCardClick(id,event){
-  // 手機長按拖曳放開的那一下，有些瀏覽器還是會補一個 click 事件，
-  // 沒擋住的話放開卡片後會立刻又跳出商品編輯視窗（剛拖完馬上又跳視窗，體驗很差），這裡擋掉
   if(touchDragJustFinished){event.preventDefault();return;}
-  // ⌘/Ctrl+click：像 Mac 選檔案那樣，不用先手動點「批次編輯」，直接把這張卡加選/取消，自動進入批次模式
   if(event.metaKey||event.ctrlKey){
     event.preventDefault();
     if(!batchMode){
@@ -13361,7 +13170,6 @@ function handleCardClick(id,event){
     updateBatchToolbar();
     return;
   }
-  // Shift+click：已經在批次模式的話，跟上一次點的卡片之間全部一起選起來（照畫面上排列的順序）
   if(event.shiftKey&&batchMode&&lastClickedCardId){
     event.preventDefault();
     const cards=[...document.querySelectorAll('#product-grid [id^="pcard-"]')].map(el=>el.id.replace('pcard-',''));
@@ -13379,7 +13187,6 @@ function handleCardClick(id,event){
     if(batchSelected.has(id))batchSelected.delete(id);
     else batchSelected.add(id);
     lastClickedCardId=id;
-    // Update just this card
     const card=document.getElementById('pcard-'+id);
     const icon=document.getElementById('pcheck-icon-'+id);
     const sel=batchSelected.has(id);
@@ -13398,7 +13205,6 @@ function exitBatchMode(){
   updateBatchUI();updateBatchToolbar();
 }
 
-// ---- 商品庫空白處拖曳畫框選取（像桌面資料夾選檔案一樣）----
 let marqueeStart=null, marqueeEl=null, marqueeActive=false, marqueeDeselectMode=false, marqueeBaseSelection=null;
 let marqueeMovePending=false, marqueeMoveLastEvent=null;
 function initMarqueeSelect(){
@@ -13409,8 +13215,6 @@ function initMarqueeSelect(){
     if(e.button!==0)return;
     if(currentPage!=='products')return;
     if(!batchMode)return; // 只有已經在批次編輯模式時，拖曳才會啟動框選
-    // 只有點到「純背景」才會啟動框選：卡片現在一律可以直接拖曳（拿去分類），
-    // 框選要留給空白處，不然兩個手勢會搶同一個拖曳動作
     const isBareBackground=e.target.id==='page-products'||e.target.id==='product-grid'||e.target.id==='cat-sidebar'||e.target.classList.contains('sticky-sidebar')||e.target.classList.contains('products-layout-wrap')||e.target.classList.contains('products-left-col')||e.target.classList.contains('products-right-col');
     if(!isBareBackground)return;
     e.preventDefault(); // 避免拖曳框選時，瀏覽器把附近文字也一起選取（變藍色）
@@ -13477,7 +13281,6 @@ function onMarqueeUp(){
   marqueeMovePending=false;
   marqueeMoveLastEvent=null;
 }
-// Esc 中途取消框選：還原成拖之前的選取狀態，不套用這次拖出來的框選結果
 function cancelMarqueeSelect(){
   document.removeEventListener('mousemove',onMarqueeMove);
   document.removeEventListener('mouseup',onMarqueeUp);
@@ -13544,18 +13347,15 @@ function openBatchEditSelected(){
   openModal('modal-batch');
 }
 
-// 批次移動：把選取的商品移到不同大類 / 尺寸
 let batchMoveTarget = {type:null, size:null};
 function openBatchMoveModal(){
   if(batchSelected.size===0){toast('請先選擇商品','error');return;}
   batchMoveTarget = {type:null, size:null};
   document.getElementById('batch-move-count').textContent = batchSelected.size;
-  // 渲染大類按鈕（含自訂分類，不只是內建那 8 個）
   const types=getVisibleCategoryTypes().map(code=>[code,getTypeLabel(code)]);
   document.getElementById('batch-move-types').innerHTML = types.map(([code,label])=>
     `<button class="discount-btn" data-bm-type="${code}" onclick="setBatchMoveType('${code}')" style="font-size:12px;padding:7px 12px">${getCatIcon(code)} ${code} · ${label}</button>`
   ).join('');
-  // 渲染尺寸按鈕
   const sizes=[['0','無尺寸'],['XS','XS · $0.5'],['S','S · $1'],['M','M · $2'],['L','L · $3'],['XL','XL · $4'],['XX','XXL · $5']];
   document.getElementById('batch-move-sizes').innerHTML = sizes.map(([code,label])=>
     `<button class="discount-btn" data-bm-size="${code}" onclick="setBatchMoveSize('${code}')" style="font-size:12px;padding:7px 12px">${label}</button>`
@@ -13563,7 +13363,6 @@ function openBatchMoveModal(){
   openModal('modal-batch-move');
 }
 function setBatchMoveType(t){
-  // 切換選擇（再點一次取消）
   batchMoveTarget.type = (batchMoveTarget.type===t) ? null : t;
   document.querySelectorAll('[data-bm-type]').forEach(b=>{
     b.classList.toggle('active', b.dataset.bmType===batchMoveTarget.type);
@@ -13580,12 +13379,10 @@ function applyBatchMove(){
     toast('請至少選一個大類或尺寸','error');return;
   }
   const ids=[...batchSelected];
-  // 拍快照給 undo
   const snapshot=ids.map(id=>{
     const p=DB.products.find(x=>x.id===id);
     return p?{id,type:p.type,size:p.size}:null;
   }).filter(Boolean);
-  // 套用
   ids.forEach(id=>{
     const p=DB.products.find(x=>x.id===id);
     if(!p)return;
@@ -13611,35 +13408,36 @@ function applyBatchMove(){
   toast(`✅ 已移動 ${ids.length} 件到 ${parts.join(' · ')}（⌘Z 撤銷）`,'success');
 }
 
-// Patch v1：更新商品名稱與分類
 __bootSteps.push(function(){try{
-  if(lsGet('patchDB_names_v1')) return;
-  var s=lsGet('patchDB_v3'); if(!s) return;
-  var db=JSON.parse(s);
-  if(!db.products) return;
-  var P={"p019": {"name": "黑白線條愛心PEACE布貼"}, "p024": {"name": "幽靈貓布貼", "sku": "PA0302-0102-001"}, "p027": {"name": "黑白線條躺著狗布貼"}, "p028": {"name": "黑白線條站著狗布貼"}, "p029": {"name": "黑白線條LUCK四葉草布貼"}, "p032": {"name": "黑白線條熊頭布貼"}, "p038": {"name": "黑白線條大耳朵狗頭布貼"}, "p039": {"name": "黑白線條三層愛心布貼"}, "p040": {"name": "黑白線條貓頭布貼"}, "p007": {"name": "灰色兔子毛布貼"}, "p018": {"name": "粉色兔子毛布貼"}, "p026": {"name": "白色貴賓狗毛布貼"}};
-  db.products.forEach(function(p){if(P[p.id]){Object.assign(p,P[p.id]);}});
-  lsSet('patchDB_v3',JSON.stringify(db));
-  lsSet('patchDB_names_v1','1');
-  }catch(e){}});
-// Patch names v2：p042 改名為「細黑色蝴蝶結布貼」
-__bootSteps.push(function(){try{
-  if(lsGet('patchDB_names_v2')) return;
-  var s=lsGet('patchDB_v3'); if(!s) return;
-  var db=JSON.parse(s);
-  if(!db.products) return;
-  var P={"p042":{"name":"細黑色蝴蝶結布貼"}};
-  db.products.forEach(function(p){if(P[p.id]){Object.assign(p,P[p.id]);}});
-  lsSet('patchDB_v3',JSON.stringify(db));
-  lsSet('patchDB_names_v2','1');
-  }catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_sku_v2'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;var P={"p001": "PA0503-9900-001", "p002": "PA0503-0102-001", "p003": "PA0204-0400-001", "p004": "PA0799-0201-001", "p005": "PA0901-0203-001", "p006": "PA1501-0806-001", "p007": "PB0104-0300-001", "p008": "PA0702-0200-001", "p009": "PA1501-9900-001", "p010": "PA0702-0601-001", "p011": "PA0702-0600-001", "p012": "PA0702-0701-001", "p013": "PA0702-1201-001", "p014": "PA0899-1000-001", "p015": "PA0802-9900-001", "p016": "PA0402-0700-001", "p017": "PA0403-9900-001", "p018": "PB0104-1208-001", "p019": "PA1001-0201-001", "p020": "PA0504-9900-001", "p021": "PA0705-0203-001", "p022": "PA0302-0199-001", "p023": "PA0302-0299-001", "p029": "PA0402-0201-001", "p030": "PA0899-9900-001", "p031": "PA0301-0900-001", "p033": "PA0702-1400-001", "p034": "PA1001-0201-002", "p035": "PA0802-0201-001", "p036": "PA0703-0200-001", "p037": "PA0503-0104-001", "p039": "PA0701-0102-001"};db.products.forEach(function(p){if(P[p.id])p.sku=P[p.id];});lsSet('patchDB_v3',JSON.stringify(db));lsSet('patchDB_sku_v2','1');console.log('SKU v2 done');}catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_sku_v3'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;var P={"p001": "PA0501-9900-001", "p002": "PA0501-0102-001", "p020": "PA0502-9900-001", "p037": "PA0501-0104-001"};db.products.forEach(function(p){if(P[p.id])p.sku=P[p.id];});lsSet('patchDB_v3',JSON.stringify(db));lsSet('patchDB_sku_v3','1');}catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_sku_v4'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;// Fix SKU prefix to match type
-db.products.forEach(function(p){if(p.sku&&p.type&&p.sku.length>=2&&p.sku.slice(0,2)!==p.type){p.sku=p.type+p.sku.slice(2);}});lsSet('patchDB_v3',JSON.stringify(db));lsSet('patchDB_sku_v4','1');console.log('✅ SKU prefix 已修正');}catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_sku_v5'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;var P={"p026": "PB0102-0107-001", "p030": "PA0599-9900-001"};db.products.forEach(function(p){if(P[p.id])p.sku=P[p.id];});lsSet('patchDB_v3',JSON.stringify(db));lsSet('patchDB_sku_v5','1');}catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_sku_v6'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;var P={"p013": {"sku": "PA0702-1200-001"}, "p035": {"sku": "PA0802-0102-001"}, "p010": {"sku": "PA0702-0600-001"}, "p003": {"name": "章魚燒布貼", "sku": "PA0501-0400-001"}, "p017": {"name": "點點樹布貼", "sku": "PA0403-0799-001"}, "p012": {"name": "粉綠星星布貼", "sku": "PA0702-1300-001"}, "p015": {"sku": "PA0802-0201-001"}};db.products.forEach(function(p){if(P[p.id]){if(P[p.id].sku)p.sku=P[p.id].sku;if(P[p.id].name)p.name=P[p.id].name;}});lsSet('patchDB_v3',JSON.stringify(db));lsSet('patchDB_sku_v6','1');}catch(e){}});
-__bootSteps.push(function(){try{if(lsGet('patchDB_price_v1'))return;var s=lsGet('patchDB_v3');if(!s)return;var db=JSON.parse(s);if(!db.products)return;var SP={XS:0.5,S:1,M:2,L:3,XL:4,XX:5};var filled=0;db.products.forEach(function(p){if(p.size&&p.size!=='0'&&(!p.price||p.price===0)){var base=SP[p.size];if(base!==undefined){p.price=(p.type==='PB')?base+1:base;filled++;}}});if(filled>0){lsSet('patchDB_v3',JSON.stringify(db));}lsSet('patchDB_price_v1','1');if(filled>0)console.log('✅ 已自動填入'+filled+'個售價');}catch(e){}});
+  var s=lsGet('patchDB_v3');if(!s)return;
+  var db=JSON.parse(s);if(!db.products)return;
+  var changed=false;
+  function applyMap(flag,map){
+    if(lsGet(flag))return;
+    db.products.forEach(function(p){
+      var patch=map[p.id];if(!patch)return;
+      if(typeof patch==='string'){if(p.sku!==patch){p.sku=patch;changed=true;}}
+      else Object.keys(patch).forEach(function(k){if(p[k]!==patch[k]){p[k]=patch[k];changed=true;}});
+    });
+    lsSet(flag,'1');
+  }
+  applyMap('patchDB_names_v1',{"p019":{"name":"黑白線條愛心PEACE布貼"},"p024":{"name":"幽靈貓布貼","sku":"PA0302-0102-001"},"p027":{"name":"黑白線條躺著狗布貼"},"p028":{"name":"黑白線條站著狗布貼"},"p029":{"name":"黑白線條LUCK四葉草布貼"},"p032":{"name":"黑白線條熊頭布貼"},"p038":{"name":"黑白線條大耳朵狗頭布貼"},"p039":{"name":"黑白線條三層愛心布貼"},"p040":{"name":"黑白線條貓頭布貼"},"p007":{"name":"灰色兔子毛布貼"},"p018":{"name":"粉色兔子毛布貼"},"p026":{"name":"白色貴賓狗毛布貼"}});
+  applyMap('patchDB_names_v2',{"p042":{"name":"細黑色蝴蝶結布貼"}});
+  applyMap('patchDB_sku_v2',{"p001":"PA0503-9900-001","p002":"PA0503-0102-001","p003":"PA0204-0400-001","p004":"PA0799-0201-001","p005":"PA0901-0203-001","p006":"PA1501-0806-001","p007":"PB0104-0300-001","p008":"PA0702-0200-001","p009":"PA1501-9900-001","p010":"PA0702-0601-001","p011":"PA0702-0600-001","p012":"PA0702-0701-001","p013":"PA0702-1201-001","p014":"PA0899-1000-001","p015":"PA0802-9900-001","p016":"PA0402-0700-001","p017":"PA0403-9900-001","p018":"PB0104-1208-001","p019":"PA1001-0201-001","p020":"PA0504-9900-001","p021":"PA0705-0203-001","p022":"PA0302-0199-001","p023":"PA0302-0299-001","p029":"PA0402-0201-001","p030":"PA0899-9900-001","p031":"PA0301-0900-001","p033":"PA0702-1400-001","p034":"PA1001-0201-002","p035":"PA0802-0201-001","p036":"PA0703-0200-001","p037":"PA0503-0104-001","p039":"PA0701-0102-001"});
+  applyMap('patchDB_sku_v3',{"p001":"PA0501-9900-001","p002":"PA0501-0102-001","p020":"PA0502-9900-001","p037":"PA0501-0104-001"});
+  if(!lsGet('patchDB_sku_v4')){
+    db.products.forEach(function(p){if(p.sku&&p.type&&p.sku.length>=2&&p.sku.slice(0,2)!==p.type){p.sku=p.type+p.sku.slice(2);changed=true;}});
+    lsSet('patchDB_sku_v4','1');
+  }
+  applyMap('patchDB_sku_v5',{"p026":"PB0102-0107-001","p030":"PA0599-9900-001"});
+  applyMap('patchDB_sku_v6',{"p013":{"sku":"PA0702-1200-001"},"p035":{"sku":"PA0802-0102-001"},"p010":{"sku":"PA0702-0600-001"},"p003":{"name":"章魚燒布貼","sku":"PA0501-0400-001"},"p017":{"name":"點點樹布貼","sku":"PA0403-0799-001"},"p012":{"name":"粉綠星星布貼","sku":"PA0702-1300-001"},"p015":{"sku":"PA0802-0201-001"}});
+  if(!lsGet('patchDB_price_v1')){
+    var SP={XS:0.5,S:1,M:2,L:3,XL:4,XX:5};
+    db.products.forEach(function(p){if(p.size&&p.size!=='0'&&(!p.price||p.price===0)){var base=SP[p.size];if(base!==undefined){p.price=(p.type==='PB')?base+1:base;changed=true;}}});
+    lsSet('patchDB_price_v1','1');
+  }
+  if(changed)lsSet('patchDB_v3',JSON.stringify(db));
+}catch(e){console.warn('legacy product migration failed',e);}});
 __bootSteps.push(function(){try{
   if(lsGet('patchDB_order_v1'))return;
   var s=lsGet('patchDB_v3');if(!s)return;
@@ -13683,7 +13481,6 @@ __bootSteps.push(function(){try{
   lsSet('patchDB_v3',JSON.stringify(db));
   lsSet('patchDB_order_v2','1');
 }catch(e){}});
-// 歷史圖片清理：合併原 img_v3 / order_img_v1 / order_img_v2，保留各自旗標與原效果
 __bootSteps.push(function(){try{
   var needProductImg=!lsGet('patchDB_img_v3');
   var needStarOrderImg=!lsGet('patchDB_order_img_v1');
@@ -13713,26 +13510,21 @@ __bootSteps.push(function(){try{
   var s=lsGet('patchDB_v3');if(!s)return;
   var db=JSON.parse(s);
   var ghostImg="";
-  // 1. 把 p022/p023/p024 的 cost 補成 4
   ['p022','p023','p024'].forEach(function(pid){
     var p=(db.products||[]).find(function(x){return x.id===pid;});
     if(p&&(!p.cost||p.cost===0)){p.cost=4;p.updatedAt=Date.now();}
   });
-  // 2. 改採購單明細
   (db.orders||[]).forEach(function(o){
     if(o.id!=='order_20260123_huaomaru')return;
     var items=o.items||[];
     var ghostNames=['组合三枚 - 白色幽靈','组合三枚 - 黑色幽靈','组合三枚 - 幽靈貓'];
-    // 檢查是否已有合併行
     var existingCombo=items.find(function(i){return i.name==='组合三枚（自粘贴）';});
     if(existingCombo){
-      // 已存在合併行,只補圖
       if(!existingCombo.img||existingCombo.img.length<100){
         existingCombo.img=ghostImg;
       }
       return;
     }
-    // 沒合併行 → 刪 3 行幽靈組合,加新 1 行
     var ghostRows=items.filter(function(i){return ghostNames.indexOf(i.name)>=0;});
     if(ghostRows.length===0)return;
     o.items=items.filter(function(i){return ghostNames.indexOf(i.name)<0;});
@@ -13749,7 +13541,6 @@ __bootSteps.push(function(){try{
   lsSet('patchDB_v3',JSON.stringify(db));
   lsSet('patchDB_combo_v2','1');
 }catch(e){}});
-// 啟動行已下移至檔尾統一執行(__bootApp)
 
 function openTrash(){
   const trash=DB.trash||[];
@@ -13793,7 +13584,6 @@ function deleteTrash(idx){
   saveDB();openTrash();
   toast('已永久刪除');
 }
-// === 商品回收區 ===
 let productTrashSelected=new Set();
 function openProductTrash(){
   const trash=DB.productTrash||[];
@@ -13917,7 +13707,6 @@ function renderBatchTable(){
   </tr>`;}).join('')+'</tbody>';
 }
 
-// 批次編輯表格：每一列的縮圖可以直接拖曳照片進來換圖，或點擊選檔案
 let batchRowImgTargetId=null;
 function triggerBatchRowImgPick(id){
   batchRowImgTargetId=id;
@@ -14000,10 +13789,8 @@ function saveBatchEdit(){
     const id=row.dataset.id;
     const p=DB.products.find(x=>x.id===id);
     if(!p)return;
-    // Always save all rows (checkboxes only affect batch set)
     p.cost=parseFloat(row.querySelector('.batch-cost').value)||0;
     p.price=parseFloat(row.querySelector('.batch-price').value)||0;
-    // 多規格商品沒有 .batch-stock 這個欄位（庫存要去商品編輯逐款調整），這裡跳過，不要動 p.stock
     const stockInput=row.querySelector('.batch-stock');
     if(stockInput)p.stock=parseInt(stockInput.value)||0;
     p.updatedAt=Date.now();
@@ -14014,7 +13801,6 @@ function saveBatchEdit(){
   toast('✅ '+count+' 件商品儲存完成，可繼續編輯；按 × 或 Esc 才離開','success');
 }
 
-// ---- 盤點模式：輸入實際清點數量，跟帳面庫存比對差異，一次套用調整 ----
 function openStocktakeModal(){
   document.getElementById('stocktake-type-filter').value='all';syncCustomSelectLabel('stocktake-type-filter');
   renderStocktakeTable();
@@ -14035,9 +13821,6 @@ function renderStocktakeTable(){
     const hasVariants=p.variants&&p.variants.length>0;
     const imgHtml=p.img?`<img src="${p.img}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:var(--cream2)">`:'<div style="width:36px;height:36px;border-radius:6px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>';
     if(hasVariants){
-      // 多規格商品（例如字母貼）：p.stock 只是所有款式庫存的加總，不能直接整個改掉——
-      // 不然下次任何一款有變動（賣出/手動調整），系統會照款式重新加總，剛剛盤點改的數字就會被蓋掉、白改了。
-      // 所以多規格商品要一款一款分開盤點。
       return `<tr style="border-bottom:1px solid var(--cream2)" data-id="${p.id}" data-variant-product="1">
         <td colspan="4" style="padding:8px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -14175,9 +13958,7 @@ function applyStocktake(){
 </script>
 
 <script>
-// 內建初始商品資料：不包含商品圖片
 
-// 內建種子資料：第一次開啟時載入初始商品，使用最新版商品 schema
 __bootSteps.push(function(){
   try {
     const existing = lsGet('patchDB_v3');
@@ -14203,8 +13984,7 @@ __bootSteps.push(function(){
         if(!_exIds.has(p.id)){ db.products.push(p); _added++; }
       });
       db.orders = db.orders || [];
-      db.sales = db.sales || [];
-      db.todaySales = db.todaySales || {};
+            db.todaySales = db.todaySales || {};
       db.productTrash = db.productTrash || [];
       db.trash = db.trash || [];
       db.rate = db.rate || 0.138;
@@ -14222,14 +14002,12 @@ __bootSteps.push(function(){
   } catch(e) { console.error('種子載入失敗:', e); }
 });
 
-// ── 款式系統 ──────────────────────────────────────────────────
 let currentVariantProductId = null;
 
 function getProductStock(p){
   if(p.variants&&p.variants.length>0) return p.variants.reduce((s,v)=>s+(v.stock||0),0);
   return p.stock||0;
 }
-// 最近 N 天賣出這個商品的數量（用來估算庫存周轉），從每日銷售紀錄的 rawItems 撈
 function getRecentSoldQty(productId,days){
   const cutoffStr=new Date(Date.now()-days*86400000).toISOString().slice(0,10); // YYYY-MM-DD 字串直接比較就好，格式跟 DB.todaySales 的 key 一致
   let qty=0;
@@ -14241,8 +14019,6 @@ function getRecentSoldQty(productId,days){
   });
   return qty;
 }
-// 這個商品累計送出過幾件樣品（從結帳時記錄的 DB.samples 撈，不是另外維護一個獨立計數器——
-// 這樣才不會像舊版那樣，手動+/-按鈕跟實際出貨對不起來、越用越漂移）
 function getTotalSampleQty(productId){
   let qty=0;
   (DB.samples||[]).forEach(s=>{
@@ -14250,7 +14026,6 @@ function getTotalSampleQty(productId){
   });
   return qty;
 }
-// 庫存周轉天數：照最近30天賣出的速度，現在的庫存還能撐幾天
 function getTurnoverDaysText(p){
   const stock=getProductStock(p);
   if(stock<=0)return null;
@@ -14260,13 +14035,11 @@ function getTurnoverDaysText(p){
   const days=Math.round(stock/dailyRate);
   return days<=0?'隨時可能賣完':`約還能撐 ${days} 天`;
 }
-// 商品在庫天數：距離上次真的補到新貨（applyWAC）過了幾天
 function getDaysInStockText(p){
   if(!p.lastRestockedAt)return null;
   const days=Math.floor((Date.now()-p.lastRestockedAt)/86400000);
   return days<=0?'今天剛到貨':`到貨 ${days} 天`;
 }
-// 在途庫存：這個商品在所有「還沒到貨」的採購單裡總共訂了多少、最快哪張單的預計到貨日期
 function getInTransitInfo(productId){
   const pending=(DB.orders||[]).filter(o=>o.status!=='received');
   let qty=0,earliestEta=null;
@@ -14334,10 +14107,6 @@ function adjVariantStock(productId,variantId,delta){
   saveDB();
 }
 
-// ═══════════════════════════════════════════════════════════════
-// __bootApp:應用程式啟動入口
-// 流程:初始化儲存層(LS→IDB 遷移 + 快取載入)→ 依序執行 patches → 種子 → loadDB → 渲染
-// ═══════════════════════════════════════════════════════════════
 (async function __bootApp(){
   try{
     await __initStorage();
@@ -14346,14 +14115,11 @@ function adjVariantStock(productId,variantId,delta){
     alert('系統啟動失敗,請截圖回報:'+e.message);
     return;
   }
-  // 依序執行所有 patches 與種子(順序就是註冊順序)
   for(var i=0;i<__bootSteps.length;i++){
     try{__bootSteps[i]();}catch(e){console.error('啟動步驟 #'+i+' 失敗:',e);}
   }
-  // 載入到記憶體 DB 物件並首次渲染
   try{loadDB();}catch(e){console.error('loadDB 失敗:',e);}
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
-  // 重新整理網頁的時候，回到上次離開的那一頁，不要每次都跳回總覽
   try{
     const savedPage=localStorage.getItem('andhug_last_page');
     const validPages=['overview','products','orders','sales','reports','customers','sku'];
@@ -14373,7 +14139,6 @@ function adjVariantStock(productId,variantId,delta){
 })();
 </script>
 
-
 <div class="batch-toolbar" id="batch-toolbar" style="flex-direction:column;align-items:stretch;gap:10px">
   <div style="display:flex;align-items:center;justify-content:center;gap:10px">
     <span id="batch-selected-count" style="font-size:13px;font-weight:700;color:var(--brown)">0 件已選</span>
@@ -14392,7 +14157,6 @@ function adjVariantStock(productId,variantId,delta){
     <button class="btn btn-secondary btn-sm" onclick="exitBatchMode()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-shortcuts">
   <div class="modal" style="max-width:520px">
@@ -14421,7 +14185,6 @@ function adjVariantStock(productId,variantId,delta){
 #modal-shortcuts .shortcut-help-row:last-child{border-bottom:0}
 #modal-shortcuts kbd{display:inline-flex;align-items:center;justify-content:center;min-height:25px;padding:3px 8px;border:1px solid var(--cream3);border-bottom-width:2px;border-radius:7px;background:var(--surface);color:var(--brown);font:700 11px/1.2 'Nunito',sans-serif;white-space:nowrap}
 </style>
-
 
 <div class="modal-overlay hidden" id="modal-batch-move">
   <div class="modal" style="max-width:520px">
@@ -14452,7 +14215,6 @@ function adjVariantStock(productId,variantId,delta){
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-trash">
   <div class="modal" style="max-width:600px">
     <div class="modal-header">
@@ -14462,7 +14224,6 @@ function adjVariantStock(productId,variantId,delta){
     <div class="modal-body" id="trash-body"></div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-product-trash">
   <div class="modal" style="max-width:600px">
@@ -14474,7 +14235,6 @@ function adjVariantStock(productId,variantId,delta){
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-order-trash">
   <div class="modal" style="max-width:600px">
     <div class="modal-header">
@@ -14484,7 +14244,6 @@ function adjVariantStock(productId,variantId,delta){
     <div class="modal-body" id="order-trash-body" style="max-height:60vh;overflow-y:auto"></div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-reorder-list">
   <div class="modal" style="max-width:640px">
@@ -14503,7 +14262,6 @@ function adjVariantStock(productId,variantId,delta){
   </div>
 </div>
 
-
 <div class="modal-overlay hidden" id="modal-supplier-stats">
   <div class="modal" style="max-width:640px">
     <div class="modal-header">
@@ -14516,7 +14274,6 @@ function adjVariantStock(productId,variantId,delta){
     </div>
   </div>
 </div>
-
 
 <div class="modal-overlay hidden" id="modal-batch">
   <div class="modal" style="max-width:900px;width:95vw">
@@ -14635,15 +14392,9 @@ sb.auth.onAuthStateChange((_event, session) => {
 });
 updateAuthStatusUI();
 
-// 同步時，如果某個欄位在雲端資料庫還不存在（例如新加的 variants/rate_used/received_at 還沒手動建欄位），
-// 不要整包同步都失敗——先把那個欄位拿掉重試一次，讓其他資料照樣能存上去，
-// 這樣就算漏做了資料庫的手動設定步驟，也不會完全卡住雲端同步。table 參數可以是 'products' 或 'orders'。
 async function upsertWithFallback(sb, table, rows, firstError, triedCols) {
   triedCols = triedCols || [];
   const msg = firstError.message || '';
-  // 兩種常見的「欄位不存在」錯誤格式都要抓：
-  // Postgres 原生：column "variants" of relation "products" does not exist
-  // PostgREST：Could not find the 'variants' column of 'products' in the schema cache
   const m = /column ["']?([a-zA-Z_]+)["']?[^"']*does not exist/i.exec(msg)
     || /find the ["']([a-zA-Z_]+)["'] column/i.exec(msg);
   if (m && !triedCols.includes(m[1])) {
@@ -14929,7 +14680,7 @@ let __pullingFromCloud = false;
 // 下次合併時拿本機現在的值、雲端現在的值，分別跟這個基準比對，才能知道「這個欄位到底是誰改的」，
 // 而不是像整筆蓋掉那樣，只要有任何一個欄位比較新就把整包資料互相蓋過去、犧牲掉另一邊沒衝突的修改。
 if (!DB.__syncBaseline) DB.__syncBaseline = { products: {}, orders: {} };
-const PRODUCT_SCALAR_FIELDS = ['name','sku','type','size','color','style','cost','price','stock','minStock','defectStock','displayStock','note','status','img'];
+const PRODUCT_SCALAR_FIELDS = ['name','sku','type','size','cost','price','stock','minStock','defectStock','displayStock','note','status','img'];
 const ORDER_SCALAR_FIELDS = ['supplier','date','shipping','total','totalUsd','note','status','rateUsed','receivedAt','expectedDate','feeUsd','rawPaymentText','totalPaidUsdActual'];
 function snapshotFields(obj, fields) {
   const out = {};
@@ -15485,14 +15236,10 @@ window.addEventListener('load', () => {
 });
 </script>
 <script>
-// ═══════════════════════════════════════════════════════════════
-// 採購單最終執行保護（0818-S）
-// 放在所有主要程式之後：避免其他初始化／舊資料渲染把儲存停留、圖片、組合、繁體付款資訊蓋掉。
-// ═══════════════════════════════════════════════════════════════
 (function(){
   const ORDER_FIX_BUILD='0818-S';
 
-  function showOrderFixBuild(){
+function showOrderFixBuild(){
     const badge=document.getElementById('order-fix-build');
     if(badge)badge.remove();
   }
@@ -15606,7 +15353,6 @@ window.addEventListener('load', () => {
     window.saveOrder=function(event){
       if(event){event.preventDefault();event.stopPropagation();}
       const result=originalSaveOrder.apply(this,arguments);
-      // 原儲存流程全部跑完後再執行，確保任何同步重繪或舊關閉指令都不能把畫面關掉。
       setTimeout(()=>{
         const modal=document.getElementById('modal-order');
         if(modal){modal.classList.remove('hidden');document.body.style.overflow='hidden';}
