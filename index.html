@@ -274,15 +274,15 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-item-group .oi-group-check{display:none!important;}
 .si-bundle-toggle{width:32px;height:32px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;flex:0 0 32px;cursor:pointer;transition:all .15s;padding:0}
 .si-bundle-toggle:hover,.si-bundle-toggle.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
-.smart-import-review-row{grid-template-columns:32px 26px 32px minmax(0,1fr) 76px 60px 32px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
-.smart-import-item-no{height:32px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;box-sizing:border-box}
+.smart-import-review-row{grid-template-columns:32px 32px 22px minmax(0,1fr) 76px 60px 32px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
+.smart-import-item-no{height:32px;display:flex;align-items:center;justify-content:flex-end;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--brown);background:transparent;border:none;border-radius:0;box-sizing:border-box;padding:0;line-height:1}
 .si-bundle-item-no{height:38px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:9px;font-weight:900;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;box-sizing:border-box;white-space:nowrap}
 .smart-import-review-row .form-input,.si-bundle-component .form-input{height:32px;box-sizing:border-box}
 .smart-import-review-row>[id^="si-img-slot-"]{width:32px!important;height:32px!important;margin-top:0;border-radius:9px!important}
 .si-bundle-component>[id^="sibp-img-slot-"]{height:38px!important;margin-top:0;border-radius:9px!important}
 .smart-import-review-row .remove-btn{width:32px;height:32px;margin-top:0;border-radius:9px}
 .si-bundle-component .remove-btn{width:32px;height:32px;margin-top:2px;border-radius:9px}
-.smart-import-review-name{min-width:0}
+.smart-import-review-name{min-width:0;margin-left:-4px}
 .smart-import-review-name>.oi-linked-tag{min-height:16px;margin-top:3px}
 .smart-import-price-cell{position:relative;min-width:0}
 .smart-import-price-cell>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px;pointer-events:none}
@@ -333,12 +333,12 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .si-bundle-search-wrap .oi-suggest-item{padding:8px 10px;border-bottom:1px solid var(--cream2)}
 .si-bundle-search-wrap .oi-suggest-item:last-child{border-bottom:none}
 @media(max-width:700px){
-  .smart-import-review-row{grid-template-columns:32px 26px 32px minmax(0,1fr) 32px!important}
+  .smart-import-review-row{grid-template-columns:32px 32px 22px minmax(0,1fr) 32px!important}
   .smart-import-review-row>.si-bundle-toggle{grid-column:1;grid-row:1}
-  .smart-import-review-row>.smart-import-item-no{grid-column:2;grid-row:1}
-  .smart-import-review-row>[id^="si-img-slot-"]{grid-column:3;grid-row:1}
+  .smart-import-review-row>[id^="si-img-slot-"]{grid-column:2;grid-row:1}
+  .smart-import-review-row>.smart-import-item-no{grid-column:3;grid-row:1}
   .smart-import-review-name{grid-column:4;grid-row:1}
-  .smart-import-price-cell{grid-column:1/4;grid-row:2}
+  .smart-import-price-cell{grid-column:2/4;grid-row:2}
   .smart-import-qty-cell{grid-column:4;grid-row:2}
   .smart-import-review-row>.remove-btn{grid-column:5;grid-row:1}
   .si-bundle-panel{margin-left:0}
@@ -1116,7 +1116,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .smart-import-check-summary.warn{border-color:#e8c889;background:var(--yellow-light);color:#7d6220;}
 .smart-import-check-summary.ok{border-color:var(--mint);background:var(--mint-light);color:#3d6b4f;}
 .smart-import-page-badge{display:inline-flex;align-items:center;gap:3px;margin-top:3px;padding:1px 6px;border-radius:999px;background:var(--cream2);border:1px solid var(--cream3);font-size:8.5px;font-weight:800;color:var(--text3);white-space:nowrap;}
-.smart-import-row-needs-check{border-radius:11px;background:rgba(245,216,118,.11);}
+.smart-import-row-needs-check{border-radius:11px;background:transparent;}
 #modal-smart-import .smart-import-review-footer{
   flex:0 0 auto!important;position:relative;z-index:4;margin:12px 0 0!important;
   padding:12px 0 0!important;border-top:1.5px solid var(--cream3)!important;
@@ -9285,7 +9285,9 @@ function isSmartImportAddressLike(v){
   const s=String(v||'').trim();
   if(!s)return false;
   const addressHits=(s.match(/省|市|縣|县|區|区|鎮|镇|鄉|乡|村|街道|大道|路|巷|弄|號|号|棟|栋|樓|楼|室/g)||[]).length;
-  return SMART_IMPORT_PHONE_RE.test(s)||addressHits>=3||SMART_IMPORT_ADDRESS_RE.test(s)&&addressHits>=2;
+  // 商品名稱可能同時包含「小號」「走路」等字樣，不能只因兩個地址字就誤判成地址。
+  // 真實收貨地址通常會有 3 個以上地址結構字，或直接包含電話。
+  return SMART_IMPORT_PHONE_RE.test(s)||addressHits>=3;
 }
 function isSmartImportNonProductText(v){
   const s=String(v||'').trim();
@@ -9463,8 +9465,10 @@ function cleanSmartImportItems(items){
   return smartImportApplyAutoSplit(suggested);
 }
 function parsePdfRowsToItems(rows){
-  const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
-  const qtyRe=/^[xX×]\s*([\d]+)$/;
+  // 淘寶 PDF 的價格/數量有時會跟別的文字黏在同一個 text item，
+  // 所以不能要求整個 token 必須「只有 ￥12.34」或「只有 x1」。
+  const priceRe=/[¥￥]\s*([\d]+(?:\.\d+)?)/i;
+  const qtyRe=/(?:^|\s)[xX×]\s*([\d]+)(?:\s|$)/i;
   const serviceRe=/(?:7天無理由退貨|7天无理由退货|退貨運費險|退货运费险|訂單服務|订单服务)/i;
   const headerNoiseRe=/(?:訂單詳情|订单详情|拍下寶貝|拍下宝贝|買家付款|买家付款|賣家發貨|卖家发货|確認收貨|确认收货|交易成功)/i;
   const items=[];
@@ -9509,16 +9513,30 @@ function parsePdfRowsToItems(rows){
       continue;
     }
 
-    for(const tok of tokens){
+    for(const rawTok of tokens){
+      const tok=String(rawTok||'').trim();
       const pm=tok.match(priceRe),qm=tok.match(qtyRe);
+
       if(pm){
-        if(firstPrice===null)firstPrice=parseFloat(pm[1]);
-        else if(secondPrice===null)secondPrice=parseFloat(pm[1]);
-      }else if(qm){
-        rowQty=parseInt(qm[1]);
-      }else if(!serviceRe.test(tok)){
-        left.push(tok);
+        const pv=parseFloat(pm[1]);
+        if(Number.isFinite(pv)){
+          if(firstPrice===null)firstPrice=pv;
+          else if(secondPrice===null)secondPrice=pv;
+        }
       }
+      if(qm){
+        const qv=parseInt(qm[1]);
+        if(Number.isFinite(qv)&&qv>0)rowQty=qv;
+      }
+
+      // 如果同一個 token 同時含商品文字 + 價格/數量，只移除價格/數量，
+      // 剩下的文字仍要留下來當商品名稱的一部分。
+      const residue=tok
+        .replace(/[¥￥]\s*[\d]+(?:\.\d+)?/gi,' ')
+        .replace(/(?:^|\s)[xX×]\s*[\d]+(?=\s|$)/gi,' ')
+        .replace(/\s+/g,' ')
+        .trim();
+      if(residue&&!serviceRe.test(residue))left.push(residue);
     }
     if(left.length)leftBuf.push(left.join(''));
 
@@ -9534,6 +9552,63 @@ function parsePdfRowsToItems(rows){
   }
   return items;
 }
+
+function parsePdfRowsToItemsLoose(rows){
+  const priceRe=/[¥￥]\s*([\d]+(?:\.\d+)?)/i;
+  const qtyRe=/(?:^|\s)[xX×]\s*([\d]+)(?:\s|$)/i;
+  const serviceRe=/(?:7天無理由退貨|7天无理由退货|退貨運費險|退货运费险|訂單服務|订单服务)/i;
+  const headerNoiseRe=/(?:訂單詳情|订单详情|拍下寶貝|拍下宝贝|買家付款|买家付款|賣家發貨|卖家发货|確認收貨|确认收货|交易成功)/i;
+  const items=[];
+  let buf=[],price=null;
+
+  const makeName=parts=>{
+    const clean=(parts||[]).map(v=>String(v||'').replace(/\s+/g,' ').trim()).filter(Boolean)
+      .filter(v=>!serviceRe.test(v)&&!headerNoiseRe.test(v)&&!isSmartImportNonProductText(v));
+    if(!clean.length)return '';
+    let baseIndex=0;
+    for(let i=1;i<clean.length;i++)if(clean[i].length>clean[baseIndex].length)baseIndex=i;
+    const tail=clean.slice(baseIndex+1).filter(v=>v.length<=50);
+    return convertSimplifiedToTraditional([clean[baseIndex],...tail].join(' ').trim());
+  };
+
+  for(const row of rows||[]){
+    const tokens=pdfRowToTokens(row.items);
+    const rowText=tokens.join(' ').trim();
+    if(tokens.some(t=>String(t).includes('付款详情')||String(t).includes('付款詳情')))break;
+
+    const serviceOnly=serviceRe.test(rowText);
+    if(isSmartImportNonProductText(rowText)&&!serviceOnly){buf=[];price=null;continue;}
+
+    let qty=null;
+    const textBits=[];
+    for(const raw of tokens){
+      const tok=String(raw||'').trim();
+      const pm=tok.match(priceRe),qm=tok.match(qtyRe);
+      if(pm&&price===null){
+        const n=parseFloat(pm[1]);
+        if(Number.isFinite(n))price=n;
+      }
+      if(qm){
+        const n=parseInt(qm[1]);
+        if(Number.isFinite(n)&&n>0)qty=n;
+      }
+      const residue=tok
+        .replace(/[¥￥]\s*[\d]+(?:\.\d+)?/gi,' ')
+        .replace(/(?:^|\s)[xX×]\s*[\d]+(?=\s|$)/gi,' ')
+        .replace(/\s+/g,' ').trim();
+      if(residue&&!serviceRe.test(residue))textBits.push(residue);
+    }
+    if(textBits.length)buf.push(textBits.join(' '));
+
+    if(qty!==null&&price!==null){
+      const name=makeName(buf);
+      if(name)items.push({name,rawName:name,cost:price,qty});
+      buf=[];price=null;
+    }
+  }
+  return items;
+}
+
 function parseTaobaoOrderMeta(rows){
   const meta={shopName:'',orderNo:'',payDate:'',totalProduct:null,shipping:null,discount:null,totalPaid:null,totalPaidUsd:null,feeUsd:null,rawPaymentText:''};
   const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
@@ -9662,21 +9737,27 @@ async function handleSmartImportPDF(input){
         });
         const ocrItems=cleanSmartImportItems(parseOcrTextToItems(text)).map(it=>({...it,_pdfPage:pageNum}));
         allItems.push(...ocrItems);
-        if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[]};
+        if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[],parsedByPage:{}};
         if(!ocrItems.length&&String(text||'').trim().length>20)smartImportMeta._pdfAudit.suspectedPages.push(pageNum);
       }
     }
-    if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[]};
+    if(!smartImportMeta._pdfAudit)smartImportMeta._pdfAudit={pages:pdf.numPages,suspectedPages:[],parsedByPage:{}};
     for(const pageRec of textPageRows){
       const rows=pageRec.rows,pageNum=pageRec.pageNum;
       const candidateCount=smartImportEstimatePdfCandidateCount(rows);
       let pageItems=parsePdfRowsToItems(rows);
+      const looseItems=parsePdfRowsToItemsLoose(rows);
+      if(looseItems.length>pageItems.length)pageItems=looseItems;
       if(!pageItems.length){
         const pageText=rows.map(r=>pdfRowToTokens(r.items).join(' ')).join('\n');
         if(pageText)pageItems=parseOcrTextToItems(pageText);
       }
       const cleanedPage=cleanSmartImportItems(pageItems).map(it=>({...it,_pdfPage:pageNum}));
       allItems.push(...cleanedPage);
+      if(smartImportMeta._pdfAudit){
+        if(!smartImportMeta._pdfAudit.parsedByPage)smartImportMeta._pdfAudit.parsedByPage={};
+        smartImportMeta._pdfAudit.parsedByPage[pageNum]=cleanedPage.length;
+      }
       if(candidateCount>cleanedPage.length&&!smartImportMeta._pdfAudit.suspectedPages.includes(pageNum)){
         smartImportMeta._pdfAudit.suspectedPages.push(pageNum);
       }
@@ -9689,11 +9770,24 @@ async function handleSmartImportPDF(input){
       });
     }
     progress.classList.add('hidden');
-    const cleanedItems=cleanSmartImportItems(allItems);
+
+    // IMPORTANT:
+    // 每一頁在加入 allItems 前已經 cleanSmartImportItems() 過一次。
+    // 不能在這裡再 clean 第二次，因為第一次的名稱建議流程可能刻意把
+    // 「沒有把握的長商品名」設成空白，等使用者確認；第二次 clean 會把
+    // 這些 name=='' 的合法商品直接刪掉，造成 43 款只剩個位數。
+    const cleanedItems=allItems.filter(it=>it&&(
+      String(it.rawName||'').trim() ||
+      String(it.name||'').trim() ||
+      (Array.isArray(it.bundleItems)&&it.bundleItems.length)
+    ));
+
     if(!cleanedItems.length){toast('沒有從 PDF 讀到商品資料，可能格式跟預期不同，建議改用 Excel 或截圖','error');return;}
     smartImportItems=cleanedItems;
     renderSmartImportReview();
-    toast(`✅ 從 PDF 讀到 ${cleanedItems.length} 筆，付款／折扣欄位已自動排除，請再檢查一次`,'success');
+
+    const totalQty=cleanedItems.reduce((s,it)=>s+(Number(it.qty)||0),0);
+    toast(`✅ 從 PDF 讀到 ${cleanedItems.length} 款 / ${totalQty} 件，付款／折扣欄位已自動排除，請再檢查一次`,'success');
   }catch(err){
     progress.classList.add('hidden');
     toast('PDF 讀取失敗：'+String(err&&err.message||err),'error');
@@ -9938,7 +10032,10 @@ function smartImportUpdateReviewSummary(){
   }
   if(st.expectedProductTotal!==null){
     if(Math.abs(st.productDiff)<=0.02)msgs.push(`✓ 商品總價對上 PDF：¥${st.totalCost.toFixed(2)}`);
-    else msgs.push(`⚠️ 商品總價差 ¥${Math.abs(st.productDiff).toFixed(2)}（PDF ¥${st.expectedProductTotal.toFixed(2)} / 目前 ¥${st.totalCost.toFixed(2)}）`);
+    else{
+      msgs.push(`⚠️ 商品總價差 ¥${Math.abs(st.productDiff).toFixed(2)}（PDF ¥${st.expectedProductTotal.toFixed(2)} / 目前 ¥${st.totalCost.toFixed(2)}）`);
+      if(Math.abs(st.productDiff)>Math.max(5,st.expectedProductTotal*0.1))msgs.push('⚠️ 差額過大，可能有商品漏抓，請不要直接匯入，先確認每一頁商品都有列出。');
+    }
   }
   if(st.paid!==null){
     if(Math.abs(st.paidDiff)<=0.02)msgs.push(`✓ 實付對帳一致：¥${st.paid.toFixed(2)}`);
@@ -9957,18 +10054,21 @@ function smartImportRefreshAfterEdit(){
   smartImportUpdateReviewSummary();
 }
 function smartImportEstimatePdfCandidateCount(rows){
-  let count=0,stopped=false;
-  const priceRe=/^[¥￥]\s*([\d]+\.?[\d]*)$/;
-  const qtyRe=/^[xX×]\s*([\d]+)$/;
+  let count=0,stopped=false,havePrice=false;
+  const priceRe=/[¥￥]\s*([\d]+(?:\.\d+)?)/i;
+  const qtyRe=/(?:^|\s)[xX×]\s*([\d]+)(?:\s|$)/i;
+  const serviceRe=/(?:7天無理由退貨|7天无理由退货|退貨運費險|退货运费险|訂單服務|订单服务)/i;
   for(const row of rows||[]){
     const tokens=pdfRowToTokens(row.items);
     if(tokens.some(tok=>tok.includes('付款详情')||tok.includes('付款詳情'))){stopped=true;break;}
     if(stopped)break;
     const rowText=tokens.join(' ').trim();
-    if(isSmartImportNonProductText(rowText))continue;
-    const hasQty=tokens.some(t=>qtyRe.test(t));
-    const hasPrice=tokens.some(t=>priceRe.test(t));
-    if(hasQty&&hasPrice)count++;
+    const serviceOnly=serviceRe.test(rowText);
+    if(isSmartImportNonProductText(rowText)&&!serviceOnly){havePrice=false;continue;}
+    const hasPrice=tokens.some(t=>priceRe.test(String(t||'')));
+    const hasQty=tokens.some(t=>qtyRe.test(String(t||'')));
+    if(hasPrice)havePrice=true;
+    if(hasQty&&havePrice){count++;havePrice=false;}
   }
   return count;
 }
@@ -10010,8 +10110,8 @@ function renderSmartImportReview(){
     return `
     <div class="order-item-row smart-import-review-row${needsCheck?' smart-import-row-needs-check':''}">
       ${smartImportBundleToggleHtml(i,it)}
-      <div class="smart-import-item-no" title="第 ${i+1} 個產品">${i+1}</div>
       ${smartImportPhotoSlotHtml(i,imgSrc)}
+      <div class="smart-import-item-no" title="第 ${i+1} 個產品">${i+1}</div>
       <div class="oi-suggest-wrap smart-import-review-name">
         <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i});smartImportRefreshAfterEdit()" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
         ${it._nameSuggestionNote?`<div style="font-size:9px;color:${it._possibleBundle?'var(--brown)':'#3d8a58'};margin-top:3px;padding-left:5px;line-height:1.35;font-weight:800">✨ ${smartImportEsc(it._nameSuggestionNote)}${it._suggestedVariant?` · 款式：${smartImportEsc(it._suggestedVariant)}`:''}</div>`:''}
