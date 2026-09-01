@@ -10174,6 +10174,11 @@ function smartImportPlaceLinkedTag(input){
   tag.style.gap='2px';
   tag.style.marginLeft='6px';
   tag.style.verticalAlign='top';
+  const linkedText=String(tag.textContent||'').trim();
+  if(linkedText.startsWith('🔗')){
+    const rest=linkedText.replace(/^🔗\s*/,'');
+    tag.innerHTML=`<span style="font-size:8px;line-height:1;display:inline-block;transform:translateY(-.5px);flex:0 0 auto">🔗</span><span>${smartImportEsc(rest)}</span>`;
+  }
   if(note){
     note.style.display='inline-flex';
     note.style.alignItems='center';
