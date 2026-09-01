@@ -10281,6 +10281,10 @@ function smartImportShowSuggestions(input,i){
   const matches=(DB.products||[]).filter(p=>p.name&&(p.name.toLowerCase().includes(ql)||(p.sku||'').toLowerCase().includes(ql))).slice(0,8);
   list=document.createElement('div');
   list.className='oi-suggest-list';
+  list.style.top=(input.offsetTop+input.offsetHeight+3)+'px';
+  list.style.left=input.offsetLeft+'px';
+  list.style.right='auto';
+  list.style.width=input.offsetWidth+'px';
   if(matches.length===0){
     list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，匯入後會建立新商品「${q}」</div>`;
   }else{
@@ -10956,15 +10960,35 @@ function processOrderItemImgFile(f,id){
 function smartImportPhotoSlotHtml(i,img){
   return `<div id="si-img-slot-${i}" style="width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--cream2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;border:1.5px dashed var(--cream4);transition:border-color .15s,background .15s;box-sizing:border-box" onclick="document.getElementById('si-img-input-${i}').click()" title="幫這個項目加照片——也可以直接把圖片拖進來" ondragover="event.preventDefault();this.style.borderColor='var(--brown)';this.style.background='var(--cream3)'" ondragleave="this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)'" ondrop="event.preventDefault();this.style.borderColor='var(--cream4)';this.style.background='var(--cream2)';processSmartImportItemImgFile(event.dataTransfer.files[0],${i})"><img id="si-img-thumb-${i}" src="${img||''}" style="width:100%;height:100%;object-fit:cover;${img?'':'display:none'}"><span id="si-img-placeholder-${i}" style="${img?'display:none':'display:block'}">📷</span></div><input type="file" accept="image/*" id="si-img-input-${i}" style="display:none" onchange="processSmartImportItemImgFile(event.target.files[0],${i})">`;
 }
+function applySmartImportItemImg(i,img){
+  const it=smartImportItems[i];
+  if(!it)return;
+  if(img)it.img=img;else delete it.img;
+  const thumb=document.getElementById('si-img-thumb-'+i);
+  const ph=document.getElementById('si-img-placeholder-'+i);
+  if(thumb){
+    thumb.src=img||'';
+    thumb.style.display=img?'block':'none';
+  }
+  if(ph)ph.style.display=img?'none':'block';
+  const fileInput=document.getElementById('si-img-input-'+i);
+  if(fileInput)fileInput.value='';
+}
 function processSmartImportItemImgFile(f,i){
   if(!f||!f.type||!f.type.startsWith('image/'))return;
+  const it=smartImportItems[i];
+  if(!it)return;
+  const oldImg=it.img||'';
   const r=new FileReader();
   r.onload=ev=>{
-    smartImportItems[i].img=ev.target.result;
-    const thumb=document.getElementById('si-img-thumb-'+i);
-    const ph=document.getElementById('si-img-placeholder-'+i);
-    if(thumb){thumb.src=ev.target.result;thumb.style.display='block';}
-    if(ph)ph.style.display='none';
+    const newImg=ev.target.result;
+    applySmartImportItemImg(i,newImg);
+    pushUndo({
+      label:'更換匯入商品照片',
+      undo:()=>applySmartImportItemImg(i,oldImg),
+      redo:()=>applySmartImportItemImg(i,newImg)
+    });
+    toast('📷 照片已加入，可按 ⌘Z 復原','success');
   };
   r.readAsDataURL(f);
 }
