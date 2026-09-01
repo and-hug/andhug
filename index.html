@@ -275,14 +275,14 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .si-bundle-toggle{width:32px;height:32px;margin-top:0;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;flex:0 0 32px;cursor:pointer;transition:all .15s;padding:0}
 .si-bundle-toggle:hover,.si-bundle-toggle.active{background:var(--cream2);border-color:var(--brown);color:var(--brown)}
 .smart-import-review-row{grid-template-columns:32px 32px 22px minmax(0,1fr) 76px 60px 32px!important;gap:8px!important;align-items:start!important;margin-bottom:12px!important;min-width:0}
-.smart-import-item-no{height:32px;display:flex;align-items:center;justify-content:flex-end;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--brown);background:transparent;border:none;border-radius:0;box-sizing:border-box;padding:0;line-height:1}
+.smart-import-item-no{height:32px;display:flex;align-items:center;justify-content:flex-end;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:var(--brown);background:transparent;border:none;border-radius:0;box-sizing:border-box;padding:0 1px 0 0;line-height:1;opacity:.86}
 .si-bundle-item-no{height:38px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:9px;font-weight:900;color:var(--brown);background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;box-sizing:border-box;white-space:nowrap}
 .smart-import-review-row .form-input,.si-bundle-component .form-input{height:32px;box-sizing:border-box}
 .smart-import-review-row>[id^="si-img-slot-"]{width:32px!important;height:32px!important;margin-top:0;border-radius:9px!important}
 .si-bundle-component>[id^="sibp-img-slot-"]{height:38px!important;margin-top:0;border-radius:9px!important}
-.smart-import-review-row .remove-btn{width:32px;height:32px;margin-top:0;border-radius:9px}
-.si-bundle-component .remove-btn{width:32px;height:32px;margin-top:2px;border-radius:9px}
-.smart-import-review-name{min-width:0;margin-left:-4px}
+.smart-import-review-row .remove-btn{width:24px;height:24px;margin-top:4px;border-radius:7px;justify-self:center}
+.si-bundle-component .remove-btn{width:24px;height:24px;margin-top:4px;border-radius:7px;justify-self:center}
+.smart-import-review-name{min-width:0;margin-left:-2px}
 .smart-import-review-name>.oi-linked-tag{min-height:16px;margin-top:3px}
 .smart-import-price-cell{position:relative;min-width:0}
 .smart-import-price-cell>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:11px;pointer-events:none}
@@ -369,6 +369,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .modal-close::after,.remove-btn::after{transform:translate(-50%,-50%) rotate(-45deg)}
 .remove-btn:hover{background:var(--red);color:#fff;}
 .order-form-review-row .remove-btn::before,.order-form-review-row .remove-btn::after{width:9px;height:1.4px}
+.smart-import-review-row .remove-btn::before,.smart-import-review-row .remove-btn::after,.si-bundle-component .remove-btn::before,.si-bundle-component .remove-btn::after{width:8px;height:1.3px;top:calc(50% - .5px)}
 .rate-bar{display:flex;align-items:center;gap:10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--text2);font-weight:600;margin-bottom:20px;}
 .rate-val{font-family:'Nunito',sans-serif;font-weight:800;color:var(--brown);font-size:14px;}
 .sku-panel{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--cream3);padding:24px;box-shadow:var(--shadow);}
@@ -2183,6 +2184,87 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 #page-sales-history .sales-history-dd-option:not(.active)::before{
   content:'';display:inline-block;width:16px
+}
+</style>
+
+
+<style id="smart-import-unified-layout-safe">
+/* Smart Import unified row layout — isolated override; remove this block to revert. */
+#smart-import-list .smart-import-review-row{
+  grid-template-columns:32px 32px minmax(0,1fr) 76px 60px 30px!important;
+  gap:8px!important;
+  align-items:start!important;
+}
+#smart-import-list .smart-import-review-row>.si-bundle-toggle{grid-column:1;grid-row:1}
+#smart-import-list .smart-import-review-row>[id^="si-img-slot-"]{
+  grid-column:2;grid-row:1;width:32px!important;height:32px!important;margin-top:0!important;border-radius:9px!important
+}
+#smart-import-list .smart-import-review-row>.smart-import-item-no{
+  grid-column:3;grid-row:1;z-index:3;width:42px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0;padding:0;background:transparent;border:0;border-right:1px solid var(--cream3);border-radius:0;
+  opacity:1;pointer-events:none;box-sizing:border-box;font-size:12px
+}
+#smart-import-list .smart-import-review-name{
+  grid-column:3;grid-row:1;min-width:0;margin-left:0;position:relative;z-index:1
+}
+#smart-import-list .smart-import-review-name>input.form-input{
+  height:32px!important;padding-left:51px!important;border-radius:9px!important;box-sizing:border-box
+}
+#smart-import-list .smart-import-price-cell{grid-column:4;grid-row:1}
+#smart-import-list .smart-import-qty-cell{grid-column:5;grid-row:1}
+#smart-import-list .smart-import-review-row>.remove-btn{
+  grid-column:6;grid-row:1;width:30px!important;height:30px!important;min-width:30px!important;
+  margin-top:1px!important;border-radius:8px!important;justify-self:center!important
+}
+#smart-import-list .smart-import-review-row>.remove-btn::before,
+#smart-import-list .smart-import-review-row>.remove-btn::after{
+  left:50%;top:50%;width:8px;height:1.3px
+}
+
+#smart-import-list .si-bundle-component{
+  grid-template-columns:32px minmax(0,1fr) 90px 30px!important;
+  gap:8px!important;align-items:start!important
+}
+#smart-import-list .si-bundle-component>[id^="sibp-img-slot-"]{
+  grid-column:1;grid-row:1;width:32px!important;height:32px!important;margin-top:0!important;border-radius:9px!important
+}
+#smart-import-list .si-bundle-component>.si-bundle-item-no{
+  grid-column:2;grid-row:1;z-index:3;width:42px;height:32px!important;
+  display:flex;align-items:center;justify-content:center;
+  margin:0;padding:0;background:transparent;border:0;border-right:1px solid var(--cream3);border-radius:0;
+  pointer-events:none;box-sizing:border-box;font-size:10px
+}
+#smart-import-list .si-bundle-component>.si-bundle-search-wrap{
+  grid-column:2;grid-row:1;min-width:0;position:relative;z-index:1
+}
+#smart-import-list .si-bundle-component>.si-bundle-search-wrap>input.form-input{
+  height:32px!important;padding-left:51px!important;border-radius:9px!important;box-sizing:border-box
+}
+#smart-import-list .si-bundle-component>div:nth-child(4){grid-column:3;grid-row:1}
+#smart-import-list .si-bundle-component>.remove-btn{
+  grid-column:4;grid-row:1;width:30px!important;height:30px!important;min-width:30px!important;
+  margin-top:1px!important;border-radius:8px!important;justify-self:center!important
+}
+#smart-import-list .si-bundle-component>.remove-btn::before,
+#smart-import-list .si-bundle-component>.remove-btn::after{
+  left:50%;top:50%;width:8px;height:1.3px
+}
+
+@media(max-width:700px){
+  #smart-import-list .smart-import-review-row{
+    grid-template-columns:32px 32px minmax(0,1fr) 30px!important
+  }
+  #smart-import-list .smart-import-review-row>.si-bundle-toggle{grid-column:1;grid-row:1}
+  #smart-import-list .smart-import-review-row>[id^="si-img-slot-"]{grid-column:2;grid-row:1}
+  #smart-import-list .smart-import-review-row>.smart-import-item-no,
+  #smart-import-list .smart-import-review-name{grid-column:3;grid-row:1}
+  #smart-import-list .smart-import-review-row>.remove-btn{grid-column:4;grid-row:1}
+  #smart-import-list .smart-import-price-cell{grid-column:2;grid-row:2}
+  #smart-import-list .smart-import-qty-cell{grid-column:3;grid-row:2}
+  #smart-import-list .si-bundle-component{
+    grid-template-columns:32px minmax(0,1fr) 84px 30px!important
+  }
 }
 </style>
 
@@ -9033,7 +9115,7 @@ function renderImportDraftsList(){
         <div style="font-size:11px;color:var(--text3);margin-top:2px">${(d.items||[]).length} 筆商品 · ${dateStr}</div>
       </div>
       <button class="btn btn-primary btn-sm" onclick="resumeImportDraft('${d.id}')">繼續編輯</button>
-      <button class="remove-btn" onclick="deleteImportDraft('${d.id}')">×</button>
+      <button class="remove-btn" style="width:28px;height:28px;min-width:28px;border-radius:8px;align-self:center" onclick="deleteImportDraft('${d.id}')">×</button>
     </div>`;
   }).join('');
 }
