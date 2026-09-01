@@ -10285,6 +10285,17 @@ function smartImportShowSuggestions(input,i){
   list.style.left=input.offsetLeft+'px';
   list.style.right='auto';
   list.style.width=input.offsetWidth+'px';
+  list.style.zIndex='99999';
+  const suggestWrap=input.closest('.oi-suggest-wrap');
+  if(suggestWrap){
+    suggestWrap.style.position='relative';
+    suggestWrap.style.zIndex='99998';
+  }
+  const reviewRow=input.closest('.smart-import-review-row');
+  if(reviewRow){
+    reviewRow.style.position='relative';
+    reviewRow.style.zIndex='99997';
+  }
   if(matches.length===0){
     list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，匯入後會建立新商品「${q}」</div>`;
   }else{
