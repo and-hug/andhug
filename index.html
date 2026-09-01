@@ -10196,10 +10196,12 @@ function renderSmartImportReview(){
       <div class="smart-import-item-no" title="第 ${i+1} 個產品">${i+1}</div>
       <div class="oi-suggest-wrap smart-import-review-name">
         <input type="text" class="form-input" value="${(displayName||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="smartImportItems[${i}]._nameTouched=true;smartImportShowSuggestions(this,${i});smartImportRefreshAfterEdit()" onfocus="smartImportShowSuggestions(this,${i})" onblur="hideOrderItemSuggestionsLater(this)" placeholder="輸入你的商品名稱">
-        ${it._nameSuggestionNote?`<div style="font-size:9px;color:${it._possibleBundle?'var(--brown)':'#3d8a58'};margin-top:3px;padding-left:5px;line-height:1.35;font-weight:800">✨ ${smartImportEsc(it._nameSuggestionNote)}${it._suggestedVariant?` · 款式：${smartImportEsc(it._suggestedVariant)}`:''}</div>`:''}
+        <div style="display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px;padding-left:5px;margin-top:${it._nameSuggestionNote||matchedP?'3px':'0'};line-height:1.35;min-height:${it._nameSuggestionNote||matchedP?'12px':'0'}">
+          ${it._nameSuggestionNote?`<div style="font-size:9px;color:${it._possibleBundle?'var(--brown)':'#3d8a58'};line-height:1.35;font-weight:800">✨ ${smartImportEsc(it._nameSuggestionNote)}${it._suggestedVariant?` · 款式：${smartImportEsc(it._suggestedVariant)}`:''}</div>`:''}
+          <div class="oi-linked-tag" style="font-size:9px;line-height:1.35;margin-top:0;min-height:0">${matchedP?`🔗 已連結:${smartImportEsc(matchedP.name)}`:''}</div>
+        </div>
         ${it.rawName?`<div style="font-size:9px;color:var(--text3);margin-top:2px;padding-left:5px;line-height:1.35">原始：${smartImportEsc(it.rawName)}</div>`:''}
         ${it._pdfPage?`<div class="smart-import-page-badge">PDF 第 ${it._pdfPage} 頁</div>`:''}
-        <div class="oi-linked-tag">${matchedP?`🔗 已連結:${smartImportEsc(matchedP.name)}`:''}</div>
       </div>
       <div class="smart-import-price-cell"><span>¥</span><input type="number" class="form-input" value="${it.cost?Number(it.cost).toFixed(2):0}" step="0.01" style="font-size:12px" onchange="smartImportItems[${i}].cost=parseFloat(this.value)||0;smartImportRefreshAfterEdit()"></div>
       <div class="smart-import-qty-cell" style="position:relative;display:inline-block"><input type="number" id="si-qty-${i}" class="form-input sibp-qty-input" value="${it.qty}" min="1" style="font-size:12px;text-align:center;width:60px;box-sizing:border-box;padding:4px 16px 4px 4px" onchange="smartImportItems[${i}].qty=parseInt(this.value)||1;smartImportRefreshAfterEdit()"><div style="position:absolute;right:1px;top:1px;bottom:1px;width:15px;display:flex;flex-direction:column;border-left:1px solid var(--cream3)"><button type="button" onclick="stepSmartImportQty(${i},1)" style="flex:1;border:none;border-bottom:1px solid var(--cream3);background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 8px 0 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▲</button><button type="button" onclick="stepSmartImportQty(${i},-1)" style="flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:7px;line-height:1;cursor:pointer;padding:0;font-family:inherit;border-radius:0 0 8px 0;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='var(--cream3)'" onmouseout="this.style.background='var(--cream2)'">▼</button></div></div>
@@ -10286,11 +10288,6 @@ function smartImportShowSuggestions(input,i){
   list.style.right='auto';
   list.style.width=input.offsetWidth+'px';
   list.style.zIndex='99999';
-  const suggestWrap=input.closest('.oi-suggest-wrap');
-  if(suggestWrap){
-    suggestWrap.style.position='relative';
-    suggestWrap.style.zIndex='99998';
-  }
   const reviewRow=input.closest('.smart-import-review-row');
   if(reviewRow){
     reviewRow.style.position='relative';
