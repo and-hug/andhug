@@ -10295,8 +10295,8 @@ function ungroupSmartImportItems(gid,skipUndo=false){
 function smartImportShowSuggestions(input,i){
   const wrap=input.closest('.oi-suggest-wrap');
   if(!wrap)return;
-  let list=wrap.querySelector('.oi-suggest-list');
-  if(list)list.remove();
+  document.querySelectorAll('.smart-import-floating-suggest').forEach(el=>el.remove());
+  let list=null;
   const q=input.value.trim();
   smartImportItems[i].name=q;
   const tag=wrap.querySelector('.oi-linked-tag');
@@ -10319,17 +10319,16 @@ function smartImportShowSuggestions(input,i){
   const ql=q.toLowerCase();
   const matches=(DB.products||[]).filter(p=>p.name&&(p.name.toLowerCase().includes(ql)||(p.sku||'').toLowerCase().includes(ql))).slice(0,8);
   list=document.createElement('div');
-  list.className='oi-suggest-list';
-  list.style.top=(input.offsetTop+input.offsetHeight+3)+'px';
-  list.style.left=input.offsetLeft+'px';
+  list.className='oi-suggest-list smart-import-floating-suggest';
+  const rect=input.getBoundingClientRect();
+  list.style.position='absolute';
+  list.style.top=(rect.bottom+window.scrollY+3)+'px';
+  list.style.bottom='auto';
+  list.style.transform='none';
+  list.style.left=(rect.left+window.scrollX)+'px';
   list.style.right='auto';
-  list.style.width=input.offsetWidth+'px';
+  list.style.width=rect.width+'px';
   list.style.zIndex='99999';
-  const reviewRow=input.closest('.smart-import-review-row');
-  if(reviewRow){
-    reviewRow.style.position='relative';
-    reviewRow.style.zIndex='99997';
-  }
   if(matches.length===0){
     list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，匯入後會建立新商品「${q}」</div>`;
   }else{
@@ -10341,7 +10340,7 @@ function smartImportShowSuggestions(input,i){
       list.appendChild(item);
     });
   }
-  wrap.appendChild(list);
+  document.body.appendChild(list);
 }
 function smartImportSelectSuggestion(input,i,productId,productName){
   const rawName=(smartImportItems[i]&&smartImportItems[i].rawName?smartImportItems[i].rawName:input.value).trim();
@@ -10350,19 +10349,13 @@ function smartImportSelectSuggestion(input,i,productId,productName){
   smartImportItems[i].name=productName;
   smartImportItems[i].productId=productId;
   const wrap=input.closest('.oi-suggest-wrap');
+  document.querySelectorAll('.smart-import-floating-suggest').forEach(el=>el.remove());
   if(wrap){
-    const list=wrap.querySelector('.oi-suggest-list');
-    if(list)list.remove();
     const tag=wrap.querySelector('.oi-linked-tag');
     if(tag){tag.innerHTML=`🔗 已連結:${productName}`;smartImportPlaceLinkedTag(input);}
   }
   const p=DB.products.find(x=>x.id===productId);
-  const thumb=document.getElementById('si-img-thumb-'+i);
-  const ph=document.getElementById('si-img-placeholder-'+i);
-  if(!smartImportItems[i].img&&thumb){
-    if(p&&p.img){thumb.src=p.img;thumb.style.display='block';if(ph)ph.style.display='none';}
-    else{thumb.style.display='none';if(ph)ph.style.display='block';}
-  }
+  applySmartImportItemImg(i,p&&p.img?p.img:'');
 }
 function smartImportAddRow(){
   smartImportItems.push({name:'',cost:0,qty:1});
@@ -10832,6 +10825,7 @@ function removeProductAlias(productId,alias){
 function hideOrderItemSuggestionsLater(input){
   setTimeout(()=>{
     const wrap=input.closest('.oi-suggest-wrap');
+    document.querySelectorAll('.smart-import-floating-suggest').forEach(el=>el.remove());
     const list=wrap&&wrap.querySelector('.oi-suggest-list');
     if(list)list.remove();
     const tag=wrap&&wrap.querySelector('.oi-linked-tag');
