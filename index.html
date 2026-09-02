@@ -122,7 +122,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .hidden{display:none !important;}
 .modal{background:var(--cream);border-radius:20px;border:2px solid var(--cream3);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
 .modal-header{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;}
-.modal-title{font-size:16px;font-weight:800;color:var(--text);}
+.modal-title{font-size:14px;font-weight:800;color:var(--text);}
 .modal-close{width:32px;height:32px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
 .modal-close:hover{background:var(--cream3);}
 .modal-body{padding:20px 24px 24px;}
@@ -7208,7 +7208,7 @@ function renderPriceComparePicker(){
     const checked=priceCompareSelectedIds.includes(String(p.id));
     return `<button type="button" onclick="togglePriceCompareProduct('${p.id}')" style="width:100%;border:none;border-radius:9px;background:${checked?'var(--cream2)':'transparent'};padding:7px 8px;display:flex;align-items:center;gap:8px;cursor:pointer;text-align:left;color:var(--text);font-family:inherit;margin-bottom:2px">
       <span style="width:18px;height:18px;border-radius:6px;border:1.5px solid ${checked?'var(--brown)':'var(--cream4)'};background:${checked?'var(--brown)':'var(--surface)'};color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800">${checked?'✓':''}</span>
-      ${p.img?`<img src="${p.img}" alt="" style="width:34px;height:34px;border-radius:8px;object-fit:contain;background:var(--cream2);flex-shrink:0">`:`<span style="width:34px;height:34px;border-radius:8px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0">📦</span>`}
+      ${p.img?`<img src="${p.img}" alt="" style="width:38px;height:38px;border-radius:8px;object-fit:contain;background:var(--cream2);flex-shrink:0">`:`<span style="width:34px;height:34px;border-radius:8px;background:var(--cream2);display:flex;align-items:center;justify-content:center;flex-shrink:0">📦</span>`}
       <span style="min-width:0;flex:1">
         <span style="display:block;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||'未命名商品'}</span>
         <span style="display:block;font-size:9.5px;color:var(--text3);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.sku||'無SKU'}</span>
@@ -7738,7 +7738,7 @@ function renderProducts(){
 
           <div class="pc-missing-cost-row">
             ${missing.length>0?`<span class="pc-missing">缺：${missing.join('·')}</span>`:'<span></span>'}
-            ${(p.cost||0)>0?`<span class="pc-cost">進貨 ¥${(p.cost||0).toFixed(2)}</span>`:'<span></span>'}
+            ${(p.cost||0)>0?`<span class="pc-cost"><span class="pc-cost-label">進貨</span> ¥${(p.cost||0).toFixed(2)}</span>`:'<span></span>'}
           </div>
 
           ${(()=>{const t=getInTransitInfo(p.id);return t?`<div class="pc-transit">🚚 在途 ${t.qty} 件${t.eta?'・'+t.eta.slice(5)+' 到':''}</div>`:'';})()}
@@ -8018,21 +8018,24 @@ function ensureProductMergeVariantModal(){
   modal.className='modal-overlay hidden';
   modal.id='modal-product-variant-merge';
   modal.innerHTML=`
-    <div class="modal" style="max-width:520px;width:min(520px,92vw)">
+    <div class="modal" style="max-width:312px;width:min(312px,92vw)">
       <div class="modal-header" style="padding:22px 24px 12px">
-        <div class="modal-title">🌸 併入商品款式</div>
-        <button class="modal-close" onclick="closeModal('modal-product-variant-merge')">×</button>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="modal-title">🌸 併入商品款式</div>
+          <button type="button" class="hint-info-btn" onclick="toggleProductMergeInfo()" aria-label="查看併入說明" title="查看說明"
+            style="width:18px;height:18px;border:1.5px solid var(--cream3);border-radius:50%;background:var(--surface);color:var(--text3);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0;top:0">i</button>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-product-variant-merge')"
+          style="display:flex;align-items:center;justify-content:center;padding:0;line-height:1">×</button>
       </div>
       <div class="modal-body" style="padding:4px 24px 8px">
-        <div id="product-variant-merge-summary" style="font-size:12px;color:var(--text2);margin-bottom:14px"></div>
+        <div id="product-variant-merge-summary" style="font-size:12px;color:var(--text2);margin-bottom:10px"></div>
 
-        <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 0 9px">
+        <div style="margin:2px 0 9px">
           <div style="font-size:11px;font-weight:800;color:var(--text2)">選擇要併入的款式</div>
-          <button type="button" class="hint-info-btn" onclick="toggleProductMergeInfo()" aria-label="查看併入說明" title="查看說明"
-            style="width:18px;height:18px;border:1.5px solid var(--cream3);border-radius:50%;background:var(--surface);color:var(--text3);font-size:11px;font-weight:800;top:0">i</button>
         </div>
 
-        <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px"></div>
+        <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,38px);gap:7px;justify-content:start"></div>
 
         <div id="product-variant-merge-info" class="hidden"
           style="margin-top:10px;padding:9px 11px;border:1px dashed var(--cream4);border-radius:12px;background:rgba(255,255,255,.45);font-size:10.5px;line-height:1.6;color:var(--text3)">
@@ -8040,7 +8043,7 @@ function ensureProductMergeVariantModal(){
         </div>
       </div>
 
-      <div class="modal-footer" style="padding:14px 24px 22px;justify-content:flex-end">
+      <div class="modal-footer" style="padding:14px 24px 14px;display:flex;align-items:center;justify-content:flex-end;gap:8px;width:100%;border-top:1px solid var(--cream3);margin-top:6px">
         <button class="btn btn-secondary" onclick="closeModal('modal-product-variant-merge')">取消</button>
         <button class="btn btn-primary" id="product-variant-merge-confirm" onclick="confirmProductMergeIntoVariant()" disabled>確認併入</button>
       </div>
@@ -8091,27 +8094,18 @@ function openProductMergeVariantModal(sourceId,targetId){
   const summary=document.getElementById('product-variant-merge-summary');
   const srcStock=getProductStock(source);
   summary.innerHTML=`
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--cream3);border-radius:16px;background:rgba(255,255,255,.55)">
+    <div style="padding:2px 0 0">
       <div style="min-width:0">
         <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">來源商品</div>
         <div style="font-weight:800;color:var(--text);line-height:1.4">${source.name}</div>
         <div style="font-size:10.5px;color:var(--text3);margin-top:4px">目前庫存 ${srcStock} 件</div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:6px;color:var(--text3);font-size:10.5px;font-weight:800;white-space:nowrap">
-        <span>併入</span><span style="font-size:15px;line-height:1">→</span>
-      </div>
-
-      <div style="min-width:0;text-align:right">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">母商品</div>
-        <div style="font-weight:800;color:var(--brown);line-height:1.4">${target.name}</div>
       </div>
     </div>`;
 
   const options=document.getElementById('product-variant-merge-options');
   options.innerHTML=target.variants.map(v=>`
     <button type="button" data-merge-variant-id="${v.id}" onclick="selectProductMergeVariant('${v.id}')"
-      style="width:100%;min-width:0;height:42px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
+      style="width:34px;height:34px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
       ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
     </button>`).join('');
 
@@ -16377,6 +16371,92 @@ document.addEventListener('change',function(e){
   <div><strong>PDF</strong>：先試著直接讀取文字，讀不到（掃描檔）就自動改用 OCR 辨識每一頁，一樣建議辨識完檢查一遍</div>
   <div><strong>辨識結果</strong>：抓到的內容可以直接在清單裡修改或刪除，匯入前請再檢查一次</div>
 </div>
+
+
+<style id="andhug-force-original-card-colors">
+/* 強制最終配色：商品庫＋開單，圖片區奶油米色、資訊區白色 */
+#product-grid:not(.view-list) .product-card,
+#sale-product-grid:not(.view-list) .product-card{
+  background:#fff !important;
+}
+
+#product-grid:not(.view-list) .product-card .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  background:var(--cream2) !important;
+}
+
+#product-grid:not(.view-list) .product-card .product-info,
+#sale-product-grid:not(.view-list) .product-card .product-info{
+  background:#fff !important;
+}
+
+/* 子分類：白底、奶油邊框、咖啡字；active 保持咖啡底 */
+#subcat-filters button:not(.active),
+#sale-subcat-filters button:not(.active){
+  background:#fff !important;
+  border-color:var(--cream3) !important;
+  color:var(--text2) !important;
+}
+</style>
+
+
+<style id="andhug-subcat-panel-bg-fix">
+/* 子分類整個背景區塊：固定使用淡粉奶油色 */
+#page-products .products-right-col > .sticky-bar,
+#page-sales .sale-cat-layout > div:last-child > .sticky-bar{
+  background:#F9F3F0 !important;
+}
+</style>
+
+
+<style id="andhug-product-info-normal-weight">
+/* 商品卡下方輔助資訊改回一般字重；商品名稱與庫存 badge 維持原本 */
+#product-grid:not(.view-list) .product-card .product-sku,
+#product-grid:not(.view-list) .product-card .pc-subcat-code,
+#product-grid:not(.view-list) .product-card .pc-catcode,
+#product-grid:not(.view-list) .product-card .pc-sold,
+#product-grid:not(.view-list) .product-card .pc-defect,
+#product-grid:not(.view-list) .product-card .pc-stale,
+#product-grid:not(.view-list) .product-card .pc-transit,
+#product-grid:not(.view-list) .product-card .pc-pending,
+#product-grid:not(.view-list) .product-card .pc-missing,
+#product-grid:not(.view-list) .product-card .pc-cost,
+#product-grid:not(.view-list) .product-card .price-tag,
+#sale-product-grid:not(.view-list) .product-card .product-sku,
+#sale-product-grid:not(.view-list) .product-card .pc-subcat-code,
+#sale-product-grid:not(.view-list) .product-card .pc-catcode,
+#sale-product-grid:not(.view-list) .product-card .pc-sold,
+#sale-product-grid:not(.view-list) .product-card .pc-defect,
+#sale-product-grid:not(.view-list) .product-card .pc-stale,
+#sale-product-grid:not(.view-list) .product-card .pc-transit,
+#sale-product-grid:not(.view-list) .product-card .pc-pending,
+#sale-product-grid:not(.view-list) .product-card .pc-missing,
+#sale-product-grid:not(.view-list) .product-card .pc-cost,
+#sale-product-grid:not(.view-list) .product-card .price-tag{
+  font-weight:400 !important;
+}
+</style>
+
+
+
+<style id="andhug-cost-label-only-size">
+/* 只有「進貨」兩字跟 05/FD 一樣大；金額維持原尺寸 */
+#product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label,
+#sale-product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label{
+  font-size:9px !important;
+  font-weight:400 !important;
+  line-height:1.18 !important;
+}
+</style>
+
+
+<style id="andhug-merge-close-x-up1">
+/* 只把併入商品款式右上角的叉叉圖形往上 1px，外框不動 */
+#modal-product-variant-merge .modal-close::before,
+#modal-product-variant-merge .modal-close::after{
+  top:50% !important;
+}
+</style>
 
 </body>
 </html>
