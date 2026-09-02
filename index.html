@@ -7720,7 +7720,7 @@ function renderProducts(){
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
-      <div class="product-img"${currentView==='list'?'':' style="padding:10px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'}>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${currentView==='list'?'':' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'}>`:'<div class="no-img">📦</div>'}</div>
+      <div class="product-img"${currentView==='grid'?' style="padding:8px!important;background:var(--cream2)!important;box-sizing:border-box!important;"':''}>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${currentView==='grid'?' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"':''}>`:'<div class="no-img">📦</div>'}</div>
       <div class="product-info">
         <div class="product-name">
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
@@ -16591,6 +16591,14 @@ document.addEventListener('change',function(e){
 
 <!-- andhug hard fix: product image style is now embedded in renderProducts/renderSaleProducts
      so upload/re-render cannot fall back to the older card image CSS. -->
+
+
+<style id="andhug-product-grid-photo-pad8">
+/* 只改商品庫「格狀模式」：圖片區 padding 8px */
+#product-grid.view-grid .product-card .product-img{
+  padding:8px !important;
+}
+</style>
 
 </body>
 </html>
