@@ -933,6 +933,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   display:flex!important;
   flex-direction:column!important;
   flex:1!important;
+  background:var(--cream2)!important;
 }
 #product-grid:not(.view-list) .product-card .product-name{
   margin:0!important;
@@ -2315,7 +2316,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" id="order-recovery-scan-btn" onclick="scanAndRecoverMissingOrderItems()" style="position:relative">🛟 修復缺失明細<span id="order-recovery-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">+ 新增採購單</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-list"></div>
@@ -2921,6 +2922,11 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
       <button class="modal-close" onclick="closeModal('modal-import-drafts')">×</button>
     </div>
     <div class="modal-body" style="max-height:84vh;overflow:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
+        <div style="font-size:10.5px;color:var(--text3)">如果今天打過的名稱不見了，可以從最近自動備份找回，不會整份資料倒退。</div>
+        <button class="btn btn-secondary btn-sm" style="flex-shrink:0" onclick="toggleSmartImportDraftRecovery()">🛟 尋找舊草稿</button>
+      </div>
+      <div id="import-draft-recovery-wrap" class="hidden" style="margin-bottom:12px"></div>
       <div id="import-drafts-list" style="max-height:60vh;overflow-y:auto"></div>
     </div>
   </div>
@@ -9310,7 +9316,117 @@ function recoverOrderItemsFromBackup(orderId){
   });
 }
 
+
+function getRecoverableMissingOrderItems(){
+  const rows=[];
+  (DB.orders||[]).forEach(order=>{
+    if(!order)return;
+    if(Array.isArray(order.items)&&order.items.length>0)return;
+    const candidate=getOrderBackupRecoveryCandidate(order);
+    if(candidate){
+      rows.push({
+        orderId:order.id,
+        supplier:order.supplier||'未命名供應商',
+        date:order.date||'',
+        note:order.note||'',
+        candidate
+      });
+    }
+  });
+  return rows;
+}
+
+function updateOrderRecoveryBadge(){
+  const badge=document.getElementById('order-recovery-badge');
+  if(!badge)return;
+  const count=getRecoverableMissingOrderItems().length;
+  badge.textContent=count;
+  badge.classList.toggle('hidden',count<=0);
+  const btn=document.getElementById('order-recovery-scan-btn');
+  if(btn)btn.title=count>0
+    ?`找到 ${count} 張可從自動備份救回商品明細的採購單`
+    :'目前沒有偵測到可救援的 0 項採購單';
+}
+
+function scanAndRecoverMissingOrderItems(){
+  const rows=getRecoverableMissingOrderItems();
+  if(!rows.length){
+    toast('目前沒有找到可從最近自動備份救回的 0 項採購單','success');
+    updateOrderRecoveryBadge();
+    return;
+  }
+
+  const preview=rows.slice(0,8).map(r=>{
+    const when=r.candidate.timestamp
+      ?new Date(r.candidate.timestamp).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+      :'較早備份';
+    return `• ${r.supplier}${r.date?' · '+r.date:''}：${r.candidate.itemCount} 項（${when}）`;
+  }).join('\n');
+
+  const more=rows.length>8?`\n…另外還有 ${rows.length-8} 張`:'';
+  const totalItems=rows.reduce((s,r)=>s+(Number(r.candidate.itemCount)||0),0);
+
+  customConfirm(
+    `🛟 找到 ${rows.length} 張目前是 0 項、但備份裡有商品明細的採購單，共 ${totalItems} 項。\n\n${preview}${more}\n\n只會補回這些採購單的商品 items；商品庫、分類、銷售紀錄和其他目前資料都不會倒退。\n\n確定全部救回嗎？`,
+    ()=>recoverAllMissingOrderItems(rows)
+  );
+}
+
+function recoverAllMissingOrderItems(rows){
+  rows=Array.isArray(rows)?rows:getRecoverableMissingOrderItems();
+  if(!rows.length)return;
+
+  const beforeOrders=JSON.parse(JSON.stringify(DB.orders||[]));
+  let recoveredOrders=0;
+  let recoveredItems=0;
+
+  rows.forEach(r=>{
+    const current=(DB.orders||[]).find(o=>o&&o.id===r.orderId);
+    if(!current)return;
+    if(Array.isArray(current.items)&&current.items.length>0)return;
+
+    const candidate=getOrderBackupRecoveryCandidate(current);
+    if(!candidate||!candidate.order||!Array.isArray(candidate.order.items)||!candidate.order.items.length)return;
+
+    current.items=JSON.parse(JSON.stringify(candidate.order.items));
+    recoveredOrders++;
+    recoveredItems+=current.items.length;
+
+    // 現有 metadata 優先；只有目前空白時才補備份值。
+    if(!(Number(current.total)>0)&&Number(candidate.order.total)>0)current.total=Number(candidate.order.total);
+    if(!(Number(current.totalUsd)>0)&&Number(candidate.order.totalUsd)>0)current.totalUsd=Number(candidate.order.totalUsd);
+    if(!current.note&&candidate.order.note)current.note=candidate.order.note;
+    current.updatedAt=Date.now();
+  });
+
+  if(!recoveredOrders){
+    toast('沒有需要救回的採購明細','success');
+    return;
+  }
+
+  const afterOrders=JSON.parse(JSON.stringify(DB.orders||[]));
+  const restoreOrdersState=(snapshot)=>{
+    DB.orders=JSON.parse(JSON.stringify(snapshot));
+    saveDB();
+    renderOrders();
+    renderOverview();
+  };
+
+  pushUndo({
+    label:`救回 ${recoveredOrders} 張採購單明細`,
+    undo:()=>restoreOrdersState(beforeOrders),
+    redo:()=>restoreOrdersState(afterOrders)
+  });
+
+  saveDB();
+  renderOrders();
+  renderOverview();
+  updateOrderRecoveryBadge();
+  toast(`🛟 已救回 ${recoveredOrders} 張採購單、共 ${recoveredItems} 項商品明細（可按 ⌘Z 復原）`,'success');
+}
+
 function renderOrders(){
+  updateOrderRecoveryBadge();
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
   const byTimeDesc=(a,b)=>{const d=b.date.localeCompare(a.date);if(d!==0)return d;return(b.createdAt||0)-(a.createdAt||0);};
@@ -9421,8 +9537,162 @@ function updateImportDraftsBadge(){
   badge.textContent=n;
   badge.classList.toggle('hidden',n===0);
 }
+
+function smartImportDraftDisplayNameCount(draft){
+  return (draft&&Array.isArray(draft.items)?draft.items:[]).filter(it=>{
+    const name=String(it&&it.name||'').trim();
+    if(!name)return false;
+    const raw=String(it&&it.rawName||'').trim();
+    // 有 name 就算，尤其手動輸入/選舊商品後都要算進去。
+    return !!name || (raw&&name!==raw);
+  }).length;
+}
+
+function getSmartImportDraftRecoveryCandidates(){
+  const out=[];
+  const seen=new Set();
+
+  const addDraft=(draft,sourceLabel,backupTime,slotKey,draftIndex)=>{
+    if(!draft||!Array.isArray(draft.items)||!draft.items.length)return;
+    const names=draft.items.map(it=>String(it&&it.name||'').trim()).filter(Boolean);
+    const namedCount=smartImportDraftDisplayNameCount(draft);
+    const fingerprint=[
+      draft.id||'',
+      draft.savedAt||0,
+      draft.items.length,
+      names.slice(0,12).join('|')
+    ].join('::');
+    if(seen.has(fingerprint))return;
+    seen.add(fingerprint);
+
+    out.push({
+      sourceLabel,
+      backupTime:Number(backupTime)||Number(draft.savedAt)||0,
+      slotKey,
+      draftIndex,
+      draft:JSON.parse(JSON.stringify(draft)),
+      itemCount:draft.items.length,
+      namedCount,
+      previewNames:names.slice(0,5)
+    });
+  };
+
+  // 目前 DB 裡的草稿也列出來，避免使用者其實只是開錯版本。
+  (DB.smartImportDrafts||[]).forEach((d,i)=>{
+    addDraft(d,'目前資料',d.savedAt||Date.now(),'current',i);
+  });
+
+  const meta=getAutoBackupMeta();
+  const slots=[...(meta.slots||[])].sort((a,b)=>b.timestamp-a.timestamp);
+
+  if(lsGet('patchDB_autobackup_emergency')){
+    try{
+      const db=JSON.parse(lsGet('patchDB_autobackup_emergency'));
+      (db.smartImportDrafts||[]).forEach((d,i)=>addDraft(d,'緊急備份',d.savedAt||Date.now(),'emergency',i));
+    }catch(e){}
+  }
+
+  slots.forEach(s=>{
+    const raw=lsGet('patchDB_autobackup_'+s.index);
+    if(!raw)return;
+    try{
+      const db=JSON.parse(raw);
+      (db.smartImportDrafts||[]).forEach((d,i)=>{
+        addDraft(d,`自動備份 ${s.index+1}`,s.timestamp,'backup:'+s.index,i);
+      });
+    }catch(e){}
+  });
+
+  out.sort((a,b)=>{
+    // 先讓有名稱的較完整草稿排前面；同樣完整時再看時間。
+    if(b.namedCount!==a.namedCount)return b.namedCount-a.namedCount;
+    if(b.itemCount!==a.itemCount)return b.itemCount-a.itemCount;
+    return b.backupTime-a.backupTime;
+  });
+  return out;
+}
+
+function toggleSmartImportDraftRecovery(){
+  const wrap=document.getElementById('import-draft-recovery-wrap');
+  if(!wrap)return;
+  if(!wrap.classList.contains('hidden')){
+    wrap.classList.add('hidden');
+    wrap.innerHTML='';
+    return;
+  }
+  renderSmartImportDraftRecovery();
+  wrap.classList.remove('hidden');
+}
+
+function renderSmartImportDraftRecovery(){
+  const wrap=document.getElementById('import-draft-recovery-wrap');
+  if(!wrap)return;
+  const rows=getSmartImportDraftRecoveryCandidates();
+
+  if(!rows.length){
+    wrap.innerHTML=`<div style="padding:14px;border:1.5px dashed var(--cream3);border-radius:12px;font-size:11px;color:var(--text3);text-align:center">
+      最近的草稿與自動備份裡沒有找到可救援的智慧匯入內容。
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML=`<div style="padding:10px;background:var(--cream2);border-radius:12px;margin-bottom:8px;font-size:10.5px;color:var(--text2);line-height:1.55">
+    🛟 下面是目前資料＋最近自動備份裡找到的智慧匯入草稿。<strong>救回會建立一份新的草稿副本</strong>，不會覆蓋你現在的資料。
+  </div>` + rows.map((r,idx)=>{
+    const dt=r.backupTime?new Date(r.backupTime):null;
+    const time=dt&&!isNaN(dt)?dt.toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'時間未知';
+    const shop=(r.draft.meta&&r.draft.meta.shopName)||r.draft.supplier||'未命名草稿';
+    const names=r.previewNames.length
+      ?r.previewNames.map(n=>`<span style="display:inline-block;background:var(--surface);border:1px solid var(--cream3);border-radius:7px;padding:2px 6px;margin:2px 3px 0 0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${smartImportEsc(n)}</span>`).join('')
+      :'<span style="color:var(--text3)">這份沒有已填名稱</span>';
+    return `<div style="padding:10px 11px;border:1.5px solid var(--cream3);border-radius:12px;margin-bottom:8px;background:var(--surface)">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11.5px;font-weight:800;color:var(--text)">${smartImportEsc(shop)}</div>
+          <div style="font-size:9.5px;color:var(--text3);margin-top:2px">${smartImportEsc(r.sourceLabel)} · ${time}</div>
+          <div style="font-size:10px;color:var(--brown);font-weight:700;margin-top:4px">${r.itemCount} 筆商品 · 已填名稱 ${r.namedCount} 筆</div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="recoverSmartImportDraftCandidate(${idx})">救回副本</button>
+      </div>
+      <div style="margin-top:6px;font-size:9.5px;line-height:1.45">${names}</div>
+    </div>`;
+  }).join('');
+
+  window.__smartImportDraftRecoveryCandidates=rows;
+}
+
+function recoverSmartImportDraftCandidate(idx){
+  const rows=window.__smartImportDraftRecoveryCandidates||[];
+  const row=rows[idx];
+  if(!row||!row.draft)return;
+
+  const restored=JSON.parse(JSON.stringify(row.draft));
+  if(!DB.smartImportDrafts)DB.smartImportDrafts=[];
+
+  // 永遠建立新 ID，避免把目前草稿蓋掉。
+  restored.id=uid();
+  restored.savedAt=Date.now();
+  restored.recoveredFrom={
+    source:row.sourceLabel,
+    backupTime:row.backupTime||0,
+    recoveredAt:Date.now()
+  };
+  DB.smartImportDrafts.push(restored);
+  saveDB();
+  updateImportDraftsBadge();
+
+  toast(`🛟 已建立救援草稿：${row.itemCount} 筆、已填名稱 ${row.namedCount} 筆`,'success');
+  renderImportDraftsList();
+  renderSmartImportDraftRecovery();
+
+  // 直接打開新救回的草稿，讓使用者馬上確認名稱是否回來。
+  resumeImportDraft(restored.id);
+}
+
 function openImportDrafts(){
   renderImportDraftsList();
+  const recovery=document.getElementById('import-draft-recovery-wrap');
+  if(recovery){recovery.classList.add('hidden');recovery.innerHTML='';}
   openModal('modal-import-drafts');
 }
 function renderImportDraftsList(){
