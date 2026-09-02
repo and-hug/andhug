@@ -2189,18 +2189,18 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 
 
 <style id="andhug-final-product-card-colors">
-/* 最終商品卡配色：商品庫＋開單，圖片上白、資訊下奶油咖啡 */
-#product-grid:not(.view-list) .product-card,
-#sale-product-grid:not(.view-list) .product-card{
+/* 截圖原本配色：商品庫＋開單，上方奶油米色、下方白色 */
+#product-grid .product-card,
+#sale-product-grid .product-card{
+  background:var(--surface)!important;
+}
+#product-grid .product-card .product-img,
+#sale-product-grid .product-card .product-img{
   background:var(--cream2)!important;
 }
-#product-grid:not(.view-list) .product-card .product-img,
-#sale-product-grid:not(.view-list) .product-card .product-img{
-  background:#fff!important;
-}
-#product-grid:not(.view-list) .product-card .product-info,
-#sale-product-grid:not(.view-list) .product-card .product-info{
-  background:var(--cream2)!important;
+#product-grid .product-card .product-info,
+#sale-product-grid .product-card .product-info{
+  background:var(--surface)!important;
 }
 </style>
 
@@ -6714,12 +6714,12 @@ function renderSubcatFilters(){
       onclick="setSubcat('${c}')"
       data-product-drop-subcat="${c}"
       ondragover="event.preventDefault();event.stopPropagation();this.style.background='var(--peach-light)';this.style.borderColor='var(--brown)'"
-      ondragleave="this.style.background='${isActive?'var(--brown)':'var(--cream2)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream4)'}'"
-      ondrop="event.preventDefault();event.stopPropagation();this.style.background='${isActive?'var(--brown)':'var(--cream2)'}';dropToSubcat(event,'${c}')"
+      ondragleave="this.style.background='${isActive?'var(--brown)':'var(--surface)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream3)'}'"
+      ondrop="event.preventDefault();event.stopPropagation();this.style.background='${isActive?'var(--brown)':'var(--surface)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream3)'}';dropToSubcat(event,'${c}')"
       style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
-        border:1.5px solid ${isActive?'var(--brown)':'var(--cream4)'};
-        background:${isActive?'var(--brown)':'var(--cream2)'};
-        color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--text3)'};
+        border:1.5px solid ${isActive?'var(--brown)':'var(--cream3)'};
+        background:${isActive?'var(--brown)':'var(--surface)'};
+        color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--cream4)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
       ${c}/${smartImportEsc((row.label||c).split(' ')[0])}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
     </button>`;
@@ -12931,7 +12931,7 @@ function renderSaleSubcatFilters(){
       onclick="saleSubcat=saleSubcat==='${c}'?'all':'${c}';renderSaleSubcatFilters();renderSaleProducts();"
       style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
         border:1.5px solid ${isActive?'var(--brown)':'var(--cream3)'};
-        background:${isActive?'var(--brown)':'var(--cream2)'};
+        background:${isActive?'var(--brown)':'var(--surface)'};
         color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--cream4)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
       ${c}/${smartImportEsc((row.label||c).split(' ')[0])}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
