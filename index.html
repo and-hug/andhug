@@ -16564,5 +16564,29 @@ document.addEventListener('change',function(e){
   border-bottom-right-radius:0 !important;
 }
 </style>
+
+<style id="andhug-grid-photo-10-bottom-square">
+/* 商品庫＋開單：白色照片 padding 10px；上圓下方。開單「更多」不受影響。 */
+#product-grid:not(.view-list) .product-card .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  padding:10px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid:not(.view-list) .product-card .product-img img,
+#sale-product-grid:not(.view-list) .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-top-left-radius:12px !important;
+  border-top-right-radius:12px !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+  object-fit:cover !important;
+}
+</style>
+
 </body>
 </html>
