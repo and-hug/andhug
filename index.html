@@ -5071,10 +5071,6 @@ document.addEventListener('click',(e)=>{
   if(!wrap||!cal||cal.style.display==='none')return;
   if(!wrap.contains(e.target))cal.style.display='none';
 });
-function openSalesHistoryPage(){
-  const btn=[...document.querySelectorAll('.nav-link')].find(b=>b.getAttribute('onclick')?.includes("'sales-history'"));
-  showPage('sales-history',btn||null);
-}
 function openSaleHistoryModal(){
   saleHistoryDate=todayStr();
   const d=new Date((saleHistoryDate||todayStr())+'T00:00:00');
@@ -8048,6 +8044,9 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
   const sourceStock=getProductStock(source);
   const targetStockBefore=getProductStock(target);
   const totalStockAfter=targetStockBefore+sourceStock;
+  const targetCostBefore=Number(target.cost)||0;
+  const variantStockBefore=Number(variant.stock)||0;
+  const variantImgBefore=variant.img||'';
 
   // 保留庫存價值：母商品成本用庫存加權平均；沒有成本時不硬改。
   if(sourceStock>0&&Number(source.cost)>0){
@@ -8058,8 +8057,21 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
     }
   }
 
-  variant.stock=(Number(variant.stock)||0)+sourceStock;
-  if(source.img&&!variant.img)variant.img=source.img;
+  variant.stock=variantStockBefore+sourceStock;
+  const appliedSourceImg=!!(source.img&&!variant.img);
+  if(appliedSourceImg)variant.img=source.img;
+
+  // 不改舊採購單 productId；母商品只記住「這個款式承接過哪個舊商品」。
+  if(!Array.isArray(target.mergedProductAliases))target.mergedProductAliases=[];
+  target.mergedProductAliases=target.mergedProductAliases.filter(a=>a&&a.sourceId!==source.id);
+  target.mergedProductAliases.push({
+    sourceId:source.id,
+    sourceName:source.name||'',
+    sourceSku:source.sku||'',
+    variantId:variant.id,
+    variantLabel:variant.label||'',
+    mergedAt:Date.now()
+  });
   target.updatedAt=Date.now();
 
   if(!DB.productTrash)DB.productTrash=[];
@@ -8072,6 +8084,12 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
     mergedIntoProductId:target.id,
     mergedVariantId:variant.id,
     mergedVariantLabel:variant.label,
+    mergedQty:sourceStock,
+    mergedTargetCostBefore:targetCostBefore,
+    mergedTargetCostAfter:Number(target.cost)||0,
+    mergedVariantStockBefore:variantStockBefore,
+    mergedVariantImgBefore,
+    mergedVariantImgApplied:appliedSourceImg,
     mergeReason:'variant'
   };
   DB.productTrash.push(archive);
@@ -8316,13 +8334,32 @@ function updateCostUsd(){
   const el=document.getElementById('p-cost-usd');
   if(el)el.textContent=cost>0?`≈ $${usd}`:'';
 }
+function getProductHistoricalIds(productId){
+  const ids=new Set();
+  if(productId)ids.add(productId);
+  const p=(DB.products||[]).find(x=>x.id===productId);
+  (p&&Array.isArray(p.mergedProductAliases)?p.mergedProductAliases:[]).forEach(a=>{
+    if(a&&a.sourceId)ids.add(a.sourceId);
+  });
+  return ids;
+}
+function getProductMergedAlias(productId,sourceId){
+  const p=(DB.products||[]).find(x=>x.id===productId);
+  return (p&&Array.isArray(p.mergedProductAliases)?p.mergedProductAliases:[]).find(a=>a&&a.sourceId===sourceId)||null;
+}
 function getProductCostHistory(productId){
   if(!productId)return[];
+  const historyIds=getProductHistoricalIds(productId);
   const rows=[];
   (DB.orders||[]).forEach(o=>{
     (o.items||[]).forEach(it=>{
-      if(it.productId===productId&&it.cost>0){
-        rows.push({date:o.date||'',cost:it.cost,orderId:o.id,supplier:o.supplier||'',qty:it.qty||1});
+      if(historyIds.has(it.productId)&&it.cost>0){
+        const alias=it.productId===productId?null:getProductMergedAlias(productId,it.productId);
+        rows.push({
+          date:o.date||'',cost:it.cost,orderId:o.id,supplier:o.supplier||'',qty:it.qty||1,
+          sourceProductId:it.productId,
+          mergedVariantLabel:alias&&alias.variantLabel||''
+        });
       }
     });
   });
@@ -12195,7 +12232,8 @@ function toggleReorderSelect(pid,el){
   else{reorderListSelected.add(pid);el.classList.add('checked');el.style.background='var(--brown)';}
 }
 function getLastSupplierForProduct(productId){
-  const orders=(DB.orders||[]).filter(o=>(o.items||[]).some(i=>i.productId===productId)).sort((a,b)=>b.date.localeCompare(a.date));
+  const historyIds=getProductHistoricalIds(productId);
+  const orders=(DB.orders||[]).filter(o=>(o.items||[]).some(i=>historyIds.has(i.productId))).sort((a,b)=>b.date.localeCompare(a.date));
   return orders.length?orders[0].supplier:'';
 }
 function addReorderListToNewOrder(){
@@ -12458,9 +12496,6 @@ function adjustCartDealSelection(i,d){
   const next=Math.max(0,Math.min(available,cur+d));
   if(next)inst.selection[k]=next;else delete inst.selection[k];
   syncCartDealCompat();clampCartDealGiftSelection();renderCart();toggleSaleDealPanel(true);
-}
-function clearCartDealItemSelection(i){
-  const inst=getActiveCartDealInstance(),c=cart[i];if(!inst||!c)return;const k=cartDealItemKey(c);delete inst.selection[k];delete inst.giftSelection[k];syncCartDealCompat();clampCartDealGiftSelection();renderCart();toggleSaleDealPanel(true);
 }
 function autoSelectCartDeal(mode){
   const inst=getActiveCartDealInstance(),deal=getActiveSaleDeal();if(!inst||!deal)return;
@@ -13905,7 +13940,6 @@ let _modalOverlayMouseDownOnSelf=false;
 document.addEventListener('mousedown',e=>{
   _modalOverlayMouseDownOnSelf=!!(e.target&&e.target.classList&&e.target.classList.contains('modal-overlay'));
 });
-document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el&&_modalOverlayMouseDownOnSelf){if(!handleDraftAutoSaveOnOutsideClick(el))closeModal(el.id);}}));
 document.addEventListener('click',e=>{
   const el=e.target;
   if(el&&el.classList&&el.classList.contains('modal-overlay')&&!el.classList.contains('hidden')&&_modalOverlayMouseDownOnSelf){if(!handleDraftAutoSaveOnOutsideClick(el))closeModal(el.id);}
@@ -14464,13 +14498,56 @@ function restoreProduct(idx){
   const realIdx=trash.length-1-idx;
   const p=trash[realIdx];
   if(!p)return;
-  const restored={...p};
-  delete restored.deletedAt;
-  restored.updatedAt=Date.now(); // 找回的時候蓋一個新的修改時間，這樣同步上去一定比雲端那筆「已刪除」的墓碑新，其他裝置才會正確跟著復原
+
+  let reverseNote='';
+  if(p.mergeReason==='variant'&&p.mergedIntoProductId){
+    const target=(DB.products||[]).find(x=>x.id===p.mergedIntoProductId);
+    if(target){
+      const variant=(target.variants||[]).find(v=>v.id===p.mergedVariantId);
+      const mergedQty=Math.max(0,Number(p.mergedQty!==undefined?p.mergedQty:getProductStock(p))||0);
+
+      if(variant){
+        // 只扣回當初併入的數量，不把合併後新發生的庫存變動抹掉。
+        variant.stock=Math.max(0,(Number(variant.stock)||0)-mergedQty);
+
+        // 只有圖片仍是當初由來源商品帶入的那張，才回復合併前圖片。
+        if(p.mergedVariantImgApplied&&String(variant.img||'')===String(p.img||'')){
+          variant.img=p.mergedVariantImgBefore||'';
+        }
+      }else{
+        reverseNote='（母商品款式已不存在，無法扣回該款式庫存）';
+      }
+
+      // 如果母商品成本仍等於「剛合併完」的值，代表後續沒有再被修改，可安全回復。
+      const costAfter=Number(p.mergedTargetCostAfter);
+      const costBefore=Number(p.mergedTargetCostBefore);
+      if(Number.isFinite(costAfter)&&Number.isFinite(costBefore)&&Math.abs((Number(target.cost)||0)-costAfter)<0.000001){
+        target.cost=costBefore;
+      }
+
+      if(Array.isArray(target.mergedProductAliases)){
+        target.mergedProductAliases=target.mergedProductAliases.filter(a=>a&&a.sourceId!==p.id);
+      }
+      target.updatedAt=Date.now();
+    }
+  }
+
+  const restored=JSON.parse(JSON.stringify(p));
+  [
+    'deletedAt','mergeId','mergedAt','mergedIntoProductId','mergedVariantId','mergedVariantLabel',
+    'mergedQty','mergedTargetCostBefore','mergedTargetCostAfter','mergedVariantStockBefore',
+    'mergedVariantImgBefore','mergedVariantImgApplied','mergeReason'
+  ].forEach(k=>delete restored[k]);
+
+  restored.updatedAt=Date.now(); // 找回時更新時間，讓雲端墓碑能被正確覆蓋。
   DB.products.push(restored);
   trash.splice(realIdx,1);
-  saveDB();openProductTrash();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();
-  toast('商品已找回 🎉','success');
+  saveDB();
+  openProductTrash();
+  renderProducts();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  toast(`商品已找回 🎉${reverseNote}`,'success');
 }
 function deleteProductPermanently(idx){
   customConfirm('永久刪除這個商品？此動作無法復原',()=>{
@@ -14852,11 +14929,12 @@ function getDaysInStockText(p){
   return days<=0?'今天剛到貨':`到貨 ${days} 天`;
 }
 function getInTransitInfo(productId){
+  const historyIds=getProductHistoricalIds(productId);
   const pending=(DB.orders||[]).filter(o=>o.status!=='received');
   let qty=0,earliestEta=null;
   pending.forEach(o=>{
     (o.items||[]).forEach(item=>{
-      if(item.productId===productId){
+      if(historyIds.has(item.productId)){
         qty+=item.qty||0;
         if(o.expectedDate&&(!earliestEta||o.expectedDate<earliestEta))earliestEta=o.expectedDate;
       }
