@@ -16602,11 +16602,16 @@ document.addEventListener('change',function(e){
 
 
 <style id="andhug-product-more-radius-match">
-/* 只改 商品庫「更多」：讓內圖上方圓角和外框同心，碰到底部維持方角。
+/* 只改 商品庫「更多」：
+   1) 外框圓角統一 16px
+   2) 內圖和外框之間留 4px
+   3) 內圖上方圓角 10px
+   4) 內圖下方維持方角
    不碰格狀、列表、開單，也不動其他 CSS。 */
 #product-grid.view-large .product-card{
   --more-frame-radius:16px;
-  --more-photo-gap:6px;
+  --more-photo-gap:4px;
+  --more-inner-top-radius:10px;
   border-radius:var(--more-frame-radius) !important;
 }
 #product-grid.view-large .product-card .product-img{
@@ -16624,9 +16629,36 @@ document.addEventListener('change',function(e){
   padding:0 !important;
   background:#fff !important;
   object-fit:cover !important;
-  border-top-left-radius:calc(var(--more-frame-radius) - var(--more-photo-gap)) !important;
-  border-top-right-radius:calc(var(--more-frame-radius) - var(--more-photo-gap)) !important;
+  border-top-left-radius:var(--more-inner-top-radius) !important;
+  border-top-right-radius:var(--more-inner-top-radius) !important;
   border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+</style>
+
+
+<style id="andhug-product-list-photo-4-match">
+/* ONLY 商品庫「列表」：
+   - 圖片區 padding 4px
+   - 外框列表本身維持 12px
+   - 內圖左上/左下 8px，對齊外框弧度
+   - 內圖右上/右下方角
+   不碰格狀、更多、開單。 */
+#product-grid.view-list .product-card .product-img{
+  padding:4px 5px 4px 4px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-top-left-radius:8px !important;
+  border-bottom-left-radius:8px !important;
+  border-top-right-radius:0 !important;
   border-bottom-right-radius:0 !important;
 }
 </style>
