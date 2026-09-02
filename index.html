@@ -185,9 +185,6 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 #sale-product-grid .product-card.sale-multi-selected::after{display:none!important;content:none!important;}
 
 .cart-item.cart-deal-selected{background:#fdf6eb;border-radius:10px}
-.cart-item
-.cart-item
-.cart-item
 
 .cart-deal-chip-row{display:flex;align-items:center;gap:3px;margin-top:4px;min-height:17px;flex-wrap:wrap}
 .cart-deal-chip{display:inline-flex;align-items:center;gap:3px;min-height:18px;padding:2px 7px;border:1px solid #ead4b7;border-radius:999px;background:#fffaf2;color:var(--brown);font-size:9px;font-weight:900;line-height:1}
@@ -427,6 +424,9 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .product-card[draggable]:active{cursor:grabbing;opacity:0.7;}
 .product-card.dragging-source{opacity:.35;}
 .product-card.drag-over-target{transform:scale(1.04);border-color:var(--brown);z-index:5;transition:transform .12s;}
+.product-card.drag-merge-target{border-color:var(--brown)!important;box-shadow:0 0 0 3px rgba(139,111,71,.13),var(--shadow)!important;transform:scale(1.025);z-index:6}
+.product-card.drag-merge-target::after{content:'放開併入款式';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;padding:7px 10px;border-radius:10px;background:rgba(139,111,71,.92);color:#fff;font-size:10px;font-weight:800;white-space:nowrap;pointer-events:none;box-shadow:0 4px 14px rgba(61,47,31,.18)}
+
 .size-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-family:monospace;}
 .size-chip:hover{border-color:var(--brown-light);color:var(--brown);}
 .size-chip.active{background:var(--brown);color:#fff;border-color:var(--brown);}
@@ -4272,6 +4272,7 @@ function dropReorderCategory(targetType){
   DB.catOrder.splice(to,0,dragged);
   saveDB();
   renderCatSidebar();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
 }
 function getVisibleCategoryTypes(){
   return getAllCategoryTypes().filter(t=>!(DB.hiddenTypes||[]).includes(t));
@@ -4882,6 +4883,7 @@ function addSidebarTypeSubcat(type){
   saveDB();activeCat=type;activeTypeSubcat=code;sidebarSubcatEditorType=null;renderCatSidebar();populateTypeDropdowns();
   if(document.getElementById('p-type-subcat'))refreshTypeSubcatSelect('p','p-type','');
   if(document.getElementById('edit-type-subcat'))refreshTypeSubcatSelect('edit','edit-type',editingId||'');
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
   toast(`✅ 已新增子分類「${label}」`,'success');
 }
 const SORT_OPTIONS=[
@@ -6617,30 +6619,38 @@ document.addEventListener('click',function(e){
 document.addEventListener('change',function(e){
   if(skuEditMode&&e.target&&e.target.matches('#page-sku input'))commitSkuFieldEdit('修改 SKU 規則');
 });
+function getSharedPatchCategoryFilterRows(){
+  return (getSkuCats()||[]).map(r=>({
+    code:String(r&&r.code||'').trim(),
+    label:String(r&&r.label||'').trim()
+  })).filter(r=>/^\d{2}$/.test(r.code));
+}
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
   if(!['PA','PB','all','__incomplete__','__complete__'].includes(activeCat)){el.innerHTML='';return;}
-  const ALL_CODES=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','99'];
+  const categoryRows=getSharedPatchCategoryFilterRows();
   const patchProducts=(DB.products||[]).filter(p=>p.type==='PA'||p.type==='PB');
   const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(isProductIncomplete):activeCat==='__complete__'?patchProducts.filter(isProductComplete):DB.products.filter(p=>p.type===activeCat);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
-  el.innerHTML=ALL_CODES.map(c=>{
+  el.innerHTML=categoryRows.map(row=>{
+    const c=row.code;
     const cnt=counts[c]||0;
     const isActive=activeSubcat===c;
     const hasProducts=cnt>0;
     return `<button
       onclick="setSubcat('${c}')"
-      ondragover="event.preventDefault();this.style.background='var(--peach-light)';this.style.borderColor='var(--brown)';maybeShrinkGhostForSidebar()"
+      data-product-drop-subcat="${c}"
+      ondragover="event.preventDefault();event.stopPropagation();this.style.background='var(--peach-light)';this.style.borderColor='var(--brown)'"
       ondragleave="this.style.background='${isActive?'var(--brown)':'var(--cream2)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream4)'}'"
-      ondrop="event.preventDefault();this.style.background='${isActive?'var(--brown)':'var(--cream2)'}';dropToSubcat(event,'${c}')"
+      ondrop="event.preventDefault();event.stopPropagation();this.style.background='${isActive?'var(--brown)':'var(--cream2)'}';dropToSubcat(event,'${c}')"
       style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
         border:1.5px solid ${isActive?'var(--brown)':'var(--cream4)'};
         background:${isActive?'var(--brown)':'var(--cream2)'};
         color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--text3)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
-      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
+      ${c}/${smartImportEsc((row.label||c).split(' ')[0])}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
     </button>`;
   }).join('');
 }
@@ -6894,6 +6904,8 @@ async function dropToSubcat(event,newSubcat){
   event.stopPropagation();
   const ids=getDragIds(event);
   if(!ids.length)return;
+  dragProductId=null;
+  nativeProductDragId=null;
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku,type:p.type}:null;}).filter(Boolean);
   const applyOne=(p)=>{
     if(!p)return false;
@@ -7633,8 +7645,8 @@ function renderProducts(){
     const imgSrc=p.img||'';
     const soldCount=salesMap[p.id]||0;
     return `<div class="product-card" id="pcard-${p.id}" draggable="true"
-      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target').forEach(el=>el.classList.remove('drag-over-target'))"
-      ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target')" ondrop="dropReorderProduct(event,'${p.id}',this)"`}
+      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'))"
+      ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
       <div class="product-img">${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async">`:'<div class="no-img">📦</div>'}</div>
@@ -7672,6 +7684,25 @@ function renderProducts(){
   }).join('');
 }
 let dragOverPending=false, dragOverLastEvent=null, dragOverLastCard=null;
+
+function canMergeProductIntoVariant(sourceId,targetId){
+  if(!sourceId||!targetId||sourceId===targetId)return false;
+  const source=DB.products.find(p=>p.id===sourceId);
+  const target=DB.products.find(p=>p.id===targetId);
+  if(!source||!target)return false;
+  // 先只允許「獨立商品 → 有款式母商品」，避免兩個母商品互相巢狀。
+  if(source.variants&&source.variants.length)return false;
+  return !!(target.variants&&target.variants.length);
+}
+
+function isProductMergeCenterZone(ev,card){
+  const rect=card.getBoundingClientRect();
+  const rx=(ev.clientX-rect.left)/Math.max(rect.width,1);
+  const ry=(ev.clientY-rect.top)/Math.max(rect.height,1);
+  // 中央區故意留得比排序區小：邊緣永遠是原本的拖曳換位。
+  return rx>=0.32&&rx<=0.68&&ry>=0.24&&ry<=0.76;
+}
+
 function dragOverProduct(e,cardEl){
   e.preventDefault();
   maybeRestoreGhostForGrid();
@@ -7683,6 +7714,25 @@ function dragOverProduct(e,cardEl){
     dragOverPending=false;
     const ev=dragOverLastEvent,card=dragOverLastCard;
     if(!ev||!card)return;
+
+    const targetId=String(card.id||'').replace('pcard-','');
+    const sourceId=dragProductId||nativeProductDragId;
+    const mergeMode=canMergeProductIntoVariant(sourceId,targetId)&&isProductMergeCenterZone(ev,card);
+
+    document.querySelectorAll('.product-card.drag-merge-target').forEach(el=>{
+      if(el!==card)el.classList.remove('drag-merge-target');
+    });
+
+    if(mergeMode){
+      card.dataset.dropMode='merge';
+      card.classList.remove('drag-over-target');
+      card.classList.add('drag-merge-target');
+      // 貓咪拖曳影子完全保留；這裡不更動 ghost-cat。
+      return;
+    }
+
+    card.dataset.dropMode='reorder';
+    card.classList.remove('drag-merge-target');
     const rect=card.getBoundingClientRect();
     const isList=currentView==='list';
     const after=isList?(ev.clientY-rect.top)>rect.height/2:(ev.clientX-rect.left)>rect.width/2;
@@ -7691,6 +7741,27 @@ function dragOverProduct(e,cardEl){
     updateGhostArrow(after,isList);
   });
 }
+
+function dropProductCard(e,targetId,cardEl){
+  e.preventDefault();
+  e.stopPropagation();
+
+  const srcId=dragProductId||nativeProductDragId;
+  const mode=cardEl&&cardEl.dataset.dropMode;
+  if(cardEl){
+    cardEl.classList.remove('drag-over-target','drag-merge-target');
+    delete cardEl.dataset.dropMode;
+  }
+
+  if(mode==='merge'&&canMergeProductIntoVariant(srcId,targetId)){
+    dragProductId=null;
+    openProductMergeVariantModal(srcId,targetId);
+    return;
+  }
+
+  dropReorderProduct(e,targetId,cardEl);
+}
+
 let dragTransparentImg=null;
 function getDragTransparentImg(){
   if(!dragTransparentImg){
@@ -7866,6 +7937,192 @@ function dropReorderProduct(e,targetId,cardEl){
   saveDB();
   renderProducts();
 }
+
+let pendingProductVariantMerge=null;
+
+function ensureProductMergeVariantModal(){
+  let modal=document.getElementById('modal-product-variant-merge');
+  if(modal)return modal;
+  modal=document.createElement('div');
+  modal.className='modal-overlay hidden';
+  modal.id='modal-product-variant-merge';
+  modal.innerHTML=`
+    <div class="modal" style="max-width:440px;width:min(440px,92vw)">
+      <div class="modal-header">
+        <div class="modal-title">🧩 併入商品款式</div>
+        <button class="modal-close" onclick="closeModal('modal-product-variant-merge')">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="product-variant-merge-summary" style="font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:12px"></div>
+        <div style="font-size:11px;font-weight:800;color:var(--brown);margin-bottom:7px">拖進哪個款式？</div>
+        <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px"></div>
+        <div style="margin-top:10px;font-size:10px;line-height:1.5;color:var(--text3)">
+          原本的商品卡拖曳換位完全保留；只有拖到母商品正中央才會進入這裡。合併後原商品會保留在商品垃圾桶，可用 ⌘Z 復原。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-product-variant-merge')">取消</button>
+        <button class="btn btn-primary" id="product-variant-merge-confirm" onclick="confirmProductMergeIntoVariant()" disabled>確認併入</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function guessMergeVariantLabel(source,target){
+  if(!source||!target||!Array.isArray(target.variants))return '';
+  const name=String(source.name||'').toUpperCase();
+  const labels=target.variants.map(v=>String(v.label||'').trim()).filter(Boolean);
+
+  // 先處理 A-Z / 0-9 這種單字元款式，避免直接用 includes() 誤抓英文單字中的字母。
+  const single=labels.filter(x=>/^[A-Z0-9]$/.test(x.toUpperCase()));
+  const hits=single.filter(label=>{
+    const L=label.toUpperCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const patterns=[
+      new RegExp('(?:字母|英文|LETTER)\\s*'+L+'(?:\\b|$)','i'),
+      new RegExp('(?:數字|数字|NUMBER|DIGIT)\\s*'+L+'(?:\\b|$)','i'),
+      new RegExp('(?:^|[\\s_\\-－/（(【\\[])'+L+'(?:$|[\\s_\\-－/）)】\\]])','i'),
+      new RegExp('^'+L+'(?:字母|數字|数字|號|号)','i'),
+      new RegExp('(?:字母|數字|数字|號|号)'+L+'$','i')
+    ];
+    return patterns.some(re=>re.test(name));
+  });
+  if(hits.length===1)return hits[0];
+
+  // 非單字元款式可以安全使用名稱包含判斷；只在唯一命中時自動選。
+  const longer=labels.filter(x=>x.length>1&&name.includes(x.toUpperCase()));
+  return longer.length===1?longer[0]:'';
+}
+
+function openProductMergeVariantModal(sourceId,targetId){
+  const source=DB.products.find(p=>p.id===sourceId);
+  const target=DB.products.find(p=>p.id===targetId);
+  if(!source||!target||!target.variants||!target.variants.length)return;
+
+  ensureProductMergeVariantModal();
+  const guessed=guessMergeVariantLabel(source,target);
+  pendingProductVariantMerge={sourceId,targetId,variantId:null};
+
+  const summary=document.getElementById('product-variant-merge-summary');
+  const srcStock=getProductStock(source);
+  summary.innerHTML=`<div style="font-weight:800;color:var(--text)">${source.name}</div>
+    <div style="color:var(--text3)">目前庫存 ${srcStock} 件</div>
+    <div style="margin:7px 0;color:var(--text3)">↓ 併入</div>
+    <div style="font-weight:800;color:var(--brown)">${target.name}</div>`;
+
+  const options=document.getElementById('product-variant-merge-options');
+  options.innerHTML=target.variants.map(v=>`
+    <button type="button" data-merge-variant-id="${v.id}" onclick="selectProductMergeVariant('${v.id}')"
+      style="height:34px;border:1.5px solid var(--cream3);border-radius:10px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-weight:800;cursor:pointer">
+      ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+    </button>`).join('');
+
+  if(guessed){
+    const v=target.variants.find(x=>String(x.label)===guessed);
+    if(v)pendingProductVariantMerge.variantId=v.id;
+  }
+  const confirmBtn=document.getElementById('product-variant-merge-confirm');
+  if(confirmBtn)confirmBtn.disabled=!pendingProductVariantMerge.variantId;
+  openModal('modal-product-variant-merge');
+}
+
+function selectProductMergeVariant(variantId){
+  if(!pendingProductVariantMerge)return;
+  pendingProductVariantMerge.variantId=variantId;
+  document.querySelectorAll('#product-variant-merge-options [data-merge-variant-id]').forEach(btn=>{
+    const active=btn.dataset.mergeVariantId===variantId;
+    btn.style.background=active?'var(--brown)':'var(--surface)';
+    btn.style.color=active?'#fff':'var(--text2)';
+    btn.style.borderColor=active?'var(--brown)':'var(--cream3)';
+  });
+  const confirmBtn=document.getElementById('product-variant-merge-confirm');
+  if(confirmBtn)confirmBtn.disabled=false;
+}
+
+function applyProductVariantMerge(sourceId,targetId,variantId){
+  const source=DB.products.find(p=>p.id===sourceId);
+  const target=DB.products.find(p=>p.id===targetId);
+  const variant=target&&target.variants&&target.variants.find(v=>v.id===variantId);
+  if(!source||!target||!variant)return false;
+
+  const sourceStock=getProductStock(source);
+  const targetStockBefore=getProductStock(target);
+  const totalStockAfter=targetStockBefore+sourceStock;
+
+  // 保留庫存價值：母商品成本用庫存加權平均；沒有成本時不硬改。
+  if(sourceStock>0&&Number(source.cost)>0){
+    if(targetStockBefore>0&&Number(target.cost)>0){
+      target.cost=((Number(target.cost)*targetStockBefore)+(Number(source.cost)*sourceStock))/totalStockAfter;
+    }else if(!Number(target.cost)){
+      target.cost=Number(source.cost);
+    }
+  }
+
+  variant.stock=(Number(variant.stock)||0)+sourceStock;
+  if(source.img&&!variant.img)variant.img=source.img;
+  target.updatedAt=Date.now();
+
+  if(!DB.productTrash)DB.productTrash=[];
+  const mergeId=uid();
+  const archive={
+    ...JSON.parse(JSON.stringify(source)),
+    deletedAt:Date.now(),
+    mergeId,
+    mergedAt:Date.now(),
+    mergedIntoProductId:target.id,
+    mergedVariantId:variant.id,
+    mergedVariantLabel:variant.label,
+    mergeReason:'variant'
+  };
+  DB.productTrash.push(archive);
+  DB.products=DB.products.filter(p=>p.id!==source.id);
+  return {sourceStock,variantLabel:variant.label,mergeId};
+}
+
+function confirmProductMergeIntoVariant(){
+  const req=pendingProductVariantMerge;
+  if(!req||!req.variantId)return;
+
+  const source=DB.products.find(p=>p.id===req.sourceId);
+  const target=DB.products.find(p=>p.id===req.targetId);
+  const variant=target&&target.variants&&target.variants.find(v=>v.id===req.variantId);
+  if(!source||!target||!variant)return;
+
+  const beforeProducts=JSON.parse(JSON.stringify(DB.products));
+  const beforeTrash=JSON.parse(JSON.stringify(DB.productTrash||[]));
+  const sourceName=source.name;
+  const targetName=target.name;
+
+  const result=applyProductVariantMerge(req.sourceId,req.targetId,req.variantId);
+  if(!result)return;
+
+  const afterProducts=JSON.parse(JSON.stringify(DB.products));
+  const afterTrash=JSON.parse(JSON.stringify(DB.productTrash||[]));
+
+  const restoreState=(products,trash)=>{
+    DB.products=JSON.parse(JSON.stringify(products));
+    DB.productTrash=JSON.parse(JSON.stringify(trash));
+    saveDB();
+    renderProducts();
+    if(document.getElementById('cat-sidebar'))renderCatSidebar();
+    if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  };
+
+  pushUndo({
+    label:`併入款式 ${variant.label}`,
+    undo:()=>restoreState(beforeProducts,beforeTrash),
+    redo:()=>restoreState(afterProducts,afterTrash)
+  });
+
+  saveDB();
+  closeModal('modal-product-variant-merge');
+  pendingProductVariantMerge=null;
+  renderProducts();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  toast(`🧩 ${sourceName} → ${targetName}・${variant.label}（+${result.sourceStock} 件，可 ⌘Z 復原）`,'success');
+}
+
 let touchDrag=null;
 let touchDragJustFinished=false;
 const TOUCH_DRAG_HOLD_MS=380; // 長按這麼久才觸發拖曳
@@ -7933,18 +8190,38 @@ document.addEventListener('pointermove',(e)=>{
     if(touchDrag.ghostEl)touchDrag.ghostEl.style.display='none';
     const under=document.elementFromPoint(ev.clientX,ev.clientY);
     if(touchDrag.ghostEl)touchDrag.ghostEl.style.display='';
-    document.querySelectorAll('.cat-sidebar-item.drag-over,.product-card.drag-over-target').forEach(el=>el.classList.remove('drag-over','drag-over-target'));
+    document.querySelectorAll('.cat-sidebar-item.drag-over,.product-card.drag-over-target,.product-card.drag-merge-target').forEach(el=>el.classList.remove('drag-over','drag-over-target','drag-merge-target'));
+    document.querySelectorAll('[data-product-drop-subcat][data-touch-drag-over="1"]').forEach(el=>{
+      delete el.dataset.touchDragOver;
+      const code=el.dataset.productDropSubcat;
+      const active=(typeof activeSubcat!=='undefined'&&activeSubcat===code);
+      el.style.background=active?'var(--brown)':'var(--cream2)';
+      el.style.borderColor=active?'var(--brown)':'var(--cream4)';
+    });
     if(under){
-      const catRow=under.closest('.cat-sidebar-item[data-cat-type]');
-      const cardRow=!catRow?under.closest('.product-card'):null;
-      if(catRow){
+      const subcatBtn=under.closest('[data-product-drop-subcat]');
+      const catRow=!subcatBtn?under.closest('.cat-sidebar-item[data-cat-type]'):null;
+      const cardRow=(!subcatBtn&&!catRow)?under.closest('.product-card'):null;
+      if(subcatBtn){
+        subcatBtn.style.background='var(--peach-light)';
+        subcatBtn.style.borderColor='var(--brown)';
+        subcatBtn.dataset.touchDragOver='1';
+      }else if(catRow){
         catRow.classList.add('drag-over');
       }else if(cardRow&&cardRow!==touchDrag.cardEl){
-        const rect=cardRow.getBoundingClientRect();
-        const isList=currentView==='list';
-        const after=isList?(ev.clientY-rect.top)>rect.height/2:(ev.clientX-rect.left)>rect.width/2;
-        cardRow.dataset.dropAfter=after?'1':'0';
-        cardRow.classList.add('drag-over-target');
+        const targetId=String(cardRow.id||'').replace('pcard-','');
+        const mergeMode=canMergeProductIntoVariant(touchDrag.id,targetId)&&isProductMergeCenterZone(ev,cardRow);
+        if(mergeMode){
+          cardRow.dataset.dropMode='merge';
+          cardRow.classList.add('drag-merge-target');
+        }else{
+          cardRow.dataset.dropMode='reorder';
+          const rect=cardRow.getBoundingClientRect();
+          const isList=currentView==='list';
+          const after=isList?(ev.clientY-rect.top)>rect.height/2:(ev.clientX-rect.left)>rect.width/2;
+          cardRow.dataset.dropAfter=after?'1':'0';
+          cardRow.classList.add('drag-over-target');
+        }
       }
     }
   });
@@ -7956,16 +8233,36 @@ function touchDragFinish(e){
   const cardEl=touchDrag.cardEl;
   if(touchDrag.ghostEl)touchDrag.ghostEl.remove();
   if(cardEl)cardEl.classList.remove('dragging-source');
-  document.querySelectorAll('.cat-sidebar-item.drag-over,.product-card.drag-over-target').forEach(el=>el.classList.remove('drag-over','drag-over-target'));
+  document.querySelectorAll('.cat-sidebar-item.drag-over,.product-card.drag-over-target,.product-card.drag-merge-target').forEach(el=>el.classList.remove('drag-over','drag-over-target','drag-merge-target'));
+  document.querySelectorAll('[data-product-drop-subcat][data-touch-drag-over="1"]').forEach(el=>{
+    delete el.dataset.touchDragOver;
+    const code=el.dataset.productDropSubcat;
+    const active=(typeof activeSubcat!=='undefined'&&activeSubcat===code);
+    el.style.background=active?'var(--brown)':'var(--cream2)';
+    el.style.borderColor=active?'var(--brown)':'var(--cream4)';
+  });
   if(wasArmed){
     const under=document.elementFromPoint(e.clientX,e.clientY);
-    const catRow=under?under.closest('.cat-sidebar-item[data-cat-type]'):null;
-    const cardRow=(!catRow&&under)?under.closest('.product-card'):null;
-    const fakeEvent={preventDefault(){},stopPropagation(){}};
-    if(catRow){
+    const subcatBtn=under?under.closest('[data-product-drop-subcat]'):null;
+    const catRow=(!subcatBtn&&under)?under.closest('.cat-sidebar-item[data-cat-type]'):null;
+    const cardRow=(!subcatBtn&&!catRow&&under)?under.closest('.product-card'):null;
+    const fakeEvent={
+      preventDefault(){},
+      stopPropagation(){},
+      dataTransfer:{getData(){return touchDrag&&touchDrag.id?touchDrag.id:'';}}
+    };
+    if(subcatBtn){
+      dropToSubcat(fakeEvent,subcatBtn.dataset.productDropSubcat);
+    }else if(catRow){
       dropToCat(fakeEvent,catRow.dataset.catType);
     }else if(cardRow&&cardRow.id&&cardRow!==cardEl){
-      dropReorderProduct(fakeEvent,cardRow.id.replace('pcard-',''),cardRow);
+      const targetId=cardRow.id.replace('pcard-','');
+      if(cardRow.dataset.dropMode==='merge'&&canMergeProductIntoVariant(touchDrag.id,targetId)){
+        dragProductId=null;
+        openProductMergeVariantModal(touchDrag.id,targetId);
+      }else{
+        dropReorderProduct(fakeEvent,targetId,cardRow);
+      }
     }else{
       dragProductId=null;
     }
@@ -12338,55 +12635,87 @@ let saleFilter='all',saleSize='all',saleSubcat='all',saleTypeSubcat='all',curren
 function renderSaleCatSidebar(){
   const sidebar=document.getElementById('sale-cat-sidebar');
   if(!sidebar)return;
-  const TYPE_ORDER=getVisibleCategoryTypes();
+
+  const types=getVisibleCategoryTypes();
   const comboType='ZZ';
-  const normalTypes=TYPE_ORDER.filter(t=>t!==comboType);
+  const normalTypes=types.filter(t=>t!==comboType);
+  const sellable=(DB.products||[]).filter(p=>p.status==='ok'&&getProductStock(p)>0);
   const counts={};
-  DB.products.filter(p=>p.status==='ok'&&getProductStock(p)>0).forEach(p=>{counts[p.type]=(counts[p.type]||0)+1;});
-  const sellableCount=DB.products.filter(p=>p.status==='ok'&&getProductStock(p)>0).length;
+  sellable.forEach(p=>{counts[p.type]=(counts[p.type]||0)+1;});
   const SIZES=['XS','S','M','L','XL','XX'];
   const PATCH_TYPES=['PA','PB'];
+
+  const renderTypeChildren=(t)=>{
+    if(saleFilter!==t)return '';
+    let out='';
+
+    if(PATCH_TYPES.includes(t)){
+      SIZES.forEach(sz=>{
+        const cnt=sellable.filter(p=>p.type===t&&(p.size||'0')===sz).length;
+        out+=`<div class="cat-sidebar-item ${saleSize===sz?'active':''}" onclick="setSaleSizeFilter('${t}','${sz}')" style="padding-left:28px;font-size:12px;">
+          <span style="font-family:monospace;font-weight:800;font-size:11px;color:${saleSize===sz?'var(--brown)':'var(--text3)'}">${SIZE_LABELS[sz]||sz}</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span>
+        </div>`;
+      });
+    }
+
+    const typeSubs=getTypeSubcats(t);
+    if(typeSubs.length){
+      const typeProducts=sellable.filter(p=>p.type===t);
+      out+=`<div class="cat-sidebar-item ${saleTypeSubcat==='all'&&saleSize==='all'?'active':''}" onclick="setSaleTypeSubcat('${t}','all')" style="padding-left:28px;font-size:12px;">
+        <span style="font-weight:700;color:${saleTypeSubcat==='all'?'var(--brown)':'var(--text3)'}">全部</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${typeProducts.length||''}</span>
+      </div>`;
+
+      typeSubs.forEach(st=>{
+        const subProducts=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code);
+        const cnt=subProducts.length;
+        out+=`<div class="cat-sidebar-item ${saleTypeSubcat===st.code&&saleSize==='all'?'active':''}" onclick="setSaleTypeSubcat('${t}','${st.code}')" style="padding-left:28px;font-size:12px;">
+          <span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0">
+            <span style="font-weight:700;color:${saleTypeSubcat===st.code?'var(--brown)':'var(--text3)'};white-space:nowrap">${smartImportEsc(st.label)}</span>
+            ${(t==='RB'||t==='BG'||t==='SK'||t==='CL')?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${smartImportEsc(st.code)}</span>`:''}
+          </span>
+          <span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span>
+        </div>`;
+
+        if(t==='BG'&&saleTypeSubcat===st.code){
+          getBgSubcatSizes(st.code).forEach(sz=>{
+            const sizeCnt=subProducts.filter(p=>(p.size||'0')===sz).length;
+            out+=`<div class="cat-sidebar-item ${saleSize===sz?'active':''}" onclick="event.stopPropagation();setSaleSizeFilter('${t}','${String(sz).replace(/'/g,"\\'")}')" style="padding-left:50px;font-size:11.5px;">
+              <span style="font-family:monospace;font-weight:800;color:${saleSize===sz?'var(--brown)':'var(--text3)'}">${smartImportEsc(sz)}</span>
+              <span style="margin-left:auto;font-size:11px;color:var(--text3)">${sizeCnt||''}</span>
+            </div>`;
+          });
+        }
+      });
+    }
+    return out;
+  };
+
   const renderTypeRow=(t)=>{
     const isActive=saleFilter===t;
-    let row=`<div class="cat-sidebar-item ${isActive?'active':''}" onclick="setSaleFilter('${t}')">
-      <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getTypeDisplayLabel(t)}</span><span style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;margin-left:4px">${t}</span>
+    return `<div class="cat-sidebar-item ${isActive&&saleSize==='all'&&saleTypeSubcat==='all'?'active':''}" onclick="setSaleFilter('${t}')">
+      <span>${getCatIcon(t)}</span>
+      <span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getTypeDisplayLabel(t)}</span>
+      <span style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;margin-left:4px">${t}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
-    </div>`;
-    if(isActive){
-      const typeSubcats=getTypeSubcats(t);
-      if(typeSubcats.length){
-        typeSubcats.forEach(sc=>{
-          const cnt=DB.products.filter(p=>p.type===t&&p.status==='ok'&&getProductStock(p)>0&&getProductTypeSubcat(p)===sc.code).length;
-          row+=`<div class="cat-sidebar-item ${saleTypeSubcat===sc.code?'active':''}" onclick="setSaleTypeSubcat('${t}','${sc.code}')"
-            style="padding-left:28px;font-size:12px;">
-            <span style="font-family:monospace;font-weight:800;font-size:10px;color:var(--text3)">${sc.code}</span>
-            <span>${sc.label}</span>
-            <span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span>
-          </div>`;
-        });
-      }
-      if(PATCH_TYPES.includes(t)){
-        SIZES.forEach(s=>{
-          const cnt=DB.products.filter(p=>p.type===t&&p.size===s&&p.status==='ok'&&getProductStock(p)>0).length;
-          row+=`<div class="cat-sidebar-item ${saleSize===s?'active':''}" onclick="setSaleSizeFilter('${t}','${s}')"
-            style="padding-left:28px;font-size:12px;">
-            <span style="font-family:monospace;font-weight:800;font-size:11px;color:var(--text3)">${SIZE_LABELS[s]||s}</span>
-            <span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span>
-          </div>`;
-        });
-      }
-    }
-    return row;
+    </div>${renderTypeChildren(t)}`;
   };
-  let rows=`<div class="cat-sidebar-header">分類</div>
+
+  let rows=`<div class="cat-sidebar-header"><span>分類</span></div>
     <div class="cat-sidebar-item ${saleFilter==='all'?'active':''}" onclick="setSaleFilter('all')">
-      <span>📋</span><span class="ui-editable" data-ui-key="catlabel-all" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-all','全部')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${sellableCount}</span>
+      <span>📋</span>
+      <span class="ui-editable" data-ui-key="catlabel-all" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-all','全部')}</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--text3)">${sellable.length}</span>
     </div>`;
+
   normalTypes.forEach(t=>{rows+=renderTypeRow(t);});
+
   let comboRows='';
-  if(TYPE_ORDER.includes(comboType)){
-    comboRows=`<div class="cat-sidebar-header">組合</div>${renderTypeRow(comboType)}`;
+  if(types.includes(comboType)){
+    comboRows=`<div class="cat-sidebar-header"><span>組合</span></div>${renderTypeRow(comboType)}`;
   }
+
   sidebar.style.background='transparent';
   sidebar.style.border='0';
   sidebar.style.boxShadow='none';
@@ -12399,7 +12728,7 @@ function setSaleFilter(f){saleFilter=f;saleSize='all';saleSubcat='all';saleTypeS
 function setSaleSizeFilter(type,size){saleFilter=type;saleSize=size;renderSaleCatSidebar();renderSaleProducts();}
 function setSaleTypeSubcat(type,code){
   saleFilter=type;
-  saleTypeSubcat=saleTypeSubcat===code?'all':code;
+  saleTypeSubcat=code==='all'?'all':(saleTypeSubcat===code?'all':code);
   saleSize='all';
   renderSaleCatSidebar();
   renderSaleProducts();
@@ -12408,12 +12737,13 @@ function renderSaleSubcatFilters(){
   const el=document.getElementById('sale-subcat-filters');
   if(!el)return;
   if(!['PA','PB','all'].includes(saleFilter)){el.innerHTML='';return;}
-  const ALL_CODES=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','99'];
+  const categoryRows=getSharedPatchCategoryFilterRows();
   const prods=(saleFilter==='all'?DB.products:DB.products.filter(p=>p.type===saleFilter))
     .filter(p=>p.status==='ok'&&(p.stock||0)>0);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
-  el.innerHTML=ALL_CODES.map(c=>{
+  el.innerHTML=categoryRows.map(row=>{
+    const c=row.code;
     const cnt=counts[c]||0;
     const isActive=saleSubcat===c;
     const hasProducts=cnt>0;
@@ -12424,7 +12754,7 @@ function renderSaleSubcatFilters(){
         background:${isActive?'var(--brown)':'var(--cream2)'};
         color:${isActive?'#fff':hasProducts?'var(--text2)':'var(--cream4)'};
         cursor:pointer;font-family:inherit;position:relative;transition:all 0.15s">
-      ${c}/${SUBCAT_MAP[c].split(' ')[0]}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
+      ${c}/${smartImportEsc((row.label||c).split(' ')[0])}${hasProducts?`<span style="position:absolute;top:-5px;right:-5px;background:var(--brown);color:#fff;border-radius:999px;font-size:8.5px;padding:0 4px;min-width:14px;line-height:14px;text-align:center;box-shadow:none">${cnt}</span>`:''}
     </button>`;
   }).join('');
 }
@@ -15174,6 +15504,14 @@ function mergeCloudProductRecord(cp) {
     return false;
   }
   const remote = cloudProductToLocal(cp);
+
+  // Supabase 商品同步目前會先送一筆不含圖片的商品資料，再補送有圖片的版本。
+  // Realtime 若先收到前一筆，cp.img 可能暫時是空值；不能因此把本機已存在的圖片清掉，
+  // 否則商品庫 / 開單會在每次同步時短暫變成 📦，看起來像圖片一直閃掉。
+  if(local && local.img && !remote.img){
+    remote.img=local.img;
+  }
+
   if(seedImageCleanupPending() && BUILTIN_SEED_PRODUCT_IDS.has(String(remote.id||''))){
     remote.img='';
   }
