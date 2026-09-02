@@ -6731,8 +6731,10 @@ function setView(v){
     var btn=document.getElementById('vbtn-'+x);
     if(btn)btn.classList.toggle('active',x===v);
   });
-  var g=document.getElementById('product-grid');
-  if(g){g.className='view-'+v;}
+  /* 商品卡的圖片 padding / 圓角是依 currentView 在 renderProducts() 內輸出。
+     因此切換顯示模式時必須重新 render，不能只換外層 class，
+     否則列表／更多會沿用切換前模式的 inline 樣式。 */
+  requestProductsRender();
 }
 function setCat(f){
   if(activeCat===f){catSizesCollapsed=!catSizesCollapsed;}
