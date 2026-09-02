@@ -7726,8 +7726,8 @@ function renderProducts(){
         currentView==='grid'
           ? ' style="padding:6px 6px 8px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
           : currentView==='large'
-            ? ' style="padding:2px 2px 3px 2px!important;background:var(--cream2)!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;"'
-            : ' style="padding:2px 3px 2px 2px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+            ? ' style="padding:4px 4px 5px 4px!important;background:var(--cream2)!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;"'
+            : ' style="padding:4px 5px 4px 4px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
       }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${
         currentView==='grid'
           ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
@@ -16640,9 +16640,9 @@ document.addEventListener('change',function(e){
    不碰格狀、列表、開單，也不動其他 CSS。 */
 #product-grid.view-large .product-card{
   --more-frame-radius:16px;
-  --more-photo-gap-x:2px;
-  --more-photo-gap-top:2px;
-  --more-photo-gap-bottom:3px;
+  --more-photo-gap-x:4px;
+  --more-photo-gap-top:4px;
+  --more-photo-gap-bottom:5px;
   --more-inner-top-radius:10px;
   border-radius:var(--more-frame-radius) !important;
 }
@@ -16704,7 +16704,7 @@ document.addEventListener('change',function(e){
    不碰：格狀、更多、開單
 */
 #product-grid.view-list .product-card .product-img{
-  padding:2px 3px 2px 2px !important;
+  padding:4px 5px 4px 4px !important;
   background:var(--cream2) !important;
   box-sizing:border-box !important;
 }
@@ -16723,7 +16723,7 @@ document.addEventListener('change',function(e){
 
 
 <!-- andhug product view render hard-fix:
-     grid=6/6/8/6, large=2/2/3/2, list=2/3/2/2.
+     grid=6/6/8/6, large=4/4/5/4, list=4/5/4/4.
      This is embedded in renderProducts so image upload/re-render keeps the approved geometry. -->
 
 </body>
