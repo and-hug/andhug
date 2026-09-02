@@ -8058,6 +8058,7 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
   }
 
   variant.stock=variantStockBefore+sourceStock;
+  target.stock=getProductStock(target);
   const appliedSourceImg=!!(source.img&&!variant.img);
   if(appliedSourceImg)variant.img=source.img;
 
@@ -8833,7 +8834,10 @@ function openStockModal(id){
     </div>
     <div style="margin-bottom:14px">
       ${p.variants&&p.variants.length>0?`
-      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">款式庫存 <span style="color:var(--text3);font-weight:400">總計 <span id="sc-variant-total">${p.stock}</span> 件</span></div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>款式庫存 <span style="color:var(--text3);font-weight:400">總計 <span id="sc-variant-total">${getProductStock(p)}</span> 件</span></span>
+        ${(Number(p.unassignedVariantStock)||0)>0?`<span style="font-size:10px;color:var(--brown);background:var(--cream2);border-radius:999px;padding:2px 7px;font-weight:700">未分配 ${Number(p.unassignedVariantStock)||0} 件</span>`:''}
+      </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
         ${p.variants.map(v=>`<div style="display:flex;align-items:center;gap:5px;background:var(--cream2);border-radius:8px;padding:5px 8px">
           <span style="font-weight:800;font-size:13px;min-width:20px;text-align:center">${v.label}</span>
@@ -9124,13 +9128,13 @@ function setVariantStockDirect(productId,variantId,val){
   const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
   v.stock=Math.max(0,parseInt(val,10)||0);
-  p.stock=p.variants.reduce((sum,item)=>sum+(item.stock||0),0);
+  p.stock=p.variants.reduce((sum,item)=>sum+(Number(item.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
   p.status='ok';
   p.updatedAt=Date.now();
   const input=document.getElementById('sc-v-'+variantId);
   if(input)input.value=v.stock;
   const total=document.getElementById('sc-variant-total');
-  if(total)total.textContent=p.stock;
+  if(total)total.textContent=getProductStock(p);
   saveDB();
 }
 function adjStock(id,type,d){const p=DB.products.find(x=>x.id===id);if(!p)return;if(type==='ok'){p.stock=Math.max(0,(p.stock||0)+d);p.status='ok';document.getElementById('sc-ok').value=p.stock;}else if(type==='defect'){p.defectStock=Math.max(0,(p.defectStock||0)+d);}else if(type==='display'){p.displayStock=Math.max(0,(p.displayStock||0)+d);}saveDB();}
@@ -11787,6 +11791,7 @@ function applyAutoVariantSetToNewProduct(product){
     stock:0
   }));
   product.stock=0;
+  product.unassignedVariantStock=0;
 
   const oldNote=String(product.note||'').trim();
   if(!oldNote)product.note=detected.note;
@@ -11794,6 +11799,43 @@ function applyAutoVariantSetToNewProduct(product){
 
   product.updatedAt=Date.now();
   return product;
+}
+
+function applyAutoVariantSetToExistingProduct(product){
+  if(!product||Array.isArray(product.variants)&&product.variants.length)return false;
+  const detected=inferAutoVariantSetFromProductName(product.name);
+  if(!detected)return false;
+
+  const existingStock=Math.max(0,Number(product.stock)||0);
+  product.variants=detected.labels.map(label=>({
+    id:uid(),
+    label,
+    stock:0
+  }));
+
+  // 舊商品原本的普通庫存不能消失，也不能猜它屬於 A/B/C 或 0/1/2。
+  product.unassignedVariantStock=existingStock;
+  product.stock=existingStock;
+
+  const oldNote=String(product.note||'').trim();
+  if(!oldNote)product.note=detected.note;
+  else if(!oldNote.includes(detected.note))product.note=`${oldNote} · ${detected.note}`;
+
+  product.autoVariantMigratedAt=Date.now();
+  product.updatedAt=Date.now();
+  return true;
+}
+
+function migrateExistingAutoVariantSets(){
+  let changed=0;
+  (DB.products||[]).forEach(product=>{
+    if(applyAutoVariantSetToExistingProduct(product))changed++;
+  });
+  if(changed){
+    saveDB();
+    console.info(`✅ 已補建 ${changed} 個舊商品的字母/數字款式；原庫存保留為未分配款式庫存`);
+  }
+  return changed;
 }
 
 function syncOrderItemImagesToProducts(orderItems,supplier,date){
@@ -14509,6 +14551,7 @@ function restoreProduct(idx){
       if(variant){
         // 只扣回當初併入的數量，不把合併後新發生的庫存變動抹掉。
         variant.stock=Math.max(0,(Number(variant.stock)||0)-mergedQty);
+        target.stock=getProductStock(target);
 
         // 只有圖片仍是當初由來源商品帶入的那張，才回復合併前圖片。
         if(p.mergedVariantImgApplied&&String(variant.img||'')===String(p.img||'')){
@@ -14893,7 +14936,9 @@ __bootSteps.push(function(){
 let currentVariantProductId = null;
 
 function getProductStock(p){
-  if(p.variants&&p.variants.length>0) return p.variants.reduce((s,v)=>s+(v.stock||0),0);
+  if(p.variants&&p.variants.length>0){
+    return p.variants.reduce((s,v)=>s+(Number(v.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
+  }
   return p.stock||0;
 }
 function getRecentSoldQty(productId,days){
@@ -14988,12 +15033,12 @@ function addVariantToCart(productId,variantId,variantLabel){
 function adjVariantStock(productId,variantId,delta){
   const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
-  v.stock=Math.max(0,(v.stock||0)+delta);
-  p.stock=p.variants.reduce((s,v)=>s+(v.stock||0),0);
+  v.stock=Math.max(0,(Number(v.stock)||0)+delta);
+  p.stock=p.variants.reduce((s,v)=>s+(Number(v.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
   p.status='ok';
   p.updatedAt=Date.now();
   const el=document.getElementById('sc-v-'+variantId);if(el){if('value' in el)el.value=v.stock;else el.textContent=v.stock;}
-  const tot=document.getElementById('sc-variant-total');if(tot)tot.textContent=p.stock;
+  const tot=document.getElementById('sc-variant-total');if(tot)tot.textContent=getProductStock(p);
   saveDB();
 }
 
@@ -15008,7 +15053,10 @@ function adjVariantStock(productId,variantId,delta){
   for(var i=0;i<__bootSteps.length;i++){
     try{__bootSteps[i]();}catch(e){console.error('啟動步驟 #'+i+' 失敗:',e);}
   }
-  try{loadDB();}catch(e){console.error('loadDB 失敗:',e);}
+  try{
+    loadDB();
+    migrateExistingAutoVariantSets();
+  }catch(e){console.error('loadDB / 舊商品款式遷移失敗:',e);}
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
   try{
     const savedPage=localStorage.getItem('andhug_last_page');
