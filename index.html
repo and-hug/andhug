@@ -2187,6 +2187,23 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 
 
 
+
+<style id="andhug-final-product-card-colors">
+/* 最終商品卡配色：商品庫＋開單，圖片上白、資訊下奶油咖啡 */
+#product-grid:not(.view-list) .product-card,
+#sale-product-grid:not(.view-list) .product-card{
+  background:var(--cream2)!important;
+}
+#product-grid:not(.view-list) .product-card .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  background:#fff!important;
+}
+#product-grid:not(.view-list) .product-card .product-info,
+#sale-product-grid:not(.view-list) .product-card .product-info{
+  background:var(--cream2)!important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -8007,20 +8024,34 @@ function ensureProductMergeVariantModal(){
         <button class="modal-close" onclick="closeModal('modal-product-variant-merge')">×</button>
       </div>
       <div class="modal-body" style="padding:4px 24px 8px">
-        <div id="product-variant-merge-summary" style="font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:14px"></div>
-        <div style="font-size:11px;font-weight:800;color:var(--text2);margin:2px 0 9px">選擇要併入的款式</div>
+        <div id="product-variant-merge-summary" style="font-size:12px;color:var(--text2);margin-bottom:14px"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:2px 0 9px">
+          <div style="font-size:11px;font-weight:800;color:var(--text2)">選擇要併入的款式</div>
+          <button type="button" class="hint-info-btn" onclick="toggleProductMergeInfo()" aria-label="查看併入說明" title="查看說明"
+            style="width:18px;height:18px;border:1.5px solid var(--cream3);border-radius:50%;background:var(--surface);color:var(--text3);font-size:11px;font-weight:800;top:0">i</button>
+        </div>
+
         <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px"></div>
-        <div style="margin-top:14px;padding:10px 12px;border:1px dashed var(--cream4);border-radius:14px;background:rgba(255,255,255,0.45);font-size:11px;line-height:1.65;color:var(--text3)">
+
+        <div id="product-variant-merge-info" class="hidden"
+          style="margin-top:10px;padding:9px 11px;border:1px dashed var(--cream4);border-radius:12px;background:rgba(255,255,255,.45);font-size:10.5px;line-height:1.6;color:var(--text3)">
           原本的商品卡拖曳換位完全保留；只有拖到母商品正中央才會進入這裡。合併後原商品會保留在商品垃圾桶，可用 ⌘Z 復原。
         </div>
       </div>
-      <div class="modal-footer" style="padding:14px 24px 22px">
+
+      <div class="modal-footer" style="padding:14px 24px 22px;justify-content:flex-end">
         <button class="btn btn-secondary" onclick="closeModal('modal-product-variant-merge')">取消</button>
         <button class="btn btn-primary" id="product-variant-merge-confirm" onclick="confirmProductMergeIntoVariant()" disabled>確認併入</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
   return modal;
+}
+
+function toggleProductMergeInfo(){
+  const el=document.getElementById('product-variant-merge-info');
+  if(el)el.classList.toggle('hidden');
 }
 
 function guessMergeVariantLabel(source,target){
@@ -8060,13 +8091,21 @@ function openProductMergeVariantModal(sourceId,targetId){
   const summary=document.getElementById('product-variant-merge-summary');
   const srcStock=getProductStock(source);
   summary.innerHTML=`
-    <div style="padding:12px 14px;border:1.5px solid var(--cream3);border-radius:16px;background:rgba(255,255,255,0.55)">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">來源商品</div>
-      <div style="font-weight:800;color:var(--text);line-height:1.45">${source.name}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">目前庫存 ${srcStock} 件</div>
-      <div style="margin:10px 0 8px;color:var(--text3);font-weight:700">↓ 併入</div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">母商品</div>
-      <div style="font-weight:800;color:var(--brown);line-height:1.45">${target.name}</div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--cream3);border-radius:16px;background:rgba(255,255,255,.55)">
+      <div style="min-width:0">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">來源商品</div>
+        <div style="font-weight:800;color:var(--text);line-height:1.4">${source.name}</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:4px">目前庫存 ${srcStock} 件</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:6px;color:var(--text3);font-size:10.5px;font-weight:800;white-space:nowrap">
+        <span>併入</span><span style="font-size:15px;line-height:1">→</span>
+      </div>
+
+      <div style="min-width:0;text-align:right">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">母商品</div>
+        <div style="font-weight:800;color:var(--brown);line-height:1.4">${target.name}</div>
+      </div>
     </div>`;
 
   const options=document.getElementById('product-variant-merge-options');
