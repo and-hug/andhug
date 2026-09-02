@@ -16458,5 +16458,111 @@ document.addEventListener('change',function(e){
 }
 </style>
 
+
+
+<style id="andhug-product-photo-unified-all-views">
+/* 商品庫＋開單：三種商品顯示模式統一為淡奶油外層＋白色照片。
+   僅作用於商品網格本身，不碰開單「更多」區。 */
+
+/* 格狀 */
+#product-grid:not(.view-list):not(.view-large) .product-card .product-img,
+#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img{
+  padding:12px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid:not(.view-list):not(.view-large) .product-card .product-img img,
+#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:12px !important;
+  object-fit:cover !important;
+}
+
+/* 列表 */
+#product-grid.view-list .product-card .product-img,
+#sale-product-grid.view-list .product-card .product-img{
+  padding:6px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:7px !important;
+  object-fit:cover !important;
+}
+
+/* 大圖 */
+#product-grid.view-large .product-card .product-img,
+#sale-product-grid.view-large .product-card .product-img{
+  padding:12px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-large .product-card .product-img img,
+#sale-product-grid.view-large .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:10px !important;
+  object-fit:cover !important;
+}
+</style>
+
+
+<style id="andhug-list-photo-fill">
+/* 列表模式：左側圖片區填滿整列高度 */
+#product-grid.view-list .product-card,
+#sale-product-grid.view-list .product-card{
+  align-items:stretch !important;
+  overflow:hidden !important;
+}
+
+#product-grid.view-list .product-card .product-img,
+#sale-product-grid.view-list .product-card .product-img{
+  width:96px !important;
+  min-width:96px !important;
+  height:auto !important;
+  min-height:84px !important;
+  aspect-ratio:unset !important;
+  flex:0 0 96px !important;
+  align-self:stretch !important;
+  margin:0 !important;
+  padding:8px !important;
+  border-radius:0 !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  min-height:68px !important;
+  padding:0 !important;
+  border-radius:9px !important;
+  background:#fff !important;
+  object-fit:cover !important;
+}
+</style>
+
+
+<style id="andhug-list-photo-right-corners-square">
+/* 列表模式：只有白色商品圖片右上與右下改成直角；左上左下維持圓角 */
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  border-top-left-radius:10px !important;
+  border-bottom-left-radius:10px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+</style>
 </body>
 </html>
