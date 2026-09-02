@@ -16869,7 +16869,7 @@ document.addEventListener('change',function(e){
 
 <style id="andhug-sale-list-name-area-bg-final">
 /* ONLY 開單區 → 列表 → 名稱那整塊區域
-   從文字區左緣到價錢區之前，整個高度使用 #F2EDE4。
+   從文字區左緣到價錢區之前，整個高度使用 #F7F2EC。
    價錢 / 幾件區域維持原本背景與位置。 */
 #sale-product-grid.view-list .product-card .product-name{
   left:0 !important;
@@ -16880,8 +16880,21 @@ document.addEventListener('change',function(e){
   display:flex !important;
   align-items:center !important;
   padding:0 0 0 16px !important;
-  background:#F2EDE4 !important;
+  background:#F7F2EC !important;
   box-sizing:border-box !important;
+}
+</style>
+
+
+<style id="andhug-sale-list-full-text-bg-f7f2ec">
+/* ONLY 開單區 → 列表 → 右半邊整個文字區
+   名稱 / 價錢 / 幾件 都統一 #F7F2EC。
+   左側滿版圖片不動。 */
+#sale-product-grid.view-list .product-card .product-info{
+  background:#F7F2EC !important;
+}
+#sale-product-grid.view-list .product-card .product-name{
+  background:#F7F2EC !important;
 }
 </style>
 
