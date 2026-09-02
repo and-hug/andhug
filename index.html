@@ -7726,8 +7726,8 @@ function renderProducts(){
         currentView==='grid'
           ? ' style="padding:6px 6px 8px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
           : currentView==='large'
-            ? ' style="padding:4px 4px 5px 4px!important;background:var(--cream2)!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;"'
-            : ' style="padding:4px 5px 4px 4px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+            ? ' style="padding:5px 5px 6px 5px!important;background:var(--cream2)!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;"'
+            : ' style="padding:5px 6px 5px 5px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
       }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${
         currentView==='grid'
           ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
@@ -12968,10 +12968,23 @@ function setSaleView(v){
     var btn=document.getElementById('svbtn-'+x);
     if(btn)btn.classList.toggle('active',x===v);
   });
-  var g=document.getElementById('sale-product-grid');
-  if(g)g.className='view-'+v;
+  /* 開單商品卡的圖片 padding / 圓角依 currentSaleView 在 renderSaleProducts() 內輸出。
+     切換模式時必須重新 render，不能只換外層 class。 */
+  renderSaleProducts();
 }
-function renderSaleProducts(){const q=(document.getElementById('sale-search')?.value||'').toLowerCase();let ps=DB.products.filter(p=>p.status==='ok'&&getProductStock(p)>0);if(saleFilter!=='all')ps=ps.filter(p=>p.type===saleFilter);if(saleTypeSubcat!=='all')ps=ps.filter(p=>getProductTypeSubcat(p)===saleTypeSubcat);if(saleSize!=='all')ps=ps.filter(p=>(p.size||'0')===saleSize);if(saleSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.length>=4&&p.sku.slice(2,4)===saleSubcat);if(q)ps=ps.filter(p=>(p.name+p.sku).toLowerCase().includes(q));const g=document.getElementById('sale-product-grid');if(!g)return;g.className='view-'+currentSaleView;if(!ps.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">沒有可賣的商品</div></div>';return;}g.innerHTML=ps.map(p=>{const stk=getProductStock(p),sc=stk<=(p.minStock||5)?'stock-low':'stock-ok',sel=saleShiftSelected.has(p.id)?' sale-multi-selected':'';return `<div class="product-card${sel}" data-sale-product-id="${p.id}" draggable="true" title="${saleShiftSelected.size?'Shift 點選多個後可整批拖進 Deal':'可拖到組合框'}" ondragstart="startSaleProductDealDrag(event,'${p.id}')" ondragend="endCartDealDrag(event)" onclick="handleSaleProductCardClick(event,'${p.id}')"><div class="product-img"${currentSaleView==='list'?'':' style="padding:10px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'}>${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async"${currentSaleView==='list'?'':' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span style="font-size:10px;color:var(--text3);font-weight:700">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+function renderSaleProducts(){const q=(document.getElementById('sale-search')?.value||'').toLowerCase();let ps=DB.products.filter(p=>p.status==='ok'&&getProductStock(p)>0);if(saleFilter!=='all')ps=ps.filter(p=>p.type===saleFilter);if(saleTypeSubcat!=='all')ps=ps.filter(p=>getProductTypeSubcat(p)===saleTypeSubcat);if(saleSize!=='all')ps=ps.filter(p=>(p.size||'0')===saleSize);if(saleSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.length>=4&&p.sku.slice(2,4)===saleSubcat);if(q)ps=ps.filter(p=>(p.name+p.sku).toLowerCase().includes(q));const g=document.getElementById('sale-product-grid');if(!g)return;g.className='view-'+currentSaleView;if(!ps.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">沒有可賣的商品</div></div>';return;}g.innerHTML=ps.map(p=>{const stk=getProductStock(p),sc=stk<=(p.minStock||5)?'stock-low':'stock-ok',sel=saleShiftSelected.has(p.id)?' sale-multi-selected':'';return `<div class="product-card${sel}" data-sale-product-id="${p.id}" draggable="true" title="${saleShiftSelected.size?'Shift 點選多個後可整批拖進 Deal':'可拖到組合框'}" ondragstart="startSaleProductDealDrag(event,'${p.id}')" ondragend="endCartDealDrag(event)" onclick="handleSaleProductCardClick(event,'${p.id}')"><div class="product-img"${
+  currentSaleView==='grid'
+    ? ' style="padding:6px 6px 7px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+    : currentSaleView==='large'
+      ? ' style="padding:0!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+      : ' style="padding:5px 6px 6px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+}>${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async"${
+  currentSaleView==='grid'
+    ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
+    : currentSaleView==='large'
+      ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
+      : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px 0 0 10px!important;object-fit:cover!important;"'
+}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span style="font-size:10px;color:var(--text3);font-weight:700">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
@@ -16640,9 +16653,9 @@ document.addEventListener('change',function(e){
    不碰格狀、列表、開單，也不動其他 CSS。 */
 #product-grid.view-large .product-card{
   --more-frame-radius:16px;
-  --more-photo-gap-x:4px;
-  --more-photo-gap-top:4px;
-  --more-photo-gap-bottom:5px;
+  --more-photo-gap-x:5px;
+  --more-photo-gap-top:5px;
+  --more-photo-gap-bottom:6px;
   --more-inner-top-radius:10px;
   border-radius:var(--more-frame-radius) !important;
 }
@@ -16677,7 +16690,7 @@ document.addEventListener('change',function(e){
    - 內圖右上/右下方角
    不碰格狀、更多、開單。 */
 #product-grid.view-list .product-card .product-img{
-  padding:4px 5px 4px 4px !important;
+  padding:5px 6px 5px 5px !important;
   background:var(--cream2) !important;
   box-sizing:border-box !important;
 }
@@ -16723,8 +16736,51 @@ document.addEventListener('change',function(e){
 
 
 <!-- andhug product view render hard-fix:
-     grid=6/6/8/6, large=4/4/5/4, list=4/5/4/4.
+     grid=6/6/8/6, large=5/5/6/5, list=5/6/5/5.
      This is embedded in renderProducts so image upload/re-render keeps the approved geometry. -->
+
+
+<style id="andhug-sale-view-final-stable">
+/* FINAL 開單商品卡 only
+   格狀：上6 / 右6 / 下7 / 左6；內圖上圓下方
+   更多：0 / 0 / 0 / 0；內圖四角圓
+   列表：上5 / 右6 / 下6 / 左6；內圖左圓右方
+   padding / 內圖圓角同時寫入 renderSaleProducts()，切模式會重新 render。 */
+
+/* 格狀 */
+#sale-product-grid.view-grid .product-card{
+  border-radius:16px !important;
+}
+#sale-product-grid.view-grid .product-card .product-img{
+  border-radius:16px 16px 0 0 !important;
+}
+
+/* 更多 */
+#sale-product-grid.view-large .product-card{
+  border-radius:10px !important;
+}
+#sale-product-grid.view-large .product-card .product-img{
+  border-radius:10px !important;
+}
+
+/* 列表 */
+#sale-product-grid.view-list .product-card{
+  border-radius:12px !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+}
+#sale-product-grid.view-list .product-card .product-img{
+  width:96px !important;
+  min-width:96px !important;
+  height:auto !important;
+  min-height:84px !important;
+  aspect-ratio:unset !important;
+  flex:0 0 96px !important;
+  align-self:stretch !important;
+  margin:0 !important;
+  border-radius:0 !important;
+}
+</style>
 
 </body>
 </html>
