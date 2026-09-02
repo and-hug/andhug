@@ -9452,6 +9452,7 @@ function renderImportDraftsList(){
         <div style="font-size:11px;color:var(--text3);margin-top:2px">${(d.items||[]).length} 筆商品 · ${dateStr}</div>
       </div>
       <button class="btn btn-primary btn-sm" onclick="resumeImportDraft('${d.id}')">繼續編輯</button>
+      <button class="btn btn-secondary btn-sm" onclick="duplicateImportDraft('${d.id}')">複製</button>
       <button class="remove-btn" style="width:28px;height:28px;min-width:28px;border-radius:8px;align-self:center" onclick="deleteImportDraft('${d.id}')">×</button>
     </div>`;
   }).join('');
@@ -9494,6 +9495,21 @@ function resumeImportDraft(id){
   openModal('modal-smart-import');
   renderSmartImportReview();
 }
+function duplicateImportDraft(id){
+  const srcDraft=(DB.smartImportDrafts||[]).find(d=>d.id===id);
+  if(!srcDraft){toast('找不到這份草稿','error');return;}
+  const copy=JSON.parse(JSON.stringify(srcDraft));
+  copy.id=uid();
+  copy.savedAt=Date.now();
+  copy.duplicatedFrom=id;
+  if(!DB.smartImportDrafts)DB.smartImportDrafts=[];
+  DB.smartImportDrafts.push(copy);
+  saveDB();
+  renderImportDraftsList();
+  updateImportDraftsBadge();
+  toast('📋 已複製一份新的草稿','success');
+}
+
 function deleteImportDraft(id){
   customConfirm('確定刪除這份草稿？',()=>{
     DB.smartImportDrafts=(DB.smartImportDrafts||[]).filter(d=>d.id!==id);
@@ -16604,18 +16620,20 @@ document.addEventListener('change',function(e){
 <style id="andhug-product-more-radius-match">
 /* 只改 商品庫「更多」：
    1) 外框圓角統一 16px
-   2) 內圖和外框之間留 4px
+   2) 內圖和外框間距：上/左/右 2px、下 3px
    3) 內圖上方圓角 10px
    4) 內圖下方維持方角
    不碰格狀、列表、開單，也不動其他 CSS。 */
 #product-grid.view-large .product-card{
   --more-frame-radius:16px;
-  --more-photo-gap:4px;
+  --more-photo-gap-x:2px;
+  --more-photo-gap-top:2px;
+  --more-photo-gap-bottom:3px;
   --more-inner-top-radius:10px;
   border-radius:var(--more-frame-radius) !important;
 }
 #product-grid.view-large .product-card .product-img{
-  padding:var(--more-photo-gap) var(--more-photo-gap) 0 var(--more-photo-gap) !important;
+  padding:var(--more-photo-gap-top) var(--more-photo-gap-x) var(--more-photo-gap-bottom) var(--more-photo-gap-x) !important;
   background:var(--cream2) !important;
   box-sizing:border-box !important;
   border-top-left-radius:var(--more-frame-radius) !important;
@@ -16659,6 +16677,32 @@ document.addEventListener('change',function(e){
   border-top-left-radius:8px !important;
   border-bottom-left-radius:8px !important;
   border-top-right-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+</style>
+
+
+
+<style id="andhug-product-list-final-pad2322-left-round-right-square">
+/* FINAL 商品庫「列表」 only
+   1) 圖片區 padding：上2 / 右3 / 下2 / 左2
+   2) 內圖圓角：上左圓 / 上右方 / 下左圓 / 下右方
+   不碰：格狀、更多、開單
+*/
+#product-grid.view-list .product-card .product-img{
+  padding:2px 3px 2px 2px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-top-left-radius:8px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-left-radius:8px !important;
   border-bottom-right-radius:0 !important;
 }
 </style>
