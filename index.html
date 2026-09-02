@@ -7877,7 +7877,18 @@ function applyGhostFullStyle(ghost,cardEl){
   const oldCard=document.createElement('div');
   oldCard.className='drag-old-card';
   const imgEl=cardEl.querySelector('.product-img');
-  if(imgEl) oldCard.appendChild(imgEl.cloneNode(true));
+  if(imgEl){
+    const ghostImgWrap=imgEl.cloneNode(true);
+    /* 拖曳 ghost 不可沿用列表卡片 render 時的 inline !important，
+       否則滿版/左圓右方會污染拖曳方格。 */
+    ghostImgWrap.removeAttribute('style');
+    const ghostImg=ghostImgWrap.querySelector('img');
+    if(ghostImg){
+      ghostImg.removeAttribute('style');
+      ghostImg.style.cssText='width:100%!important;height:100%!important;object-fit:cover!important;padding:0!important;border-radius:0!important;background:transparent!important;';
+    }
+    oldCard.appendChild(ghostImgWrap);
+  }
   const info=document.createElement('div');
   info.className='product-info';
   const nameEl=cardEl.querySelector('.product-name');
@@ -7929,7 +7940,15 @@ function applyGhostSmallStyle(ghost,cardEl){
   const imgInner=document.createElement('div');
   imgInner.className='product-img'; // 需要這個 class，圖片本身的 img{width:100%;height:100%;...} 規則才吃得到
   imgInner.style.cssText='width:100%;height:100%;border-radius:14px;overflow:hidden;background:var(--cream2);border:1.5px solid var(--cream3);';
-  if(imgEl)imgInner.innerHTML=imgEl.innerHTML;
+  if(imgEl){
+    imgInner.innerHTML=imgEl.innerHTML;
+    const ghostImg=imgInner.querySelector('img');
+    if(ghostImg){
+      /* 小拖曳方格固定為自己的四角樣式，不繼承列表左圓右方。 */
+      ghostImg.removeAttribute('style');
+      ghostImg.style.cssText='width:100%!important;height:100%!important;object-fit:cover!important;padding:0!important;border-radius:12px!important;background:#fff!important;display:block!important;';
+    }
+  }
   ghost.appendChild(imgInner);
   ghost.style.width=size+'px';
   ghost.style.height=size+'px';
@@ -16925,6 +16944,18 @@ document.addEventListener('change',function(e){
 
 #product-grid.view-list .product-card .product-info{
   background:#F7F2EC !important;
+}
+</style>
+
+
+<style id="andhug-drag-ghost-image-normalize">
+/* ONLY 拖曳 ghost：避免商品庫列表滿版/左圓右方樣式污染拖曳預覽 */
+.drag-old-ghost .drag-old-card .product-img{
+  padding:0 !important;
+  background:var(--cream2) !important;
+}
+.drag-old-ghost .drag-old-card .product-img img{
+  border-radius:0 !important;
 }
 </style>
 
