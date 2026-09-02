@@ -7916,6 +7916,7 @@ function applyGhostFullStyle(ghost,cardEl){
   visualCard.style.setProperty('max-height',rect.height+'px','important');
   visualCard.style.setProperty('margin','0','important');
   visualCard.style.setProperty('transform','none','important');
+  visualCard.style.setProperty('opacity','1','important');
   visualCard.style.setProperty('box-sizing','border-box','important');
 
   ghost.appendChild(visualCard);
@@ -16928,15 +16929,41 @@ document.addEventListener('change',function(e){
 </style>
 
 
-<style id="andhug-sale-list-full-right-bg-f7f2ec-final">
-/* ONLY 開單區 → 列表 → 右側整個文字區底色
-   名稱 / 價錢 / 幾件所在區域統一 #F7F2EC。
-   不改文字、價格、件數的位置與樣式。 */
+
+<style id="andhug-sale-list-full-right-bg-white-final">
+/* ONLY 開單區 → 列表
+   1) 右側文字區背景改成白色
+   2) 圖片與文字區之間加細分隔線
+   其他位置與樣式不動
+*/
 #sale-product-grid.view-list .product-card .product-info{
-  background:#F7F2EC !important;
+  background:#FFFFFF !important;
+  border-left:3px solid var(--cream3) !important;
 }
 #sale-product-grid.view-list .product-card .product-name{
-  background:#F7F2EC !important;
+  background:#FFFFFF !important;
+}
+</style>
+
+
+
+<style id="andhug-product-list-white-divider-final">
+/* ONLY 商品庫 → 列表
+   1) 右側文字區白底
+   2) 圖片與文字間 1px 分隔線
+   3) 不改任何文字內容/位置/大小/間距
+*/
+#product-grid.view-list .product-card .product-info{
+  background:#FFFFFF !important;
+  border-left:3px solid var(--cream3) !important;
+}
+</style>
+
+
+<style id="andhug-product-grid-lower-f5eee8-final">
+/* ONLY 商品庫 → 格狀：整個下半資訊區 */
+#product-grid.view-grid .product-card .product-info{
+  background:#F5EEE8 !important;
 }
 </style>
 
