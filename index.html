@@ -9224,6 +9224,92 @@ function toggleOrderItemGroupRow(gid2){
   body.style.display=open?'none':'block';
   if(arrow)arrow.style.transform=open?'':'rotate(-180deg)';
 }
+
+function getOrderBackupRecoveryCandidate(order){
+  if(!order)return null;
+  const meta=getAutoBackupMeta();
+  const slots=[...(meta.slots||[])].sort((a,b)=>b.timestamp-a.timestamp);
+  const candidates=[];
+
+  // 還原前安全備份如果存在，也一起列入搜尋。
+  if(lsGet('patchDB_autobackup_emergency')){
+    candidates.push({index:'emergency',timestamp:Date.now(),raw:lsGet('patchDB_autobackup_emergency')});
+  }
+  slots.forEach(s=>{
+    const raw=lsGet('patchDB_autobackup_'+s.index);
+    if(raw)candidates.push({index:s.index,timestamp:s.timestamp,raw});
+  });
+
+  for(const c of candidates){
+    try{
+      const db=JSON.parse(c.raw);
+      const orders=Array.isArray(db&&db.orders)?db.orders:[];
+      let found=orders.find(x=>x&&x.id===order.id);
+
+      // 極舊資料若 id 曾經變過，只在供應商+日期+備註完全相同時才 fallback，避免抓錯單。
+      if(!found){
+        found=orders.find(x=>x
+          &&String(x.supplier||'')===String(order.supplier||'')
+          &&String(x.date||'')===String(order.date||'')
+          &&String(x.note||'')===String(order.note||''));
+      }
+      if(found&&Array.isArray(found.items)&&found.items.length){
+        return {
+          slotIndex:c.index,
+          timestamp:c.timestamp,
+          order:found,
+          itemCount:found.items.length
+        };
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+function recoverOrderItemsFromBackup(orderId){
+  const current=DB.orders.find(o=>o.id===orderId);
+  if(!current)return;
+  const candidate=getOrderBackupRecoveryCandidate(current);
+  if(!candidate){
+    toast('最近的自動備份裡沒有找到這張採購單的舊商品明細','error');
+    return;
+  }
+
+  const when=candidate.timestamp
+    ?new Date(candidate.timestamp).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+    :'較早的安全備份';
+
+  customConfirm(`找到 ${when} 的備份，裡面這張採購單有 ${candidate.itemCount} 項商品。\n\n只救回這張單的商品明細，其他目前資料都不會倒退。確定要救回嗎？`,()=>{
+    const before=JSON.parse(JSON.stringify(current));
+    const restoredItems=JSON.parse(JSON.stringify(candidate.order.items||[]));
+
+    current.items=restoredItems;
+    // 只有目前金額是空的時候，才順便補備份金額；已有金額一律保留現在版本。
+    if(!(Number(current.total)>0)&&Number(candidate.order.total)>0)current.total=Number(candidate.order.total);
+    if(!(Number(current.totalUsd)>0)&&Number(candidate.order.totalUsd)>0)current.totalUsd=Number(candidate.order.totalUsd);
+    current.updatedAt=Date.now();
+
+    const after=JSON.parse(JSON.stringify(current));
+    pushUndo({
+      label:'救回採購商品明細',
+      undo:()=>{
+        const o=DB.orders.find(x=>x.id===orderId);
+        if(o)Object.assign(o,JSON.parse(JSON.stringify(before)));
+        saveDB();renderOrders();
+      },
+      redo:()=>{
+        const o=DB.orders.find(x=>x.id===orderId);
+        if(o)Object.assign(o,JSON.parse(JSON.stringify(after)));
+        saveDB();renderOrders();
+      }
+    });
+
+    saveDB();
+    renderOrders();
+    toast(`🛟 已救回 ${restoredItems.length} 項商品明細，可按 ⌘Z 復原`,'success');
+  });
+}
+
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
@@ -9251,6 +9337,7 @@ function renderOrders(){
       }
     });
     const itemsHtml=renderOrderItemsGrouped(o.items||[]);
+    const recoveryCandidate=(!(o.items||[]).length)?getOrderBackupRecoveryCandidate(o):null;
     return `<div class="order-accordion" id="oa-${o.id}">
       <div class="order-accordion-head" onclick="toggleAccordion('${o.id}')">
         <div style="flex:1">
@@ -9268,6 +9355,7 @@ function renderOrders(){
         ${o.note?`<div style="font-size:11px;color:var(--text2);padding:8px 0 6px;font-weight:600">📝 ${o.note}</div>`:''}
         <div style="margin-bottom:10px">${itemsHtml}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:4px">
+          ${recoveryCandidate?`<button class="btn btn-secondary btn-sm" onclick="recoverOrderItemsFromBackup('${o.id}')" title="只從自動備份救回這張採購單的商品明細">🛟 救回商品明細（${recoveryCandidate.itemCount} 項）</button>`:''}
           ${o.status!=='received'?`<button class="btn btn-primary btn-sm" onclick="confirmReceived('${o.id}')">🚀 確認到貨</button>`:''}
           <button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button>
           <button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button>
@@ -11858,7 +11946,7 @@ function syncOrderItemImagesToProducts(orderItems,supplier,date){
     }
   });
 }
-function saveOrder(event){
+function saveOrder(event,allowEmptyExistingOverwrite=false){
   if(event){event.preventDefault();event.stopPropagation();}
   const supplier=document.getElementById('o-supplier').value.trim();
   if(!supplier){toast('請輸入店家名稱 🌸','error');return;}
@@ -11896,7 +11984,20 @@ function saveOrder(event){
   const totalPaidUsdActual=parseFloat(document.getElementById('o-total-paid-usd-actual')?.value)||0; // 淘寶「实付款」欄位直接寫的真實美金金額，跟我們自己用匯率算出來的會有一兩分錢誤差，這個才是真的付了多少
   const total=items.reduce((s,i)=>s+i.cost*i.qty,0)+shipping;
   const orderRate=getEffectiveOrderRate();
-  const totalUsd=total*orderRate+feeUsd; // 支付手續費淘寶是直接用美金收的，不是人民幣換算過來的，要直接加，不能跟著匯率一起乘
+  const totalUsd=total*orderRate+feeUsd;
+
+  // 舊採購單本來有商品時，不允許因畫面異常/誤刪而靜默覆蓋成 0 項。
+  if(editingOrderId&&!allowEmptyExistingOverwrite){
+    const existingOrder=DB.orders.find(x=>x.id===editingOrderId);
+    if(existingOrder&&Array.isArray(existingOrder.items)&&existingOrder.items.length>0&&items.length===0){
+      customConfirm(`⚠️ 這張採購單原本有 ${existingOrder.items.length} 項商品，但目前表單是 0 項。
+
+若繼續儲存，原本商品明細會被清空。確定真的要存成 0 項嗎？`,()=>{
+        saveOrder(null,true);
+      });
+      return;
+    }
+  } // 支付手續費淘寶是直接用美金收的，不是人民幣換算過來的，要直接加，不能跟著匯率一起乘
   if(editingOrderId){
     const o=DB.orders.find(x=>x.id===editingOrderId);
     if(!o){toast('找不到採購單','error');return;}
