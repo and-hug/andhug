@@ -81,10 +81,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .product-card:hover .pc-quick-trash{opacity:1;}
 .pc-quick-trash{opacity:0;transition:opacity .15s;}
 .pc-quick-trash:hover{background:var(--red-light)!important;color:var(--red)!important;border-color:var(--red)!important;}
-.product-img{width:100%;aspect-ratio:1;background:var(--cream2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.product-img{width:100%;aspect-ratio:1;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .product-img img{width:100%;height:100%;object-fit:cover;padding:0;border-radius:inherit;background:transparent;}
 .product-img .no-img{font-size:36px;}
-.product-info{padding:6px 12px 12px;display:flex;flex-direction:column;flex:1;}
+.product-info{padding:6px 12px 12px;display:flex;flex-direction:column;flex:1;background:var(--cream2);}
 .product-name{font-size:12px;font-weight:700;margin-bottom:3px;line-height:1.4;}
 .product-sku{font-size:10px;color:var(--text3);margin-bottom:8px;font-family:monospace;}
 .product-meta{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
@@ -234,7 +234,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .stock-row.ok-row{background:var(--cream2);border-left:4px solid var(--cream3);}
 .stock-icon{font-size:18px;width:24px;text-align:center;}
 .stock-label{font-size:12px;font-weight:700;color:var(--text2);}
-.stock-count{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;width:36px;text-align:center;}
+.stock-count{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:36px;text-align:center;}
 input.stock-count::-webkit-inner-spin-button,input.stock-count::-webkit-outer-spin-button,.smart-import-price-cell input::-webkit-inner-spin-button,.smart-import-price-cell input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input.stock-count,.smart-import-price-cell input{-moz-appearance:textfield;appearance:textfield;}
 input.confirm-recv-qty::-webkit-inner-spin-button,input.confirm-recv-qty::-webkit-outer-spin-button,input.confirm-recv-defect::-webkit-inner-spin-button,input.confirm-recv-defect::-webkit-outer-spin-button,input.sibp-qty-input::-webkit-inner-spin-button,input.sibp-qty-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
@@ -1525,6 +1525,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
 #product-grid:not(.view-list) .product-card .product-info{
   padding:8px 10px 10px!important;
+  background:var(--cream2)!important;
 }
 #product-grid:not(.view-list) .product-card .product-name{
   font-size:12px!important;
@@ -1590,6 +1591,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
 #sale-product-grid:not(.view-list) .product-card .product-info{
   padding-bottom:10px!important;
+  background:var(--cream2)!important;
 }
 #sale-product-grid:not(.view-list) .product-card .product-name{
   margin-left:-1px!important;
@@ -2111,6 +2113,21 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 .sales-history-tag{display:inline-flex;align-items:center;border:1px solid var(--cream3);border-radius:999px;padding:2px 7px;font-size:9.5px;font-weight:800;color:var(--brown);background:var(--surface);margin-right:4px;margin-top:3px}
 .sales-history-empty{background:var(--surface);border:1.5px dashed var(--cream3);border-radius:16px;padding:42px 20px;text-align:center;color:var(--text3);font-size:13px;font-weight:700}
 @media(max-width:900px){.sales-history-summary{grid-template-columns:repeat(2,1fr)}.sales-history-card-head{grid-template-columns:92px 1fr 80px 30px}.sales-history-card-head .hist-items-col,.sales-history-card-head .hist-profit-col{display:none}}
+
+
+/* card color fix: top white, bottom cream */
+#product-grid:not(.view-list) .product-card,
+#sale-product-grid:not(.view-list) .product-card{
+  background: var(--cream2) !important;
+}
+#product-grid:not(.view-list) .product-card .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  background: #fff !important;
+}
+#product-grid:not(.view-list) .product-card .product-info,
+#sale-product-grid:not(.view-list) .product-card .product-info{
+  background: var(--cream2) !important;
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -5755,11 +5772,11 @@ function openCustomerDetail(id){
     <div style="display:flex;gap:8px;margin-bottom:16px">
       <div style="flex:1;background:var(--cream2);border-radius:12px;padding:12px;text-align:center">
         <div style="font-size:11px;color:var(--text3);font-weight:700">累積消費</div>
-        <div style="font-size:18px;font-weight:800;color:var(--brown);font-family:'Nunito',sans-serif">$${stats.total.toFixed(2)}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--brown);font-family:'Nunito',sans-serif">$${stats.total.toFixed(2)}</div>
       </div>
       <div style="flex:1;background:var(--cream2);border-radius:12px;padding:12px;text-align:center">
         <div style="font-size:11px;color:var(--text3);font-weight:700">購買次數</div>
-        <div style="font-size:18px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif">${stats.count}</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif">${stats.count}</div>
       </div>
     </div>
     ${c.phone?`<div style="font-size:13px;color:var(--text2);margin-bottom:6px">📞 ${c.phone}</div>`:''}
@@ -7984,20 +8001,20 @@ function ensureProductMergeVariantModal(){
   modal.className='modal-overlay hidden';
   modal.id='modal-product-variant-merge';
   modal.innerHTML=`
-    <div class="modal" style="max-width:440px;width:min(440px,92vw)">
-      <div class="modal-header">
-        <div class="modal-title">🧩 併入商品款式</div>
+    <div class="modal" style="max-width:520px;width:min(520px,92vw)">
+      <div class="modal-header" style="padding:22px 24px 12px">
+        <div class="modal-title">🌸 併入商品款式</div>
         <button class="modal-close" onclick="closeModal('modal-product-variant-merge')">×</button>
       </div>
-      <div class="modal-body">
-        <div id="product-variant-merge-summary" style="font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:12px"></div>
-        <div style="font-size:11px;font-weight:800;color:var(--brown);margin-bottom:7px">拖進哪個款式？</div>
-        <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px"></div>
-        <div style="margin-top:10px;font-size:10px;line-height:1.5;color:var(--text3)">
+      <div class="modal-body" style="padding:4px 24px 8px">
+        <div id="product-variant-merge-summary" style="font-size:12px;line-height:1.6;color:var(--text2);margin-bottom:14px"></div>
+        <div style="font-size:11px;font-weight:800;color:var(--text2);margin:2px 0 9px">選擇要併入的款式</div>
+        <div id="product-variant-merge-options" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px"></div>
+        <div style="margin-top:14px;padding:10px 12px;border:1px dashed var(--cream4);border-radius:14px;background:rgba(255,255,255,0.45);font-size:11px;line-height:1.65;color:var(--text3)">
           原本的商品卡拖曳換位完全保留；只有拖到母商品正中央才會進入這裡。合併後原商品會保留在商品垃圾桶，可用 ⌘Z 復原。
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="padding:14px 24px 22px">
         <button class="btn btn-secondary" onclick="closeModal('modal-product-variant-merge')">取消</button>
         <button class="btn btn-primary" id="product-variant-merge-confirm" onclick="confirmProductMergeIntoVariant()" disabled>確認併入</button>
       </div>
@@ -8042,15 +8059,20 @@ function openProductMergeVariantModal(sourceId,targetId){
 
   const summary=document.getElementById('product-variant-merge-summary');
   const srcStock=getProductStock(source);
-  summary.innerHTML=`<div style="font-weight:800;color:var(--text)">${source.name}</div>
-    <div style="color:var(--text3)">目前庫存 ${srcStock} 件</div>
-    <div style="margin:7px 0;color:var(--text3)">↓ 併入</div>
-    <div style="font-weight:800;color:var(--brown)">${target.name}</div>`;
+  summary.innerHTML=`
+    <div style="padding:12px 14px;border:1.5px solid var(--cream3);border-radius:16px;background:rgba(255,255,255,0.55)">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">來源商品</div>
+      <div style="font-weight:800;color:var(--text);line-height:1.45">${source.name}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">目前庫存 ${srcStock} 件</div>
+      <div style="margin:10px 0 8px;color:var(--text3);font-weight:700">↓ 併入</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">母商品</div>
+      <div style="font-weight:800;color:var(--brown);line-height:1.45">${target.name}</div>
+    </div>`;
 
   const options=document.getElementById('product-variant-merge-options');
   options.innerHTML=target.variants.map(v=>`
     <button type="button" data-merge-variant-id="${v.id}" onclick="selectProductMergeVariant('${v.id}')"
-      style="height:34px;border:1.5px solid var(--cream3);border-radius:10px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-weight:800;cursor:pointer">
+      style="width:100%;min-width:0;height:42px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
       ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
     </button>`).join('');
 
@@ -8071,6 +8093,7 @@ function selectProductMergeVariant(variantId){
     btn.style.background=active?'var(--brown)':'var(--surface)';
     btn.style.color=active?'#fff':'var(--text2)';
     btn.style.borderColor=active?'var(--brown)':'var(--cream3)';
+    btn.style.boxShadow=active?'0 4px 10px rgba(139,111,71,0.16)':'none';
   });
   const confirmBtn=document.getElementById('product-variant-merge-confirm');
   if(confirmBtn)confirmBtn.disabled=false;
@@ -8887,7 +8910,7 @@ function openStockModal(id){
           <div style="display:flex;gap:3px"><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
         </div>`).join('')}
       </div>`:`
-      <div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
+      <div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
         const sampleQty=getTotalSampleQty(p.id);
         const defectQty=p.defectStock||0;
         return `<div style="display:flex;flex-direction:column;gap:2px;font-size:11px;margin-left:20px">
