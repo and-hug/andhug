@@ -7810,7 +7810,7 @@ function restoreMergedProductById(productId){
   const idx=trash.findIndex(p=>p&&p.id===productId&&p.mergeReason==='variant');
   if(idx<0)return;
   const reverseIndex=trash.length-1-idx;
-  restoreProduct(reverseIndex);
+  restoreProduct(reverseIndex,{fromMergedArchive:true});
   if(activeCat==='__merged__')renderProducts();
 }
 
@@ -14975,7 +14975,7 @@ function deleteSelectedProductTrash(){
     toast(`已永久刪除 ${count} 件商品`);
   });
 }
-function restoreProduct(idx){
+function restoreProduct(idx,opts={}){
   const trash=DB.productTrash||[];
   const realIdx=trash.length-1-idx;
   const p=trash[realIdx];
@@ -15026,11 +15026,11 @@ function restoreProduct(idx){
   DB.products.push(restored);
   trash.splice(realIdx,1);
   saveDB();
-  openProductTrash();
+  if(!opts.fromMergedArchive)openProductTrash();
   renderProducts();
   if(document.getElementById('cat-sidebar'))renderCatSidebar();
   if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
-  toast(`商品已找回 🎉${reverseNote}`,'success');
+  toast(opts.fromMergedArchive?`已恢復成獨立商品 ✓${reverseNote}`:`商品已找回 🎉${reverseNote}`,'success');
 }
 function deleteProductPermanently(idx){
   customConfirm('永久刪除這個商品？此動作無法復原',()=>{
