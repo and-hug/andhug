@@ -7739,29 +7739,67 @@ function renderMergedProductsArchive(){
   merged=merged.slice().sort((a,b)=>(b.mergedAt||b.deletedAt||0)-(a.mergedAt||a.deletedAt||0));
   const summaryEl=document.getElementById('product-filtered-summary');
   if(summaryEl)summaryEl.textContent=merged.length?`已併入款式 ${merged.length} 件 · 這裡只是收納，不會刪除原資料`:'';
-  g.className='view-list';
+
+  // 跟商品庫目前顯示模式同步，不再強制切成列表
+  g.className='view-'+currentView;
+
   if(!merged.length){
     g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🗂️</div><div class="empty-text">目前沒有已併入的款式</div></div>';
     return;
   }
+
   g.innerHTML=merged.map(p=>{
-    const target=(DB.products||[]).find(x=>x.id===p.mergedIntoProductId);
+    const target=(DB.products||[]).find(x=>String(x.id)===String(p.mergedIntoProductId));
     const targetName=target?target.name:'原母商品已不存在';
     const img=p.img||'';
-    return `<div class="product-card merged-archive-card" style="cursor:default;min-height:92px!important">
-      <div class="product-img" style="width:96px!important;min-width:96px!important;flex:0 0 96px!important;padding:0!important;background:#fff!important">
-        ${img?`<img src="${img}" alt="${String(p.name||'').replace(/"/g,'&quot;')}" style="width:100%!important;height:100%!important;object-fit:cover!important;border-radius:12px 0 0 12px!important">`:'<div class="no-img">📦</div>'}
-      </div>
-      <div class="product-info" style="padding:10px 12px!important;background:#fff!important;display:flex!important;flex-direction:column!important;justify-content:center!important">
-        <div class="product-name" style="margin:0 0 2px!important">${p.name||'未命名商品'}</div>
-        <div class="product-sku" style="margin:0 0 5px!important">${p.sku||'無SKU'}</div>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;color:var(--text3)">
-          <span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:var(--cream2);color:var(--brown);font-weight:800">${p.mergedVariantLabel||'—'} 款</span>
-          <span>已併入：${targetName}</span>
+    const safeName=String(p.name||'').replace(/"/g,'&quot;');
+
+    if(currentView==='list'){
+      return `<div class="product-card merged-archive-card" style="cursor:default;min-height:92px!important">
+        <div class="product-img" style="width:96px!important;min-width:96px!important;flex:0 0 96px!important;padding:0!important;background:#fff!important">
+          ${img?`<img src="${img}" alt="${safeName}" style="width:100%!important;height:100%!important;object-fit:cover!important;border-radius:12px 0 0 12px!important">`:'<div class="no-img">📦</div>'}
         </div>
+        <div class="product-info" style="padding:10px 12px!important;background:#fff!important;display:flex!important;flex-direction:column!important;justify-content:center!important">
+          <div class="product-name" style="margin:0 0 2px!important">${p.name||'未命名商品'}</div>
+          <div class="product-sku" style="margin:0 0 5px!important">${p.sku||'無SKU'}</div>
+          <div class="merged-archive-meta">
+            <span class="merged-archive-variant">${p.mergedVariantLabel||'—'} 款</span>
+            <span>已併入：${targetName}</span>
+          </div>
+        </div>
+        <div class="merged-archive-actions merged-archive-actions-list">
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();restoreMergedProductById('${p.id}')">↩ 恢復獨立商品</button>
+        </div>
+      </div>`;
+    }
+
+    if(currentView==='large'){
+      return `<div class="product-card merged-archive-card merged-archive-card-large" style="cursor:default">
+        <div class="product-img">
+          ${img?`<img src="${img}" alt="${safeName}">`:'<div class="no-img">📦</div>'}
+        </div>
+        <div class="merged-archive-large-overlay">
+          <span>${p.mergedVariantLabel||'—'}</span>
+          <button onclick="event.stopPropagation();restoreMergedProductById('${p.id}')" title="恢復獨立商品">↩</button>
+        </div>
+      </div>`;
+    }
+
+    // 格狀：沿用商品庫格狀卡片結構與比例
+    return `<div class="product-card merged-archive-card merged-archive-card-grid" style="cursor:default">
+      <div class="product-img">
+        ${img?`<img src="${img}" alt="${safeName}">`:'<div class="no-img">📦</div>'}
       </div>
-      <div style="display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0">
-        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();restoreMergedProductById('${p.id}')" style="font-size:10.5px;white-space:nowrap">↩ 恢復獨立商品</button>
+      <div class="product-info">
+        <div class="product-name">${p.name||'未命名商品'}</div>
+        <div class="product-sku">${p.sku||'無SKU'}</div>
+        <div class="merged-archive-meta">
+          <span class="merged-archive-variant">${p.mergedVariantLabel||'—'} 款</span>
+          <span class="merged-archive-target">已併入：${targetName}</span>
+        </div>
+        <div class="merged-archive-actions">
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();restoreMergedProductById('${p.id}')">↩ 恢復獨立商品</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -17334,5 +17372,46 @@ document.addEventListener('change',function(e){
   content:'放開併入' !important;
 }
 </style>
+
+<style id="andhug-merged-archive-follow-view-final">
+/* 已併入款式：跟隨商品庫目前的 格狀 / 更多 / 列表 顯示模式 */
+#product-grid .merged-archive-meta{
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  font-size:9px;color:var(--text3);line-height:1.25;
+}
+#product-grid .merged-archive-variant{
+  display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;
+  background:var(--cream2);color:var(--brown);font-weight:800;white-space:nowrap;
+}
+#product-grid .merged-archive-actions{margin-top:auto;padding-top:8px;}
+#product-grid .merged-archive-actions .btn{font-size:9.5px!important;padding:5px 9px!important;min-height:26px!important;}
+#product-grid .merged-archive-actions-list{display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0;margin:0;}
+
+/* 格狀：完全維持商品庫格狀的照片滿版＋中間分隔線結構 */
+#product-grid.view-grid .merged-archive-card-grid .product-img{
+  padding:0!important;background:#fff!important;box-sizing:border-box!important;
+  border-radius:16px 16px 0 0!important;overflow:hidden!important;
+  border-bottom:1px solid var(--cream3)!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .product-img img{
+  width:100%!important;height:100%!important;margin:0!important;padding:0!important;
+  display:block!important;object-fit:cover!important;border-radius:16px 16px 0 0!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .product-info{
+  background:#fff!important;padding:8px 10px 10px!important;display:flex!important;flex-direction:column!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .product-name{font-size:12px!important;margin:0 0 2px!important;}
+#product-grid.view-grid .merged-archive-card-grid .product-sku{font-size:9px!important;margin:0 0 5px!important;}
+#product-grid.view-grid .merged-archive-target{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+
+/* 更多：維持更多模式，不顯示下方文字，只留小款式標記與恢復按鈕 */
+#product-grid.view-large .merged-archive-card-large{position:relative!important;overflow:hidden!important;}
+#product-grid.view-large .merged-archive-card-large .product-img{padding:0!important;background:#fff!important;border-radius:16px!important;overflow:hidden!important;}
+#product-grid.view-large .merged-archive-card-large .product-img img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;border-radius:16px!important;}
+#product-grid.view-large .merged-archive-large-overlay{position:absolute;left:5px;right:5px;bottom:5px;display:flex;align-items:center;justify-content:space-between;gap:4px;pointer-events:none;}
+#product-grid.view-large .merged-archive-large-overlay span{background:rgba(255,255,255,.9);border:1px solid var(--cream3);border-radius:999px;padding:2px 6px;font-size:8px;font-weight:800;color:var(--brown);}
+#product-grid.view-large .merged-archive-large-overlay button{pointer-events:auto;width:22px;height:22px;border-radius:8px;border:1px solid var(--cream3);background:rgba(255,255,255,.92);color:var(--brown);cursor:pointer;padding:0;font-size:11px;}
+</style>
+
 </body>
 </html>
