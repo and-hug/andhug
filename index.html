@@ -7807,10 +7807,10 @@ function renderMergedProductsArchive(){
 
 function restoreMergedProductById(productId){
   const trash=DB.productTrash||[];
-  const idx=trash.findIndex(p=>p&&p.id===productId&&p.mergeReason==='variant');
+  const idx=trash.findIndex(p=>p&&String(p.id)===String(productId)&&p.mergeReason==='variant');
   if(idx<0)return;
   const reverseIndex=trash.length-1-idx;
-  restoreProduct(reverseIndex);
+  restoreProduct(reverseIndex,{skipTrash:true,toastText:'已恢復為獨立商品'});
   if(activeCat==='__merged__')renderProducts();
 }
 
@@ -14975,7 +14975,7 @@ function deleteSelectedProductTrash(){
     toast(`已永久刪除 ${count} 件商品`);
   });
 }
-function restoreProduct(idx){
+function restoreProduct(idx,options={}){
   const trash=DB.productTrash||[];
   const realIdx=trash.length-1-idx;
   const p=trash[realIdx];
@@ -15026,11 +15026,11 @@ function restoreProduct(idx){
   DB.products.push(restored);
   trash.splice(realIdx,1);
   saveDB();
-  openProductTrash();
+  if(!options.skipTrash)openProductTrash();
   renderProducts();
   if(document.getElementById('cat-sidebar'))renderCatSidebar();
   if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
-  toast(`商品已找回 🎉${reverseNote}`,'success');
+  toast(options.toastText||`商品已找回 🎉${reverseNote}`,'success');
 }
 function deleteProductPermanently(idx){
   customConfirm('永久刪除這個商品？此動作無法復原',()=>{
@@ -17388,17 +17388,35 @@ document.addEventListener('change',function(e){
 #product-grid .merged-archive-actions-list{display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0;margin:0;}
 
 /* 格狀：完全維持商品庫格狀的照片滿版＋中間分隔線結構 */
+#product-grid.view-grid .merged-archive-card-grid{
+  overflow:hidden!important;
+  background:#fff!important;
+}
 #product-grid.view-grid .merged-archive-card-grid .product-img{
-  padding:0!important;background:#fff!important;box-sizing:border-box!important;
-  border-radius:16px 16px 0 0!important;overflow:hidden!important;
+  width:100%!important;
+  aspect-ratio:1!important;
+  padding:0!important;
+  margin:0!important;
+  background:#fff!important;
+  box-sizing:border-box!important;
+  border-radius:16px 16px 0 0!important;
+  overflow:hidden!important;
   border-bottom:1px solid var(--cream3)!important;
 }
 #product-grid.view-grid .merged-archive-card-grid .product-img img{
-  width:100%!important;height:100%!important;margin:0!important;padding:0!important;
-  display:block!important;object-fit:cover!important;border-radius:16px 16px 0 0!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  object-fit:cover!important;
+  border-radius:16px 16px 0 0!important;
 }
 #product-grid.view-grid .merged-archive-card-grid .product-info{
-  background:#fff!important;padding:8px 10px 10px!important;display:flex!important;flex-direction:column!important;
+  background:#fff!important;
+  padding:8px 10px 10px!important;
+  display:flex!important;
+  flex-direction:column!important;
 }
 #product-grid.view-grid .merged-archive-card-grid .product-name{font-size:12px!important;margin:0 0 2px!important;}
 #product-grid.view-grid .merged-archive-card-grid .product-sku{font-size:9px!important;margin:0 0 5px!important;}
