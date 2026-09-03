@@ -219,7 +219,8 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .cart-qty-spinner input{width:100%;min-width:0;height:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-align:center;padding:0 2px!important;box-shadow:none!important;-moz-appearance:textfield;appearance:textfield;}
 .cart-qty-spinner input::-webkit-inner-spin-button,.cart-qty-spinner input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .cart-qty-step{display:flex;flex-direction:column;border-left:1px solid var(--cream3);background:var(--cream2);}
-.cart-qty-step button{flex:1;min-height:0;border:0;background:transparent;color:var(--text3);font-size:8px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.cart-qty-step button{flex:1;min-height:0;border:0;background:transparent;color:var(--text3);font-size:5px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.cart-step-glyph{display:inline-block;line-height:1;transform:translateX(-1px);pointer-events:none;}
 .cart-qty-step button:first-child{border-bottom:1px solid var(--cream3);}
 .cart-qty-step button:hover:not(:disabled){background:var(--cream3);color:var(--brown);}
 .cart-qty-step button:disabled{opacity:.32;cursor:not-allowed;}
@@ -1387,7 +1388,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
 .cart-action-glyph{
   display:inline-block!important;
-  transform:translateY(-1px)!important;
+  font-size:12px!important;
+  transform:translateX(-1px)!important;
   line-height:1!important;
   pointer-events:none!important;
 }
@@ -3277,7 +3279,7 @@ window.__patchDB={
 const __bootSteps=[];
 
 let DB={products:[],orders:[],rate:0.138,rateTime:null,todaySales:{}};
-let _autoUndoContext=null,_autoUndoTimer=null,_autoUndoRestoring=false;
+let _autoUndoContext=null,_autoUndoTimer=null,_autoUndoRestoring=false,_undoStableSnapshot='';
 function _dbUndoSnapshot(){
   try{
     const state={DB};
@@ -3362,11 +3364,13 @@ function _finalizeAutoUndoNow(){
   _autoUndoTimer=null;
   const ctx=_autoUndoContext;
   _autoUndoContext=null;
-  if(!ctx||ctx.manualHandled)return;
   const after=_dbUndoSnapshot();
-  if(!ctx.beforeJson||after===ctx.beforeJson)return;
+  if(!ctx){if(after)_undoStableSnapshot=after;return;}
+  if(ctx.manualHandled){if(after)_undoStableSnapshot=after;return;}
+  if(!ctx.beforeJson||after===ctx.beforeJson){if(after)_undoStableSnapshot=after;return;}
   if(typeof _pushUndoRaw==='function')_pushUndoRaw(_makeDbSnapshotUndoEntry(ctx.label,ctx.beforeJson,after));
   else if(typeof pushUndo==='function')pushUndo(_makeDbSnapshotUndoEntry(ctx.label,ctx.beforeJson,after));
+  _undoStableSnapshot=after;
 }
 function _beginAutoUndoContext(target,labelOverride){
   if(_autoUndoRestoring)return;
@@ -3621,6 +3625,16 @@ function saveDB(options={}){
   migrateSockTypeSTtoSK();
   migrateClothingTypeGTtoCL();
   backfillMissingSortOrders();
+
+  /* Undo v3 save-layer fallback:
+     未來任何新功能只要最後有呼叫 saveDB()，即使沒有 pushUndo、沒有 click context、
+     或資料是在 async callback 裡改的，也會自動留下可復原快照。 */
+  const afterSnapshot=_dbUndoSnapshot();
+  if(!options.skipUndo&&!_autoUndoRestoring&&!_autoUndoContext&&_undoStableSnapshot&&afterSnapshot&&afterSnapshot!==_undoStableSnapshot){
+    _pushUndoRaw(_makeDbSnapshotUndoEntry(options.undoLabel||'資料修改',_undoStableSnapshot,afterSnapshot));
+  }
+  if(afterSnapshot)_undoStableSnapshot=afterSnapshot;
+
   const persistPromise=lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
   _scheduleAutoUndoFinalize();
@@ -4326,7 +4340,7 @@ async function fetchRate(){
   try{
     const r=await fetch('https://api.exchangerate-api.com/v4/latest/CNY',{signal:controller.signal});
     const d=await r.json();
-    if(d.rates?.USD&&d.rates.USD!==DB.rate){DB.rate=d.rates.USD;saveDB({skipCloudSync:true});}
+    if(d.rates?.USD&&d.rates.USD!==DB.rate){DB.rate=d.rates.USD;saveDB({skipCloudSync:true,skipUndo:true});}
     if(d.rates?.USD)DB.rateTime=new Date().toLocaleTimeString('zh-TW');
   }catch(e){console.warn('匯率更新失敗，保留目前匯率:',e.name||e);}
   finally{clearTimeout(timeout);}
@@ -6827,7 +6841,7 @@ function setSubcat(code){activeSubcat=activeSubcat===code?'all':code;requestProd
 
 let undoStack=[],redoStack=[];
 const MAX_UNDO=50;
-const PERSISTED_UNDO_KEY='patchDB_undo_history_v1';
+const PERSISTED_UNDO_KEY='patchDB_undo_history_v3';
 const PERSISTED_UNDO_LIMIT=5;
 function _persistUndoHistory(){
   try{
@@ -6852,14 +6866,29 @@ function _pushUndoRaw(entry){
   _persistUndoHistory();
 }
 function pushUndo(entry){
-  if(!_autoUndoRestoring&&_autoUndoContext){
-    const before=_autoUndoContext.beforeJson;
+  /*
+    全域 Undo v3：任何舊按鈕或未來新按鈕，只要真的改到 DB / 購物車，
+    一律升級為完整 before/after 快照。事件 context 優先；若是非同步或
+    程式觸發而沒有 context，則用最近一次穩定狀態 _undoStableSnapshot 保底。
+  */
+  if(!_autoUndoRestoring){
     const after=_dbUndoSnapshot();
-    if(before&&after!==before)_autoUndoContext.manualHandled=true;
+    const before=(_autoUndoContext&&_autoUndoContext.beforeJson)||_undoStableSnapshot;
+    if(before&&after&&after!==before){
+      if(_autoUndoContext)_autoUndoContext.manualHandled=true;
+      _pushUndoRaw(_makeDbSnapshotUndoEntry((entry&&entry.label)||(_autoUndoContext&&_autoUndoContext.label)||'資料修改',before,after));
+      _undoStableSnapshot=after;
+      return;
+    }
   }
   _pushUndoRaw(entry);
 }
 document.addEventListener('pointerdown',e=>_beginAutoUndoContext(e.target),true);
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  const typing=!!(t&&(t.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(t.tagName)));
+  if(!typing&&!['Meta','Control','Shift','Alt','CapsLock'].includes(e.key))_beginAutoUndoContext(t,'快捷鍵操作');
+},true);
 document.addEventListener('focusin',e=>{
   const t=e.target;
   if(t&&['INPUT','TEXTAREA','SELECT'].includes(t.tagName))_beginAutoUndoContext(t);
@@ -6892,6 +6921,7 @@ function doUndo(){
     redoStack.push(entry);
     _persistUndoHistory();
     _refreshAfterUndo();
+    _undoStableSnapshot=_dbUndoSnapshot();
     toast('↩ 已撤銷：'+entry.label,'success');
   }catch(e){toast('撤銷失敗','error');}
   finally{_autoUndoRestoring=false;}
@@ -6907,6 +6937,7 @@ function doRedo(){
     undoStack.push(entry);
     _persistUndoHistory();
     _refreshAfterUndo();
+    _undoStableSnapshot=_dbUndoSnapshot();
     toast('↪ 已重做：'+entry.label,'success');
   }catch(e){toast('重做失敗','error');}
   finally{_autoUndoRestoring=false;}
@@ -13493,7 +13524,7 @@ function renderCart(){syncCartSaleDateUI();
             return `<div onclick="setCartSaleType(${i},'${t}')" style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:7px;font-size:12px;font-weight:${st===t?'800':'600'};color:${st===t?'var(--brown)':'var(--text2)'};cursor:pointer" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'"><span style="display:inline-flex;width:14px">${icon}</span>${label.replace('🎁 ','')}</div>`;
           }).join('')}
         </div>`:''}
-        ${(()=>{const full=!!(activeDeal&&Number.isFinite(dealPolicy?.max)&&getCartDealSelectedQty()>=dealPolicy.max&&isSelected);if(lockedByInactiveGroup)return `<div class="qty-control" style="flex-shrink:0"><div class="cart-qty-spinner"><input type="number" min="1" value="${c.qty}" draggable="false" readonly aria-label="已分組數量"><div class="cart-qty-step"><button type="button" disabled aria-label="已鎖定">▲</button><button type="button" disabled aria-label="已鎖定">▼</button></div></div></div>`;return `<div class="qty-control" style="flex-shrink:0"><div class="cart-qty-spinner"><input type="number" min="1" value="${c.qty}" draggable="false" onchange="setCartQty(${i},this.value)" onkeydown="if(event.key==='Enter'){this.blur()}"><div class="cart-qty-step"><button type="button" draggable="false" ${full?'disabled title="Deal 已滿 7 件，先取消 Deal 名額再增加"':`onclick="changeQty(${i},1)"`} aria-label="增加數量">▲</button><button type="button" draggable="false" onclick="changeQty(${i},-1)" aria-label="減少數量">▼</button></div></div></div><button draggable="false" class="cart-remove-btn" onclick="removeFromCart(${i})" aria-label="移除商品"><span class="cart-action-glyph">×</span></button>`})()}
+        ${(()=>{const full=!!(activeDeal&&Number.isFinite(dealPolicy?.max)&&getCartDealSelectedQty()>=dealPolicy.max&&isSelected);if(lockedByInactiveGroup)return `<div class="qty-control" style="flex-shrink:0"><div class="cart-qty-spinner"><input type="number" min="1" value="${c.qty}" draggable="false" readonly aria-label="已分組數量"><div class="cart-qty-step"><button type="button" disabled aria-label="已鎖定"><span class="cart-step-glyph" aria-hidden="true">▲</span></button><button type="button" disabled aria-label="已鎖定"><span class="cart-step-glyph" aria-hidden="true">▼</span></button></div></div></div>`;return `<div class="qty-control" style="flex-shrink:0"><div class="cart-qty-spinner"><input type="number" min="1" value="${c.qty}" draggable="false" onchange="setCartQty(${i},this.value)" onkeydown="if(event.key==='Enter'){this.blur()}"><div class="cart-qty-step"><button type="button" draggable="false" ${full?'disabled title="Deal 已滿 7 件，先取消 Deal 名額再增加"':`onclick="changeQty(${i},1)"`} aria-label="增加數量"><span class="cart-step-glyph" aria-hidden="true">▲</span></button><button type="button" draggable="false" onclick="changeQty(${i},-1)" aria-label="減少數量"><span class="cart-step-glyph" aria-hidden="true">▼</span></button></div></div></div><button draggable="false" class="cart-remove-btn" onclick="removeFromCart(${i})" aria-label="移除商品"><span class="cart-action-glyph" aria-hidden="true">×</span></button>`})()}
       </div>
       ${dealUi}
     </div>
@@ -15496,6 +15527,7 @@ function adjVariantStock(productId,variantId,delta){
   try{
     loadDB();
     migrateExistingAutoVariantSets();
+    _undoStableSnapshot=_dbUndoSnapshot();
   }catch(e){console.error('loadDB / 舊商品款式遷移失敗:',e);}
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
   try{
@@ -16143,7 +16175,7 @@ function afterCloudMergeApplied(silent) {
   if (__cloudMergeRefreshTimer) return;
   __cloudMergeRefreshTimer = setTimeout(() => {
     __cloudMergeRefreshTimer = null;
-    saveDB({skipCloudSync:true});
+    saveDB({skipCloudSync:true,skipUndo:true});
     if (typeof currentPage !== 'undefined') {
       if (currentPage === 'products' && typeof renderProducts === 'function') renderProducts();
       if (currentPage === 'orders' && typeof renderOrders === 'function') renderOrders();
@@ -16521,7 +16553,7 @@ window.pullImagesFromCloud = async function() {
     });
 
     if (updated > 0) {
-      saveDB({skipCloudSync:true});
+      saveDB({skipCloudSync:true,skipUndo:true});
       if (typeof renderProducts === 'function') renderProducts();
       if (typeof renderCatSidebar === 'function') renderCatSidebar();
     }
@@ -17441,22 +17473,11 @@ document.addEventListener('change',function(e){
 </style>
 
 
-<style id="andhug-cart-remove-glyph-size-position-final">
-/* 開單 → 購物車：只調整移除按鈕裡的 ×，按鈕外框與其他排版不動 */
-.cart-remove-btn .cart-action-glyph{
-  display:inline-block !important;
-  font-size:14px !important;
-  line-height:1 !important;
-  transform:translateY(1px) !important;
-}
-</style>
 
-<style id="andhug-cart-qty-arrow-size-final">
-/* 開單 → 購物車：數量 1 右側上下箭頭縮小，按鈕格尺寸不動 */
-.cart-qty-step button{
-  font-size:6px !important;
-  line-height:1 !important;
-}
-</style>
+
+<script id="andhug-global-undo-v2-marker">
+window.__ANDHUG_GLOBAL_UNDO_V2__=true;
+window.__ANDHUG_GLOBAL_UNDO_V3__=true;
+</script>
 </body>
 </html>
