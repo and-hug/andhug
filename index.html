@@ -7854,13 +7854,13 @@ function renderProducts(){
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
       <div class="product-img"${
         currentView==='grid'
-          ? ' style="padding:6px 6px 8px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+          ? ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important;"'
           : currentView==='large'
             ? ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;"'
             : ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;"'
       }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${
         currentView==='grid'
-          ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
+          ? ' style="width:100%!important;height:100%!important;padding:0!important;margin:0!important;background:#fff!important;border-radius:16px 16px 0 0!important;object-fit:cover!important;display:block!important;"'
           : currentView==='large'
             ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:16px 16px 0 0!important;object-fit:cover!important;display:block!important;"'
             : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
@@ -13186,13 +13186,13 @@ function setSaleView(v){
 }
 function renderSaleProducts(){const q=(document.getElementById('sale-search')?.value||'').toLowerCase();let ps=DB.products.filter(p=>p.status==='ok'&&getProductStock(p)>0);if(saleFilter!=='all')ps=ps.filter(p=>p.type===saleFilter);if(saleTypeSubcat!=='all')ps=ps.filter(p=>getProductTypeSubcat(p)===saleTypeSubcat);if(saleSize!=='all')ps=ps.filter(p=>(p.size||'0')===saleSize);if(saleSubcat!=='all')ps=ps.filter(p=>p.sku&&p.sku.length>=4&&p.sku.slice(2,4)===saleSubcat);if(q)ps=ps.filter(p=>(p.name+p.sku).toLowerCase().includes(q));const g=document.getElementById('sale-product-grid');if(!g)return;g.className='view-'+currentSaleView;if(!ps.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📦</div><div class="empty-text">沒有可賣的商品</div></div>';return;}g.innerHTML=ps.map(p=>{const stk=getProductStock(p),sc=stk<=(p.minStock||5)?'stock-low':'stock-ok',sel=saleShiftSelected.has(p.id)?' sale-multi-selected':'';return `<div class="product-card${sel}" data-sale-product-id="${p.id}" draggable="true" title="${saleShiftSelected.size?'Shift 點選多個後可整批拖進 Deal':'可拖到組合框'}" ondragstart="startSaleProductDealDrag(event,'${p.id}')" ondragend="endCartDealDrag(event)" onclick="handleSaleProductCardClick(event,'${p.id}')"><div class="product-img"${
   currentSaleView==='grid'
-    ? ' style="padding:6px 6px 7px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
+    ? ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important;"'
     : currentSaleView==='large'
       ? ' style="padding:0!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
       : ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;"'
 }>${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async"${
   currentSaleView==='grid'
-    ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
+    ? ' style="width:100%!important;height:100%!important;padding:0!important;margin:0!important;background:#fff!important;border-radius:16px 16px 0 0!important;object-fit:cover!important;display:block!important;"'
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
@@ -17324,6 +17324,35 @@ document.addEventListener('change',function(e){
   border:0 !important;
   background:#fff !important;
   box-sizing:border-box !important;
+}
+</style>
+
+<style id="andhug-grid-photo-fill-divider-final">
+/* FINAL 商品庫＋開單 → 格狀
+   1) 咖啡色圖片框 / padding 拿掉
+   2) 照片直接貼滿上半部
+   3) 圖片與文字中間只留 1px 細線
+   4) 文字、價格、庫存位置不動 */
+#product-grid.view-grid .product-card .product-img,
+#sale-product-grid.view-grid .product-card .product-img{
+  padding:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
+  border-radius:16px 16px 0 0 !important;
+  overflow:hidden !important;
+  border-bottom:1px solid var(--cream3) !important;
+}
+
+#product-grid.view-grid .product-card .product-img img,
+#sale-product-grid.view-grid .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:block !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-radius:16px 16px 0 0 !important;
 }
 </style>
 </body>
