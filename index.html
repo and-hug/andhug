@@ -6061,13 +6061,18 @@ function renderCatSidebar(){
   sidebar.style.boxShadow='none';
   sidebar.style.borderRadius='0';
   sidebar.style.overflowX='visible';
-  sidebar.innerHTML=`<div style="background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:10px">${rows}</div>${comboRows?`<div style="background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2px">${comboRows}</div>`:''}`;
+  const mergedCount=(DB.productTrash||[]).filter(p=>p&&p.mergeReason==='variant').length;
+  const mergedRows=`<div class="cat-sidebar-header" style="display:flex;align-items:center;justify-content:space-between"><span>收納</span><span style="opacity:0">.</span></div>
+    <div class="cat-sidebar-item ${activeCat==='__merged__'?'active':''}" onclick="setCat('__merged__')" style="color:${activeCat==='__merged__'?'var(--brown)':'var(--text3)'}">
+      <span>🗂️</span><span>已併入款式</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${mergedCount||''}</span>
+    </div>`;
+  sidebar.innerHTML=`<div style="background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:10px">${rows}</div>${comboRows?`<div style="background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:10px">${comboRows}</div>`:''}<div style="background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2px">${mergedRows}</div>`;
 }
 
 function renderSizeFilters(){
   const el=document.getElementById('size-filters');
   if(!el)return;
-  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__complete__'||activeCat==='__stale__'){el.innerHTML='';return;}
+  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__complete__'||activeCat==='__stale__'||activeCat==='__merged__'){el.innerHTML='';return;}
   const allSizes=['0','XS','S','M','L','XL','XX'];
   const usedSizes=[...new Set(DB.products.filter(p=>p.type===activeCat).map(p=>p.size||'0'))];
   if(usedSizes.length<=1&&usedSizes[0]==='0'){el.innerHTML='';return;}
@@ -7725,9 +7730,59 @@ document.addEventListener('click',function(e){
   });
 });
 
+function renderMergedProductsArchive(){
+  const g=document.getElementById('product-grid');
+  if(!g)return;
+  const q=(document.getElementById('product-search')?.value||'').toLowerCase();
+  let merged=(DB.productTrash||[]).filter(p=>p&&p.mergeReason==='variant');
+  if(q)merged=merged.filter(p=>(String(p.name||'')+String(p.sku||'')+String(p.mergedVariantLabel||'')).toLowerCase().includes(q));
+  merged=merged.slice().sort((a,b)=>(b.mergedAt||b.deletedAt||0)-(a.mergedAt||a.deletedAt||0));
+  const summaryEl=document.getElementById('product-filtered-summary');
+  if(summaryEl)summaryEl.textContent=merged.length?`已併入款式 ${merged.length} 件 · 這裡只是收納，不會刪除原資料`:'';
+  g.className='view-list';
+  if(!merged.length){
+    g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🗂️</div><div class="empty-text">目前沒有已併入的款式</div></div>';
+    return;
+  }
+  g.innerHTML=merged.map(p=>{
+    const target=(DB.products||[]).find(x=>x.id===p.mergedIntoProductId);
+    const targetName=target?target.name:'原母商品已不存在';
+    const img=p.img||'';
+    return `<div class="product-card merged-archive-card" style="cursor:default;min-height:92px!important">
+      <div class="product-img" style="width:96px!important;min-width:96px!important;flex:0 0 96px!important;padding:0!important;background:#fff!important">
+        ${img?`<img src="${img}" alt="${String(p.name||'').replace(/"/g,'&quot;')}" style="width:100%!important;height:100%!important;object-fit:cover!important;border-radius:12px 0 0 12px!important">`:'<div class="no-img">📦</div>'}
+      </div>
+      <div class="product-info" style="padding:10px 12px!important;background:#fff!important;display:flex!important;flex-direction:column!important;justify-content:center!important">
+        <div class="product-name" style="margin:0 0 2px!important">${p.name||'未命名商品'}</div>
+        <div class="product-sku" style="margin:0 0 5px!important">${p.sku||'無SKU'}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;color:var(--text3)">
+          <span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:var(--cream2);color:var(--brown);font-weight:800">${p.mergedVariantLabel||'—'} 款</span>
+          <span>已併入：${targetName}</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0">
+        <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();restoreMergedProductById('${p.id}')" style="font-size:10.5px;white-space:nowrap">↩ 恢復獨立商品</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function restoreMergedProductById(productId){
+  const trash=DB.productTrash||[];
+  const idx=trash.findIndex(p=>p&&p.id===productId&&p.mergeReason==='variant');
+  if(idx<0)return;
+  const reverseIndex=trash.length-1-idx;
+  restoreProduct(reverseIndex);
+  if(activeCat==='__merged__')renderProducts();
+}
+
 function renderProducts(){
   renderSortMenu();
   renderCatSidebar();renderSizeFilters();renderSubcatFilters();
+  if(activeCat==='__merged__'){
+    renderMergedProductsArchive();
+    return;
+  }
   let needsSave=false;
   DB.products.forEach((p,i)=>{ if(p.sortOrder===undefined||p.sortOrder===null){p.sortOrder=i*10;needsSave=true;} });
   if(needsSave)saveDB();
@@ -7915,7 +7970,15 @@ function dropProductCard(e,targetId,cardEl){
 
   if(mode==='merge'&&canMergeProductIntoVariant(srcId,targetId)){
     dragProductId=null;
-    openProductMergeVariantModal(srcId,targetId);
+    const source=DB.products.find(p=>p.id===srcId);
+    const target=DB.products.find(p=>p.id===targetId);
+    const guessed=guessMergeVariantLabel(source,target);
+    const variant=target&&target.variants&&target.variants.find(v=>String(v.label)===String(guessed));
+    if(!variant){
+      toast('讀不到這張卡的款式字母，請先確認商品名稱有 A–Z / 0–9 款式標記','error');
+      return;
+    }
+    executeProductMergeIntoVariant(srcId,targetId,variant.id);
     return;
   }
 
@@ -8236,7 +8299,9 @@ function openProductMergeVariantModal(sourceId,targetId){
   options.innerHTML=target.variants.map(v=>`
     <button type="button" data-merge-variant-id="${v.id}" onclick="selectProductMergeVariant('${v.id}')"
       style="width:34px;height:34px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
-      ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+      <span class="product-variant-merge-letter" style="display:inline-block;font-size:15px;line-height:1;transform:translateY(-1px)">
+        ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+      </span>
     </button>`).join('');
 
   if(guessed){
@@ -8325,26 +8390,22 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
   return {sourceStock,variantLabel:variant.label,mergeId};
 }
 
-function confirmProductMergeIntoVariant(){
-  const req=pendingProductVariantMerge;
-  if(!req||!req.variantId)return;
-
-  const source=DB.products.find(p=>p.id===req.sourceId);
-  const target=DB.products.find(p=>p.id===req.targetId);
-  const variant=target&&target.variants&&target.variants.find(v=>v.id===req.variantId);
-  if(!source||!target||!variant)return;
+function executeProductMergeIntoVariant(sourceId,targetId,variantId){
+  const source=DB.products.find(p=>p.id===sourceId);
+  const target=DB.products.find(p=>p.id===targetId);
+  const variant=target&&target.variants&&target.variants.find(v=>v.id===variantId);
+  if(!source||!target||!variant)return false;
 
   const beforeProducts=JSON.parse(JSON.stringify(DB.products));
   const beforeTrash=JSON.parse(JSON.stringify(DB.productTrash||[]));
   const sourceName=source.name;
   const targetName=target.name;
 
-  const result=applyProductVariantMerge(req.sourceId,req.targetId,req.variantId);
-  if(!result)return;
+  const result=applyProductVariantMerge(sourceId,targetId,variantId);
+  if(!result)return false;
 
   const afterProducts=JSON.parse(JSON.stringify(DB.products));
   const afterTrash=JSON.parse(JSON.stringify(DB.productTrash||[]));
-
   const restoreState=(products,trash)=>{
     DB.products=JSON.parse(JSON.stringify(products));
     DB.productTrash=JSON.parse(JSON.stringify(trash));
@@ -8361,12 +8422,20 @@ function confirmProductMergeIntoVariant(){
   });
 
   saveDB();
-  closeModal('modal-product-variant-merge');
   pendingProductVariantMerge=null;
   renderProducts();
   if(document.getElementById('cat-sidebar'))renderCatSidebar();
   if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
-  toast(`🧩 ${sourceName} → ${targetName}・${variant.label}（+${result.sourceStock} 件，可 ⌘Z 復原）`,'success');
+  toast(`🧩 已併入 ${variant.label} 款式：${sourceName} → ${targetName}（+${result.sourceStock} 件，可 ⌘Z 復原）`,'success');
+  return true;
+}
+
+function confirmProductMergeIntoVariant(){
+  const req=pendingProductVariantMerge;
+  if(!req||!req.variantId)return;
+  if(executeProductMergeIntoVariant(req.sourceId,req.targetId,req.variantId)){
+    closeModal('modal-product-variant-merge');
+  }
 }
 
 let touchDrag=null;
@@ -8505,7 +8574,12 @@ function touchDragFinish(e){
       const targetId=cardRow.id.replace('pcard-','');
       if(cardRow.dataset.dropMode==='merge'&&canMergeProductIntoVariant(touchDrag.id,targetId)){
         dragProductId=null;
-        openProductMergeVariantModal(touchDrag.id,targetId);
+        const source=DB.products.find(p=>p.id===touchDrag.id);
+        const target=DB.products.find(p=>p.id===targetId);
+        const guessed=guessMergeVariantLabel(source,target);
+        const variant=target&&target.variants&&target.variants.find(v=>String(v.label)===String(guessed));
+        if(variant)executeProductMergeIntoVariant(touchDrag.id,targetId,variant.id);
+        else toast('讀不到這張卡的款式字母，請先確認商品名稱有 A–Z / 0–9 款式標記','error');
       }else{
         dropReorderProduct(fakeEvent,targetId,cardRow);
       }
@@ -17071,5 +17145,28 @@ document.addEventListener('change',function(e){
 }
 </style>
 
+
+<style id="andhug-product-list-sold-align-color-final-v2">
+/* ONLY 商品庫 → 列表
+   1) 🔥 已售出 再往下，跟右側「進貨價」視覺對齊
+   2) 已售出文字顏色改成和進貨價同色系
+   3) 用高優先權固定，避免上傳後被前面舊規則蓋掉 */
+#product-grid.view-list .product-card .pc-sold{
+  display:block !important;
+  position:relative !important;
+  left:1px !important;
+  top:8px !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:9px !important;
+  line-height:1.18 !important;
+  font-weight:700 !important;
+  color:var(--text3) !important;
+}
+
+#product-grid.view-list .product-card .more-cost{
+  color:var(--text3) !important;
+}
+</style>
 </body>
 </html>
