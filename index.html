@@ -7787,8 +7787,8 @@ function renderMergedProductsArchive(){
 
     // 格狀：沿用商品庫格狀卡片結構與比例
     return `<div class="product-card merged-archive-card merged-archive-card-grid" style="cursor:default;overflow:hidden!important;background:#fff!important">
-      <div class="product-img" style="width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important">
-        ${img?`<img src="${img}" alt="${safeName}" style="width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important;background:#fff!important;object-fit:cover!important;border-radius:16px 16px 0 0!important">`:'<div class="no-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">📦</div>'}
+      <div class="merged-archive-photo" style="width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important">
+        ${img?`<img src="${img}" alt="${safeName}" style="width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important;background:#fff!important;object-fit:cover!important;border-radius:16px 16px 0 0!important">`:'<div class="no-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#fff">📦</div>'}
       </div>
       <div class="product-info" style="background:#fff!important">
         <div class="product-name">${p.name||'未命名商品'}</div>
@@ -16808,13 +16808,13 @@ document.addEventListener('change',function(e){
    僅作用於商品網格本身，不碰開單「更多」區。 */
 
 /* 格狀 */
-#product-grid:not(.view-list):not(.view-large) .product-card .product-img,
+#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img,
 #sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img{
   padding:12px !important;
   background:var(--cream2) !important;
   box-sizing:border-box !important;
 }
-#product-grid:not(.view-list):not(.view-large) .product-card .product-img img,
+#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img img,
 #sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img img{
   width:100% !important;
   height:100% !important;
@@ -16910,14 +16910,14 @@ document.addEventListener('change',function(e){
 
 <style id="andhug-grid-photo-10-bottom-square">
 /* 商品庫＋開單：白色照片 padding 10px；上圓下方。開單「更多」不受影響。 */
-#product-grid:not(.view-list) .product-card .product-img,
+#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img,
 #sale-product-grid:not(.view-list) .product-card .product-img{
   padding:10px !important;
   background:var(--cream2) !important;
   box-sizing:border-box !important;
 }
 
-#product-grid:not(.view-list) .product-card .product-img img,
+#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img img,
 #sale-product-grid:not(.view-list) .product-card .product-img img{
   width:100% !important;
   height:100% !important;
@@ -16938,7 +16938,7 @@ document.addEventListener('change',function(e){
 
 <style id="andhug-only-product-grid-photo-6-6-8-6">
 /* ONLY 商品庫格狀模式：上/右/左 6px，下 8px。列表、大圖、開單完全不動。 */
-#product-grid.view-grid .product-card .product-img{
+#product-grid.view-grid .product-card:not(.merged-archive-card-grid) .product-img{
   padding:6px 6px 8px 6px !important;
 }
 </style>
@@ -17392,7 +17392,7 @@ document.addEventListener('change',function(e){
   overflow:hidden!important;
   background:#fff!important;
 }
-#product-grid.view-grid .merged-archive-card-grid .product-img{
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
   width:100%!important;
   aspect-ratio:1!important;
   padding:0!important;
@@ -17403,7 +17403,7 @@ document.addEventListener('change',function(e){
   overflow:hidden!important;
   border-bottom:1px solid var(--cream3)!important;
 }
-#product-grid.view-grid .merged-archive-card-grid .product-img img{
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
   width:100%!important;
   height:100%!important;
   margin:0!important;
@@ -17417,6 +17417,15 @@ document.addEventListener('change',function(e){
   padding:8px 10px 10px!important;
   display:flex!important;
   flex-direction:column!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
+  width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;
+  background:#fff!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important;
+  border-radius:16px 16px 0 0!important;box-sizing:border-box!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
+  width:100%!important;height:100%!important;display:block!important;margin:0!important;padding:0!important;
+  object-fit:cover!important;background:#fff!important;border-radius:16px 16px 0 0!important;
 }
 #product-grid.view-grid .merged-archive-card-grid .product-name{font-size:12px!important;margin:0 0 2px!important;}
 #product-grid.view-grid .merged-archive-card-grid .product-sku{font-size:9px!important;margin:0 0 5px!important;}
