@@ -17168,5 +17168,24 @@ document.addEventListener('change',function(e){
   color:var(--text3) !important;
 }
 </style>
+
+<style id="andhug-product-more-divider-no-outer-border-final">
+/* FINAL ONLY 商品庫 → 更多
+   - 拿掉整張商品卡外圍咖啡/奶茶邊框
+   - 只保留圖片與文字資訊交界的 1px 細分隔線
+   - 不動圖片、圓角、文字、價錢、庫存、間距
+*/
+#product-grid.view-large .product-card{
+  border:none !important;
+  outline:none !important;
+  box-shadow:var(--shadow) !important;
+}
+#product-grid.view-large .product-card:hover{
+  border:none !important;
+}
+#product-grid.view-large .product-card .product-info{
+  border-top:1px solid var(--cream3) !important;
+}
+</style>
 </body>
 </html>
