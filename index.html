@@ -797,6 +797,33 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .drag-old-ghost .stock-more-number,.drag-old-ghost .more-cost{display:none!important;}
 .drag-old-ghost .more-price-stack{display:contents!important;}
 
+/* 分類／子分類拖放縮圖使用獨立樣式，避免被商品卡不同檢視模式的 CSS 蓋掉。 */
+.drag-sidebar-thumb{
+  position:fixed!important;left:0!important;top:0!important;z-index:9999!important;
+  width:56px!important;height:56px!important;margin:0!important;padding:0!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  pointer-events:none!important;border:0!important;border-radius:14px!important;
+  overflow:visible!important;background:var(--surface)!important;
+  box-shadow:0 4px 16px rgba(61,47,31,.24)!important;
+  transition:none!important;will-change:transform!important;
+}
+.drag-sidebar-thumb .drag-sidebar-thumb-image{
+  width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;
+  margin:0!important;padding:0!important;display:flex!important;align-items:center!important;
+  justify-content:center!important;box-sizing:border-box!important;overflow:hidden!important;
+  border:1.5px solid var(--cream3)!important;border-radius:14px!important;
+  background:var(--cream2)!important;visibility:visible!important;opacity:1!important;
+}
+.drag-sidebar-thumb .drag-sidebar-thumb-image img{
+  width:100%!important;height:100%!important;margin:0!important;padding:0!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  object-fit:cover!important;border-radius:12px!important;background:transparent!important;
+}
+.drag-sidebar-thumb .drag-sidebar-thumb-image .no-img{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;height:100%!important;font-size:25px!important;
+}
+
 #print-labels-container{display:none;}
 
 .ghost-cat{position:absolute;top:50%;width:34px;height:34px;margin-top:-22.5px;pointer-events:none;z-index:2;
@@ -7988,13 +8015,29 @@ function applyGhostFullStyle(ghost,cardEl){
 }
 function applyGhostSmallStyle(ghost,cardEl){
   ghost.innerHTML='';
-  ghost.className=''; // 小圖示不需要卡片本身的排版 class，避免多餘的內距/樣式
+  ghost.className='drag-sidebar-thumb';
   const imgEl=cardEl.querySelector('.product-img');
   const size=56;
   const imgInner=document.createElement('div');
-  imgInner.className='product-img'; // 需要這個 class，圖片本身的 img{width:100%;height:100%;...} 規則才吃得到
-  imgInner.style.cssText='width:100%;height:100%;border-radius:14px;overflow:hidden;background:var(--cream2);border:1.5px solid var(--cream3);';
-  if(imgEl)imgInner.innerHTML=imgEl.innerHTML;
+  imgInner.className='drag-sidebar-thumb-image';
+  if(imgEl){
+    const sourceImg=imgEl.querySelector('img');
+    const noImg=imgEl.querySelector('.no-img');
+    if(sourceImg){
+      const clonedImg=sourceImg.cloneNode(true);
+      clonedImg.removeAttribute('id');
+      clonedImg.removeAttribute('draggable');
+      imgInner.appendChild(clonedImg);
+    }else if(noImg){
+      const clonedNoImg=noImg.cloneNode(true);
+      clonedNoImg.removeAttribute('id');
+      imgInner.appendChild(clonedNoImg);
+    }else{
+      imgInner.innerHTML='<span class="no-img">🌸</span>';
+    }
+  }else{
+    imgInner.innerHTML='<span class="no-img">🌸</span>';
+  }
   ghost.appendChild(imgInner);
   ghost.style.width=size+'px';
   ghost.style.height=size+'px';
@@ -8040,6 +8083,13 @@ function startDragVisual(e,cardEl){
   document.body.appendChild(ghost);
   ptrGhostEl=ghost;
   document.addEventListener('dragover',dragMoveVisual);
+  document.addEventListener('dragover',syncDragGhostModeForTarget);
+}
+function syncDragGhostModeForTarget(e){
+  if(ptrDragIsBatch||!ptrGhostEl||!ptrDragCardEl)return;
+  const target=e.target&&e.target.closest?e.target.closest('.cat-sidebar-item'):null;
+  if(target)maybeShrinkGhostForSidebar();
+  else if(e.target&&e.target.closest&&e.target.closest('#product-grid,#sale-product-grid'))maybeRestoreGhostForGrid();
 }
 let dragMovePending=false, dragMoveLastEvent=null;
 function dragMoveVisual(e){
@@ -8060,6 +8110,7 @@ function endDragVisual(){
   ptrCatEl=null;
   ptrDragCardEl=null;
   document.removeEventListener('dragover',dragMoveVisual);
+  document.removeEventListener('dragover',syncDragGhostModeForTarget);
 }
 function updateGhostArrow(after,isList){
   if(!ptrCatEl)return;
