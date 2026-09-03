@@ -216,7 +216,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .cart-item-name{font-size:12px;font-weight:700;}
 .qty-control{display:flex;align-items:center;gap:7px;}
 .cart-qty-spinner{width:54px;height:24px;display:grid;grid-template-columns:minmax(0,1fr) 17px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);overflow:hidden;box-sizing:border-box;flex-shrink:0;}
-.cart-qty-spinner input{width:100%;min-width:0;height:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;text-align:center;padding:0 2px!important;box-shadow:none!important;-moz-appearance:textfield;appearance:textfield;}
+.cart-qty-spinner input{width:100%;min-width:0;height:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;text-align:center;padding:0 2px!important;line-height:24px;box-shadow:none!important;-moz-appearance:textfield;appearance:textfield;}
 .cart-qty-spinner input::-webkit-inner-spin-button,.cart-qty-spinner input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .cart-qty-step{display:flex;flex-direction:column;border-left:1px solid var(--cream3);background:var(--cream2);}
 .cart-qty-step button{flex:1;min-height:0;border:0;background:transparent;color:var(--text3);font-size:5px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
@@ -756,7 +756,8 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 
   .form-input,.form-select,.search-input{font-size:16px!important;}
 
-  #stock-range-min,#stock-range-max,#cart-discount-input,#sale-customer-select,#batch-val,.cart-price-input{font-size:16px!important;}
+  #stock-range-min,#stock-range-max,#cart-discount-input,#sale-customer-select,#batch-val,.cart-price-input,.cart-qty-spinner input{font-size:16px!important;}
+  .cart-qty-spinner input{line-height:26px!important;font-weight:700!important;}
 
   .form-row{grid-template-columns:1fr!important;}
   .form-row > *{min-width:0;}
@@ -1389,7 +1390,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .cart-action-glyph{
   display:inline-block!important;
   font-size:12px!important;
-  transform:translateX(-1px)!important;
+  transform:translateX(0)!important;
   line-height:1!important;
   pointer-events:none!important;
 }
@@ -6904,11 +6905,54 @@ document.addEventListener('click',e=>{
   _beginAutoUndoContext(e.target);
 },true);
 function _refreshAfterUndo(){
-  saveDB();
-  if(currentPage==='products'){renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();}
-  if(currentPage==='sales'){renderSaleCatSidebar();renderSaleProducts();renderCart();renderSaleHistory();updateTodayStats();}
-  if(currentPage==='orders')renderOrders();
-  if(currentPage==='overview')renderOverview();
+  // Undo / Redo 已先把 DB 還原；這裡只負責持久化並刷新目前頁面。
+  // 所有 showPage() 可到達的主頁都必須覆蓋，避免「提示已撤銷但畫面沒更新」。
+  saveDB({skipUndo:true});
+  if(currentPage==='overview'){
+    renderOverview();
+    return;
+  }
+  if(currentPage==='products'){
+    renderProducts();
+    if(document.getElementById('cat-sidebar'))renderCatSidebar();
+    if(document.getElementById('subcat-filters'))renderSubcatFilters();
+    if(document.getElementById('size-filters'))renderSizeFilters();
+    return;
+  }
+  if(currentPage==='orders'){
+    renderOrders();
+    if(typeof renderOverview==='function')renderOverview();
+    return;
+  }
+  if(currentPage==='sales'){
+    renderSaleCatSidebar();
+    renderSaleProducts();
+    renderCart();
+    renderSaleHistory();
+    updateTodayStats();
+    if(typeof refreshSaleCustomerSelect==='function')refreshSaleCustomerSelect();
+    return;
+  }
+  if(currentPage==='sales-history'){
+    renderSalesHistoryPage();
+    return;
+  }
+  if(currentPage==='reports'){
+    renderReports();
+    return;
+  }
+  if(currentPage==='customers'){
+    renderCustomers();
+    return;
+  }
+  if(currentPage==='sku'){
+    renderSkuPage();
+    return;
+  }
+  // 未知／未來頁面的保底：已存在的共用視圖就刷新。
+  if(document.getElementById('sales-history-list'))renderSalesHistoryPage();
+  if(document.getElementById('sale-history'))renderSaleHistory();
+  if(document.getElementById('product-grid'))renderProducts();
 }
 function doUndo(){
   _finalizeAutoUndoNow();
@@ -14131,49 +14175,47 @@ function deleteSaleRecord(idx){
   const t=saleHistoryDate||todayStr();
   const records=DB.todaySales?.[t]?.records||[];
   if(!records[idx])return;
+
+  /* 刪除銷售紀錄必須是一個「完整狀態」Undo 動作。
+     不再用 +qty / -qty 手工復原，避免 Undo 時庫存再多加一次。 */
+  const beforeJson=_dbUndoSnapshot();
   const rec=records[idx];
-  const recCopy={...rec};
+
   if(!DB.trash)DB.trash=[];
   const trashEntry={...rec,deletedAt:Date.now(),date:t};
   DB.trash.push(trashEntry);
-  if(rec.rawItems){rec.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock+=item.qty;});}
+
+  // 刪除銷售 = 取消這筆交易，所以把原銷售扣掉的庫存補回來。
+  if(rec.rawItems){
+    rec.rawItems.forEach(item=>{
+      const p=DB.products.find(x=>x.id===item.id);
+      if(p)p.stock=(Number(p.stock)||0)+(Number(item.qty)||0);
+    });
+  }
   const linked=removeLinkedSamplesDefects(rec.txId,true);
   trashEntry.linkedSamplesDefects=linked;
+
   records.splice(idx,1);
   DB.todaySales[t].revenue=records.reduce((s,r)=>s+(r.revenue||0),0);
   DB.todaySales[t].cost=records.reduce((s,r)=>s+(r.cost||0),0);
   DB.todaySales[t].profit=records.reduce((s,r)=>s+(r.profit||0),0);
-  pushUndo({label:'刪除紀錄',
-    undo:()=>{
-      if(recCopy.rawItems)recCopy.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock=Math.max(0,p.stock-item.qty);});
-      restoreLinkedSamplesDefects(linked,true);
-      const recs=DB.todaySales?.[t]?.records;
-      if(recs){
-        recs.splice(idx,0,recCopy);
-        DB.todaySales[t].revenue=recs.reduce((s,r)=>s+(r.revenue||0),0);
-        DB.todaySales[t].cost=recs.reduce((s,r)=>s+(r.cost||0),0);
-        DB.todaySales[t].profit=recs.reduce((s,r)=>s+(r.profit||0),0);
-      }
-      DB.trash=DB.trash.filter(x=>x.deletedAt!==trashEntry.deletedAt);
-      if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
-    },
-    redo:()=>{
-      if(recCopy.rawItems)recCopy.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock+=item.qty;});
-      removeLinkedSamplesDefects(rec.txId,true);
-      const recs=DB.todaySales?.[t]?.records;
-      if(recs){
-        const i=recs.findIndex(r=>r===recCopy||(r.id&&r.id===recCopy.id));
-        if(i>=0)recs.splice(i,1);
-        DB.todaySales[t].revenue=recs.reduce((s,r)=>s+(r.revenue||0),0);
-        DB.todaySales[t].cost=recs.reduce((s,r)=>s+(r.cost||0),0);
-        DB.todaySales[t].profit=recs.reduce((s,r)=>s+(r.profit||0),0);
-      }
-      if(!DB.trash)DB.trash=[];
-      DB.trash.push(trashEntry);
-      if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
-    }
-  });
-  saveDB();refreshSalesRecordViews();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
+
+  const afterJson=_dbUndoSnapshot();
+  if(beforeJson&&afterJson&&beforeJson!==afterJson){
+    // 直接存完整 before/after；不要經過舊的局部 undo 函式。
+    if(_autoUndoContext)_autoUndoContext.manualHandled=true;
+    _pushUndoRaw(_makeDbSnapshotUndoEntry('刪除紀錄',beforeJson,afterJson));
+    _undoStableSnapshot=afterJson;
+  }
+
+  // 這次 Undo 已由上面的完整快照負責，saveDB 不可再新增第二筆 Undo。
+  saveDB({skipUndo:true});
+  refreshSalesRecordViews();
+  updateTodayStats();
+  if(typeof renderProducts==='function')renderProducts();
+  renderSaleProducts();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
   toast('🗑 已刪除（⌘Z 撤銷）','success');
 }
 function updateTodayStats(){const t=DB.todaySales?.[todayStr()];const rev=t?.revenue||0,cstCny=t?.cost||0,prof=rev-cstCny*DB.rate;document.getElementById('today-revenue').textContent=`$${rev.toFixed(2)}`;document.getElementById('today-cost').textContent=`¥${cstCny.toFixed(2)}`;document.getElementById('today-profit').textContent=`$${prof.toFixed(2)}`;document.getElementById('stat-today').textContent=`$${rev.toFixed(0)}`;}
@@ -17479,5 +17521,7 @@ document.addEventListener('change',function(e){
 window.__ANDHUG_GLOBAL_UNDO_V2__=true;
 window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 </script>
+
+<script id="andhug-undo-refresh-v4-marker">window.__ANDHUG_UNDO_REFRESH_V4__=true;</script>
 </body>
 </html>
