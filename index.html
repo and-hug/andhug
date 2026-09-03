@@ -7786,11 +7786,11 @@ function renderMergedProductsArchive(){
     }
 
     // 格狀：沿用商品庫格狀卡片結構與比例
-    return `<div class="product-card merged-archive-card merged-archive-card-grid" style="cursor:default">
-      <div class="product-img">
-        ${img?`<img src="${img}" alt="${safeName}">`:'<div class="no-img">📦</div>'}
+    return `<div class="product-card merged-archive-card merged-archive-card-grid" style="cursor:default;overflow:hidden!important;background:#fff!important">
+      <div class="product-img" style="width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important">
+        ${img?`<img src="${img}" alt="${safeName}" style="width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important;background:#fff!important;object-fit:cover!important;border-radius:16px 16px 0 0!important">`:'<div class="no-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">📦</div>'}
       </div>
-      <div class="product-info">
+      <div class="product-info" style="background:#fff!important">
         <div class="product-name">${p.name||'未命名商品'}</div>
         <div class="product-sku">${p.sku||'無SKU'}</div>
         <div class="merged-archive-meta">
