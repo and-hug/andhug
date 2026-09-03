@@ -7776,6 +7776,98 @@ function restoreMergedProductById(productId){
   if(activeCat==='__merged__')renderProducts();
 }
 
+
+// FINAL DESKTOP MERGE FALLBACK: track the last real drag position and complete merge on dragend
+// even when Chrome/Safari swallows or skips the native drop event.
+let lastProductDragClientX=0,lastProductDragClientY=0;
+let productMergeCompletedThisDrag=false;
+
+document.addEventListener('dragover',(e)=>{
+  if(dragProductId||nativeProductDragId){
+    lastProductDragClientX=Number(e.clientX)||lastProductDragClientX;
+    lastProductDragClientY=Number(e.clientY)||lastProductDragClientY;
+  }
+},true);
+
+function inferLetterFromSourceCard(source){
+  if(!source)return '';
+  const raw=[source.name,source.sku,source.note].filter(Boolean).join(' ').toUpperCase();
+  const explicit=[
+    /(?:字母|英文字母|英文|LETTER)\s*([A-Z])(?=$|[^A-Z0-9])/i,
+    /(?:^|[^A-Z0-9])([A-Z])\s*(?:字母|英文字母|LETTER)/i,
+    /(?:數字|数字|NUMBER|DIGIT)\s*([0-9])(?=$|[^A-Z0-9])/i,
+    /(?:^|[^A-Z0-9])([0-9])\s*(?:數字|数字|NUMBER|DIGIT|號|号)/i
+  ];
+  for(const re of explicit){const m=raw.match(re);if(m)return String(m[1]).toUpperCase();}
+  // 最後才接受獨立的一個 A-Z / 0-9 token，避免從英文單字中亂抓字母。
+  const tokens=raw.match(/(?:^|[\s_\-－/（(【\[])([A-Z0-9])(?=$|[\s_\-－/）)】\]])/g)||[];
+  const vals=[...new Set(tokens.map(s=>{const m=s.match(/[A-Z0-9]/i);return m?m[0].toUpperCase():'';}).filter(Boolean))];
+  return vals.length===1?vals[0]:'';
+}
+
+function normalizedVariantLetter(label){
+  const s=String(label||'').trim().toUpperCase().replace(/\s+/g,'');
+  const m=s.match(/^([A-Z0-9])(?:款|字母|號|号)?$/i);
+  return m?m[1].toUpperCase():'';
+}
+
+function findLetterVariantForMerge(source,target){
+  if(!source||!target)return null;
+  const guessed=inferLetterFromSourceCard(source)||guessMergeVariantLabel(source,target);
+  if(!guessed)return null;
+  if(!Array.isArray(target.variants))target.variants=[];
+  let variant=target.variants.find(v=>normalizedVariantLetter(v.label)===String(guessed).toUpperCase());
+  // 舊資料只要母商品名稱明確是 26 字母 / 英文字母，即使沒有 variants，也能直接建立對應字母款。
+  if(!variant && /26\s*字母|英文字母|26\s*LETTERS?|ALPHABET/i.test(String(target.name||''))){
+    variant={id:uid(),label:String(guessed).toUpperCase(),stock:0,img:'',price:Number(target.price)||0};
+    target.variants.push(variant);
+  }
+  return variant||null;
+}
+
+function canDropLetterIntoProduct(source,target){
+  if(!source||!target||String(source.id)===String(target.id))return false;
+  if(Array.isArray(source.variants)&&source.variants.length)return false;
+  const letter=inferLetterFromSourceCard(source)||guessMergeVariantLabel(source,target);
+  if(!letter)return false;
+  if(/26\s*字母|英文字母|26\s*LETTERS?|ALPHABET/i.test(String(target.name||'')))return true;
+  return Array.isArray(target.variants)&&target.variants.some(v=>normalizedVariantLetter(v.label)===String(letter).toUpperCase());
+}
+
+function tryFinalizeProductMergeAtPoint(sourceId,x,y){
+  const source=DB.products.find(p=>String(p.id)===String(sourceId));
+  if(!source)return false; // already merged by native drop
+  const under=document.elementFromPoint(Number(x)||0,Number(y)||0);
+  const card=under&&under.closest?under.closest('#product-grid .product-card'):null;
+  if(!card||!card.id)return false;
+  const targetId=String(card.id).replace('pcard-','');
+  if(String(targetId)===String(sourceId))return false;
+  const target=DB.products.find(p=>String(p.id)===String(targetId));
+  if(!target)return false;
+  const variant=findLetterVariantForMerge(source,target);
+  if(!variant)return false;
+  const ok=executeProductMergeIntoVariant(String(source.id),String(target.id),String(variant.id));
+  if(ok)productMergeCompletedThisDrag=true;
+  return !!ok;
+}
+
+function finalizeProductDragEnd(event,sourceId){
+  // Native drop may already have succeeded. If so, source no longer exists and this is a no-op.
+  if(!productMergeCompletedThisDrag){
+    try{
+      tryFinalizeProductMergeAtPoint(sourceId,lastProductDragClientX,lastProductDragClientY);
+    }catch(err){
+      console.error('[dragend 併入保險錯誤]',err);
+      toast('併入失敗：'+(err&&err.message?err.message:'未知錯誤'),'error');
+    }
+  }
+  productMergeCompletedThisDrag=false;
+  dragProductId=null;
+  nativeProductDragId=null;
+  try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}
+  document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'));
+}
+
 function renderProducts(){
   renderSortMenu();
   renderCatSidebar();renderSizeFilters();renderSubcatFilters();
@@ -7848,7 +7940,7 @@ function renderProducts(){
     const imgSrc=p.img||'';
     const soldCount=salesMap[p.id]||0;
     return `<div class="product-card" id="pcard-${p.id}" draggable="true"
-      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'))"
+      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="this.classList.remove('dragging-source');finalizeProductDragEnd(event,'${p.id}')"
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
@@ -7902,8 +7994,8 @@ let dragOverPending=false, dragOverLastEvent=null, dragOverLastCard=null;
 
 function canMergeProductIntoVariant(sourceId,targetId){
   if(!sourceId||!targetId||sourceId===targetId)return false;
-  const source=DB.products.find(p=>p.id===sourceId);
-  const target=DB.products.find(p=>p.id===targetId);
+  const source=DB.products.find(p=>String(p.id)===String(sourceId));
+  const target=DB.products.find(p=>String(p.id)===String(targetId));
   if(!source||!target)return false;
   // 先只允許「獨立商品 → 有款式母商品」，避免兩個母商品互相巢狀。
   if(source.variants&&source.variants.length)return false;
@@ -7935,7 +8027,7 @@ function dragOverProduct(e,cardEl){
     const source=DB.products.find(p=>String(p.id)===String(sourceId));
     const target=DB.products.find(p=>p.id===targetId);
     // 能明確讀到款式字母時，整張母商品卡都是併入區，不必再瞄準正中央。
-    const mergeMode=canMergeProductIntoVariant(sourceId,targetId)&&!!guessMergeVariantLabel(source,target);
+    const mergeMode=canDropLetterIntoProduct(source,target);
 
     document.querySelectorAll('.product-card.drag-merge-target').forEach(el=>{
       if(el!==card)el.classList.remove('drag-merge-target');
@@ -7976,11 +8068,8 @@ function dropProductCard(e,targetId,cardEl){
   const srcId=getDraggedProductId(e);
   const source=DB.products.find(p=>String(p.id)===srcId);
   const target=DB.products.find(p=>String(p.id)===String(targetId));
-  const guessed=guessMergeVariantLabel(source,target);
-  const variant=target&&Array.isArray(target.variants)
-    ? target.variants.find(v=>String(v.label||'').toUpperCase()===String(guessed||'').toUpperCase())
-    : null;
-  const shouldMerge=!!(srcId&&source&&target&&srcId!==String(targetId)&&variant&&canMergeProductIntoVariant(srcId,targetId));
+  const variant=findLetterVariantForMerge(source,target);
+  const shouldMerge=!!(srcId&&source&&target&&srcId!==String(targetId)&&variant&&canDropLetterIntoProduct(source,target));
 
   if(cardEl){
     cardEl.classList.remove('drag-over-target','drag-merge-target');
@@ -8348,9 +8437,9 @@ function selectProductMergeVariant(variantId){
 }
 
 function applyProductVariantMerge(sourceId,targetId,variantId){
-  const source=DB.products.find(p=>p.id===sourceId);
-  const target=DB.products.find(p=>p.id===targetId);
-  const variant=target&&target.variants&&target.variants.find(v=>v.id===variantId);
+  const source=DB.products.find(p=>String(p.id)===String(sourceId));
+  const target=DB.products.find(p=>String(p.id)===String(targetId));
+  const variant=target&&target.variants&&target.variants.find(v=>String(v.id)===String(variantId));
   if(!source||!target||!variant)return false;
 
   const sourceStock=getProductStock(source);
@@ -8401,19 +8490,19 @@ function applyProductVariantMerge(sourceId,targetId,variantId){
     mergedTargetCostBefore:targetCostBefore,
     mergedTargetCostAfter:Number(target.cost)||0,
     mergedVariantStockBefore:variantStockBefore,
-    mergedVariantImgBefore,
+    mergedVariantImgBefore:variantImgBefore,
     mergedVariantImgApplied:appliedSourceImg,
     mergeReason:'variant'
   };
   DB.productTrash.push(archive);
-  DB.products=DB.products.filter(p=>p.id!==source.id);
+  DB.products=DB.products.filter(p=>String(p.id)!==String(source.id));
   return {sourceStock,variantLabel:variant.label,mergeId};
 }
 
 function executeProductMergeIntoVariant(sourceId,targetId,variantId){
-  const source=DB.products.find(p=>p.id===sourceId);
-  const target=DB.products.find(p=>p.id===targetId);
-  const variant=target&&target.variants&&target.variants.find(v=>v.id===variantId);
+  const source=DB.products.find(p=>String(p.id)===String(sourceId));
+  const target=DB.products.find(p=>String(p.id)===String(targetId));
+  const variant=target&&target.variants&&target.variants.find(v=>String(v.id)===String(variantId));
   if(!source||!target||!variant)return false;
 
   const beforeProducts=JSON.parse(JSON.stringify(DB.products));
@@ -8547,7 +8636,7 @@ document.addEventListener('pointermove',(e)=>{
         const targetId=String(cardRow.id||'').replace('pcard-','');
         const source=DB.products.find(p=>p.id===touchDrag.id);
         const target=DB.products.find(p=>p.id===targetId);
-        const mergeMode=canMergeProductIntoVariant(touchDrag.id,targetId)&&!!guessMergeVariantLabel(source,target);
+        const mergeMode=canDropLetterIntoProduct(source,target);
         if(mergeMode){
           cardRow.dataset.dropMode='merge';
           cardRow.classList.add('drag-merge-target');
@@ -8594,14 +8683,13 @@ function touchDragFinish(e){
       dropToCat(fakeEvent,catRow.dataset.catType);
     }else if(cardRow&&cardRow.id&&cardRow!==cardEl){
       const targetId=cardRow.id.replace('pcard-','');
-      if(cardRow.dataset.dropMode==='merge'&&canMergeProductIntoVariant(touchDrag.id,targetId)){
+      if(cardRow.dataset.dropMode==='merge'){
         dragProductId=null;
-        const source=DB.products.find(p=>p.id===touchDrag.id);
-        const target=DB.products.find(p=>p.id===targetId);
-        const guessed=guessMergeVariantLabel(source,target);
-        const variant=target&&target.variants&&target.variants.find(v=>String(v.label)===String(guessed));
-        if(variant)executeProductMergeIntoVariant(touchDrag.id,targetId,variant.id);
-        else toast('讀不到這張卡的款式字母，請先確認商品名稱有 A–Z / 0–9 款式標記','error');
+        const source=DB.products.find(p=>String(p.id)===String(touchDrag.id));
+        const target=DB.products.find(p=>String(p.id)===String(targetId));
+        const variant=findLetterVariantForMerge(source,target);
+        if(variant)executeProductMergeIntoVariant(String(touchDrag.id),String(targetId),String(variant.id));
+        else toast('讀不到這張卡的款式字母，或目標不是可併入的字母母商品','error');
       }else{
         dropReorderProduct(fakeEvent,targetId,cardRow);
       }
@@ -17355,5 +17443,259 @@ document.addEventListener('change',function(e){
   border-radius:16px 16px 0 0 !important;
 }
 </style>
+
+<style id="andhug-merge-debug-panel-style">
+#andhug-merge-debug-panel{position:fixed;right:18px;bottom:18px;z-index:20000;width:330px;max-width:calc(100vw - 36px);background:rgba(255,255,255,.97);border:1.5px solid var(--cream3);border-radius:16px;box-shadow:0 10px 30px rgba(61,47,31,.16);padding:12px 14px;font:12px/1.45 'Noto Sans TC','Nunito',sans-serif;color:var(--text);display:none}
+#andhug-merge-debug-panel.show{display:block}
+#andhug-merge-debug-title{font-size:12px;font-weight:900;color:var(--brown);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#andhug-merge-debug-log{max-height:190px;overflow:auto;white-space:pre-wrap;word-break:break-word;color:var(--text2)}
+#andhug-merge-debug-log .ok{color:#3d8a58;font-weight:700}
+#andhug-merge-debug-log .err{color:var(--red);font-weight:800}
+#andhug-merge-debug-log .info{color:var(--brown);font-weight:700}
+</style>
+<script id="andhug-merge-runtime-debug-v1">
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function panel(){
+    let p=document.getElementById('andhug-merge-debug-panel');
+    if(p)return p;
+    p=document.createElement('div');p.id='andhug-merge-debug-panel';
+    p.innerHTML='<div id="andhug-merge-debug-title"><span>🧪 字母併入診斷</span><button type="button" onclick="document.getElementById(\'andhug-merge-debug-panel\').classList.remove(\'show\')" style="border:0;background:transparent;color:var(--text3);cursor:pointer;font-size:14px">×</button></div><div id="andhug-merge-debug-log"></div>';
+    document.body.appendChild(p);return p;
+  }
+  function clear(){const p=panel();p.classList.add('show');const l=document.getElementById('andhug-merge-debug-log');if(l)l.innerHTML='';}
+  function log(msg,type){const p=panel();p.classList.add('show');const l=document.getElementById('andhug-merge-debug-log');if(!l)return;const row=document.createElement('div');row.className=type||'';row.innerHTML=esc(msg);l.appendChild(row);l.scrollTop=l.scrollHeight;}
+  window.__mergeDebug={clear,log};
+  let lastCandidate='';
+
+  document.addEventListener('dragstart',function(e){
+    const card=e.target&&e.target.closest?e.target.closest('#product-grid .product-card'):null;
+    if(!card)return;
+    clear();
+    const id=String(card.id||'').replace('pcard-','');
+    const p=(window.DB&&DB.products||[]).find(x=>String(x.id)===id);
+    log('① dragstart 收到：'+(p?p.name:'找不到商品')+' ['+id+']',p?'ok':'err');
+  },true);
+
+  document.addEventListener('dragover',function(e){
+    const card=e.target&&e.target.closest?e.target.closest('#product-grid .product-card'):null;
+    if(!card||!window.DB)return;
+    const targetId=String(card.id||'').replace('pcard-','');
+    const sourceId=String((typeof dragProductId!=='undefined'&&dragProductId)||(typeof nativeProductDragId!=='undefined'&&nativeProductDragId)||'');
+    if(!sourceId||sourceId===targetId)return;
+    const source=(DB.products||[]).find(x=>String(x.id)===sourceId);
+    const target=(DB.products||[]).find(x=>String(x.id)===targetId);
+    if(!source||!target)return;
+    let guessed='';
+    try{guessed=guessMergeVariantLabel(source,target)||'';}catch(err){log('② 判斷字母時錯誤：'+err.message,'err');return;}
+    const key=sourceId+'>'+targetId+'>'+guessed;
+    if(key===lastCandidate)return; lastCandidate=key;
+    if(guessed)log('② 目標收到：'+target.name+'；讀到款式 '+guessed,'ok');
+    else log('② 目標收到：'+target.name+'；但沒有讀到對應字母','err');
+  },true);
+
+  document.addEventListener('drop',function(e){
+    const card=e.target&&e.target.closest?e.target.closest('#product-grid .product-card'):null;
+    if(!card){log('③ drop 有發生，但落點不是商品卡','err');return;}
+    const targetId=String(card.id||'').replace('pcard-','');
+    log('③ drop 事件收到：target='+targetId,'ok');
+  },true);
+
+  if(typeof executeProductMergeIntoVariant==='function'){
+    const originalExecute=executeProductMergeIntoVariant;
+    executeProductMergeIntoVariant=function(sourceId,targetId,variantId){
+      log('④ execute 開始：source='+sourceId+' target='+targetId+' variant='+variantId,'info');
+      try{
+        const beforeCount=(DB.products||[]).length;
+        const ok=originalExecute(sourceId,targetId,variantId);
+        const sourceStill=(DB.products||[]).some(p=>String(p.id)===String(sourceId));
+        const afterCount=(DB.products||[]).length;
+        if(ok&&!sourceStill){
+          log('⑤ 原卡已從 DB.products 移除（'+beforeCount+' → '+afterCount+'）','ok');
+          const target=(DB.products||[]).find(p=>String(p.id)===String(targetId));
+          const variant=target&&Array.isArray(target.variants)?target.variants.find(v=>String(v.id)===String(variantId)):null;
+          log('⑥ 完成：'+(variant?('款式 '+variant.label+' 現在庫存 '+(variant.stock||0)):'找不到完成後款式'),variant?'ok':'err');
+        }else if(!ok){
+          log('⑤ execute 回傳 false，沒有完成併入','err');
+        }else{
+          log('⑤ execute 回傳成功，但來源卡仍存在','err');
+        }
+        return ok;
+      }catch(err){
+        console.error('[MERGE DEBUG]',err);
+        log('❌ 真正錯誤：'+(err&&err.message?err.message:String(err)),'err');
+        if(err&&err.stack)log(err.stack.split('\\n').slice(0,3).join(' | '),'err');
+        return false;
+      }
+    };
+  }else{
+    document.addEventListener('DOMContentLoaded',()=>log('❌ 找不到 executeProductMergeIntoVariant 函式','err'));
+  }
+
+  window.addEventListener('error',function(e){
+    if(panel().classList.contains('show'))log('❌ window error：'+(e.message||'未知錯誤'),'err');
+  });
+})();
+</script>
+
+
+<script id="andhug-letter-pointer-merge-v1">
+/* DESKTOP HARD REPLACEMENT — 字母卡 → 26 字母
+   不依賴 native drop / dragend；滑鼠 pointerup 直接完成併入。 */
+(function(){
+  let st=null;
+  let suppressClickUntil=0;
+
+  function productFromCard(card){
+    if(!card||!card.id)return null;
+    const id=String(card.id).replace('pcard-','');
+    return DB.products.find(p=>String(p.id)===id)||null;
+  }
+  function clearTarget(){
+    document.querySelectorAll('#product-grid .product-card.drag-merge-target,#product-grid .product-card.drag-over-target').forEach(el=>{
+      el.classList.remove('drag-merge-target','drag-over-target');
+      delete el.dataset.dropMode;
+      delete el.dataset.dropAfter;
+      delete el.dataset.pointerMergeLetter;
+    });
+  }
+  function makeGhost(card){
+    const r=card.getBoundingClientRect();
+    const g=card.cloneNode(true);
+    g.removeAttribute('id');
+    g.removeAttribute('draggable');
+    g.querySelectorAll('[id]').forEach(x=>x.removeAttribute('id'));
+    g.querySelectorAll('button').forEach(x=>x.remove());
+    g.style.cssText += ';position:fixed!important;left:0!important;top:0!important;z-index:10050!important;pointer-events:none!important;margin:0!important;opacity:.92!important;width:'+r.width+'px!important;height:'+r.height+'px!important;box-shadow:0 12px 30px rgba(61,47,31,.22)!important;transition:none!important;';
+    document.body.appendChild(g);
+    return {el:g,w:r.width,h:r.height};
+  }
+  function moveGhost(x,y){
+    if(!st||!st.ghost)return;
+    st.ghost.el.style.transform=`translate(${x-st.ghost.w/2}px,${y-st.ghost.h/2}px)`;
+  }
+  function targetAt(x,y){
+    if(!st)return null;
+    if(st.ghost)st.ghost.el.style.display='none';
+    const under=document.elementFromPoint(x,y);
+    if(st.ghost)st.ghost.el.style.display='';
+    const card=under&&under.closest?under.closest('#product-grid .product-card'):null;
+    return card&&card!==st.card?card:null;
+  }
+  function restoreSourceDraggable(){
+    if(!st||!st.card)return;
+    const card=st.card;
+    const old=st.oldDraggable;
+    requestAnimationFrame(()=>{
+      if(!card.isConnected)return;
+      if(old===null)card.removeAttribute('draggable');
+      else card.setAttribute('draggable',old);
+    });
+  }
+  function cleanup(){
+    if(!st)return;
+    if(st.ghost&&st.ghost.el)st.ghost.el.remove();
+    st.card&&st.card.classList.remove('dragging-source');
+    clearTarget();
+    restoreSourceDraggable();
+    st=null;
+  }
+
+  document.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse'||e.button!==0||batchMode)return;
+    if(e.target.closest('button,input,select,textarea,a'))return;
+    const card=e.target.closest('#product-grid .product-card');
+    if(!card||!card.id)return;
+    const source=productFromCard(card);
+    if(!source||Array.isArray(source.variants)&&source.variants.length)return;
+    const letter=inferLetterFromSourceCard(source);
+    if(!letter)return; // 只有明確字母/數字卡改走此穩定機制；一般商品仍走舊拖曳。
+    const old=card.getAttribute('draggable');
+    card.setAttribute('draggable','false'); // 阻止瀏覽器 native drag 接管滑鼠事件
+    st={pointerId:e.pointerId,sourceId:String(source.id),letter,card,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,active:false,ghost:null,oldDraggable:old};
+    try{card.setPointerCapture(e.pointerId)}catch(_){ }
+  },true);
+
+  document.addEventListener('pointermove',function(e){
+    if(!st||e.pointerId!==st.pointerId)return;
+    st.lastX=e.clientX; st.lastY=e.clientY;
+    const dx=e.clientX-st.startX,dy=e.clientY-st.startY;
+    if(!st.active){
+      if(Math.hypot(dx,dy)<6)return;
+      st.active=true;
+      st.card.classList.add('dragging-source');
+      st.ghost=makeGhost(st.card);
+    }
+    e.preventDefault();
+    moveGhost(e.clientX,e.clientY);
+    clearTarget();
+    const targetCard=targetAt(e.clientX,e.clientY);
+    if(!targetCard)return;
+    const source=DB.products.find(p=>String(p.id)===st.sourceId);
+    const target=productFromCard(targetCard);
+    if(source&&target&&canDropLetterIntoProduct(source,target)){
+      targetCard.dataset.dropMode='merge';
+      targetCard.dataset.pointerMergeLetter=st.letter;
+      targetCard.classList.add('drag-merge-target');
+    }else{
+      targetCard.dataset.dropMode='reorder';
+      const r=targetCard.getBoundingClientRect();
+      const isList=currentView==='list';
+      const after=isList?(e.clientY-r.top)>r.height/2:(e.clientX-r.left)>r.width/2;
+      targetCard.dataset.dropAfter=after?'1':'0';
+      targetCard.classList.add('drag-over-target');
+    }
+  },{capture:true,passive:false});
+
+  function finish(e){
+    if(!st||e.pointerId!==st.pointerId)return;
+    const local=st;
+    if(!local.active){cleanup();return;}
+    e.preventDefault();
+    const targetCard=targetAt(e.clientX,e.clientY);
+    let completed=false;
+    if(targetCard){
+      const source=DB.products.find(p=>String(p.id)===local.sourceId);
+      const target=productFromCard(targetCard);
+      if(source&&target&&canDropLetterIntoProduct(source,target)){
+        const variant=findLetterVariantForMerge(source,target);
+        if(variant){
+          completed=!!executeProductMergeIntoVariant(String(source.id),String(target.id),String(variant.id));
+        }else{
+          toast(`讀到 ${local.letter}，但無法建立/找到對應款式`,'error');
+        }
+      }else if(source&&target){
+        // 字母卡若不是放到可併入母商品，保留原本「拖曳換位」能力。
+        const fake={preventDefault(){},stopPropagation(){},clientX:e.clientX,clientY:e.clientY,dataTransfer:{getData(){return local.sourceId;}}};
+        dropReorderProduct(fake,String(target.id),targetCard);
+        completed=true;
+      }
+    }
+    suppressClickUntil=Date.now()+450;
+    cleanup();
+    if(!completed&&targetCard){
+      const t=productFromCard(targetCard);
+      if(t)toast(`這張 ${local.letter} 卡沒有併入「${t.name||'目標商品'}」`,'error');
+    }
+  }
+  document.addEventListener('pointerup',finish,true);
+  document.addEventListener('pointercancel',function(e){if(st&&e.pointerId===st.pointerId)cleanup()},true);
+
+  document.addEventListener('click',function(e){
+    if(Date.now()<suppressClickUntil&&e.target.closest('#product-grid .product-card')){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },true);
+})();
+</script>
+
+
+<style id="andhug-letter-pointer-merge-label">
+#product-grid .product-card.drag-merge-target[data-pointer-merge-letter]::after{
+  content:'放開併入 ' attr(data-pointer-merge-letter) !important;
+}
+</style>
+
 </body>
 </html>
