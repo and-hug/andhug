@@ -7932,7 +7932,10 @@ function dragOverProduct(e,cardEl){
 
     const targetId=String(card.id||'').replace('pcard-','');
     const sourceId=dragProductId||nativeProductDragId;
-    const mergeMode=canMergeProductIntoVariant(sourceId,targetId)&&isProductMergeCenterZone(ev,card);
+    const source=DB.products.find(p=>p.id===sourceId);
+    const target=DB.products.find(p=>p.id===targetId);
+    // 能明確讀到款式字母時，整張母商品卡都是併入區，不必再瞄準正中央。
+    const mergeMode=canMergeProductIntoVariant(sourceId,targetId)&&!!guessMergeVariantLabel(source,target);
 
     document.querySelectorAll('.product-card.drag-merge-target').forEach(el=>{
       if(el!==card)el.classList.remove('drag-merge-target');
@@ -8252,26 +8255,28 @@ function toggleProductMergeInfo(){
 
 function guessMergeVariantLabel(source,target){
   if(!source||!target||!Array.isArray(target.variants))return '';
-  const name=String(source.name||'').toUpperCase();
+  // 商品卡上會直接寫 A/B/C...，所以以名稱為主；SKU/備註只做輔助。
+  const raw=[source.name,source.sku,source.note].filter(Boolean).join(' ').toUpperCase();
   const labels=target.variants.map(v=>String(v.label||'').trim()).filter(Boolean);
 
-  // 先處理 A-Z / 0-9 這種單字元款式，避免直接用 includes() 誤抓英文單字中的字母。
-  const single=labels.filter(x=>/^[A-Z0-9]$/.test(x.toUpperCase()));
+  // A-Z / 0-9：支援「字母F」「F字母」「F 字母」「數字3」「3數字」等寫法。
+  // 必須是唯一命中才自動併入，避免英文單字裡剛好含有某個字母而誤判。
+  const single=labels.filter(x=>/^[A-Z0-9]$/i.test(x));
   const hits=single.filter(label=>{
     const L=label.toUpperCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     const patterns=[
-      new RegExp('(?:字母|英文|LETTER)\\s*'+L+'(?:\\b|$)','i'),
-      new RegExp('(?:數字|数字|NUMBER|DIGIT)\\s*'+L+'(?:\\b|$)','i'),
-      new RegExp('(?:^|[\\s_\\-－/（(【\\[])'+L+'(?:$|[\\s_\\-－/）)】\\]])','i'),
-      new RegExp('^'+L+'(?:字母|數字|数字|號|号)','i'),
-      new RegExp('(?:字母|數字|数字|號|号)'+L+'$','i')
+      new RegExp('(?:字母|英文字母|英文|LETTER)\\s*'+L+'(?=$|[^A-Z0-9])','i'),
+      new RegExp('(?:數字|数字|NUMBER|DIGIT)\\s*'+L+'(?=$|[^A-Z0-9])','i'),
+      new RegExp('(?:^|[^A-Z0-9])'+L+'\\s*(?:字母|英文字母|LETTER)','i'),
+      new RegExp('(?:^|[^A-Z0-9])'+L+'\\s*(?:數字|数字|NUMBER|DIGIT|號|号)','i'),
+      new RegExp('(?:^|[\\s_\\-－/（(【\\[])'+L+'(?:$|[\\s_\\-－/）)】\\]])','i')
     ];
-    return patterns.some(re=>re.test(name));
+    return patterns.some(re=>re.test(raw));
   });
   if(hits.length===1)return hits[0];
 
-  // 非單字元款式可以安全使用名稱包含判斷；只在唯一命中時自動選。
-  const longer=labels.filter(x=>x.length>1&&name.includes(x.toUpperCase()));
+  // 非單字元款式可以安全使用完整標籤包含判斷；只在唯一命中時自動選。
+  const longer=labels.filter(x=>x.length>1&&raw.includes(x.toUpperCase()));
   return longer.length===1?longer[0]:'';
 }
 
@@ -8525,7 +8530,9 @@ document.addEventListener('pointermove',(e)=>{
         catRow.classList.add('drag-over');
       }else if(cardRow&&cardRow!==touchDrag.cardEl){
         const targetId=String(cardRow.id||'').replace('pcard-','');
-        const mergeMode=canMergeProductIntoVariant(touchDrag.id,targetId)&&isProductMergeCenterZone(ev,cardRow);
+        const source=DB.products.find(p=>p.id===touchDrag.id);
+        const target=DB.products.find(p=>p.id===targetId);
+        const mergeMode=canMergeProductIntoVariant(touchDrag.id,targetId)&&!!guessMergeVariantLabel(source,target);
         if(mergeMode){
           cardRow.dataset.dropMode='merge';
           cardRow.classList.add('drag-merge-target');
