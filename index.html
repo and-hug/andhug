@@ -425,7 +425,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .product-card.dragging-source{opacity:.35;}
 .product-card.drag-over-target{transform:scale(1.04);border-color:var(--brown);z-index:5;transition:transform .12s;}
 .product-card.drag-merge-target{border-color:var(--brown)!important;box-shadow:0 0 0 3px rgba(139,111,71,.13),var(--shadow)!important;transform:scale(1.025);z-index:6}
-.product-card.drag-merge-target::after{content:'放開併入款式';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;padding:7px 10px;border-radius:10px;background:rgba(139,111,71,.92);color:#fff;font-size:10px;font-weight:800;white-space:nowrap;pointer-events:none;box-shadow:0 4px 14px rgba(61,47,31,.18)}
+.product-card.drag-merge-target::after{content:'放開併入';position:absolute;left:50%;top:28%;transform:translate(-50%,-50%);z-index:8;padding:4px 8px;border-radius:999px;background:rgba(243,237,227,.94);color:var(--brown);font-size:9px;font-weight:700;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px rgba(61,47,31,.10);border:1px solid rgba(139,111,71,.18)}
 
 .size-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-family:monospace;}
 .size-chip:hover{border-color:var(--brown-light);color:var(--brown);}
@@ -7856,13 +7856,13 @@ function renderProducts(){
         currentView==='grid'
           ? ' style="padding:6px 6px 8px 6px!important;background:var(--cream2)!important;box-sizing:border-box!important;"'
           : currentView==='large'
-            ? ' style="padding:5px 5px 6px 5px!important;background:var(--cream2)!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;"'
+            ? ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;"'
             : ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;"'
       }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${
         currentView==='grid'
           ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 12px 0 0!important;object-fit:cover!important;"'
           : currentView==='large'
-            ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px 10px 0 0!important;object-fit:cover!important;"'
+            ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:16px 16px 0 0!important;object-fit:cover!important;display:block!important;"'
             : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
       }>`:'<div class="no-img">📦</div>'}</div>
       <div class="product-info">
@@ -7931,8 +7931,8 @@ function dragOverProduct(e,cardEl){
     if(!ev||!card)return;
 
     const targetId=String(card.id||'').replace('pcard-','');
-    const sourceId=dragProductId||nativeProductDragId;
-    const source=DB.products.find(p=>p.id===sourceId);
+    const sourceId=getDraggedProductId(ev);
+    const source=DB.products.find(p=>String(p.id)===String(sourceId));
     const target=DB.products.find(p=>p.id===targetId);
     // 能明確讀到款式字母時，整張母商品卡都是併入區，不必再瞄準正中央。
     const mergeMode=canMergeProductIntoVariant(sourceId,targetId)&&!!guessMergeVariantLabel(source,target);
@@ -7960,28 +7960,43 @@ function dragOverProduct(e,cardEl){
   });
 }
 
+function getDraggedProductId(e){
+  let id=dragProductId||nativeProductDragId||'';
+  if(!id&&e&&e.dataTransfer){
+    try{id=e.dataTransfer.getData('application/x-product-id')||e.dataTransfer.getData('text/plain')||'';}catch(err){}
+  }
+  return String(id||'');
+}
+
 function dropProductCard(e,targetId,cardEl){
   e.preventDefault();
   e.stopPropagation();
 
-  const srcId=dragProductId||nativeProductDragId;
-  const mode=cardEl&&cardEl.dataset.dropMode;
+  // HARD FIX：放開當下重新讀來源商品，不再依賴 dragover 是否成功留下 dropMode。
+  const srcId=getDraggedProductId(e);
+  const source=DB.products.find(p=>String(p.id)===srcId);
+  const target=DB.products.find(p=>String(p.id)===String(targetId));
+  const guessed=guessMergeVariantLabel(source,target);
+  const variant=target&&Array.isArray(target.variants)
+    ? target.variants.find(v=>String(v.label||'').toUpperCase()===String(guessed||'').toUpperCase())
+    : null;
+  const shouldMerge=!!(srcId&&source&&target&&srcId!==String(targetId)&&variant&&canMergeProductIntoVariant(srcId,targetId));
+
   if(cardEl){
     cardEl.classList.remove('drag-over-target','drag-merge-target');
     delete cardEl.dataset.dropMode;
   }
 
-  if(mode==='merge'&&canMergeProductIntoVariant(srcId,targetId)){
+  if(shouldMerge){
     dragProductId=null;
-    const source=DB.products.find(p=>p.id===srcId);
-    const target=DB.products.find(p=>p.id===targetId);
-    const guessed=guessMergeVariantLabel(source,target);
-    const variant=target&&target.variants&&target.variants.find(v=>String(v.label)===String(guessed));
-    if(!variant){
-      toast('讀不到這張卡的款式字母，請先確認商品名稱有 A–Z / 0–9 款式標記','error');
-      return;
-    }
+    nativeProductDragId=null;
     executeProductMergeIntoVariant(srcId,targetId,variant.id);
+    return;
+  }
+
+  // 如果目標本身是款式母商品，但來源字母讀不到，要明確告知，不要默默當排序。
+  if(source&&target&&Array.isArray(target.variants)&&target.variants.length&&!source.variants?.length){
+    toast('這張卡沒有讀到可對應的 A–Z / 0–9 款式，所以沒有併入','error');
     return;
   }
 
@@ -17192,6 +17207,123 @@ document.addEventListener('change',function(e){
 }
 #product-grid.view-large .product-card .product-info{
   border-top:1px solid var(--cream3) !important;
+}
+</style>
+
+
+<script id="andhug-product-variant-drop-capture-hardfix">
+/* HARD FIX 2026-09-03
+   當商品卡已顯示「放開併入」時，由 document capture 階段直接完成併入。
+   目的：避開部分瀏覽器/自訂拖曳影子造成 card inline drop 沒有可靠執行的問題。 */
+(function(){
+  let mergeCandidate=null;
+
+  document.addEventListener('dragover',function(e){
+    const card=e.target&&e.target.closest?e.target.closest('#product-grid .product-card'):null;
+    if(!card){ mergeCandidate=null; return; }
+
+    const targetId=String(card.id||'').replace('pcard-','');
+    const sourceId=String((typeof dragProductId!=='undefined'&&dragProductId)||(typeof nativeProductDragId!=='undefined'&&nativeProductDragId)||'');
+    if(!sourceId||!targetId||sourceId===targetId){ mergeCandidate=null; return; }
+
+    const source=(DB.products||[]).find(p=>String(p.id)===sourceId);
+    const target=(DB.products||[]).find(p=>String(p.id)===targetId);
+    if(!source||!target||!canMergeProductIntoVariant(sourceId,targetId)){ mergeCandidate=null; return; }
+
+    const guessed=guessMergeVariantLabel(source,target);
+    const variant=Array.isArray(target.variants)
+      ? target.variants.find(v=>String(v.label||'').toUpperCase()===String(guessed||'').toUpperCase())
+      : null;
+
+    if(variant){
+      mergeCandidate={sourceId,targetId,variantId:variant.id,variantLabel:String(variant.label||'')};
+      card.dataset.dropMode='merge';
+      card.classList.remove('drag-over-target');
+      card.classList.add('drag-merge-target');
+      e.preventDefault();
+      if(e.dataTransfer)e.dataTransfer.dropEffect='move';
+    }else{
+      mergeCandidate=null;
+    }
+  },true);
+
+  document.addEventListener('drop',function(e){
+    if(!mergeCandidate)return;
+    const card=e.target&&e.target.closest?e.target.closest('#product-grid .product-card'):null;
+    if(!card)return;
+    const targetId=String(card.id||'').replace('pcard-','');
+    if(targetId!==String(mergeCandidate.targetId))return;
+
+    const req=mergeCandidate;
+    mergeCandidate=null;
+
+    const source=(DB.products||[]).find(p=>String(p.id)===String(req.sourceId));
+    const target=(DB.products||[]).find(p=>String(p.id)===String(req.targetId));
+    const variant=target&&Array.isArray(target.variants)
+      ? target.variants.find(v=>String(v.id)===String(req.variantId)) || target.variants.find(v=>String(v.label||'').toUpperCase()===String(req.variantLabel||'').toUpperCase())
+      : null;
+
+    if(!source||!target||!variant){
+      toast('併入失敗：找不到來源商品或對應款式','error');
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+    if(typeof e.stopImmediatePropagation==='function')e.stopImmediatePropagation();
+
+    if(typeof dragProductId!=='undefined')dragProductId=null;
+    if(typeof nativeProductDragId!=='undefined')nativeProductDragId=null;
+    card.classList.remove('drag-over-target','drag-merge-target');
+    delete card.dataset.dropMode;
+
+    const ok=executeProductMergeIntoVariant(String(req.sourceId),String(req.targetId),variant.id);
+    if(!ok)toast('併入沒有完成，請再試一次','error');
+  },true);
+
+  document.addEventListener('dragend',function(){ mergeCandidate=null; },true);
+})();
+</script>
+
+
+
+<style id="andhug-product-more-photo-full-divider-text-final-v3">
+/* FINAL 商品庫 → 更多：照片滿版 → 1px 分隔線 → 文字區 */
+#product-grid.view-large .product-card{
+  border:0 !important;
+  outline:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+#product-grid.view-large .product-card .product-img{
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
+  border:0 !important;
+  border-bottom:1px solid var(--cream3) !important;
+  border-radius:16px 16px 0 0 !important;
+  overflow:hidden !important;
+}
+#product-grid.view-large .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:block !important;
+  object-fit:cover !important;
+  background:#fff !important;
+  border:0 !important;
+  border-radius:16px 16px 0 0 !important;
+}
+#product-grid.view-large .product-card .product-info{
+  width:100% !important;
+  margin:0 !important;
+  border:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
 }
 </style>
 </body>
