@@ -10790,6 +10790,103 @@ function smartImportBundleLinkedTag(part){
   const variant=part.variantLabel?` · ${smartImportEsc(part.variantLabel)}`:'';
   return `🔗 已連結:${smartImportEsc(p.name)}${variant}`;
 }
+
+function smartImportNormalizeSearchText(value){
+  return String(value||'')
+    .toLocaleLowerCase('zh-TW')
+    .replace(/\s+/g,'')
+    .replace(/[，。！？、；：,.!?:;_\-—–()（）【】\[\]{}]/g,'')
+    .trim();
+}
+function smartImportSubsequenceRatio(query,target){
+  const q=smartImportNormalizeSearchText(query);
+  const t=smartImportNormalizeSearchText(target);
+  if(!q||!t)return 0;
+  let qi=0;
+  for(let ti=0;ti<t.length&&qi<q.length;ti++){
+    if(t[ti]===q[qi])qi++;
+  }
+  return qi/q.length;
+}
+function smartImportCharacterCoverage(query,target){
+  const q=smartImportNormalizeSearchText(query);
+  const t=smartImportNormalizeSearchText(target);
+  if(!q||!t)return 0;
+  const chars=[...new Set([...q])];
+  if(!chars.length)return 0;
+  let hit=0;
+  chars.forEach(ch=>{if(t.includes(ch))hit++;});
+  return hit/chars.length;
+}
+function smartImportBigramCoverage(query,target){
+  const q=smartImportNormalizeSearchText(query);
+  const t=smartImportNormalizeSearchText(target);
+  if(q.length<2||!t)return 0;
+  const grams=[];
+  for(let i=0;i<q.length-1;i++)grams.push(q.slice(i,i+2));
+  if(!grams.length)return 0;
+  let hit=0;
+  grams.forEach(g=>{if(t.includes(g))hit++;});
+  return hit/grams.length;
+}
+function smartImportProductSearchScore(product,query){
+  const q=smartImportNormalizeSearchText(query);
+  if(!product)return -Infinity;
+
+  // 點開但尚未輸入：照商品庫目前順序顯示前 6 個，讓下拉直接打開。
+  if(!q)return 1;
+
+  const name=smartImportNormalizeSearchText(product.name);
+  const sku=smartImportNormalizeSearchText(product.sku);
+  const aliases=(product.sourceAliases||[]).map(smartImportNormalizeSearchText).filter(Boolean);
+
+  if(name===q)return 1200;
+  if(aliases.some(a=>a===q))return 1150;
+  if(name.startsWith(q))return 1050;
+  if(name.includes(q))return 980;
+  if(aliases.some(a=>a.startsWith(q)))return 930;
+  if(aliases.some(a=>a.includes(q)))return 900;
+  if(sku&&sku.includes(q))return 820;
+
+  const targets=[name,...aliases].filter(Boolean);
+  let best=0;
+  targets.forEach(target=>{
+    const subseq=smartImportSubsequenceRatio(q,target);
+    const chars=smartImportCharacterCoverage(q,target);
+    const bigrams=smartImportBigramCoverage(q,target);
+
+    // 一個字：只要名稱/alias 有該字就開始顯示。
+    if(q.length===1){
+      if(target.includes(q))best=Math.max(best,700);
+      return;
+    }
+
+    // 模糊／關鍵字：
+    // - 至少一半字元相關，或
+    // - 至少一半相鄰字組相關，或
+    // - 字元順序大致吻合
+    if(chars>=0.5||bigrams>=0.34||subseq>=0.5){
+      const score=350 + chars*220 + bigrams*220 + subseq*160;
+      best=Math.max(best,score);
+    }
+  });
+
+  return best||-Infinity;
+}
+function smartImportSearchProducts(query,limit=6){
+  const products=(DB.products||[]).filter(p=>p&&p.name);
+  const q=smartImportNormalizeSearchText(query);
+
+  if(!q)return products.slice(0,limit);
+
+  return products
+    .map((p,index)=>({p,index,score:smartImportProductSearchScore(p,q)}))
+    .filter(x=>Number.isFinite(x.score)&&x.score>0)
+    .sort((a,b)=>b.score-a.score||a.index-b.index)
+    .slice(0,limit)
+    .map(x=>x.p);
+}
+
 function smartImportBundleShowSuggestions(input,i,j){
   const part=smartImportItems[i]&&smartImportItems[i].bundleItems&&smartImportItems[i].bundleItems[j];
   const wrap=input.closest('.si-bundle-search-wrap');
@@ -10811,11 +10908,7 @@ function smartImportBundleShowSuggestions(input,i,j){
     part.productId=exact.id;
     if(tag)tag.innerHTML=`🔗 已連結:${smartImportEsc(exact.name)}`;
   }
-  if(!q)return;
-  const ql=q.toLowerCase();
-  const matches=(DB.products||[]).filter(p=>p.name&&(
-    p.name.toLowerCase().includes(ql)||String(p.sku||'').toLowerCase().includes(ql)
-  )).slice(0,8);
+  const matches=smartImportSearchProducts(q,6);
   const list=document.createElement('div');
   list.className='oi-suggest-list smart-import-floating-suggest';
   list.style.position='absolute';
@@ -10826,7 +10919,7 @@ function smartImportBundleShowSuggestions(input,i,j){
   list._smartImportAnchorInput=input;
   positionSmartImportFloatingSuggestion(list,input);
   if(!matches.length){
-    list.innerHTML=`<div class="oi-suggest-empty">找不到包含「${smartImportEsc(q)}」的現有商品；你仍可直接使用這個新名稱。</div>`;
+    list.innerHTML=`<div class="oi-suggest-empty">${q?`找不到符合「${smartImportEsc(q)}」的現有商品；你仍可直接使用這個新名稱。`:'目前商品庫沒有可建議的商品'}</div>`;
   }else{
     matches.forEach(p=>{
       const option=document.createElement('div');
@@ -11181,9 +11274,7 @@ function smartImportShowSuggestions(input,i){
     if(tag)tag.innerHTML='';
     if(!smartImportItems[i].img&&thumb){thumb.style.display='none';thumb.removeAttribute('src');if(ph)ph.style.display='block';}
   }
-  if(!q)return;
-  const ql=q.toLowerCase();
-  const matches=(DB.products||[]).filter(p=>p.name&&(p.name.toLowerCase().includes(ql)||(p.sku||'').toLowerCase().includes(ql))).slice(0,8);
+  const matches=smartImportSearchProducts(q,6);
   list=document.createElement('div');
   list.className='oi-suggest-list smart-import-floating-suggest';
   list.style.position='absolute';
@@ -11194,7 +11285,7 @@ function smartImportShowSuggestions(input,i){
   list._smartImportAnchorInput=input;
   positionSmartImportFloatingSuggestion(list,input);
   if(matches.length===0){
-    list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，匯入後會建立新商品「${q}」</div>`;
+    list.innerHTML=`<div class="oi-suggest-empty">${q?`找不到符合的商品，匯入後會建立新商品「${smartImportEsc(q)}」`:'目前商品庫沒有可建議的商品'}</div>`;
   }else{
     matches.forEach(p=>{
       const item=document.createElement('div');
