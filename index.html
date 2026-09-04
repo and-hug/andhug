@@ -11395,35 +11395,80 @@ function closeOrderItemFloatingSuggestions(input){
     if(!input||list._orderItemAnchorInput===input)list.remove();
   });
 }
-function positionOrderItemFloatingSuggestion(list,input){
-  if(!list||!input||!input.isConnected)return;
+function isOrderItemSuggestionAnchorVisible(input){
+  if(!input||!input.isConnected)return false;
+  const modalBody=input.closest('.modal-body');
+  const modal=input.closest('.modal');
+  const overlay=input.closest('.modal-overlay');
+  if(overlay&&overlay.classList.contains('hidden'))return false;
+
+  const rect=input.getBoundingClientRect();
+  if(rect.width<=0||rect.height<=0)return false;
+
+  // 只要來源名稱欄位捲出採購 modal 的可視區，就直接關閉下拉，
+  // 不讓提示框脫離原本那一格後繼續漂在畫面上。
+  if(modalBody){
+    const bodyRect=modalBody.getBoundingClientRect();
+    const visibleTop=Math.max(bodyRect.top,modal?modal.getBoundingClientRect().top:bodyRect.top);
+    const visibleBottom=Math.min(bodyRect.bottom,modal?modal.getBoundingClientRect().bottom:bodyRect.bottom);
+    const edgeTolerance=2;
+    if(rect.bottom<=visibleTop-edgeTolerance||rect.top>=visibleBottom+edgeTolerance)return false;
+  }
+
+  return rect.bottom>0&&rect.top<window.innerHeight;
+}
+function positionOrderItemFloatingSuggestion(list,input,options){
+  if(!list||!input||!input.isConnected)return false;
+  if(!isOrderItemSuggestionAnchorVisible(input)){
+    list.remove();
+    return false;
+  }
+
   const rect=input.getBoundingClientRect();
   const gap=3;
-  list.style.position='absolute';
-  list.style.left=(rect.left+window.scrollX)+'px';
+  const opts=options||{};
+
+  // 下拉框第一次打開時才量高度、決定方向。
+  // scroll 過程不再反覆量 offsetHeight / 切換上下方向，避免臨界位置閃爍。
+  if(!list._orderItemSuggestHeight||opts.remeasure){
+    list._orderItemSuggestHeight=list.offsetHeight;
+  }
+  const listH=list._orderItemSuggestHeight||list.offsetHeight;
+
+  if(!list.dataset.openDirection||opts.rechooseDirection){
+    const spaceBelow=window.innerHeight-rect.bottom-8;
+    const spaceAbove=rect.top-8;
+    const openUp=listH>spaceBelow&&spaceAbove>spaceBelow;
+    list.dataset.openDirection=openUp?'up':'down';
+  }
+
+  const openUp=list.dataset.openDirection==='up';
+  const top=openUp
+    ? Math.max(8,rect.top-listH-gap)
+    : rect.bottom+gap;
+
+  // 尺寸維持原樣；只用 transform 改位置，減少 scroll 時 layout/repaint 抖動。
+  list.style.position='fixed';
+  list.style.left='0';
+  list.style.top='0';
   list.style.right='auto';
-  list.style.width=rect.width+'px';
   list.style.bottom='auto';
+  list.style.width=rect.width+'px';
   list.style.marginTop='0';
   list.style.zIndex='99999';
-
-  // 保持原本下拉框尺寸不變，只決定往下或往上放。
-  const listH=list.offsetHeight;
-  const spaceBelow=window.innerHeight-rect.bottom-8;
-  const spaceAbove=rect.top-8;
-  const openUp=listH>spaceBelow&&spaceAbove>spaceBelow;
-  const top=openUp
-    ? Math.max(window.scrollY+8,rect.top+window.scrollY-listH-gap)
-    : rect.bottom+window.scrollY+gap;
-  list.style.top=top+'px';
-  list.dataset.openDirection=openUp?'up':'down';
+  list.style.willChange='transform';
+  list.style.transform=`translate3d(${Math.round(rect.left)}px,${Math.round(top)}px,0)`;
+  return true;
 }
 if(!window.__orderItemFloatingSuggestBound){
   window.__orderItemFloatingSuggestBound=true;
   const repositionOrderItemSuggests=()=>{
     document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
       const input=list._orderItemAnchorInput;
-      if(!input||!input.isConnected){list.remove();return;}
+      if(!input||!input.isConnected||!isOrderItemSuggestionAnchorVisible(input)){
+        list.remove();
+        return;
+      }
       positionOrderItemFloatingSuggestion(list,input);
     });
   };
@@ -11437,7 +11482,13 @@ if(!window.__orderItemFloatingSuggestBound){
   };
   // capture=true：modal-body 自己捲動時也能跟著輸入框移動。
   document.addEventListener('scroll',scheduleOrderSuggestReposition,true);
-  window.addEventListener('resize',scheduleOrderSuggestReposition,{passive:true});
+  window.addEventListener('resize',()=>{
+    document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
+      const input=list._orderItemAnchorInput;
+      if(!input||!input.isConnected){list.remove();return;}
+      positionOrderItemFloatingSuggestion(list,input,{remeasure:true,rechooseDirection:true});
+    });
+  },{passive:true});
   document.addEventListener('mousedown',e=>{
     if(e.target.closest('.order-item-floating-suggest'))return;
     if(e.target.closest('#order-items-list .oi-name-input'))return;
