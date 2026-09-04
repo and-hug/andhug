@@ -2529,7 +2529,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header">
     <div>
       <div class="section-title">🧾 紀錄</div>
-      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:3px">查詢每一筆成交、折扣、組合與毛利</div>
+      
     </div>
     <button class="btn btn-secondary btn-sm" onclick="openTrash()">🗑 已刪紀錄</button>
   </div>
@@ -11384,11 +11384,64 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img,va
     }
   }
 }
+function closeOrderItemFloatingSuggestions(input){
+  document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
+    if(!input||list._orderItemAnchorInput===input)list.remove();
+  });
+}
+function positionOrderItemFloatingSuggestion(list,input){
+  if(!list||!input||!input.isConnected)return;
+  const rect=input.getBoundingClientRect();
+  const gap=3;
+  list.style.position='absolute';
+  list.style.left=(rect.left+window.scrollX)+'px';
+  list.style.right='auto';
+  list.style.width=rect.width+'px';
+  list.style.bottom='auto';
+  list.style.marginTop='0';
+  list.style.zIndex='99999';
+
+  // 保持原本下拉框尺寸不變，只決定往下或往上放。
+  const listH=list.offsetHeight;
+  const spaceBelow=window.innerHeight-rect.bottom-8;
+  const spaceAbove=rect.top-8;
+  const openUp=listH>spaceBelow&&spaceAbove>spaceBelow;
+  const top=openUp
+    ? Math.max(window.scrollY+8,rect.top+window.scrollY-listH-gap)
+    : rect.bottom+window.scrollY+gap;
+  list.style.top=top+'px';
+  list.dataset.openDirection=openUp?'up':'down';
+}
+if(!window.__orderItemFloatingSuggestBound){
+  window.__orderItemFloatingSuggestBound=true;
+  const repositionOrderItemSuggests=()=>{
+    document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
+      const input=list._orderItemAnchorInput;
+      if(!input||!input.isConnected){list.remove();return;}
+      positionOrderItemFloatingSuggestion(list,input);
+    });
+  };
+  let orderSuggestRaf=0;
+  const scheduleOrderSuggestReposition=()=>{
+    if(orderSuggestRaf)return;
+    orderSuggestRaf=requestAnimationFrame(()=>{
+      orderSuggestRaf=0;
+      repositionOrderItemSuggests();
+    });
+  };
+  // capture=true：modal-body 自己捲動時也能跟著輸入框移動。
+  document.addEventListener('scroll',scheduleOrderSuggestReposition,true);
+  window.addEventListener('resize',scheduleOrderSuggestReposition,{passive:true});
+  document.addEventListener('mousedown',e=>{
+    if(e.target.closest('.order-item-floating-suggest'))return;
+    if(e.target.closest('#order-items-list .oi-name-input'))return;
+    closeOrderItemFloatingSuggestions();
+  });
+}
 function showOrderItemSuggestions(input){
   const wrap=input.closest('.oi-suggest-wrap');
   if(!wrap)return;
-  let list=wrap.querySelector('.oi-suggest-list');
-  if(list)list.remove();
+  closeOrderItemFloatingSuggestions();
   const q=input.value.trim();
   input.dataset.linkedId=input.dataset.linkedId||'';
   const tag=wrap.querySelector('.oi-linked-tag');
@@ -11399,8 +11452,9 @@ function showOrderItemSuggestions(input){
   }
   const ql=q.toLowerCase();
   const matches=(DB.products||[]).filter(p=>p.name&&(p.name.toLowerCase().includes(ql)||(p.sku||'').toLowerCase().includes(ql))).slice(0,8);
-  list=document.createElement('div');
-  list.className='oi-suggest-list';
+  const list=document.createElement('div');
+  list.className='oi-suggest-list order-item-floating-suggest';
+  list._orderItemAnchorInput=input;
   if(matches.length===0){
     list.innerHTML=`<div class="oi-suggest-empty">找不到符合的商品，儲存時會自動新增一個新商品「${q}」</div>`;
   }else{
@@ -11412,7 +11466,8 @@ function showOrderItemSuggestions(input){
       list.appendChild(item);
     });
   }
-  wrap.appendChild(list);
+  document.body.appendChild(list);
+  positionOrderItemFloatingSuggestion(list,input);
 }
 function selectOrderItemSuggestion(input,productId,productName){
   const rawName=input.value.trim();
@@ -11420,9 +11475,8 @@ function selectOrderItemSuggestion(input,productId,productName){
   input.value=productName;
   input.dataset.linkedId=productId;
   const wrap=input.closest('.oi-suggest-wrap');
+  closeOrderItemFloatingSuggestions(input);
   if(wrap){
-    const list=wrap.querySelector('.oi-suggest-list');
-    if(list)list.remove();
     const tag=wrap.querySelector('.oi-linked-tag');
     if(tag)tag.innerHTML=`🔗 已連結:${productName}`;
   }
@@ -11664,6 +11718,7 @@ function hideOrderItemSuggestionsLater(input){
   setTimeout(()=>{
     const wrap=input.closest('.oi-suggest-wrap');
     closeSmartImportFloatingSuggestions();
+    if(typeof closeOrderItemFloatingSuggestions==='function')closeOrderItemFloatingSuggestions(input);
     const list=wrap&&wrap.querySelector('.oi-suggest-list');
     if(list)list.remove();
     const tag=wrap&&wrap.querySelector('.oi-linked-tag');
@@ -15006,21 +15061,23 @@ function openTrash(){
   if(!trash.length){
     el.innerHTML='<div style="text-align:center;color:var(--text3);padding:24px">這裡是空的 🌸<div style="font-size:11px;margin-top:6px">刪除的紀錄會放在這裡</div></div>';
   } else {
-    el.innerHTML=trash.map((rec,i)=>`
+    // 畫面要最新在最上面，但按鈕必須保留「真正的原始 index」。
+    // 不能先 reverse 顯示、進函式後又再反轉一次，否則會找回錯筆紀錄。
+    const rows=trash.map((rec,realIdx)=>({rec,realIdx})).reverse();
+    el.innerHTML=rows.map(({rec,realIdx})=>`
       <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--cream2)">
         <div style="flex:1">
           <div style="font-size:12px;color:var(--text2);font-weight:600">${rec.items}</div>
           <div style="font-size:10px;color:var(--text3)">${rec.date} ${rec.time} · $${(rec.revenue||0).toFixed(2)}</div>
         </div>
-        <button onclick="restoreTrash(${i})" class="btn btn-secondary btn-sm">↩ 找回</button>
-        <button onclick="deleteTrash(${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px;border-radius:6px" title="永久刪除">✕</button>
-      </div>`).reverse().join('');
+        <button onclick="restoreTrash(${realIdx})" class="btn btn-secondary btn-sm">↩ 找回</button>
+        <button onclick="deleteTrash(${realIdx})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px;border-radius:6px" title="永久刪除">✕</button>
+      </div>`).join('');
   }
   openModal('modal-trash');
 }
-function restoreTrash(idx){
+function restoreTrash(realIdx){
   const trash=DB.trash||[];
-  const realIdx=trash.length-1-idx;
   const rec=trash[realIdx];
   if(!rec)return;
   const t=rec.date||todayStr();
@@ -15032,12 +15089,20 @@ function restoreTrash(idx){
   if(rec.rawItems)rec.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock-=item.qty;});
   if(rec.linkedSamplesDefects)restoreLinkedSamplesDefects(rec.linkedSamplesDefects,true);
   trash.splice(realIdx,1);
-  saveDB();openTrash();refreshSalesRecordViews();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  saveDB();
+  // 先重畫垃圾桶，再立即重畫紀錄主頁／開單小紀錄。
+  openTrash();
+  refreshSalesRecordViews();
+  updateTodayStats();
+  if(typeof renderProducts==='function')renderProducts();
+  renderSaleProducts();
+  if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();
+  if(document.getElementById('cat-sidebar'))renderCatSidebar();
   toast('已找回！','success');
 }
-function deleteTrash(idx){
+function deleteTrash(realIdx){
   const trash=DB.trash||[];
-  const realIdx=trash.length-1-idx;
+  if(!trash[realIdx])return;
   trash.splice(realIdx,1);
   saveDB();openTrash();
   toast('已永久刪除');
