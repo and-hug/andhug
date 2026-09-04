@@ -2791,7 +2791,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="modal-overlay hidden" id="modal-order">
-  <div class="modal" style="max-width:680px">
+  <div class="modal" style="width:min(82vw,920px);max-width:920px">
     <div class="modal-header"><div class="modal-title" id="order-modal-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>表格式匯入</div><button class="modal-close" onclick="closeModal('modal-order')">×</button></div>
     <div class="modal-body" style="max-height:84vh;overflow:auto">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
@@ -3049,7 +3049,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="modal-overlay hidden" id="modal-smart-import">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="width:min(82vw,920px);max-width:920px">
     <div class="modal-header">
       <div class="modal-title">🛸 智慧匯入 <button type="button" class="hint-info-btn import-help-info" aria-label="匯入說明" title="匯入說明" onclick="event.stopPropagation();toggleImportHelp(event)">i</button></div>
       <button class="modal-close" onclick="closeModal('modal-smart-import')">×</button>
@@ -17902,7 +17902,7 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 /* ===== Smart Import modal width — wider desktop frame only ===== */
 #modal-smart-import .modal,
 #modal-order .modal{
-  width:min(96vw,920px)!important;
+  width:min(82vw,920px)!important;
   max-width:920px!important;
 }
 
@@ -17919,6 +17919,17 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
   width:100%!important;
 }
 
+
+
+
+#modal-smart-import .smart-import-review-row{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import .smart-import-review-name{
+  min-width:0!important;
+}
 
 </style>
 </body>
