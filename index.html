@@ -1106,6 +1106,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 .import-help-popover.hidden{display:none!important;}
 
+#modal-smart-import{
+  /* 智慧匯入視窗：避免 fixed overlay + backdrop blur + 大型內部 scroll 的合成閃爍 */
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+body.theme-glass #modal-smart-import .modal{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
 #modal-smart-import .modal{
   display:flex!important;flex-direction:column!important;max-height:calc(100vh - 40px)!important;overflow:hidden!important;
 }
@@ -1119,7 +1128,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 }
 #modal-smart-import #smart-import-list{
   flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;
-  padding-right:4px;overscroll-behavior:contain;
+  padding-right:4px;overscroll-behavior:contain;contain:paint;
 }
 .smart-import-check-summary{
   flex:0 0 auto;margin:0 0 9px;padding:8px 10px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);font-size:10.5px;line-height:1.55;color:var(--text2);
@@ -11462,33 +11471,29 @@ function positionOrderItemFloatingSuggestion(list,input,options){
 }
 if(!window.__orderItemFloatingSuggestBound){
   window.__orderItemFloatingSuggestBound=true;
-  const repositionOrderItemSuggests=()=>{
-    document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
-      const input=list._orderItemAnchorInput;
-      if(!input||!input.isConnected||!isOrderItemSuggestionAnchorVisible(input)){
-        list.remove();
-        return;
-      }
-      positionOrderItemFloatingSuggestion(list,input);
-    });
+
+  // 最穩定方案：採購 modal 一開始滑動，就直接關閉目前的商品建議。
+  // 不再在 scroll 每一幀重算位置，徹底避免 fixed 浮層在 modal 滑動時閃爍。
+  const closeOrderSuggestOnScrollIntent=e=>{
+    const t=e&&e.target;
+    if(t&&t.closest&&t.closest('.order-item-floating-suggest'))return;
+    closeOrderItemFloatingSuggestions();
   };
-  let orderSuggestRaf=0;
-  const scheduleOrderSuggestReposition=()=>{
-    if(orderSuggestRaf)return;
-    orderSuggestRaf=requestAnimationFrame(()=>{
-      orderSuggestRaf=0;
-      repositionOrderItemSuggests();
-    });
-  };
-  // capture=true：modal-body 自己捲動時也能跟著輸入框移動。
-  document.addEventListener('scroll',scheduleOrderSuggestReposition,true);
-  window.addEventListener('resize',()=>{
-    document.querySelectorAll('.order-item-floating-suggest').forEach(list=>{
-      const input=list._orderItemAnchorInput;
-      if(!input||!input.isConnected){list.remove();return;}
-      positionOrderItemFloatingSuggestion(list,input,{remeasure:true,rechooseDirection:true});
-    });
-  },{passive:true});
+
+  // wheel / touchmove 在畫面真正位移前就先關掉，避免第一幀閃一下。
+  document.addEventListener('wheel',closeOrderSuggestOnScrollIntent,{capture:true,passive:true});
+  document.addEventListener('touchmove',closeOrderSuggestOnScrollIntent,{capture:true,passive:true});
+
+  // scrollbar 拖動、鍵盤捲動等沒有 wheel/touchmove 的情況，用 scroll 補上。
+  document.addEventListener('scroll',e=>{
+    const t=e&&e.target;
+    if(t&&t.closest&&t.closest('.order-item-floating-suggest'))return;
+    closeOrderItemFloatingSuggestions();
+  },true);
+
+  // 視窗尺寸改變時也直接關閉；重新點名稱欄位就會以新位置再開。
+  window.addEventListener('resize',()=>closeOrderItemFloatingSuggestions(),{passive:true});
+
   document.addEventListener('mousedown',e=>{
     if(e.target.closest('.order-item-floating-suggest'))return;
     if(e.target.closest('#order-items-list .oi-name-input'))return;
