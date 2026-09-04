@@ -4385,7 +4385,7 @@ function renderOverview(){
   document.getElementById('stat-week').textContent=`$${wRevenue.toFixed(0)}`;
   document.getElementById('stat-month-revenue').textContent=`$${mRevenue.toFixed(0)}`;
   document.getElementById('stat-month-profit').textContent=`$${(mRevenue-mCostCny*DB.rate).toFixed(0)}`;
-  const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+  const ro=document.getElementById('recent-orders'),recent=[...DB.orders].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
   if(!recent.length){
     ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';
   }else{
@@ -4395,10 +4395,10 @@ function renderOverview(){
   if(!low.length){
     ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';
   }else{
-    ls.innerHTML=low.map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');
+    ls.innerHTML=low.slice(0,8).map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');
   }
   const il=document.getElementById('in-transit-list');
-  const inTransit=DB.orders.filter(o=>o.status!=='received').sort((a,b)=>(a.expectedDate||'9999').localeCompare(b.expectedDate||'9999'));
+  const inTransit=DB.orders.filter(o=>o.status!=='received').sort((a,b)=>(a.expectedDate||'9999').localeCompare(b.expectedDate||'9999')).slice(0,8);
   if(!inTransit.length){
     il.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">沒有運送中的採購單 ✓</div>';
   }else{
