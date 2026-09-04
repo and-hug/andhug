@@ -356,6 +356,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .oi-group-check.checked::after{content:'✓';}
 .oi-suggest-wrap{position:relative;}
 .oi-suggest-list{position:absolute;top:100%;left:0;right:0;z-index:80;background:var(--surface,#fff);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:none;max-height:190px;overflow-y:auto;margin-top:3px;}
+.smart-import-floating-suggest{max-height:312px!important;}
 .oi-suggest-item{padding:8px 10px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text2);}
 .oi-suggest-item:hover{background:var(--cream2);}
 .oi-suggest-item img{width:24px;height:24px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--cream2);}
@@ -10840,12 +10841,22 @@ function smartImportProductSearchScore(product,query){
   const sku=smartImportNormalizeSearchText(product.sku);
   const aliases=(product.sourceAliases||[]).map(smartImportNormalizeSearchText).filter(Boolean);
 
+  const closenessBonus=(target)=>{
+    const extra=Math.max(0,String(target||'').length-q.length);
+    return Math.max(0,90-Math.min(90,extra*5));
+  };
+
   if(name===q)return 1200;
   if(aliases.some(a=>a===q))return 1150;
-  if(name.startsWith(q))return 1050;
-  if(name.includes(q))return 980;
-  if(aliases.some(a=>a.startsWith(q)))return 930;
-  if(aliases.some(a=>a.includes(q)))return 900;
+
+  // 同樣都是「黑白線條…」時，越接近輸入字串、越短的名稱排越前，
+  // 避免很長的英文名稱把大頭貓等簡短商品擠出前 6。
+  if(name.startsWith(q))return 1050+closenessBonus(name);
+  if(name.includes(q))return 980+closenessBonus(name);
+  const aliasStarts=aliases.filter(a=>a.startsWith(q));
+  if(aliasStarts.length)return 930+Math.max(...aliasStarts.map(closenessBonus));
+  const aliasIncludes=aliases.filter(a=>a.includes(q));
+  if(aliasIncludes.length)return 900+Math.max(...aliasIncludes.map(closenessBonus));
   if(sku&&sku.includes(q))return 820;
 
   const targets=[name,...aliases].filter(Boolean);
@@ -10882,7 +10893,9 @@ function smartImportSearchProducts(query,limit=6){
   return products
     .map((p,index)=>({p,index,score:smartImportProductSearchScore(p,q)}))
     .filter(x=>Number.isFinite(x.score)&&x.score>0)
-    .sort((a,b)=>b.score-a.score||a.index-b.index)
+    .sort((a,b)=>b.score-a.score||
+      smartImportNormalizeSearchText(a.p.name).length-smartImportNormalizeSearchText(b.p.name).length||
+      a.index-b.index)
     .slice(0,limit)
     .map(x=>x.p);
 }
@@ -10908,7 +10921,7 @@ function smartImportBundleShowSuggestions(input,i,j){
     part.productId=exact.id;
     if(tag)tag.innerHTML=`🔗 已連結:${smartImportEsc(exact.name)}`;
   }
-  const matches=smartImportSearchProducts(q,6);
+  const matches=smartImportSearchProducts(q,8);
   const list=document.createElement('div');
   list.className='oi-suggest-list smart-import-floating-suggest';
   list.style.position='absolute';
@@ -11274,7 +11287,7 @@ function smartImportShowSuggestions(input,i){
     if(tag)tag.innerHTML='';
     if(!smartImportItems[i].img&&thumb){thumb.style.display='none';thumb.removeAttribute('src');if(ph)ph.style.display='block';}
   }
-  const matches=smartImportSearchProducts(q,6);
+  const matches=smartImportSearchProducts(q,8);
   list=document.createElement('div');
   list.className='oi-suggest-list smart-import-floating-suggest';
   list.style.position='absolute';
@@ -17884,6 +17897,14 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 #subcat-filters.product-drag-active button[data-sku-subcat-drop].drag-over{
   box-shadow:0 0 0 2px rgba(156,122,74,.14)!important;
 }
+
+
+/* ===== Smart Import modal width — wider desktop frame only ===== */
+#modal-smart-import .modal{
+  width:min(96vw,1200px)!important;
+  max-width:1200px!important;
+}
+
 </style>
 </body>
 </html>
