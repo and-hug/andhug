@@ -15032,7 +15032,7 @@ function restoreTrash(idx){
   if(rec.rawItems)rec.rawItems.forEach(item=>{const p=DB.products.find(x=>x.id===item.id);if(p)p.stock-=item.qty;});
   if(rec.linkedSamplesDefects)restoreLinkedSamplesDefects(rec.linkedSamplesDefects,true);
   trash.splice(realIdx,1);
-  saveDB();openTrash();renderSaleHistory();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
+  saveDB();openTrash();refreshSalesRecordViews();updateTodayStats();if(typeof renderProducts==='function')renderProducts();renderSaleProducts();if(document.getElementById('sale-cat-sidebar'))renderSaleCatSidebar();if(document.getElementById('cat-sidebar'))renderCatSidebar();
   toast('已找回！','success');
 }
 function deleteTrash(idx){
