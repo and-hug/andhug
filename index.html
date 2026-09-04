@@ -216,7 +216,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .cart-item-name{font-size:12px;font-weight:700;}
 .qty-control{display:flex;align-items:center;gap:7px;}
 .cart-qty-spinner{width:54px;height:24px;display:grid;grid-template-columns:minmax(0,1fr) 17px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);overflow:hidden;box-sizing:border-box;flex-shrink:0;}
-.cart-qty-spinner input{width:100%;min-width:0;height:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;text-align:center;padding:0 2px!important;line-height:24px;box-shadow:none!important;-moz-appearance:textfield;appearance:textfield;}
+.cart-qty-spinner input{width:100%;min-width:0;height:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;text-align:center;padding:0 2px!important;line-height:24px;transform:translateY(1px);box-shadow:none!important;-moz-appearance:textfield;appearance:textfield;}
 .cart-qty-spinner input::-webkit-inner-spin-button,.cart-qty-spinner input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .cart-qty-step{display:flex;flex-direction:column;border-left:1px solid var(--cream3);background:var(--cream2);}
 .cart-qty-step button{flex:1;min-height:0;border:0;background:transparent;color:var(--text3);font-size:5px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
@@ -6808,9 +6808,8 @@ function renderSubcatFilters(){
     return `<button
       onclick="setSubcat('${c}')"
       data-product-drop-subcat="${c}"
-      ondragover="event.preventDefault();event.stopPropagation();this.style.background='var(--peach-light)';this.style.borderColor='var(--brown)'"
-      ondragleave="this.style.background='${isActive?'var(--brown)':'var(--surface)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream3)'}'"
-      ondrop="event.preventDefault();event.stopPropagation();this.style.background='${isActive?'var(--brown)':'var(--surface)'}';this.style.borderColor='${isActive?'var(--brown)':'var(--cream3)'}';dropToSubcat(event,'${c}')"
+      data-product-drop-kind="sku-subcat"
+      data-sku-subcat-drop="${c}"
       style="padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;
         border:1.5px solid ${isActive?'var(--brown)':'var(--cream3)'};
         background:${isActive?'var(--brown)':'var(--surface)'};
@@ -6820,6 +6819,60 @@ function renderSubcatFilters(){
     </button>`;
   }).join('');
 }
+
+function beginProductSubcatDropUI(){
+  const el=document.getElementById('subcat-filters');
+  if(el)el.classList.add('product-drag-active');
+}
+function endProductSubcatDropUI(){
+  const el=document.getElementById('subcat-filters');
+  if(el)el.classList.remove('product-drag-active');
+  document.querySelectorAll('#subcat-filters [data-sku-subcat-drop].drag-over').forEach(x=>x.classList.remove('drag-over'));
+}
+function setSkuSubcatDropVisual(btn,on){
+  if(!btn)return;
+  const code=btn.dataset.skuSubcatDrop||'';
+  const active=(typeof activeSubcat!=='undefined'&&activeSubcat===code);
+  btn.classList.toggle('drag-over',!!on);
+  btn.style.background=on?'var(--peach-light)':(active?'var(--brown)':'var(--surface)');
+  btn.style.borderColor=on?'var(--brown)':(active?'var(--brown)':'var(--cream3)');
+}
+function getProductSubcatDropTarget(target){
+  if(!target||!target.closest)return null;
+  return target.closest('#subcat-filters [data-sku-subcat-drop],#cat-sidebar [data-product-drop-type][data-product-drop-subcat]');
+}
+document.addEventListener('dragover',function(e){
+  const btn=getProductSubcatDropTarget(e.target);
+  if(!btn)return;
+  e.preventDefault();e.stopPropagation();
+  if(e.dataTransfer)e.dataTransfer.dropEffect='move';
+  beginProductSubcatDropUI();
+  if(btn.dataset.skuSubcatDrop)setSkuSubcatDropVisual(btn,true);
+  else btn.classList.add('drag-over');
+  try{maybeShrinkGhostForSidebar();}catch(_e){}
+},true);
+document.addEventListener('dragleave',function(e){
+  const btn=getProductSubcatDropTarget(e.target);
+  if(!btn)return;
+  const rel=e.relatedTarget;
+  if(rel&&btn.contains(rel))return;
+  if(btn.dataset.skuSubcatDrop)setSkuSubcatDropVisual(btn,false);
+  else btn.classList.remove('drag-over');
+},true);
+document.addEventListener('drop',function(e){
+  const btn=getProductSubcatDropTarget(e.target);
+  if(!btn)return;
+  e.preventDefault();e.stopPropagation();
+  const subCode=btn.dataset.productDropSubcat||btn.dataset.skuSubcatDrop||'';
+  const typeCode=btn.dataset.productDropType||'';
+  if(btn.dataset.skuSubcatDrop)setSkuSubcatDropVisual(btn,false);
+  else btn.classList.remove('drag-over');
+  endProductSubcatDropUI();
+  if(!subCode)return;
+  if(typeCode)dropToTypeSubcat(e,typeCode,subCode);
+  else dropToSubcat(e,subCode);
+},true);
+
 function setView(v){
   currentView=v;
   ['grid','large','list'].forEach(function(x){
@@ -8009,7 +8062,7 @@ function renderProducts(){
     const imgSrc=p.img||'';
     const soldCount=salesMap[p.id]||0;
     return `<div class="product-card" id="pcard-${p.id}" draggable="true"
-      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'))"
+      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');beginProductSubcatDropUI();try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');endProductSubcatDropUI();try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'))"
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
@@ -8332,7 +8385,7 @@ function startDragVisual(e,cardEl){
 }
 function syncDragGhostModeForTarget(e){
   if(ptrDragIsBatch||!ptrGhostEl||!ptrDragCardEl)return;
-  const target=e.target&&e.target.closest?e.target.closest('.cat-sidebar-item'):null;
+  const target=e.target&&e.target.closest?e.target.closest('.cat-sidebar-item,#subcat-filters [data-sku-subcat-drop]'):null;
   if(target)maybeShrinkGhostForSidebar();
   else if(e.target&&e.target.closest&&e.target.closest('#product-grid,#sale-product-grid'))maybeRestoreGhostForGrid();
 }
@@ -8642,6 +8695,7 @@ function touchDragArm(){
   if(!touchDrag)return;
   touchDrag.armed=true;
   dragProductId=touchDrag.id;
+  beginProductSubcatDropUI();
   if(!batchMode)touchDrag.cardEl.classList.add('dragging-source');
   if(navigator.vibrate)try{navigator.vibrate(15);}catch(e){}
   touchDragCreateGhost();
@@ -8734,6 +8788,7 @@ function touchDragFinish(e){
   const cardEl=touchDrag.cardEl;
   if(touchDrag.ghostEl)touchDrag.ghostEl.remove();
   if(cardEl)cardEl.classList.remove('dragging-source');
+  endProductSubcatDropUI();
   document.querySelectorAll('.cat-sidebar-item.drag-over,.product-card.drag-over-target,.product-card.drag-merge-target').forEach(el=>el.classList.remove('drag-over','drag-over-target','drag-merge-target'));
   document.querySelectorAll('[data-product-drop-subcat][data-touch-drag-over="1"]').forEach(el=>{
     delete el.dataset.touchDragOver;
@@ -8753,7 +8808,10 @@ function touchDragFinish(e){
       dataTransfer:{getData(){return touchDrag&&touchDrag.id?touchDrag.id:'';}}
     };
     if(subcatBtn){
-      dropToSubcat(fakeEvent,subcatBtn.dataset.productDropSubcat);
+      const subCode=subcatBtn.dataset.productDropSubcat||'';
+      const typeCode=subcatBtn.dataset.productDropType||'';
+      if(typeCode)dropToTypeSubcat(fakeEvent,typeCode,subCode);
+      else dropToSubcat(fakeEvent,subCode);
     }else if(catRow){
       dropToCat(fakeEvent,catRow.dataset.catType);
     }else if(cardRow&&cardRow.id&&cardRow!==cardEl){
@@ -17523,5 +17581,18 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 </script>
 
 <script id="andhug-undo-refresh-v4-marker">window.__ANDHUG_UNDO_REFRESH_V4__=true;</script>
+
+<style id="andhug-real-subcat-drop-v1">
+#subcat-filters.product-drag-active{gap:4px!important;}
+#subcat-filters.product-drag-active button[data-sku-subcat-drop]{
+  padding:4px 10px!important;
+  font-size:10px!important;
+  min-height:26px!important;
+  transition:padding .08s,font-size .08s,background .08s,border-color .08s!important;
+}
+#subcat-filters.product-drag-active button[data-sku-subcat-drop].drag-over{
+  box-shadow:0 0 0 2px rgba(156,122,74,.14)!important;
+}
+</style>
 </body>
 </html>
