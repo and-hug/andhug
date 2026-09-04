@@ -11123,23 +11123,40 @@ function positionSmartImportFloatingSuggestion(list,input){
 }
 if(!window.__smartImportFloatingSuggestCloseBound){
   window.__smartImportFloatingSuggestCloseBound=true;
+
   document.addEventListener('mousedown',e=>{
     if(e.target.closest('.smart-import-floating-suggest'))return;
     if(e.target.closest('.smart-import-review-name input,.si-bundle-search-wrap input'))return;
     closeSmartImportFloatingSuggestions();
   });
-  let smartImportSuggestScrollRaf=0;
-  window.addEventListener('scroll',()=>{
-    if(smartImportSuggestScrollRaf)return;
-    smartImportSuggestScrollRaf=requestAnimationFrame(()=>{
-      smartImportSuggestScrollRaf=0;
-      document.querySelectorAll('.smart-import-floating-suggest').forEach(list=>{
-        const input=list._smartImportAnchorInput;
-        if(!input||!input.isConnected){list.remove();return;}
-        positionSmartImportFloatingSuggestion(list,input);
-      });
-    });
-  },{passive:true});
+
+  // 智慧匯入真正捲動的是 #smart-import-list，不是 window。
+  // 一開始滑這個清單，就先把目前的建議框關掉，避免它留在 viewport 上漂到後面的商品旁邊。
+  const closeSmartImportSuggestOnListScrollIntent=e=>{
+    const target=e&&e.target;
+    if(target&&target.closest&&target.closest('.smart-import-floating-suggest'))return;
+    if(target&&target.closest&&target.closest('#smart-import-list')){
+      closeSmartImportFloatingSuggestions();
+    }
+  };
+
+  document.addEventListener('wheel',closeSmartImportSuggestOnListScrollIntent,{capture:true,passive:true});
+  document.addEventListener('touchmove',closeSmartImportSuggestOnListScrollIntent,{capture:true,passive:true});
+
+  // scroll 不會正常 bubble，所以用 capture 直接抓到 #smart-import-list 自己的 scroll。
+  document.addEventListener('scroll',e=>{
+    const target=e&&e.target;
+    if(target&&target.id==='smart-import-list'){
+      closeSmartImportFloatingSuggestions();
+      return;
+    }
+    // 頁面本身若真的捲動，也不要讓 smart-import 建議框留在錯的位置。
+    if(target===document||target===document.documentElement||target===document.body){
+      closeSmartImportFloatingSuggestions();
+    }
+  },true);
+
+  window.addEventListener('resize',()=>closeSmartImportFloatingSuggestions(),{passive:true});
 }
 function smartImportShowSuggestions(input,i){
   const wrap=input.closest('.oi-suggest-wrap');
