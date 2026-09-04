@@ -17902,9 +17902,23 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 /* ===== Smart Import modal width — wider desktop frame only ===== */
 #modal-smart-import .modal,
 #modal-order .modal{
-  width:min(96vw,1000px)!important;
-  max-width:1000px!important;
+  width:min(96vw,920px)!important;
+  max-width:920px!important;
 }
+
+/* 兩個匯入視窗：讓每一列跟著外框收窄並完整吃滿可用寬度 */
+#modal-smart-import .smart-import-review-row,
+#modal-order .order-form-review-row,
+#modal-order .order-items-header{
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import .smart-import-review-name,
+#modal-order .order-form-review-name{
+  min-width:0!important;
+  width:100%!important;
+}
+
 
 </style>
 </body>
