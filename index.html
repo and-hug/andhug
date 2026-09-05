@@ -2844,10 +2844,12 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         <button class="btn btn-secondary btn-sm" onclick="addOrderItem()">+ 新增商品項目</button>
         <button type="button" class="btn btn-primary btn-sm hidden" id="order-group-toggle-btn" onclick="finishOrderRowGroupSelection()">✓ 完成組合</button>
       </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
+      <div id="order-draft-row" style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="btn btn-secondary btn-sm" id="order-save-draft-btn" onclick="saveOrderFormDraft()">📝 儲存草稿</button>
+      </div>
+      <div id="order-edit-action-footer" style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm hidden" id="order-back-btn" onclick="backToOrderDetail()"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>返回詳情</button>
         <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-order')"><svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:3px"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6,6 L18,18"/><path d="M18,6 L6,18"/></g></svg>取消</button>
-        <button class="btn btn-secondary btn-sm" id="order-save-draft-btn" onclick="saveOrderFormDraft()">📝 儲存草稿</button>
         <button type="button" class="btn btn-primary btn-sm" id="order-save-btn" onclick="saveOrder(event)">💾 儲存採購單</button>
       </div>
     </div>
@@ -11428,6 +11430,7 @@ function backToSmartImportReview(){
   toast('已返回智慧匯入，剛才的組合商品與照片都還在','success');
 }
 function openAddOrder(){
+  setOrderEditFooterFixed(false);
   editingOrderId=null;
   orderItemsUnlocked=false;
   currentImportDraftId=null;
@@ -11488,6 +11491,7 @@ function unlockOrderItems(){
     });
     document.getElementById('order-unlock-btn').classList.add('hidden');
     orderItemsUnlocked=true;
+    setOrderGroupControlsLocked(false);
     toast('已解鎖，可以編輯了','success');
   });
 }
@@ -11979,9 +11983,25 @@ function hideOrderItemSuggestionsLater(input){
     }
   },150);
 }
+
+function setOrderEditFooterFixed(fixed){
+  const overlay=document.getElementById('modal-order');
+  const modal=overlay&&overlay.querySelector('.modal');
+  const body=document.querySelector('#modal-order .modal-body');
+  const footer=document.getElementById('order-edit-action-footer');
+  if(!overlay||!modal||!body||!footer)return;
+  overlay.classList.toggle('order-edit-footer-fixed',!!fixed);
+  if(fixed){
+    modal.appendChild(footer);
+  }else{
+    body.appendChild(footer);
+  }
+}
+
 function openEditOrder(id){
   const o=DB.orders.find(x=>x.id===id);
   if(!o)return;
+  setOrderEditFooterFixed(true);
   editingOrderId=id;
   orderItemsUnlocked=false;
   currentImportDraftId=null;
@@ -12007,6 +12027,7 @@ function openEditOrder(id){
   resetOrderGroupSelectMode();
   (o.items||[]).forEach(i=>addOrderItemFilled(i.name,i.cost,i.qty,isReceived,i.productId,i.originalCost,i.img,i.variantId,i.variantLabel));
   regroupOrderItemRowsFromItems(o.items);
+  setOrderGroupControlsLocked(isReceived);
   if(!o.items||!o.items.length)addOrderItem();
   updateOrderTotalPreview();
   closeModal('modal-order-detail');
@@ -12217,6 +12238,7 @@ function updateOrderRowGroupSelectionUI(){
   }
 }
 function removeOrderItemFromGroup(rowId,skipUndo=false){
+  if(!skipUndo&&guardLockedOrderStructure())return false;
   const row=document.getElementById('oi-'+rowId);
   const group=row&&row.closest('.order-item-group');
   if(!row||!group)return false;
@@ -12256,7 +12278,26 @@ function removeOrderItemFromGroup(rowId,skipUndo=false){
   toast(`已把「${itemName}」移出組合，商品沒有刪除`,'success');
   return true;
 }
+
+function isOrderItemStructureLocked(){
+  if(!editingOrderId)return false;
+  const order=DB.orders.find(x=>x.id===editingOrderId);
+  return !!(order&&order.status==='received'&&!orderItemsUnlocked);
+}
+function setOrderGroupControlsLocked(locked){
+  document.querySelectorAll('#order-items-list .order-row-group-icon,#order-items-list .order-group-target-icon').forEach(btn=>{
+    btn.disabled=!!locked;
+    btn.setAttribute('aria-disabled',locked?'true':'false');
+  });
+}
+function guardLockedOrderStructure(){
+  if(!isOrderItemStructureLocked())return false;
+  toast('🔒 已到貨商品目前鎖住，請先按「解鎖編輯」','info');
+  return true;
+}
+
 function toggleOrderRowGroupPick(rowId){
+  if(guardLockedOrderStructure())return;
   const row=document.getElementById('oi-'+rowId);
   if(!row)return;
   if(row.closest('.order-item-group')){removeOrderItemFromGroup(rowId);return;}
@@ -12314,6 +12355,7 @@ function addOrderRowsToExistingGroup(gid,rows,skipUndo=false){
   return true;
 }
 function toggleExistingOrderGroupTarget(gid){
+  if(guardLockedOrderStructure())return;
   const group=document.querySelector(`.order-item-group[data-group-id="${gid}"]`);
   if(!group)return;
   const selectedRows=[...orderGroupSelectedIds].map(id=>document.getElementById('oi-'+id)).filter(row=>row&&!row.closest('.order-item-group'));
@@ -12332,6 +12374,7 @@ function toggleExistingOrderGroupTarget(gid){
   toast(orderGroupTargetId?'已選這個組合；接著點下面新增商品的連結圖示就會直接加入':'已結束加入組合模式',orderGroupTargetId?'success':'info');
 }
 function finishOrderRowGroupSelection(){
+  if(guardLockedOrderStructure())return;
   if(orderGroupSelectedIds.size<2){toast('至少要選 2 個商品才能組合','error');return;}
   confirmOrderItemGroup();
   const count=orderGroupSelectedIds.size;
@@ -18076,6 +18119,42 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
   z-index:4;
   padding-top:12px;
   border-top:1px solid var(--cream3);
+}
+
+
+
+/* ===== 編輯採購單：只有 返回詳情 / 取消 / 儲存修改 固定在底部 ===== */
+#modal-order.order-edit-footer-fixed .modal{
+  display:flex!important;
+  flex-direction:column!important;
+  max-height:calc(100vh - 36px)!important;
+  overflow:hidden!important;
+}
+#modal-order.order-edit-footer-fixed .modal-body{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+}
+#modal-order.order-edit-footer-fixed #order-edit-action-footer{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:12px 20px 16px!important;
+  background:var(--cream)!important;
+  border-top:1px solid var(--cream3)!important;
+  z-index:20!important;
+}
+#modal-order.order-edit-footer-fixed #order-draft-row{
+  display:none!important;
+}
+
+
+
+/* 已到貨採購單未解鎖時：組合結構控制也必須一起鎖住 */
+#modal-order .order-row-group-icon:disabled,
+#modal-order .order-group-target-icon:disabled{
+  cursor:default!important;
+  opacity:.38!important;
+  pointer-events:none!important;
 }
 
 </style>
