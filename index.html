@@ -2780,13 +2780,21 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="modal-overlay hidden" id="modal-stock">
-  <div class="modal" style="max-width:1100px">
-    <div class="modal-header">
-      <div class="modal-title" id="stock-modal-title">商品詳情</div>
-      <button class="modal-close" onclick="closeModal('modal-stock')">×</button>
-    </div>
-    <div class="modal-body" id="stock-modal-body" style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+  <div class="stock-modal-nav-shell">
+    <button type="button" class="stock-product-nav stock-product-nav-prev" id="stock-product-nav-prev" onclick="navigateStockProduct(-1)" aria-label="上一個商品" title="上一個商品">
+      <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="modal" style="max-width:1100px">
+      <div class="modal-header">
+        <div class="modal-title" id="stock-modal-title">商品詳情</div>
+        <button class="modal-close" onclick="closeModal('modal-stock')">×</button>
+      </div>
+      <div class="modal-body" id="stock-modal-body" style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
 </div>
+    </div>
+    <button type="button" class="stock-product-nav stock-product-nav-next" id="stock-product-nav-next" onclick="navigateStockProduct(1)" aria-label="下一個商品" title="下一個商品">
+      <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
   </div>
 </div>
 
@@ -3392,6 +3400,7 @@ function _finalizeAutoUndoNow(){
 }
 function _beginAutoUndoContext(target,labelOverride){
   if(_autoUndoRestoring)return;
+  if(target&&target.closest&&target.closest('[data-fast-stock-adjust="1"]'))return;
   const label=labelOverride||_autoUndoLabelFromTarget(target);
   if(!label)return;
   const now=_dbUndoSnapshot();
@@ -4866,6 +4875,8 @@ const SIZE_LABELS={0:'無尺寸',XS:'XS',S:'S',M:'M',L:'L',XL:'XL',XX:'XXL'};
 const SIZE_PRICES={XS:0.5,S:1,M:2,L:3,XL:4,XX:5};
 function getSizePrice(size,type){const base=SIZE_PRICES[size];if(base===undefined)return null;return (type==='PB')?base+1:base;}
 let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', catSizesCollapsed=false, allStatusExpanded=true;
+let expandedProductCats=new Set();
+let categoryDragSuppressClickUntil=0;
 function isProductIncomplete(p){return !p.cost||p.cost===0||!p.sku||!p.img;}
 function isProductComplete(p){return !isProductIncomplete(p);}
 function toggleAllStatusGroup(event){if(event)event.stopPropagation();allStatusExpanded=!allStatusExpanded;renderCatSidebar();}
@@ -5026,7 +5037,52 @@ function getProductTypeSubcat(p){
   if(p.type==='RB'&&p.ribbonSubtype&&LEGACY_RIBBON_SUBCAT[p.ribbonSubtype])return LEGACY_RIBBON_SUBCAT[p.ribbonSubtype];
   return inferTypeSubcatCode(p.type,p.name);
 }
-function setTypeSubcat(type,code){activeCat=type;activeTypeSubcat=code;activeSize='all';activeSubcat='all';catSizesCollapsed=false;requestProductsRender();}
+function toggleProductCategoryGroup(type,event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  if(Date.now()<categoryDragSuppressClickUntil)return;
+  const t=String(type||'');
+  if(!t)return;
+  if(expandedProductCats.has(t))expandedProductCats.delete(t);
+  else expandedProductCats.add(t);
+  renderCatSidebar();
+}
+function selectProductCategoryAll(type,event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  const t=String(type||'');
+  if(!t)return;
+  expandedProductCats.add(t);
+  activeCat=t;
+  activeSize='all';
+  activeTypeSubcat='all';
+  activeSubcat='all';
+  catSizesCollapsed=false;
+  requestProductsRender();
+}
+function setCategorySize(type,size){
+  const t=String(type||'');
+  expandedProductCats.add(t);
+  activeCat=t;
+  activeSize=size;
+  activeTypeSubcat='all';
+  activeSubcat='all';
+  catSizesCollapsed=false;
+  requestProductsRender();
+}
+function setCategorySubSize(type,subcat,size){
+  const t=String(type||'');
+  expandedProductCats.add(t);
+  activeCat=t;
+  activeTypeSubcat=String(subcat||'all');
+  activeSize=size;
+  activeSubcat='all';
+  catSizesCollapsed=false;
+  requestProductsRender();
+}
+function setTypeSubcat(type,code){
+  const t=String(type||'');
+  expandedProductCats.add(t);
+  activeCat=t;activeTypeSubcat=code;activeSize='all';activeSubcat='all';catSizesCollapsed=false;requestProductsRender();
+}
 let bgSizeEditorSubcat=null;
 function getBgSubcatSizes(code){
   const saved=DB.bgSubcatSizes&&typeof DB.bgSubcatSizes==='object'?DB.bgSubcatSizes[code]:null;
@@ -6008,8 +6064,10 @@ function renderCatSidebar(){
       return topRows;
     })()}`;
   normalTypes.forEach((t,idx)=>{
-    const isActive=activeCat===t;
-    const clickAttr=catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:(catReorderMode?'':`setCat('${t}')`);
+    const isViewingType=activeCat===t;
+    const isExpanded=expandedProductCats.has(String(t));
+    const typeAllActive=isViewingType&&activeSize==='all'&&activeTypeSubcat==='all'&&activeSubcat==='all';
+    const clickAttr=catDeleteMode?`event.stopPropagation();deleteCategoryType('${t}')`:(catReorderMode?'':`toggleProductCategoryGroup('${t}',event)`);
     const dragAttrs=catReorderMode?`draggable="true"
       ondragstart="catDragType='${t}';event.dataTransfer.effectAllowed='move';this.classList.add('cat-reorder-dragging')"
       ondragend="this.classList.remove('cat-reorder-dragging');catDragType=null"
@@ -6019,39 +6077,55 @@ function renderCatSidebar(){
       ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
       ondragleave="this.classList.remove('drag-over')"
       ondrop="dropToCat(event,'${t}')"`;
-    rows+=`<div class="cat-sidebar-item ${isActive&&activeSize==='all'?'active':''}" data-cat-type="${t}" onclick="${clickAttr}" ${dragAttrs}>
+    rows+=`<div class="cat-sidebar-item ${isExpanded?'cat-expanded':''}" data-cat-type="${t}" onclick="${clickAttr}" ${dragAttrs}>
       ${catReorderMode?`<span style="color:var(--text3);flex-shrink:0;cursor:grab;display:flex" title="拖曳排序"><svg viewBox="0 0 24 24" width="12" height="12"><g fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></g></svg></span>`:''}
       <span>${getCatIcon(t)}</span><span class="ui-editable" data-ui-key="catlabel-${t}" onclick="handleUIEditableClick(event,this)">${getTypeDisplayLabel(t)}</span><span style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;margin-left:4px">${t}</span>
       <span style="margin-left:auto;font-size:11px;color:var(--text3)">${counts[t]||0}</span>
+      ${!catDeleteMode&&!catReorderMode?`<span class="cat-expand-chevron" aria-hidden="true">${isExpanded?'⌃':'⌄'}</span>`:''}
       ${catDeleteMode?`<span style="color:var(--red);display:inline-flex">${trashIcon}</span>`:''}
     </div>`;
-    if(isActive && PATCH_TYPES.includes(t) && activeCat!=='__incomplete__' && !catSizesCollapsed){
-      SIZES.forEach(s=>{
-        const cnt=DB.products.filter(p=>p.type===t&&p.size===s).length;
-        rows+=`<div class="cat-sidebar-item ${activeSize===s?'active':''}"
-          onclick="setSize('${s}')"
-          ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
-          ondragleave="this.classList.remove('drag-over')"
-          ondrop="dropToSize(event,'${t}','${s}')"
-          style="padding-left:28px;font-size:12px;">
-          <span style="font-family:monospace;font-weight:800;font-size:11px;color:${activeSize===s?'var(--brown)':'var(--text3)'}">${SIZE_LABELS[s]||s}</span>
-          <span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span>
-        </div>`;
-      });
-    }
-    const typeSubs=getTypeSubcats(t);
-    if(isActive && !catSizesCollapsed){
+
+    if(isExpanded && !catSizesCollapsed){
       const typeProducts=DB.products.filter(p=>p.type===t);
+
+      // 每一個分類底下第一列固定都是「全部」；只有點這一列才真的切換右側商品。
+      rows+=`<div class="cat-sidebar-item cat-filter-row ${typeAllActive?'active':''}"
+        data-cat-filter-type="${t}" data-cat-filter-all="1"
+        onclick="selectProductCategoryAll('${t}',event)"
+        ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="this.classList.remove('drag-over');dropToCat(event,'${t}')"
+        style="padding-left:28px;font-size:12px;">
+        <span style="font-weight:800">全部</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${typeProducts.length||0}</span>
+      </div>`;
+
+      if(PATCH_TYPES.includes(t)){
+        SIZES.forEach(s=>{
+          const cnt=DB.products.filter(p=>p.type===t&&p.size===s).length;
+          rows+=`<div class="cat-sidebar-item cat-filter-row ${isViewingType&&activeSize===s?'active':''}"
+            onclick="setCategorySize('${t}','${s}')"
+            ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="dropToSize(event,'${t}','${s}')"
+            style="padding-left:28px;font-size:12px;">
+            <span style="font-family:monospace;font-weight:800;font-size:11px;color:${isViewingType&&activeSize===s?'var(--brown)':'var(--text3)'}">${SIZE_LABELS[s]||s}</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--text3)">${cnt||''}</span>
+          </div>`;
+        });
+      }
+
+      const typeSubs=getTypeSubcats(t);
       if(typeSubs.length){
-        rows+=`<div class="cat-sidebar-item ${activeTypeSubcat==='all'?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="all" onclick="setTypeSubcat('${t}','all')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','all')" style="padding-left:28px;font-size:12px;"><span style="font-weight:700;color:${activeTypeSubcat==='all'?'var(--brown)':'var(--text3)'}">全部</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${typeProducts.length||''}</span></div>`;
         typeSubs.forEach(st=>{
           const subProducts=typeProducts.filter(p=>getProductTypeSubcat(p)===st.code);
           const cnt=subProducts.length;
-          rows+=`<div class="cat-sidebar-item ${activeTypeSubcat===st.code&&activeSize==='all'?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="${st.code}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="font-weight:700;color:${activeTypeSubcat===st.code?'var(--brown)':'var(--text3)'};white-space:nowrap">${st.label}</span>${(t==='RB'||t==='BG'||t==='SK'||t==='CL')?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${st.code}</span>`:''}</span><span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span></div>`;
-          if(t==='BG'&&activeTypeSubcat===st.code){
+          const subActive=isViewingType&&activeTypeSubcat===st.code&&activeSize==='all';
+          rows+=`<div class="cat-sidebar-item cat-filter-row ${subActive?'active':''}" data-product-drop-type="${t}" data-product-drop-subcat="${st.code}" onclick="setTypeSubcat('${t}','${st.code}')" ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropToTypeSubcat(event,'${t}','${st.code}')" style="padding-left:28px;font-size:12px;"><span class="cat-subcat-label-wrap" style="display:inline-flex;align-items:center;gap:5px;min-width:0"><span style="font-weight:700;color:${subActive?'var(--brown)':'var(--text3)'};white-space:nowrap">${st.label}</span>${(t==='RB'||t==='BG'||t==='SK'||t==='CL')?`<span class="rb-subcat-code" style="font-family:monospace;font-size:9.5px;color:var(--text3);opacity:.75;white-space:nowrap">${st.code}</span>`:''}</span><span style="margin-left:auto;font-size:11px;color:var(--text3);flex-shrink:0">${cnt||''}</span></div>`;
+          if(t==='BG'&&isViewingType&&activeTypeSubcat===st.code){
             getBgSubcatSizes(st.code).forEach(s=>{
               const sizeCnt=subProducts.filter(p=>(p.size||'0')===s).length;
-              rows+=`<div class="cat-sidebar-item ${activeSize===s?'active':''}" onclick="event.stopPropagation();setSize('${s.replace(/'/g,"\\'")}')" style="padding-left:50px;font-size:11.5px;"><span style="font-family:monospace;font-weight:800;color:${activeSize===s?'var(--brown)':'var(--text3)'}">${s}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${sizeCnt||''}</span></div>`;
+              rows+=`<div class="cat-sidebar-item cat-filter-row ${activeSize===s?'active':''}" onclick="event.stopPropagation();setCategorySubSize('${t}','${st.code}','${s.replace(/'/g,"\\'")}')" style="padding-left:50px;font-size:11.5px;"><span style="font-family:monospace;font-weight:800;color:${activeSize===s?'var(--brown)':'var(--text3)'}">${s}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${sizeCnt||''}</span></div>`;
             });
             rows+=`<div class="cat-sidebar-item" onclick="event.stopPropagation();toggleBgSizeEditor('${st.code}')" style="padding-left:50px;font-size:11px;color:var(--brown);font-weight:700;opacity:.9"><span style="font-size:13px">＋</span><span>新增尺寸</span></div>`;
             if(bgSizeEditorSubcat===st.code){
@@ -6060,6 +6134,7 @@ function renderCatSidebar(){
           }
         });
       }
+
       rows+=`<div class="cat-sidebar-item" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="padding-left:28px;font-size:11.5px;color:var(--brown);font-weight:700;opacity:.9"><span style="font-size:14px">＋</span><span>新增子類</span></div>`;
       if(sidebarSubcatEditorType===t){const nextCode=getNextTypeSubcatCode(t)||'';rows+=`<div style="margin:2px 0 8px 0;padding:8px 7px;background:var(--cream2);border-radius:9px;border:1px solid var(--cream3);width:100%;box-sizing:border-box"><div style="display:flex;gap:5px;margin-bottom:6px;width:100%;min-width:0"><input id="sidebar-subcat-code-${t}" class="form-input" value="${nextCode}" maxlength="2" inputmode="numeric" placeholder="01" style="width:44px;flex:0 0 44px;font-size:11px;text-align:center;padding:6px 3px;font-family:monospace"><input id="sidebar-subcat-name-${t}" class="form-input" placeholder="子類名稱" onkeydown="if(event.key==='Enter')addSidebarTypeSubcat('${t}')" style="flex:1 1 0;width:0;min-width:0;font-size:11px;padding:6px 7px"></div><div style="display:flex;gap:5px;width:100%;min-width:0"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addSidebarTypeSubcat('${t}')" style="flex:1 1 0;min-width:0;justify-content:center;font-size:10.5px;padding:6px">新增</button><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();toggleSidebarSubcatEditor('${t}')" style="flex:1 1 0;min-width:0;justify-content:center;padding:6px;font-size:10.5px">取消</button></div></div>`;}
     }
@@ -7025,6 +7100,7 @@ function _refreshAfterUndo(){
   if(document.getElementById('product-grid'))renderProducts();
 }
 function doUndo(){
+  if(typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();
   _finalizeAutoUndoNow();
   const entry=undoStack.pop();
   if(!entry){toast('沒有可撤銷的動作 🌸');return;}
@@ -7041,6 +7117,7 @@ function doUndo(){
   finally{_autoUndoRestoring=false;}
 }
 function doRedo(){
+  if(typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();
   _finalizeAutoUndoNow();
   const entry=redoStack.pop();
   if(!entry||!entry.redo){toast('沒有可重做的動作 🌸');return;}
@@ -7186,15 +7263,71 @@ document.addEventListener('keydown',function(e){
   if(k==='m'){e.preventDefault();shortcutMoveSelected();return;}
 });
 
+let activeProductDragIds=[];
+let productBatchDragSuppressClickUntil=0;
+
+function startProductCardDrag(event,id,cardEl){
+  const sid=String(id||'');
+  let ids=(batchMode&&batchSelected.has(sid)&&batchSelected.size>1)
+    ? [...batchSelected].map(String)
+    : [sid];
+  ids=ids.filter(x=>x&&DB.products.some(p=>String(p.id)===x));
+  if(!ids.length){event.preventDefault();return;}
+
+  activeProductDragIds=ids;
+  dragProductId=ids[0];
+  nativeProductDragId=ids[0];
+
+  if(event.dataTransfer){
+    event.dataTransfer.effectAllowed='move';
+    try{
+      event.dataTransfer.setData('application/x-product-ids',JSON.stringify(ids));
+      event.dataTransfer.setData('application/x-product-id',ids[0]);
+      event.dataTransfer.setData('text/plain',ids[0]);
+    }catch(_e){}
+  }
+
+  ids.forEach(pid=>document.getElementById('pcard-'+pid)?.classList.add('batch-dragging'));
+  if(cardEl)cardEl.classList.add('dragging-source');
+  beginProductSubcatDropUI();
+  try{startDragVisual(event,cardEl);}catch(err){console.error('[拖曳影子錯誤]',err);}
+}
+
+function endProductCardDrag(event,cardEl){
+  productBatchDragSuppressClickUntil=Date.now()+300;
+  categoryDragSuppressClickUntil=Math.max(categoryDragSuppressClickUntil,Date.now()+350);
+  document.querySelectorAll('#product-grid .batch-dragging').forEach(el=>el.classList.remove('batch-dragging'));
+  if(cardEl)cardEl.classList.remove('dragging-source');
+  dragProductId=null;
+  nativeProductDragId=null;
+  activeProductDragIds=[];
+  endProductSubcatDropUI();
+  try{endDragVisual();}catch(err){console.error('[拖曳結束錯誤]',err);}
+  document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'));
+}
+
 function getDragIds(event){
+  if(activeProductDragIds&&activeProductDragIds.length)return [...activeProductDragIds];
+
+  if(event&&event.dataTransfer){
+    try{
+      const raw=event.dataTransfer.getData('application/x-product-ids');
+      if(raw){
+        const ids=JSON.parse(raw);
+        if(Array.isArray(ids)&&ids.length)return ids.map(String);
+      }
+    }catch(_e){}
+  }
+
   let currentId=dragProductId||nativeProductDragId;
   if(!currentId&&event&&event.dataTransfer){
-    try{currentId=event.dataTransfer.getData('application/x-product-id')||event.dataTransfer.getData('text/plain')||'';}catch(e){}
+    try{currentId=event.dataTransfer.getData('application/x-product-id')||event.dataTransfer.getData('text/plain')||'';}catch(_e){}
   }
-  if(batchMode && currentId && batchSelected.has(currentId) && batchSelected.size>1){
-    return [...batchSelected];
+  currentId=String(currentId||'');
+  if(batchMode&&currentId&&batchSelected.has(currentId)&&batchSelected.size>1){
+    return [...batchSelected].map(String);
   }
-  return currentId ? [currentId] : [];
+  return currentId?[currentId]:[];
 }
 
 async function dropToSubcat(event,newSubcat){
@@ -7262,9 +7395,11 @@ async function dropToSize(event,newType,newSize){
 }
 async function dropToCat(event,newType){
   event.preventDefault();
+  event.stopPropagation();
+  categoryDragSuppressClickUntil=Date.now()+450;
   document.querySelectorAll('.cat-sidebar-item').forEach(el=>el.classList.remove('drag-over'));
   if(newType==='all')return;
-  const ids=getDragIds().filter(id=>{const p=DB.products.find(x=>x.id===id);return p&&p.type!==newType;});
+  const ids=getDragIds(event).filter(id=>{const p=DB.products.find(x=>x.id===id);return p&&p.type!==newType;});
   if(!ids.length)return;
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,type:p.type,sku:p.sku}:null;}).filter(Boolean);
   ids.forEach(id=>{
@@ -8078,8 +8213,8 @@ function renderProducts(){
     if(!p.img)missing.push('圖片');
     const imgSrc=p.img||'';
     const soldCount=salesMap[p.id]||0;
-    return `<div class="product-card" id="pcard-${p.id}" draggable="true"
-      ondragstart="dragProductId='${p.id}';nativeProductDragId='${p.id}';event.dataTransfer.effectAllowed='move';try{event.dataTransfer.setData('text/plain','${p.id}');event.dataTransfer.setData('application/x-product-id','${p.id}')}catch(e){}this.classList.add('dragging-source');beginProductSubcatDropUI();try{startDragVisual(event,this)}catch(err){console.error('[拖曳影子錯誤]',err)}" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="dragProductId=null;nativeProductDragId=null;this.classList.remove('dragging-source');endProductSubcatDropUI();try{endDragVisual()}catch(err){console.error('[拖曳結束錯誤]',err)}document.querySelectorAll('.drag-over-target,.drag-merge-target').forEach(el=>el.classList.remove('drag-over-target','drag-merge-target'))"
+    return `<div class="product-card${batchMode&&batchSelected.has(String(p.id))?' batch-selected':''}" id="pcard-${p.id}" draggable="true"
+      ondragstart="startProductCardDrag(event,'${p.id}',this)" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="endProductCardDrag(event,this)" 
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
@@ -8363,6 +8498,12 @@ function applyGhostSmallStyle(ghost,cardEl){
   ptrGhostHalfW=-16; // 負值＝往右下偏移，不是置中，讓游標指的地方（側邊欄）露出來
   ptrGhostHalfH=-16;
   ptrGhostW=size;ptrGhostH=size;
+  if(Array.isArray(activeProductDragIds)&&activeProductDragIds.length>1){
+    const badge=document.createElement('div');
+    badge.className='batch-drag-count';
+    badge.textContent=activeProductDragIds.length+' 件';
+    ghost.appendChild(badge);
+  }
   ptrCatEl=null;
   ptrGhostMode='small';
 }
@@ -8377,7 +8518,7 @@ function maybeRestoreGhostForGrid(){
 function startDragVisual(e,cardEl){
   e.dataTransfer.setDragImage(getDragTransparentImg(),0,0);
   ptrDragCardEl=cardEl;
-  ptrDragIsBatch=batchMode;
+  ptrDragIsBatch=Array.isArray(activeProductDragIds)&&activeProductDragIds.length>1;
   const ghost=document.createElement('div');
   ghost.style.position='fixed';
   ghost.style.pointerEvents='none';
@@ -9260,8 +9401,65 @@ function updateStockClassSizeLayout(){
   if(wrap)wrap.classList.toggle('is-rb',type==='RB');
 }
 
+
+let stockProductNavIds=[];
+let stockProductNavSwitching=false;
+
+function captureStockProductNavIds(currentId){
+  const visible=[...document.querySelectorAll('#product-grid [id^="pcard-"]')]
+    .map(el=>String(el.id||'').replace(/^pcard-/,''))
+    .filter(id=>id&&DB.products.some(p=>String(p.id)===id));
+  stockProductNavIds=visible.length?visible:DB.products.map(p=>String(p.id));
+  if(currentId&&!stockProductNavIds.includes(String(currentId))){
+    stockProductNavIds.push(String(currentId));
+  }
+  updateStockProductNavTitles(currentId);
+}
+
+function updateStockProductNavTitles(currentId){
+  const prev=document.getElementById('stock-product-nav-prev');
+  const next=document.getElementById('stock-product-nav-next');
+  if(!prev||!next)return;
+  const ids=stockProductNavIds.filter(id=>DB.products.some(p=>String(p.id)===String(id)));
+  if(!ids.length){
+    prev.disabled=true;next.disabled=true;
+    return;
+  }
+  const idx=Math.max(0,ids.indexOf(String(currentId)));
+  const prevId=ids[(idx-1+ids.length)%ids.length];
+  const nextId=ids[(idx+1)%ids.length];
+  const prevP=DB.products.find(p=>String(p.id)===String(prevId));
+  const nextP=DB.products.find(p=>String(p.id)===String(nextId));
+  prev.disabled=ids.length<2;
+  next.disabled=ids.length<2;
+  prev.title=prevP?`上一個：${prevP.name}`:'上一個商品';
+  next.title=nextP?`下一個：${nextP.name}`:'下一個商品';
+  prev.setAttribute('aria-label',prev.title);
+  next.setAttribute('aria-label',next.title);
+}
+
+function navigateStockProduct(direction){
+  if(typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();
+  let ids=stockProductNavIds.filter(id=>DB.products.some(p=>String(p.id)===String(id)));
+  if(!ids.length){
+    captureStockProductNavIds(editingId);
+    ids=stockProductNavIds.slice();
+  }
+  if(ids.length<2)return;
+  let idx=ids.indexOf(String(editingId));
+  if(idx<0)idx=0;
+  const nextIdx=(idx+(direction<0?-1:1)+ids.length)%ids.length;
+  const targetId=ids[nextIdx];
+  stockProductNavSwitching=true;
+  openStockModal(targetId);
+  stockProductNavSwitching=false;
+  const modal=document.querySelector('#modal-stock .modal');
+  if(modal)modal.scrollTop=0;
+}
+
 function openStockModal(id){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
+  if(!stockProductNavSwitching)captureStockProductNavIds(id);
   cleanupLegacyGeneratedProductNote(p);
   editingId=id; pendingImg=null; window.pendingStockImg=null; window.pendingStockImgRemoved=false;
   window._stockSnapshot = JSON.stringify(p);
@@ -9404,10 +9602,10 @@ function openStockModal(id){
           <span style="font-weight:800;font-size:13px;min-width:20px;text-align:center">${v.label}</span>
           <span style="width:1px;align-self:stretch;background:var(--cream4);margin:0 2px"></span>
           <input type="number" class="stock-count" id="sc-v-${v.id}" value="${v.stock||0}" min="0" inputmode="numeric" aria-label="${v.label} 款式庫存" onfocus="this.select()" onchange="setVariantStockDirect('${id}','${v.id}',this.value)" style="font-size:13px;width:40px;background:var(--surface);border:1.5px solid var(--cream3);border-radius:7px;padding:3px 2px;outline:none">
-          <div style="display:flex;gap:3px"><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
+          <div style="display:flex;gap:3px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
         </div>`).join('')}
       </div>`:`
-      <div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
+      <div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
         const sampleQty=getTotalSampleQty(p.id);
         const defectQty=p.defectStock||0;
         return `<div style="display:flex;flex-direction:column;gap:2px;font-size:11px;margin-left:20px">
@@ -9529,6 +9727,7 @@ function openStockModal(id){
       </div>
     </div>`;
   document.getElementById('stock-modal-body').innerHTML='<div>'+mainHTML+'</div>'+skuRefHTML;
+  updateStockProductNavTitles(id);
   openModal('modal-stock');
   updateStockClassSizeLayout();
   autoJumpStockSkuRule(p);
@@ -9698,7 +9897,68 @@ function setVariantStockDirect(productId,variantId,val){
   if(total)total.textContent=getProductStock(p);
   saveDB();
 }
-function adjStock(id,type,d){const p=DB.products.find(x=>x.id===id);if(!p)return;if(type==='ok'){p.stock=Math.max(0,(p.stock||0)+d);p.status='ok';document.getElementById('sc-ok').value=p.stock;}else if(type==='defect'){p.defectStock=Math.max(0,(p.defectStock||0)+d);}else if(type==='display'){p.displayStock=Math.max(0,(p.displayStock||0)+d);}saveDB();}
+const _quickStockBursts=new Map();
+function _applyQuickStockValue(id,type,value){
+  const p=DB.products.find(x=>x.id===id);if(!p)return;
+  const n=Math.max(0,Number(value)||0);
+  if(type==='ok'){
+    p.stock=n;p.status='ok';
+    const el=document.getElementById('sc-ok');if(el)el.value=n;
+  }else if(type==='defect'){
+    p.defectStock=n;
+    const el=document.getElementById('sc-defect');if(el)el.value=n;
+  }else if(type==='display'){
+    p.displayStock=n;
+    const el=document.getElementById('sc-display');if(el)el.value=n;
+  }
+  p.updatedAt=Date.now();
+}
+function _scheduleQuickStockBurst(key,config){
+  let burst=_quickStockBursts.get(key);
+  if(!burst){
+    burst={...config,timer:null};
+    _quickStockBursts.set(key,burst);
+  }else{
+    burst.after=config.after;
+    burst.apply=config.apply;
+  }
+  clearTimeout(burst.timer);
+  burst.timer=setTimeout(()=>_flushQuickStockBurst(key),220);
+}
+function _flushQuickStockBurst(key){
+  const burst=_quickStockBursts.get(key);
+  if(!burst)return;
+  clearTimeout(burst.timer);
+  _quickStockBursts.delete(key);
+  if(Number(burst.before)!==Number(burst.after)&&typeof _pushUndoRaw==='function'){
+    const before=burst.before,after=burst.after,apply=burst.apply;
+    _pushUndoRaw({
+      label:burst.label||'調整庫存',
+      undo:()=>apply(before),
+      redo:()=>apply(after)
+    });
+  }
+  saveDB({skipUndo:true});
+}
+function flushAllQuickStockBursts(){
+  [..._quickStockBursts.keys()].forEach(_flushQuickStockBurst);
+}
+function adjStock(id,type,d){
+  const p=DB.products.find(x=>x.id===id);if(!p)return;
+  const field=type==='ok'?'stock':type==='defect'?'defectStock':'displayStock';
+  const before=Math.max(0,Number(p[field])||0);
+  const after=Math.max(0,before+d);
+  if(after===before)return;
+  _applyQuickStockValue(id,type,after);
+  const key=`product:${id}:${type}`;
+  const existing=_quickStockBursts.get(key);
+  _scheduleQuickStockBurst(key,{
+    before:existing?existing.before:before,
+    after,
+    label:'調整商品庫存',
+    apply:value=>_applyQuickStockValue(id,type,value)
+  });
+}
 let orderSortMode='newest';
 const ORDER_SORT_OPTIONS=[
   {value:'newest',label:'🆕 最新採購在前'},
@@ -14849,6 +15109,7 @@ function _actuallyCloseModal(id){
     if(video)video.srcObject=null;
   }
   if(id==='modal-stock'){
+    if(typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();
     if(typeof renderProducts==='function')renderProducts();
     if(document.getElementById('cat-sidebar'))renderCatSidebar();
   }
@@ -14968,29 +15229,38 @@ function toggleBatchMode(){
 }
 
 function updateBatchUI(){
-  document.querySelectorAll('[id^="pcard-"]').forEach(el=>{
+  document.querySelectorAll('#product-grid [id^="pcard-"]').forEach(el=>{
     const id=el.id.replace('pcard-','');
-    const sel=batchSelected.has(id);
-    el.style.border=sel&&batchMode?'3px solid var(--brown)':'';
-    el.style.background=sel&&batchMode?'rgba(139,111,71,0.1)':'';
+    const sel=!!batchMode&&batchSelected.has(String(id));
+    el.classList.toggle('batch-selected',sel);
+    el.style.border='';
+    el.style.background='';
   });
+  const grid=document.getElementById('product-grid');
+  if(grid)grid.classList.toggle('batch-mode',!!batchMode);
 }
 
 function handleCardClick(id,event){
   if(touchDragJustFinished){event.preventDefault();return;}
+  if(Date.now()<productBatchDragSuppressClickUntil){event.preventDefault();event.stopPropagation();return;}
   if(event.metaKey||event.ctrlKey){
     event.preventDefault();
+    event.stopPropagation();
     if(!batchMode){
       batchMode=true;
       batchSelected.clear();
       const btn=document.getElementById('batch-btn');
       if(btn){btn.textContent='✕ 退出批次';btn.classList.add('btn-primary');btn.classList.remove('btn-secondary');}
+      const grid=document.getElementById('product-grid');
+      if(grid)grid.classList.add('batch-mode');
     }
-    if(batchSelected.has(id))batchSelected.delete(id);
-    else batchSelected.add(id);
-    lastClickedCardId=id;
-    renderProducts();
+    const sid=String(id);
+    if(batchSelected.has(sid))batchSelected.delete(sid);
+    else batchSelected.add(sid);
+    lastClickedCardId=sid;
+    updateBatchUI();
     updateBatchToolbar();
+    if(batchSelected.size>1)toast(`已選 ${batchSelected.size} 件；拖任一個已選商品即可整批移動`,'success');
     return;
   }
   if(event.shiftKey&&batchMode&&lastClickedCardId){
@@ -15007,13 +15277,11 @@ function handleCardClick(id,event){
   }
   if(batchMode){
     event.stopPropagation();
-    if(batchSelected.has(id))batchSelected.delete(id);
-    else batchSelected.add(id);
-    lastClickedCardId=id;
-    const card=document.getElementById('pcard-'+id);
-    const icon=document.getElementById('pcheck-icon-'+id);
-    const sel=batchSelected.has(id);
-    if(card){card.style.border=sel?'3px solid var(--brown)':'';card.style.background=sel?'rgba(139,111,71,0.1)':'#fff';}
+    const sid=String(id);
+    if(batchSelected.has(sid))batchSelected.delete(sid);
+    else batchSelected.add(sid);
+    lastClickedCardId=sid;
+    updateBatchUI();
     updateBatchToolbar();
   } else {
     openStockModal(id);
@@ -15119,7 +15387,7 @@ function cancelMarqueeSelect(){
 initMarqueeSelect();
 
 function selectAllBatchCards(){
-  DB.products.forEach(p=>batchSelected.add(p.id));
+  DB.products.forEach(p=>batchSelected.add(String(p.id)));
   updateBatchUI();updateBatchToolbar();
 }
 
@@ -15976,17 +16244,37 @@ function addVariantToCart(productId,variantId,variantLabel){
   toast(`✅ ${p.name} (${variantLabel}) 加入`,'success');
 }
 
+function _applyQuickVariantStockValue(productId,variantId,value){
+  const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
+  const v=p.variants.find(x=>x.id===variantId);if(!v)return;
+  v.stock=Math.max(0,Number(value)||0);
+  p.stock=p.variants.reduce((s,item)=>s+(Number(item.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
+  p.status='ok';
+  p.updatedAt=Date.now();
+  const el=document.getElementById('sc-v-'+variantId);
+  if(el){if('value' in el)el.value=v.stock;else el.textContent=v.stock;}
+  const tot=document.getElementById('sc-variant-total');
+  if(tot)tot.textContent=getProductStock(p);
+}
 function adjVariantStock(productId,variantId,delta){
   const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
-  v.stock=Math.max(0,(Number(v.stock)||0)+delta);
-  p.stock=p.variants.reduce((s,v)=>s+(Number(v.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
-  p.status='ok';
-  p.updatedAt=Date.now();
-  const el=document.getElementById('sc-v-'+variantId);if(el){if('value' in el)el.value=v.stock;else el.textContent=v.stock;}
-  const tot=document.getElementById('sc-variant-total');if(tot)tot.textContent=getProductStock(p);
-  saveDB();
+  const before=Math.max(0,Number(v.stock)||0);
+  const after=Math.max(0,before+delta);
+  if(after===before)return;
+  _applyQuickVariantStockValue(productId,variantId,after);
+  const key=`variant:${productId}:${variantId}`;
+  const existing=_quickStockBursts.get(key);
+  _scheduleQuickStockBurst(key,{
+    before:existing?existing.before:before,
+    after,
+    label:'調整款式庫存',
+    apply:value=>_applyQuickVariantStockValue(productId,variantId,value)
+  });
 }
+
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();});
+window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='function')flushAllQuickStockBursts();});
 
 (async function __bootApp(){
   try{
@@ -16057,11 +16345,13 @@ function adjVariantStock(productId,variantId,delta){
         <div class="shortcut-help-row"><span>重做</span><kbd>⌘ / Ctrl + ⇧ + Z</kbd></div>
         <div class="shortcut-help-row"><span>新增目前頁面資料</span><kbd>N</kbd></div>
         <div class="shortcut-help-row"><span>智慧匯入</span><kbd>I</kbd></div>
+        <div class="shortcut-help-row"><span>多選商品（商品庫）</span><kbd>⌘ / Ctrl + 點擊</kbd></div>
+        <div class="shortcut-help-row"><span>拖移全部已選商品</span><kbd>拖任一已選商品</kbd></div>
         <div class="shortcut-help-row"><span>移動已選商品到分類</span><kbd>M</kbd></div>
         <div class="shortcut-help-row"><span>關閉目前視窗</span><kbd>Esc</kbd></div>
         <div class="shortcut-help-row"><span>開啟這個說明</span><kbd>?</kbd></div>
       </div>
-      <div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--cream2);font-size:11.5px;color:var(--text2);line-height:1.55">在輸入商品名稱、SKU、備註等文字時，N / I / M / ? 會自動停用，不會干擾打字。要用 M 移動商品時，先按住 ⌘（Windows 是 Ctrl）點選一張或多張商品卡。</div>
+      <div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--cream2);font-size:11.5px;color:var(--text2);line-height:1.55">在輸入商品名稱、SKU、備註等文字時，N / I / M / ? 會自動停用，不會干擾打字。商品庫可按住 ⌘（Windows 是 Ctrl）逐張點選；選好後直接拖任一張已選商品，就會整批一起拖到分類／子分類。也可以按 M 開啟批次移動。</div>
     </div>
   </div>
 </div>
@@ -18155,6 +18445,207 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
   cursor:default!important;
   opacity:.38!important;
   pointer-events:none!important;
+}
+
+
+
+/* ===== 編輯採購單捲動穩定：避免 backdrop blur 與 scroll layer 重繪閃爍 ===== */
+#modal-order.order-edit-footer-fixed{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+body.theme-glass #modal-order.order-edit-footer-fixed .modal{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#modal-order.order-edit-footer-fixed .modal{
+  isolation:isolate;
+}
+#modal-order.order-edit-footer-fixed .modal-body{
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable;
+  contain:paint;
+  -webkit-overflow-scrolling:touch;
+}
+#modal-order.order-edit-footer-fixed #order-edit-action-footer{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+
+
+/* ===== 商品詳情：上一個 / 下一個商品 ===== */
+#modal-stock .stock-modal-nav-shell{
+  position:relative;
+  width:min(1100px,calc(100vw - 120px));
+  max-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#modal-stock .stock-modal-nav-shell>.modal{
+  width:100%;
+  max-width:1100px!important;
+}
+#modal-stock .stock-product-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:8;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:1.5px solid var(--cream3);
+  border-radius:15px;
+  background:rgba(250,247,242,.96);
+  color:var(--brown);
+  box-shadow:0 5px 16px rgba(61,47,31,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+#modal-stock .stock-product-nav-prev{left:-58px;}
+#modal-stock .stock-product-nav-next{right:-58px;}
+#modal-stock .stock-product-nav:hover{
+  background:var(--cream2);
+  border-color:var(--brown-light);
+  box-shadow:0 7px 18px rgba(61,47,31,.16);
+}
+#modal-stock .stock-product-nav:active{
+  transform:translateY(-50%) scale(.94);
+}
+#modal-stock .stock-product-nav svg{display:block;}
+@media (max-width:1240px){
+  #modal-stock .stock-modal-nav-shell{
+    width:min(1100px,calc(100vw - 32px));
+  }
+  #modal-stock .stock-product-nav{
+    width:38px;
+    height:38px;
+    border-radius:13px;
+    background:rgba(250,247,242,.98);
+  }
+  #modal-stock .stock-product-nav-prev{left:8px;}
+  #modal-stock .stock-product-nav-next{right:8px;}
+}
+@media (max-width:768px){
+  #modal-stock .stock-modal-nav-shell{
+    width:100%;
+    max-height:92vh;
+  }
+  #modal-stock .stock-product-nav{
+    top:56px;
+    width:34px;
+    height:34px;
+    border-radius:11px;
+  }
+  #modal-stock .stock-product-nav-prev{left:12px;}
+  #modal-stock .stock-product-nav-next{right:58px;}
+}
+
+
+
+#modal-stock .stock-product-nav:disabled{
+  opacity:.32;
+  cursor:default;
+  box-shadow:none;
+}
+
+
+
+/* ===== 商品庫：⌘ / Ctrl 多選 + 整批拖移 ===== */
+#product-grid .product-card.batch-selected{
+  border:2px solid var(--brown)!important;
+  background:#fffaf4!important;
+  box-shadow:0 0 0 3px rgba(139,111,71,.10)!important;
+}
+#product-grid .product-card.batch-selected::before{
+  content:'✓';
+  position:absolute;
+  left:7px;
+  top:7px;
+  z-index:7;
+  width:21px;
+  height:21px;
+  border-radius:999px;
+  background:var(--brown);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Nunito',sans-serif;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+  box-shadow:0 2px 7px rgba(61,47,31,.16);
+  pointer-events:none;
+}
+#product-grid .product-card.batch-dragging{
+  opacity:.42!important;
+}
+.drag-sidebar-thumb .batch-drag-count{
+  position:absolute;
+  right:-10px;
+  top:-10px;
+  min-width:28px;
+  height:28px;
+  padding:0 7px;
+  border-radius:999px;
+  background:var(--brown);
+  color:#fff;
+  border:2px solid var(--surface);
+  box-shadow:0 3px 9px rgba(61,47,31,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  font-family:'Nunito',sans-serif;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+
+
+/* ===== 左側分類：展開狀態與實際篩選狀態分色 ===== */
+#cat-sidebar .cat-sidebar-item.cat-expanded{
+  background:#f4e7e3!important;
+  color:#8d645b!important;
+  border-left-color:#d4a49a!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-expanded:hover{
+  background:#f1ddd8!important;
+  color:#825b53!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-expanded .cat-expand-chevron{
+  color:#b68176;
+}
+#cat-sidebar .cat-sidebar-item.cat-filter-row.active{
+  background:var(--cream2)!important;
+  color:var(--brown)!important;
+  border-left-color:var(--brown)!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-filter-row:not(.active){
+  background:var(--surface);
+}
+#cat-sidebar .cat-expand-chevron{
+  width:14px;
+  flex:0 0 14px;
+  text-align:center;
+  font-size:11px;
+  line-height:1;
+  color:var(--text3);
+}
+
+
+
+#cat-sidebar .cat-sidebar-item.cat-expanded.drag-over{
+  background:var(--peach-light)!important;
+  color:var(--brown)!important;
+  border-left-color:var(--brown)!important;
+  box-shadow:inset 0 0 0 1px rgba(139,111,71,.14);
 }
 
 </style>
