@@ -20,6 +20,7 @@
   --lavender:#c4b5e8;--lavender-light:#f0ecfb;
   --yellow:#f5d876;--yellow-light:#fef9e4;
   --red-light:#fee2e2;--red:#e07070;
+  --sidebar-active-bg:#e9e2d8;--sidebar-active-bg-hover:#e2d9ce;
   --shadow:0 2px 12px rgba(61,47,31,0.08);
   --shadow-lg:0 8px 32px rgba(61,47,31,0.12);
   --radius:16px;--radius-sm:10px;
@@ -81,6 +82,12 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .product-card:hover .pc-quick-trash{opacity:1;}
 .pc-quick-trash{opacity:0;transition:opacity .15s;}
 .pc-quick-trash:hover{background:var(--red-light)!important;color:var(--red)!important;border-color:var(--red)!important;}
+.pc-quick-paw{position:absolute;top:7px;left:7px;z-index:5;width:20px;height:20px;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:0;opacity:1;transition:transform .15s ease;}
+.pc-quick-paw:hover{transform:scale(1.06);}
+.pc-quick-paw svg{display:block;width:20px;height:20px;overflow:visible;}
+.pc-quick-paw.state-outline{color:#9C8068;}
+.pc-quick-paw.state-half{color:#D8B98F;}
+.pc-quick-paw.state-full{color:#765039;}
 .product-img{width:100%;aspect-ratio:1;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .product-img img{width:100%;height:100%;object-fit:cover;padding:0;border-radius:inherit;background:transparent;}
 .product-img .no-img{font-size:36px;}
@@ -417,7 +424,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .alert-card{background:var(--yellow-light);border:1.5px solid var(--yellow);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px;}
 .cat-sidebar-item{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:8px;}
 .cat-sidebar-item:hover{background:var(--cream2);color:var(--brown);}
-.cat-sidebar-item.active{background:var(--cream2);color:var(--brown);border-left-color:var(--brown);}
+.cat-sidebar-item.active{background:var(--sidebar-active-bg);color:var(--brown);border-left-color:var(--brown);}
 .cat-sidebar-item.drag-over{background:var(--peach-light);border-left-color:var(--brown);color:var(--brown);}
 .cat-sidebar-item.cat-reorder-over{box-shadow:inset 0 2px 0 var(--brown);}
 .cat-sidebar-item.cat-reorder-dragging{opacity:.4;}
@@ -472,6 +479,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 #product-grid.view-list .product-meta,#sale-product-grid.view-list .product-meta{position:absolute!important;right:14px!important;bottom:10px!important;top:auto!important;transform:none!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;justify-content:flex-end!important;gap:6px!important;margin:0!important;white-space:nowrap!important;}
 #product-grid.view-list .product-meta .stock-badge,#sale-product-grid.view-list .product-meta .stock-badge{margin-left:0!important;}
 #product-grid.view-list .pc-quick-trash,#sale-product-grid.view-list .pc-quick-trash{top:8px!important;right:8px!important;transform:none!important;}
+#product-grid.view-list .pc-quick-paw,#sale-product-grid.view-list .pc-quick-paw{top:8px!important;left:8px!important;transform:none!important;}
 .divider{height:1.5px;background:var(--cream3);margin:16px 0;border-radius:2px;}
 
   .order-accordion{border:1.5px solid var(--cream3);border-radius:12px;margin-bottom:8px;overflow:hidden;background:var(--surface);}
@@ -781,7 +789,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .pc-quick-trash{opacity:1!important;}
   .btn-primary:hover{transform:none;background:var(--brown);}
   .cat-sidebar-item:hover{background:none;color:var(--text2);}
-  .cat-sidebar-item.active:hover{background:var(--cream2);color:var(--brown);}
+  .cat-sidebar-item.active:hover{background:var(--sidebar-active-bg-hover);color:var(--brown);}
 .view-btn:hover{border-color:var(--cream3);}
 }
 
@@ -796,7 +804,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .drag-old-ghost .drag-old-card .product-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-top:auto!important;position:static!important;inset:auto!important;transform:none!important;width:auto!important;flex-direction:row!important;gap:0!important;padding:0!important;border:0!important;white-space:normal!important;}
 .drag-old-ghost .drag-old-card .stock-badge{font-size:10px!important;padding:3px 8px!important;border-radius:10px!important;font-weight:700!important;margin:0!important;position:static!important;}
 .drag-old-ghost .drag-old-card .price-tag{font-size:11px!important;color:var(--text3)!important;font-weight:600!important;margin:0!important;position:static!important;top:auto!important;}
-.drag-old-ghost .drag-old-card .pc-quick-trash,.drag-old-ghost .drag-old-card .pc-flow{display:none!important;}
+.drag-old-ghost .drag-old-card .pc-quick-trash,.drag-old-ghost .drag-old-card .pc-quick-paw,.drag-old-ghost .drag-old-card .pc-flow{display:none!important;}
 .drag-old-ghost .stock-more-number,.drag-old-ghost .more-cost{display:none!important;}
 .drag-old-ghost .more-price-stack{display:contents!important;}
 
@@ -2719,7 +2727,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
         <div class="form-group"><label class="form-label">商品名稱 ✦</label><input type="text" class="form-input" id="p-name" placeholder="白色小貓布貼" oninput="autoSkuFromProductName('p',this.value,'p-type','')"></div>
         <div class="form-group"><label class="form-label">SKU</label><input type="hidden" id="p-sku" value=""><div class="sku-builder">
           <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="p-sku-typepart" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
-          <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="p-sku-catpart" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
+          <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="p-sku-catpart" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="p-sku-detailpart" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="p-sku-colorpart" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" readonly tabindex="-1"></div>
@@ -4529,11 +4537,15 @@ function parseProductSkuParts(sku,fallbackType){
 }
 function sanitizeSkuPartValue(input,kind){
   if(!input)return '';
-  let v=String(input.value||'').toUpperCase();
+  const raw=String(input.value||'');
+  let v=raw.toUpperCase();
   if(kind==='type')v=v.replace(/[^A-Z]/g,'').slice(0,2);
   else if(kind==='color')v=v.replace(/[^0-9A-Z]/g,'').slice(0,4);
   else v=v.replace(/\D/g,'').slice(0,kind==='serial'?3:2);
-  input.value=v;
+
+  // 合法輸入時不要重設 input.value，否則游標 / 選取狀態會被瀏覽器重置，
+  // 造成像 05 → 06 時第一個 0 輸入後，第二個 6 又把 0 蓋掉。
+  if(raw!==v)input.value=v;
   return v;
 }
 function getNextSkuSerial(type,cat,detail,color,excludeProductId){
@@ -4577,11 +4589,34 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
   }
   if(type.length===2&&cat.length===2&&detail.length===2&&color.length===4){
     const base=`${type}${cat}${detail}-${color}-`;
-    const conflict=serial&&(DB.products||[]).some(p=>p.id!==productId&&String(p.sku||'').toUpperCase()===base+serial);
-    if(!serial||conflict){serial=getNextSkuSerial(type,cat,detail,color,productId);serialEl.value=serial;}
+
+    // 編輯既有商品時，只要前段 SKU 組合改了，就依「新的組合」重新排流水號。
+    // 例：PA0599-9900-017 → 把 05 改成 06；
+    // 若 PA0699-9900 尚無商品，就會自動變成 PA0699-9900-001。
+    const existingProduct=productId?(DB.products||[]).find(p=>String(p.id)===String(productId)):null;
+    const existingSku=existingProduct?String(existingProduct.sku||'').toUpperCase():'';
+    const existingBaseMatch=existingSku.match(/^([A-Z]{2}\d{4}-[A-Z0-9]{4}-)/);
+    const existingBase=existingBaseMatch?existingBaseMatch[1]:'';
+    const baseChanged=!!(existingProduct&&existingBase&&existingBase!==base);
+
+    const conflict=serial&&(DB.products||[]).some(
+      p=>String(p.id)!==String(productId||'')&&String(p.sku||'').toUpperCase()===base+serial
+    );
+
+    if(baseChanged){
+      serial=getNextSkuSerial(type,cat,detail,color,productId);
+      serialEl.value=serial;
+    }else if(!serial||conflict){
+      serial=getNextSkuSerial(type,cat,detail,color,productId);
+      serialEl.value=serial;
+    }
+
     hidden.value=base+serial;
   }else{
-    serialEl.value='';hidden.value='';
+    // 輸入兩位分類碼途中可能短暫只有 1 碼；先保留畫面上的流水號，
+    // 等新的 SKU 前段完整後，再依新組合自動重新編號。
+    if(!serial)serialEl.value='';
+    hidden.value='';
   }
 }
 function autoSkuFromProductName(prefix,name,typeFieldId,productId){
@@ -4879,6 +4914,57 @@ let expandedProductCats=new Set();
 let categoryDragSuppressClickUntil=0;
 function isProductIncomplete(p){return !p.cost||p.cost===0||!p.sku||!p.img;}
 function isProductComplete(p){return !isProductIncomplete(p);}
+function getProductPawSignature(p){
+  if(!p)return '';
+  return JSON.stringify([
+    String(p.name||''),String(p.sku||''),String(p.type||''),String(p.size||''),
+    Number(p.cost||0),Number(p.price||0),!!p.img,
+    String(p.typeSubcat||''),String(p.ribbonSubtype||'')
+  ]);
+}
+function isProductPawConfirmed(p){
+  return !!(p&&p.pawConfirmed&&p.pawConfirmedSignature===getProductPawSignature(p));
+}
+function getProductPawState(p){
+  if(!isProductComplete(p))return 'outline';
+  return isProductPawConfirmed(p)?'full':'half';
+}
+function getProductPawTitle(p){
+  const state=getProductPawState(p);
+  if(state==='full')return '已全部確認 · 點一下取消';
+  if(state==='half')return '資料已填齊 · 點一下全部確認';
+  return '資料未填齊';
+}
+function renderProductPawIcon(p){
+  const state=getProductPawState(p);
+  const id='pawfill-'+String(p&&p.id||'x').replace(/[^a-zA-Z0-9_-]/g,'');
+  const outline='#9C8068',half='#D8B98F',full='#765039';
+  const fill=state==='full'?full:(state==='half'?`url(#${id})`:'none');
+  const stroke=state==='full'?full:outline;
+  const defs=state==='half'?`<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${half}"/><stop offset="50%" stop-color="${half}"/><stop offset="50.01%" stop-color="transparent"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>`:'';
+  return `<svg viewBox="0 0 22 22" aria-hidden="true">${defs}<g fill="${fill}" stroke="${stroke}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6.1" cy="6.2" rx="1.8" ry="2.45" transform="rotate(-18 6.1 6.2)"/><ellipse cx="9.7" cy="4.3" rx="1.62" ry="2.2" transform="rotate(-6 9.7 4.3)"/><ellipse cx="13.1" cy="4.45" rx="1.62" ry="2.2" transform="rotate(7 13.1 4.45)"/><ellipse cx="16.3" cy="6.7" rx="1.75" ry="2.4" transform="rotate(18 16.3 6.7)"/><path d="M10.95 8.9c-2.55 0-5.25 1.9-5.5 4.55-.2 2.18 1.65 4.2 5.5 4.2s5.7-2.02 5.5-4.2c-.25-2.65-2.95-4.55-5.5-4.55Z"/></g></svg>`;
+}
+function toggleProductPawConfirmed(id){
+  const p=DB.products.find(x=>String(x.id)===String(id));
+  if(!p)return;
+  const state=getProductPawState(p);
+  if(state==='outline'){
+    toast('資料還沒填齊，先維持空心貓腳','info');
+    return;
+  }
+  if(state==='full'){
+    p.pawConfirmed=false;
+    p.pawConfirmedSignature='';
+    toast('已取消全部確認','success');
+  }else{
+    p.pawConfirmed=true;
+    p.pawConfirmedSignature=getProductPawSignature(p);
+    toast('已全部確認 🐾','success');
+  }
+  p.updatedAt=Date.now();
+  saveDB();
+  renderProducts({gridOnly:true});
+}
 function toggleAllStatusGroup(event){if(event)event.stopPropagation();allStatusExpanded=!allStatusExpanded;renderCatSidebar();}
 let nativeProductDragId=null; // 原生拖曳的穩定備援 ID，直到 dragend 才清掉
 let activeTypeSubcat='all';
@@ -6730,6 +6816,9 @@ function syncSkuRuleDraftFromDom(){
 async function saveSkuEdits(options){
   options=options||{};
   const keepEditing=options.keepEditing!==false;
+  const skuProductBefore=new Map((DB.products||[]).map(p=>[String(p.id),{
+    sku:String(p.sku||''),type:String(p.type||''),typeSubcat:String(p.typeSubcat||'')
+  }]));
   syncSkuRuleDraftFromDom();
   commitSkuFieldEdit();
   const oldSkuTypes=(DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:getSkuTypes()).map(r=>({code:String(r.code||'').trim().toUpperCase(),label:String(r.label||'').trim()}));
@@ -6838,6 +6927,17 @@ async function saveSkuEdits(options){
     if(!valid){const other=(DB.typeSubcats[p.type]||[]).find(r=>r.code==='99');if(other)p.typeSubcat='99';else delete p.typeSubcat;}
   });
 
+  // 跨裝置同步需要正確的商品版本時間：SKU / 類型 / 子分類有變時一定更新 updatedAt。
+  const skuSaveTime=Date.now();
+  (DB.products||[]).forEach(p=>{
+    const before=skuProductBefore.get(String(p.id));
+    if(!before)return;
+    if(before.sku!==String(p.sku||'')||before.type!==String(p.type||'')||before.typeSubcat!==String(p.typeSubcat||'')){
+      p.updatedAt=skuSaveTime;
+    }
+  });
+  DB.skuSettingsUpdatedAt=skuSaveTime;
+
   const skuSavedRaw=JSON.stringify(DB);
   saveDB({skipCloudSync:true});
   try{
@@ -6852,6 +6952,16 @@ async function saveSkuEdits(options){
   }
 
   skuUndoStack=[];skuRedoStack=[];skuFieldEditBefore=null;
+
+  // SKU 規則本身使用獨立雲端表同步；只有使用者真的按「儲存變更」才會上傳，
+  // 避免另一台舊電腦只是開啟網頁就把舊規則覆蓋到雲端。
+  if(typeof window.syncSkuSettingsToCloud==='function'){
+    try{await window.syncSkuSettingsToCloud(true);}catch(e){console.warn('SKU 規則雲端同步失敗，已保留本機資料',e);}
+  }
+  if(typeof window.syncToSupabase==='function'){
+    clearTimeout(_autoSyncTimer);
+    _autoSyncTimer=setTimeout(()=>window.syncToSupabase(true),300);
+  }
 
   if(keepEditing){
     skuEditMode=true;
@@ -6873,11 +6983,6 @@ async function saveSkuEdits(options){
 
     if(document.getElementById('p-type-subcat'))refreshTypeSubcatSelect('p','p-type','');
     if(document.getElementById('edit-type-subcat'))refreshTypeSubcatSelect('edit','edit-type',editingId||'');
-
-    if(typeof window.syncToSupabase==='function'){
-      clearTimeout(_autoSyncTimer);
-      _autoSyncTimer=setTimeout(()=>window.syncToSupabase(true),2500);
-    }
 
     updateSkuUndoButton();
     const savedTime=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -8381,6 +8486,7 @@ function renderProducts(options={}){
       ondragstart="startProductCardDrag(event,'${p.id}',this)" ondrag="try{dragMoveVisual(event)}catch(err){console.error('[拖曳更新錯誤]',err)}" ondragend="endProductCardDrag(event,this)" 
       ${batchMode?'':`ondragover="dragOverProduct(event,this)" ondragleave="this.classList.remove('drag-over-target','drag-merge-target');delete this.dataset.dropMode" ondrop="dropProductCard(event,'${p.id}',this)"`}
       onclick="handleCardClick('${p.id}',event)">
+      <button type="button" onclick="event.stopPropagation();toggleProductPawConfirmed('${p.id}')" title="${getProductPawTitle(p)}" aria-label="${getProductPawTitle(p)}" class="pc-quick-paw state-${getProductPawState(p)}">${renderProductPawIcon(p)}</button>
       <button type="button" onclick="event.stopPropagation();deleteProduct('${p.id}')" title="直接移到垃圾桶" class="pc-quick-trash" style="position:absolute;top:6px;right:6px;z-index:5;width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--cream3);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="13" height="13"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5,7 L19,7"/><path d="M9,7 V5 a1.5,1.5 0 0 1 1.5,-1.5 h3 a1.5,1.5 0 0 1 1.5,1.5 V7"/><path d="M7,7 L7.7,19 a2,2 0 0 0 2,1.9 h4.6 a2,2 0 0 0 2,-1.9 L17,7"/></g></svg></button>
       <div class="product-img"${
         currentView==='grid'
@@ -8388,7 +8494,7 @@ function renderProducts(options={}){
           : currentView==='large'
             ? ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;border-radius:16px 16px 0 0!important;overflow:hidden!important;"'
             : ' style="padding:0!important;background:#fff!important;box-sizing:border-box!important;"'
-      }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async"${
+      }>${imgSrc?`<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async" draggable="false"${
         currentView==='grid'
           ? ' style="width:100%!important;height:100%!important;padding:0!important;margin:0!important;background:#fff!important;border-radius:16px 16px 0 0!important;object-fit:cover!important;display:block!important;"'
           : currentView==='large'
@@ -9743,7 +9849,7 @@ function openStockModal(id){
             <input type="hidden" id="edit-sku" value="${p.sku||''}">
             <div class="sku-builder">
               <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="edit-sku-typepart" value="${skuParts.type||''}" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
+              <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" readonly tabindex="-1"></div>
@@ -16754,6 +16860,61 @@ const SUPABASE_KEY = 'sb_publishable_cY4ATOMAMThdZ4oQ5cxdXw_OP7Bjwub';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.__sb = sb;
 
+
+const SKU_SETTINGS_FIELDS=[
+  'skuTypes','skuSizes','skuCats','skuColors','typeSubcats','typeDetails',
+  'customTypes','deletedCustomTypes','hiddenTypes','deletedTypes','catOrder','skuColorPresetHidden'
+];
+function cloneJsonSafe(value,fallback){
+  try{return JSON.parse(JSON.stringify(value===undefined?fallback:value));}catch(_e){return fallback;}
+}
+function getSkuSettingsCloudPayload(){
+  const data={};
+  SKU_SETTINGS_FIELDS.forEach(key=>{data[key]=cloneJsonSafe(DB[key],Array.isArray(DB[key])?[]:{});});
+  return data;
+}
+function applySkuSettingsCloudRecord(row){
+  if(!row||!row.data)return false;
+  const cloudTime=row.updated_at?new Date(row.updated_at).getTime():0;
+  const localTime=Number(DB.skuSettingsUpdatedAt)||0;
+  if(cloudTime&&localTime&&cloudTime<=localTime)return false;
+  const data=row.data||{};
+  let changed=false;
+  SKU_SETTINGS_FIELDS.forEach(key=>{
+    if(!Object.prototype.hasOwnProperty.call(data,key))return;
+    const next=cloneJsonSafe(data[key],Array.isArray(DB[key])?[]:{});
+    if(JSON.stringify(DB[key])!==JSON.stringify(next)){DB[key]=next;changed=true;}
+  });
+  if(cloudTime>localTime){DB.skuSettingsUpdatedAt=cloudTime;changed=true;}
+  return changed;
+}
+window.syncSkuSettingsToCloud=async function(silent){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){if(!silent)toast('請先用 Google 登入 🔑','error');return false;}
+  const uid=session.user.id;
+  const localTime=Number(DB.skuSettingsUpdatedAt)||Date.now();
+  const row={user_id:uid,data:getSkuSettingsCloudPayload(),updated_at:new Date(localTime).toISOString()};
+  const {error}=await sb.from('sku_settings').upsert(row,{onConflict:'user_id'});
+  if(error)throw error;
+  if(!silent)toast('☁️ SKU 規則已同步到其他裝置','success');
+  return true;
+};
+
+async function fetchAndMergeCloudState(uid){
+  const [productsRes,ordersRes,skuRes]=await Promise.all([
+    sb.from('products').select('*').eq('user_id',uid),
+    sb.from('orders').select('*').eq('user_id',uid),
+    sb.from('sku_settings').select('*').eq('user_id',uid).limit(1)
+  ]);
+  if(productsRes.error||ordersRes.error||skuRes.error)throw(productsRes.error||ordersRes.error||skuRes.error);
+  let changed=false;
+  (productsRes.data||[]).forEach(cp=>{if(mergeCloudProductRecord(cp))changed=true;});
+  (ordersRes.data||[]).forEach(co=>{if(mergeCloudOrderRecord(co))changed=true;});
+  const skuRow=(skuRes.data||[])[0]||null;
+  if(skuRow&&applySkuSettingsCloudRecord(skuRow))changed=true;
+  return {changed,cloudProducts:productsRes.data||[],cloudOrders:ordersRes.data||[],skuRow};
+}
+
 window.signInWithGoogle = async function() {
   await sb.auth.signInWithOAuth({
     provider: 'google',
@@ -16831,6 +16992,17 @@ async function performSupabaseSync(silent) {
 
   const uid = session.user.id;
 
+  // 先拉再推：舊電腦重新上線時，先合併雲端較新的 SKU / 商品資料，
+  // 再把合併後的版本推上去，避免舊資料反向蓋掉新資料。
+  try{
+    const prePull=await fetchAndMergeCloudState(uid);
+    if(prePull.changed)await saveDB({skipCloudSync:true,skipUndo:true});
+  }catch(prePullErr){
+    console.warn('同步前拉取雲端資料失敗；本次不推送，避免舊資料覆蓋雲端',prePullErr);
+    if(!silent)toast('☁️ 先取得其他裝置資料失敗，這次沒有上傳本機資料','error');
+    return;
+  }
+
   function dedupeById(arr, timeField) {
     const map = new Map();
     (arr || []).forEach(item => {
@@ -16870,6 +17042,8 @@ async function performSupabaseSync(silent) {
       variants: (p.variants && p.variants.length) ? p.variants : null, // 多規格商品的各款式庫存，之前完全沒同步上去
       tags: (p.tags && p.tags.length) ? p.tags : null,
       suppliers: (p.suppliers && p.suppliers.length) ? p.suppliers : null,
+      paw_confirmed: !!p.pawConfirmed,
+      paw_confirmed_signature: p.pawConfirmedSignature || null,
       deleted: false, // 刪除同步用的墓碑欄位：這筆還活著
       updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString()
     }));
@@ -16911,6 +17085,8 @@ async function performSupabaseSync(silent) {
         variants: (p.variants && p.variants.length) ? p.variants : null,
         tags: (p.tags && p.tags.length) ? p.tags : null,
         suppliers: (p.suppliers && p.suppliers.length) ? p.suppliers : null,
+        paw_confirmed: !!p.pawConfirmed,
+        paw_confirmed_signature: p.pawConfirmedSignature || null,
         updated_at: p.updatedAt ? new Date(p.updatedAt).toISOString() : new Date().toISOString(),
         img: p.img
       }));
@@ -17030,6 +17206,8 @@ function cloudProductToLocal(cp) {
     variants: cp.variants || undefined,
     tags: cp.tags || undefined,
     suppliers: cp.suppliers || undefined,
+    pawConfirmed: !!cp.paw_confirmed,
+    pawConfirmedSignature: cp.paw_confirmed_signature || '',
     img: cp.img || '',
     updatedAt: cp.updated_at ? new Date(cp.updated_at).getTime() : Date.now()
   };
@@ -17057,7 +17235,7 @@ function cloudOrderToLocal(co) {
 }
 let __pullingFromCloud = false;
 if (!DB.__syncBaseline) DB.__syncBaseline = { products: {}, orders: {} };
-const PRODUCT_SCALAR_FIELDS = ['name','sku','type','size','cost','price','stock','minStock','defectStock','displayStock','note','status','img'];
+const PRODUCT_SCALAR_FIELDS = ['name','sku','type','size','cost','price','stock','minStock','defectStock','displayStock','note','status','img','pawConfirmed','pawConfirmedSignature'];
 const ORDER_SCALAR_FIELDS = ['supplier','date','shipping','total','totalUsd','note','status','rateUsed','receivedAt','expectedDate','feeUsd','rawPaymentText','totalPaidUsdActual'];
 function snapshotFields(obj, fields) {
   const out = {};
@@ -17171,11 +17349,16 @@ function afterCloudMergeApplied(silent) {
   __cloudMergeRefreshTimer = setTimeout(() => {
     __cloudMergeRefreshTimer = null;
     saveDB({skipCloudSync:true,skipUndo:true});
+    if(typeof populateTypeDropdowns==='function')populateTypeDropdowns();
+    if(typeof renderCatSidebar==='function'&&document.getElementById('cat-sidebar'))renderCatSidebar();
+    if(typeof renderSubcatFilters==='function')renderSubcatFilters();
+    if(typeof renderSizeFilters==='function')renderSizeFilters();
     if (typeof currentPage !== 'undefined') {
       if (currentPage === 'products' && typeof renderProducts === 'function') renderProducts();
       if (currentPage === 'orders' && typeof renderOrders === 'function') renderOrders();
       if (currentPage === 'sales' && typeof renderSaleProducts === 'function') renderSaleProducts();
       if (currentPage === 'overview' && typeof renderOverview === 'function') renderOverview();
+      if (currentPage === 'sku' && typeof renderSkuPage === 'function') renderSkuPage();
     }
     if (__cloudMergeNeedsNotice) toast('☁️ 已同步其他裝置的最新資料', 'success');
     __cloudMergeNeedsNotice = false;
@@ -17188,14 +17371,8 @@ window.pullFromSupabase = async function(silent) {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return; // 沒登入就沒有雲端資料可拉
     const uid = session.user.id;
-    const [{ data: cloudProducts, error: pErr }, { data: cloudOrders, error: oErr }] = await Promise.all([
-      sb.from('products').select('*').eq('user_id', uid),
-      sb.from('orders').select('*').eq('user_id', uid)
-    ]);
-    if (pErr || oErr) throw (pErr || oErr);
-    let changed = false;
-    (cloudProducts || []).forEach(cp => { if (mergeCloudProductRecord(cp)) changed = true; });
-    (cloudOrders || []).forEach(co => { if (mergeCloudOrderRecord(co)) changed = true; });
+    const merged=await fetchAndMergeCloudState(uid);
+    let changed=merged.changed;
 
     const seedImageChanged=clearSeedImagesInMemory();
     if(seedImageChanged)changed=true;
@@ -17230,6 +17407,9 @@ async function setupRealtimeSync() {
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `user_id=eq.${uid}` }, payload => {
       if (payload.new && mergeCloudOrderRecord(payload.new)) afterCloudMergeApplied(true);
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'sku_settings', filter: `user_id=eq.${uid}` }, payload => {
+      if (payload.new && applySkuSettingsCloudRecord(payload.new)) afterCloudMergeApplied(true);
     })
     .subscribe(status => {
       if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') console.warn('即時同步連線失敗，會退回輪詢方式，不影響正常使用');
@@ -18483,11 +18663,13 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
   transition:background .06s,border-color .06s,color .06s,box-shadow .06s!important;
 }
 #subcat-filters.product-drag-active button[data-sku-subcat-drop].drag-over{
+  /* 只填色，不改按鈕尺寸 */
   background:var(--brown)!important;
   color:#fff!important;
   border-color:var(--brown)!important;
-  border-width:2.5px!important;
-  box-shadow:0 0 0 2px rgba(139,111,71,.20)!important;
+  border-width:1.5px!important;
+  box-shadow:none!important;
+  transform:none!important;
   transition:none!important;
 }
 
@@ -18825,21 +19007,27 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
   /* 展開背景 = SKU 規則頁後方的米白底 */
   background:var(--cream)!important;
   color:var(--text2)!important;
-  /* 左側窄條 = 布貼管理最上方深色 bar */
-  border-left-color:#2d3f45!important;
+  /* 左側窄條改回網站原本棕色 */
+  border-left-color:var(--brown)!important;
 }
 #cat-sidebar .cat-sidebar-item.cat-expanded:hover{
   background:var(--cream)!important;
   color:var(--brown)!important;
 }
 #cat-sidebar .cat-sidebar-item.cat-filter-row.active{
-  background:var(--cream2)!important;
+  background:var(--sidebar-active-bg)!important;
   color:var(--brown)!important;
   border-left-color:var(--brown)!important;
 }
 #cat-sidebar .cat-sidebar-item.cat-filter-row:not(.active){
   background:var(--surface);
 }
+
+#cat-sidebar .cat-sidebar-item.cat-filter-row.active:hover{
+  background:var(--sidebar-active-bg-hover)!important;
+  color:var(--brown)!important;
+}
+
 
 
 
@@ -18892,6 +19080,18 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
 #product-grid.view-large .product-card .pc-subcat-code.rb-subcat-highlight{
   display:inline-flex!important;
   margin:0 0 2px!important;
+}
+
+
+
+/* ===== 商品庫拖曳：禁止瀏覽器原生圖片拖出／Split View ===== */
+#product-grid .product-card .product-img img,
+#sale-product-grid .product-card .product-img img{
+  -webkit-user-drag:none!important;
+  user-drag:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  pointer-events:none!important;
 }
 
 </style>
