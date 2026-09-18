@@ -454,6 +454,40 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .order-search-group-match{background:rgba(216,185,143,.14)!important;border-radius:8px;}
 @media(max-width:900px){.order-search-wrap{width:100%;min-width:180px;order:-1;flex-basis:100%;}.order-search-input{width:100%;}}
 
+
+.orders-supplier-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:14px;align-items:start}
+.orders-main-column{min-width:0}
+.orders-supplier-sidebar{position:sticky;top:72px;background:var(--surface);border:1.5px solid var(--cream3);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;max-height:calc(100vh - 92px);display:flex;flex-direction:column}
+.orders-supplier-sidebar-head{padding:13px 14px 10px;border-bottom:1px solid var(--cream3);background:var(--cream2)}
+.orders-supplier-sidebar-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:800;color:var(--text2)}
+.orders-supplier-sidebar-sub{font-size:9.5px;color:var(--text3);margin-top:3px}
+.orders-supplier-filter-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:9px 10px 8px;background:var(--surface);border-bottom:1px solid var(--cream2)}
+.orders-supplier-filter{height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);font:700 10px/1 inherit;cursor:pointer;padding:0 8px;transition:border-color .15s,background .15s,color .15s}
+.orders-supplier-filter:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2)}
+.orders-supplier-filter.active{background:var(--brown);border-color:var(--brown);color:#fff}
+.orders-supplier-list{padding:8px;overflow-y:auto}
+.orders-supplier-all,.orders-supplier-item{width:100%;text-align:left;border:1.5px solid transparent;background:transparent;border-radius:11px;padding:9px 10px;cursor:pointer;color:var(--text2);font-family:inherit;transition:background .15s,border-color .15s}
+.orders-supplier-all{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:4px}
+.orders-supplier-item{display:block;margin-bottom:5px}
+.orders-supplier-all:hover,.orders-supplier-item:hover{background:var(--cream2);border-color:var(--cream3)}
+.orders-supplier-all.active,.orders-supplier-item.active{background:var(--sidebar-active-bg);border-color:var(--brown-light);color:var(--brown)}
+.orders-supplier-item-top{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.orders-supplier-item-name{font-size:11px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.orders-supplier-edit{width:22px;height:22px;border:0;background:transparent;color:var(--text3);border-radius:7px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex:0 0 22px}
+.orders-supplier-edit:hover{background:var(--surface);color:var(--brown)}
+.orders-supplier-item-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px}
+.orders-supplier-mini-cat{display:inline-flex;align-items:center;min-height:18px;padding:1px 6px;border-radius:7px;background:var(--cream2);border:1px solid var(--cream3);font-size:8.5px;font-weight:800;color:var(--brown)}
+.orders-supplier-mini-text{font-size:8.5px;color:var(--text3)}
+.orders-supplier-count{font:800 9px/1 'Nunito',sans-serif;color:var(--text3)}
+@media(max-width:1080px){
+  .orders-supplier-layout{grid-template-columns:1fr}
+  .orders-supplier-sidebar{position:relative;top:auto;max-height:none}
+  .orders-supplier-filter-row{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .orders-supplier-filter-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
 .supplier-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .supplier-filter-chip{border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);border-radius:999px;padding:5px 11px;font:700 11px/1.2 inherit;cursor:pointer}
 .supplier-filter-chip.active{background:var(--brown);border-color:var(--brown);color:#fff}
@@ -2490,12 +2524,24 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">🏪 供應商</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
-  <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
-  <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
-  <div id="order-search-summary" class="order-search-summary" aria-live="polite"></div>
-  <div id="order-list"></div>
-  <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
+  <div class="orders-supplier-layout">
+    <div class="orders-main-column">
+      <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
+      <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
+      <div id="order-search-summary" class="order-search-summary" aria-live="polite"></div>
+      <div id="order-list"></div>
+      <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
+    </div>
+    <aside class="orders-supplier-sidebar" aria-label="供應商">
+      <div class="orders-supplier-sidebar-head">
+        <div class="orders-supplier-sidebar-title"><span>🏪 供應商</span><span id="orders-supplier-visible-count" class="orders-supplier-count"></span></div>
+        <div class="orders-supplier-sidebar-sub">選店家後，左邊只看這家的採購紀錄</div>
+      </div>
+      <div class="orders-supplier-filter-row" id="orders-supplier-category-filters"></div>
+      <div class="orders-supplier-list" id="orders-supplier-list"></div>
+    </aside>
+  </div>
 </div>
 
 <div class="page" id="page-sales">
@@ -5104,18 +5150,26 @@ function getProductPawTitle(p){
 }
 function renderProductPawIcon(p){
   const state=getProductPawState(p);
-  // 使用 inline SVG 向量貓掌，20×20 顯示時在 Retina / 高解析螢幕也能保持銳利。
-  // 三種狀態共用同一個輪廓，只透過 currentColor 與填色方式切換。
+  // 依照參考圖重新描繪：兩顆上方腳趾較高、左右兩顆較低，
+  // 中央肉墊為寬而圓的拱形。線條與垃圾桶使用相同 1.8px SVG stroke。
   const filled=state!=='outline';
   const fill=filled?'currentColor':'none';
   const stroke='currentColor';
-  const strokeWidth=filled?'0':'1.9';
+  const strokeWidth=filled?'0':'1.8';
   return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" style="display:block;width:20px;height:20px;overflow:visible">
-    <ellipse cx="7.1" cy="5.8" rx="2.15" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(-18 7.1 5.8)"/>
-    <ellipse cx="12" cy="4.55" rx="2.1" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
-    <ellipse cx="16.9" cy="5.8" rx="2.15" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(18 16.9 5.8)"/>
-    <ellipse cx="4.5" cy="10.25" rx="1.95" ry="2.55" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(-28 4.5 10.25)"/>
-    <path d="M12 9.4c-2.25 0-4.15 1.22-5.4 3.1-1.02 1.55-1.48 3.18-.86 4.42.55 1.1 1.82 1.5 3.28 1.18.97-.21 1.82-.68 2.98-.68s2.01.47 2.98.68c1.46.32 2.73-.08 3.28-1.18.62-1.24.16-2.87-.86-4.42C16.15 10.62 14.25 9.4 12 9.4Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+    <g fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="5.35" cy="8.65" rx="1.65" ry="2.30" transform="rotate(-18 5.35 8.65)"/>
+      <ellipse cx="9.15" cy="5.15" rx="1.90" ry="2.60" transform="rotate(-5 9.15 5.15)"/>
+      <ellipse cx="14.85" cy="5.15" rx="1.90" ry="2.60" transform="rotate(5 14.85 5.15)"/>
+      <ellipse cx="18.65" cy="8.65" rx="1.65" ry="2.30" transform="rotate(18 18.65 8.65)"/>
+      <path d="M7.45 18.15
+               C6.25 17.20 6.15 15.55 6.95 14.10
+               C7.95 12.30 9.75 10.65 12 10.45
+               C14.25 10.65 16.05 12.30 17.05 14.10
+               C17.85 15.55 17.75 17.20 16.55 18.15
+               C15.55 18.95 14.00 19.15 12 19.15
+               C10.00 19.15 8.45 18.95 7.45 18.15 Z"/>
+    </g>
   </svg>`;
 }
 function renderSidebarConfirmedPawIcon(size=14){
@@ -10663,12 +10717,75 @@ function renderOrderSearchSummary(q=orderSearchQuery){
 }
 // 採購單展開狀態：renderOrders() 被背景刷新重新呼叫時也保持展開
 const expandedOrderAccordions=new Set();
+
+let activeOrderSupplierFilter='all';
+let activeOrderSupplierCategory='all';
+
+function setOrderSupplierCategory(value){
+  activeOrderSupplierCategory=value||'all';
+  if(activeOrderSupplierFilter!=='all'){
+    const profile=ensureSupplierProfile(activeOrderSupplierFilter);
+    if(activeOrderSupplierCategory!=='all'&&profile&&profile.category!==activeOrderSupplierCategory){
+      activeOrderSupplierFilter='all';
+    }
+  }
+  renderOrders();
+}
+function setOrderSupplierFilter(name){
+  activeOrderSupplierFilter=name||'all';
+  renderOrders();
+}
+function renderOrderSupplierSidebar(){
+  const filterEl=document.getElementById('orders-supplier-category-filters');
+  const listEl=document.getElementById('orders-supplier-list');
+  if(!filterEl||!listEl)return;
+
+  const cats=[
+    {value:'all',label:'全部'},
+    {value:'patch',label:'布貼'},
+    {value:'packaging',label:'包裝'},
+    {value:'printing',label:'印刷'},
+    {value:'other',label:'其他'}
+  ];
+  filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')">${c.label}</button>`).join('');
+
+  const names=[...new Set((DB.orders||[]).map(o=>String(o.supplier||'').trim()).filter(Boolean))];
+  const stats=names.map(name=>{
+    const orders=getSupplierOrders(name);
+    const profile=ensureSupplierProfile(name);
+    return {name,orders,profile,count:orders.length,latest:orders[0]?.date||''};
+  }).filter(s=>activeOrderSupplierCategory==='all'||s.profile.category===activeOrderSupplierCategory)
+    .sort((a,b)=>(b.latest||'').localeCompare(a.latest||'')||a.name.localeCompare(b.name,'zh-Hant'));
+
+  const countEl=document.getElementById('orders-supplier-visible-count');
+  if(countEl)countEl.textContent=`${stats.length} 家`;
+
+  listEl.innerHTML=`<button type="button" class="orders-supplier-all ${activeOrderSupplierFilter==='all'?'active':''}" onclick="setOrderSupplierFilter('all')"><span>全部供應商</span><span class="orders-supplier-count">${(DB.orders||[]).length} 單</span></button>`+
+    (stats.length?stats.map(s=>{
+      const safeName=JSON.stringify(s.name).replace(/"/g,'&quot;');
+      return `<button type="button" class="orders-supplier-item ${activeOrderSupplierFilter===s.name?'active':''}" onclick="setOrderSupplierFilter(${safeName})">
+        <div class="orders-supplier-item-top">
+          <span class="orders-supplier-item-name">${s.name}</span>
+          <span class="orders-supplier-edit" title="編輯供應商" onclick="event.stopPropagation();openSupplierProfile(${safeName})">⋯</span>
+        </div>
+        <div class="orders-supplier-item-meta">
+          <span class="orders-supplier-mini-cat">${supplierCategoryLabel(s.profile.category)}</span>
+          <span class="orders-supplier-mini-text">${s.count} 次 · ${s.latest||'—'}</span>
+        </div>
+      </button>`;
+    }).join(''):`<div style="padding:18px 10px;text-align:center;color:var(--text3);font-size:10.5px">這個分類還沒有供應商</div>`);
+}
+
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
   const byTimeDesc=(a,b)=>{const d=b.date.localeCompare(a.date);if(d!==0)return d;return(b.createdAt||0)-(a.createdAt||0);};
   const byTimeAsc=(a,b)=>-byTimeDesc(a,b);
   let sorted=[...DB.orders];
+  renderOrderSupplierSidebar();
+  if(activeOrderSupplierFilter!=='all'){
+    sorted=sorted.filter(o=>String(o.supplier||'').trim()===activeOrderSupplierFilter);
+  }
   if(orderSortMode==='oldest'){
     sorted.sort(byTimeAsc);
   }else if(orderSortMode==='pending_first'){
@@ -10685,7 +10802,7 @@ function renderOrders(){
   if(!sorted.length){
     container.innerHTML='';
     const emptyText=em?em.querySelector('.empty-text'):null;
-    if(emptyText)emptyText.textContent=activeSearch?'找不到符合的採購單':'還沒有採購單';
+    if(emptyText)emptyText.textContent=activeSearch?'找不到符合的採購單':(activeOrderSupplierFilter!=='all'?'這家供應商目前沒有採購單':'還沒有採購單');
     em.classList.remove('hidden');
     return;
   }
@@ -14247,6 +14364,7 @@ function saveSupplierProfile(){
   saveDB();
   renderSupplierCategoryFilters();
   renderSupplierStatsBody();
+  renderOrderSupplierSidebar();
   closeModal('modal-supplier-profile');
   toast('供應商分類已儲存','success');
 }
