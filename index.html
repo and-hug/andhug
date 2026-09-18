@@ -109,7 +109,11 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .search-wrap{position:relative;}
 .search-input{background:var(--surface);border:1.5px solid var(--cream3);color:var(--text);font-family:inherit;font-size:13px;padding:9px 16px 9px 36px;border-radius:20px;width:260px;outline:none;transition:border-color 0.2s;}
 .search-input:focus{border-color:var(--brown);}
+#page-products .product-search-toolbar .search-input{height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0;}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;}
+#page-products .search-wrap .search-icon,#page-sales .search-wrap .search-icon{width:14px;height:14px;color:var(--text3);pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:0;line-height:0;}
+#page-products .search-wrap .search-icon svg,#page-sales .search-wrap .search-icon svg{width:14px;height:14px;display:block;}
+#page-products .search-input::placeholder,#page-sales .search-input::placeholder{color:var(--text3);font-weight:500;opacity:1;}
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(61,47,31,0.4);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
 .settings-drawer-overlay{justify-content:flex-end !important;padding:0 !important;align-items:stretch !important;}
 .settings-drawer{width:380px;max-width:90vw;height:100%;background:var(--cream);box-shadow:-8px 0 28px rgba(122,90,63,.18);display:flex;flex-direction:column;animation:drawerSlideIn .28s cubic-bezier(.25,.8,.35,1);}
@@ -421,14 +425,31 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-copy-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px}
 @media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn{width:100%}}
 .order-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--cream3);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
-.order-search-wrap{position:relative;width:230px;min-width:190px;height:38px;display:flex;align-items:center;}
+.order-search-wrap{position:relative;width:230px;min-width:190px;height:34px;display:flex;align-items:center;}
 .order-search-wrap .order-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);pointer-events:none;}
-.order-search-input{width:100%;height:38px;box-sizing:border-box;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);color:var(--text1);font:600 12px/1 inherit;padding:0 32px 0 32px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;}
+.order-search-input{width:100%;height:34px;box-sizing:border-box;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);color:var(--text1);font:600 12px/1 inherit;padding:0 32px 0 32px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;}
 .order-search-input::placeholder{color:var(--text3);font-weight:500;}
 .order-search-input:focus{border-color:var(--brown);box-shadow:0 0 0 3px rgba(139,111,71,.08);background:#fff;}
 .order-search-clear{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:22px;height:22px;border:0;border-radius:7px;background:transparent;color:var(--text3);font:700 16px/22px inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
 .order-search-clear:hover{background:var(--cream2);color:var(--brown);}
 .order-search-clear.hidden{display:none!important;}
+.order-search-summary{display:none;margin:0 0 12px;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;}
+.order-search-summary.visible{display:block;}
+.order-search-summary-main{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--cream3);}
+.order-search-summary-title{min-width:0;flex:1;font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.order-search-summary-title span{color:var(--brown);}
+.order-search-summary-metrics{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.order-search-summary-chip{display:inline-flex;align-items:center;justify-content:center;min-height:25px;padding:4px 9px;border:1px solid var(--cream3);border-radius:999px;background:var(--cream2);color:var(--text2);font-size:10px;font-weight:800;white-space:nowrap;}
+.order-search-summary-chip strong{font-family:'Nunito',sans-serif;font-size:12px;color:var(--brown);margin:0 2px;}
+.order-search-summary-list{padding:4px 14px 7px;}
+.order-search-summary-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--cream2);}
+.order-search-summary-row:last-child{border-bottom:0;}
+.order-search-summary-name{min-width:0;display:flex;align-items:baseline;gap:7px;}
+.order-search-summary-name-main{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.order-search-summary-sku{font:700 9px/1 monospace;color:var(--text3);white-space:nowrap;}
+.order-search-summary-qty{font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:var(--brown);white-space:nowrap;}
+.order-search-summary-empty{padding:10px 14px;font-size:11px;color:var(--text3);}
+@media(max-width:700px){.order-search-summary-main{align-items:flex-start;flex-direction:column}.order-search-summary-metrics{justify-content:flex-start}.order-search-summary-row{grid-template-columns:minmax(0,1fr) auto}}
 .order-search-match{background:rgba(216,185,143,.20)!important;border-radius:8px;}
 .order-search-group-match{background:rgba(216,185,143,.14)!important;border-radius:8px;}
 @media(max-width:900px){.order-search-wrap{width:100%;min-width:180px;order:-1;flex-basis:100%;}.order-search-input{width:100%;}}
@@ -2317,8 +2338,8 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 <nav>
   <div class="nav-brand" style="display:flex;align-items:center;gap:8px"><img src="data:image/png;base64,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" alt="logo" style="height:16px;width:auto"> <span class="ui-editable" data-ui-key="nav-brand" onclick="handleUIEditableClick(event,this)">布貼管理</span></div>
   <button class="nav-link active" onclick="showPage('overview',this)"><span class="ui-editable" data-ui-key="nav-overview" onclick="handleUIEditableClick(event,this)">🏠 總覽</span></button>
-  <button class="nav-link" onclick="showPage('products',this)"><span class="ui-editable" data-ui-key="nav-products" onclick="handleUIEditableClick(event,this)">📦 商品庫</span></button>
   <button class="nav-link" onclick="showPage('orders',this)"><span class="ui-editable" data-ui-key="nav-orders" onclick="handleUIEditableClick(event,this)">🛒 採購單</span></button>
+  <button class="nav-link" onclick="showPage('products',this)"><span class="ui-editable" data-ui-key="nav-products" onclick="handleUIEditableClick(event,this)">📦 商品庫</span></button>
   <button class="nav-link" onclick="showPage('sales',this)"><span class="ui-editable" data-ui-key="nav-sales" onclick="handleUIEditableClick(event,this)">💰 開單</span></button>
   <button class="nav-link" onclick="showPage('sales-history',this)"><span class="ui-editable" data-ui-key="nav-sales-history" onclick="handleUIEditableClick(event,this)">🧾 紀錄</span></button>
   <button class="nav-link" onclick="showPage('reports',this)"><span class="ui-editable" data-ui-key="nav-reports" onclick="handleUIEditableClick(event,this)">📊 報表</span></button>
@@ -2368,7 +2389,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header">
     <div class="section-title">📦 商品庫</div>
     <div class="product-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="requestProductGridRender()"></div>
+      <div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="requestProductGridRender()"></div>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
@@ -2459,6 +2480,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
+  <div id="order-search-summary" class="order-search-summary" aria-live="polite"></div>
   <div id="order-list"></div>
   <div class="empty hidden" id="order-empty"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>
 </div>
@@ -2471,7 +2493,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
   <div class="cart-layout">
     <div>
-      <div class="section-header"><div class="section-title">🏪 選商品</div><div class="sale-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="scheduleLightRender('sale-products',renderSaleProducts)"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表"><span class="view-glyph">☰</span></button></div><button type="button" class="btn btn-secondary btn-sm" onclick="openSaleHistoryModal()" title="快速查看銷售紀錄" style="height:34px;padding:0 12px;border-radius:12px">📋 銷售紀錄</button></div></div>
+      <div class="section-header"><div class="section-title">🏪 選商品</div><div class="sale-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="scheduleLightRender('sale-products',renderSaleProducts)"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表"><span class="view-glyph">☰</span></button></div><button type="button" class="btn btn-secondary btn-sm" onclick="openSaleHistoryModal()" title="快速查看銷售紀錄" style="height:34px;padding:0 12px;border-radius:12px">📋 銷售紀錄</button></div></div>
       <div class="sale-cat-layout" style="display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:stretch">
         <div>
           <div id="sale-cat-sidebar" class="sticky-sidebar"></div>
@@ -10431,6 +10453,56 @@ function toggleOrderItemGroupRow(gid2){
   body.style.display=open?'none':'block';
   if(arrow)arrow.style.transform=open?'':'rotate(-180deg)';
 }
+function escapeOrderSearchHtml(v){
+  return String(v==null?'':v).replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+function getOrderSearchSummary(q){
+  const needle=normalizeOrderSearchText(q);
+  if(!needle)return null;
+  const matchedOrders=[];
+  const rows=new Map();
+  let totalQty=0;
+  (DB.orders||[]).forEach(order=>{
+    const matched=(order.items||[]).filter(item=>isOrderItemSearchMatch(item,needle));
+    if(!matched.length)return;
+    matchedOrders.push(order);
+    matched.forEach(item=>{
+      const p=item&&item.productId?DB.products.find(x=>String(x.id)===String(item.productId)):null;
+      const sku=String((p&&p.sku)||item.sku||'').trim();
+      const name=String(item.name||(p&&p.name)||'未命名商品').trim();
+      const qty=Number(item.qty)||0;
+      const key=sku?`sku:${sku.toLowerCase()}`:`name:${name.toLowerCase()}`;
+      if(!rows.has(key))rows.set(key,{name,sku,qty:0,orderIds:new Set()});
+      const row=rows.get(key);
+      row.qty+=qty;
+      row.orderIds.add(String(order.id));
+      totalQty+=qty;
+    });
+  });
+  const items=[...rows.values()].sort((a,b)=>b.qty-a.qty||a.name.localeCompare(b.name,'zh-Hant'));
+  return {query:String(q||'').trim(),orderCount:matchedOrders.length,itemCount:items.length,totalQty,items};
+}
+function renderOrderSearchSummary(q=orderSearchQuery){
+  const el=document.getElementById('order-search-summary');
+  if(!el)return;
+  const summary=getOrderSearchSummary(q);
+  if(!summary){el.classList.remove('visible');el.innerHTML='';return;}
+  const query=escapeOrderSearchHtml(summary.query);
+  if(!summary.items.length){el.classList.remove('visible');el.innerHTML='';return;}
+  const rows=summary.items.map(item=>`<div class="order-search-summary-row">
+    <div class="order-search-summary-name"><span class="order-search-summary-name-main">${escapeOrderSearchHtml(item.name)}</span>${item.sku?`<span class="order-search-summary-sku">${escapeOrderSearchHtml(item.sku)}</span>`:''}</div>
+    <div class="order-search-summary-qty">${item.qty} 個</div>
+  </div>`).join('');
+  el.innerHTML=`<div class="order-search-summary-main">
+    <div class="order-search-summary-title">搜尋「<span>${query}</span>」</div>
+    <div class="order-search-summary-metrics">
+      <span class="order-search-summary-chip"><strong>${summary.itemCount}</strong> 款</span>
+      <span class="order-search-summary-chip"><strong>${summary.orderCount}</strong> 張採購單</span>
+      <span class="order-search-summary-chip">共 <strong>${summary.totalQty}</strong> 個</span>
+    </div>
+  </div><div class="order-search-summary-list">${rows}</div>`;
+  el.classList.add('visible');
+}
 // 採購單展開狀態：renderOrders() 被背景刷新重新呼叫時也保持展開
 const expandedOrderAccordions=new Set();
 function renderOrders(){
@@ -10451,6 +10523,7 @@ function renderOrders(){
   const activeSearch=normalizeOrderSearchText(orderSearchQuery);
   if(activeSearch)sorted=sorted.filter(o=>orderMatchesSearch(o,activeSearch));
   syncOrderSearchUI();
+  renderOrderSearchSummary(orderSearchQuery);
   if(!sorted.length){
     container.innerHTML='';
     const emptyText=em?em.querySelector('.empty-text'):null;
