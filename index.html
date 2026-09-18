@@ -2726,9 +2726,9 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header">
     <div class="section-title">📊 銷售報表</div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月">📅 本月</button>
+      <button class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月">🌸 本月</button>
       <div style="position:relative">
-        <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px">📅 <span id="report-month-btn-label"></span> <span style="font-size:10px;color:var(--text3)">▾</span></button>
+        <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span style="font-size:10px;color:var(--text3)">▾</span></button>
         <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:280px;overflow-y:auto"></div>
       </div>
     </div>
