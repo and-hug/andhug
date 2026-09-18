@@ -2651,6 +2651,163 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 </style>
 
+
+<style id="supplier-delete-ui-refine-v3">
+/* Smaller delete X */
+#supplier-profile-category-options .supplier-category-custom-remove{
+  width:12px !important;
+  height:12px !important;
+  min-width:12px !important;
+  min-height:12px !important;
+  right:-4px !important;
+  top:-6px !important;
+}
+#supplier-profile-category-options .supplier-category-custom-remove svg{
+  width:6px !important;
+  height:6px !important;
+  flex:0 0 6px !important;
+}
+
+/* Move only the text/content of the whole row up 1px */
+#supplier-profile-category-options .supplier-category-choice > span,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  transform:translateY(-1px) !important;
+}
+</style>
+
+
+<style id="order-search-summary-thumbnails">
+.order-search-summary-row{
+  grid-template-columns:minmax(0,1fr) auto !important;
+  min-height:42px;
+}
+.order-search-summary-name{
+  align-items:center !important;
+  gap:8px !important;
+}
+.order-search-summary-thumb{
+  width:30px;
+  height:30px;
+  flex:0 0 30px;
+  border-radius:7px;
+  overflow:hidden;
+  background:var(--cream2);
+  border:1px solid var(--cream3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text3);
+  font-size:13px;
+}
+.order-search-summary-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.order-search-summary-text{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:7px;
+  flex-wrap:wrap;
+}
+</style>
+
+
+<style id="supplier-categories-tags-34">
+/* 供應類別整排統一 34px */
+#supplier-profile-category-options .supplier-category-choice,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+}
+
+/* 新增類別編輯狀態也維持 34px */
+#supplier-profile-category-options .supplier-category-add-input,
+#supplier-profile-category-options .supplier-category-add-confirm{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+}
+
+/* 標籤輸入框同樣 34px */
+#supplier-profile-tags{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+</style>
+
+
+<style id="order-summary-chip-text-up-1">
+.order-search-summary-chip-text{
+  display:inline-block;
+  transform:translateY(-1px);
+}
+</style>
+
+
+<style id="supplier-card-tag-text-up-1">
+.orders-supplier-mini-cat,
+.supplier-meta-chip.category{
+  position:relative;
+  top:-1px;
+}
+</style>
+
+
+<style id="global-box-text-centering">
+/* 統一「框框裡的文字」視覺中心：框本身不動，只把文字往上 1px */
+.ui-box-text{
+  display:inline-block !important;
+  line-height:1 !important;
+  transform:translateY(-1px) !important;
+}
+
+/* 清掉之前零散的位移，改由 ui-box-text 統一管理 */
+#supplier-profile-category-options .supplier-category-choice > span{
+  transform:none !important;
+}
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  transform:none !important;
+}
+.orders-supplier-mini-cat,
+.supplier-meta-chip.category{
+  top:0 !important;
+}
+
+/* 所有這批框型控制本體維持真正 flex 置中 */
+#supplier-profile-category-options .supplier-category-choice,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle,
+#supplier-profile-category-options .supplier-category-add-confirm,
+#orders-supplier-category-filters .orders-supplier-filter,
+.orders-supplier-mini-cat,
+.supplier-meta-chip.category{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+}
+</style>
+
+
+<style id="global-box-text-centering-fix-v2">
+#supplier-profile-category-options .supplier-category-choice > .ui-box-text{
+  transform:translateY(-1px) !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -10968,8 +11125,10 @@ function getOrderSearchSummary(q){
       const name=String(item.name||(p&&p.name)||'未命名商品').trim();
       const qty=Number(item.qty)||0;
       const key=sku?`sku:${sku.toLowerCase()}`:`name:${name.toLowerCase()}`;
-      if(!rows.has(key))rows.set(key,{name,sku,qty:0,orderIds:new Set()});
+      const img=String(item.img||(p&&p.img)||'').trim();
+      if(!rows.has(key))rows.set(key,{name,sku,img,qty:0,orderIds:new Set()});
       const row=rows.get(key);
+      if(!row.img&&img)row.img=img;
       row.qty+=qty;
       row.orderIds.add(String(order.id));
       totalQty+=qty;
@@ -10986,15 +11145,18 @@ function renderOrderSearchSummary(q=orderSearchQuery){
   const query=escapeOrderSearchHtml(summary.query);
   if(!summary.items.length){el.classList.remove('visible');el.innerHTML='';return;}
   const rows=summary.items.map(item=>`<div class="order-search-summary-row">
-    <div class="order-search-summary-name"><span class="order-search-summary-name-main">${escapeOrderSearchHtml(item.name)}</span>${item.sku?`<span class="order-search-summary-sku">${escapeOrderSearchHtml(item.sku)}</span>`:''}</div>
+    <div class="order-search-summary-name">
+      <span class="order-search-summary-thumb">${item.img?`<img src="${escapeOrderSearchHtml(item.img)}" alt="">`:'📦'}</span>
+      <span class="order-search-summary-text"><span class="order-search-summary-name-main">${escapeOrderSearchHtml(item.name)}</span>${item.sku?`<span class="order-search-summary-sku">${escapeOrderSearchHtml(item.sku)}</span>`:''}</span>
+    </div>
     <div class="order-search-summary-qty">${item.qty} 個</div>
   </div>`).join('');
   el.innerHTML=`<div class="order-search-summary-main">
     <div class="order-search-summary-title">搜尋「<span>${query}</span>」</div>
     <div class="order-search-summary-metrics">
-      <span class="order-search-summary-chip"><strong>${summary.itemCount}</strong> 款</span>
-      <span class="order-search-summary-chip"><strong>${summary.orderCount}</strong> 張採購單</span>
-      <span class="order-search-summary-chip">共 <strong>${summary.totalQty}</strong> 個</span>
+      <span class="order-search-summary-chip"><strong>${summary.itemCount}</strong><span class="order-search-summary-chip-text">款</span></span>
+      <span class="order-search-summary-chip"><strong>${summary.orderCount}</strong><span class="order-search-summary-chip-text">張採購單</span></span>
+      <span class="order-search-summary-chip"><span class="order-search-summary-chip-text">共</span><strong>${summary.totalQty}</strong><span class="order-search-summary-chip-text">個</span></span>
     </div>
   </div><div class="order-search-summary-list">${rows}</div>`;
   el.classList.add('visible');
@@ -11025,7 +11187,7 @@ function renderOrderSupplierSidebar(){
   if(!filterEl||!listEl)return;
 
   const cats=[{value:'all',label:'全部'},...getSupplierCategoryOptions()];
-  filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')">${c.label}</button>`).join('');
+  filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')"><span class="ui-box-text">${c.label}</span></button>`).join('');
 
   const names=[...new Set((DB.orders||[]).map(o=>String(o.supplier||'').trim()).filter(Boolean))];
   const stats=names.map(name=>{
@@ -11047,7 +11209,7 @@ function renderOrderSupplierSidebar(){
           <span class="orders-supplier-edit" title="編輯供應商" onclick="event.stopPropagation();openSupplierProfile(${safeName})">⋯</span>
         </div>
         <div class="orders-supplier-item-meta">
-          ${supplierCategoryLabels(s.profile).slice(0,2).map(label=>`<span class="orders-supplier-mini-cat">${label}</span>`).join('')}
+          ${supplierCategoryLabels(s.profile).slice(0,2).map(label=>`<span class="orders-supplier-mini-cat"><span class="ui-box-text">${label}</span></span>`).join('')}
           <span class="orders-supplier-mini-text">${s.count} 次 · ${s.latest||'—'}</span>
         </div>
       </button>`;
@@ -14575,14 +14737,14 @@ function renderSupplierProfileCategoryChoices(){
   el.classList.toggle('supplier-category-delete-mode',supplierCategoryDeleteMode);
   el.innerHTML=options.map(o=>{
     const active=activeSupplierProfileCategories.includes(o.value);
-    const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileCategory('${o.value}')"><span>${o.label}</span></button>`;
+    const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileCategory('${o.value}')"><span class="ui-box-text">${o.label}</span></button>`;
     return `<span class="supplier-category-custom-wrap">${button}<button type="button" class="supplier-category-custom-remove" title="刪除分類" aria-label="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${o.value}')"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button></span>`;
   }).join('')+
-  `<button type="button" class="supplier-category-add" onclick="openSupplierCategoryAddEditor()">＋ 新增類別</button>
-   <button type="button" class="supplier-category-delete-toggle ${supplierCategoryDeleteMode?'active':''}" onclick="toggleSupplierCategoryDeleteMode()">${supplierCategoryDeleteMode?'完成':'刪除類別'}</button>
+  `<button type="button" class="supplier-category-add" onclick="openSupplierCategoryAddEditor()"><span class="ui-box-text">＋ 新增類別</span></button>
+   <button type="button" class="supplier-category-delete-toggle ${supplierCategoryDeleteMode?'active':''}" onclick="toggleSupplierCategoryDeleteMode()"><span class="ui-box-text">${supplierCategoryDeleteMode?'完成':'刪除類別'}</span></button>
    <span class="supplier-category-add-editor" id="supplier-category-add-editor">
      <input class="supplier-category-add-input" id="supplier-category-add-input" maxlength="18" placeholder="輸入類別" onkeydown="if(event.key==='Enter'){event.preventDefault();addSupplierCustomCategory();}else if(event.key==='Escape'){closeSupplierCategoryAddEditor();}">
-     <button type="button" class="supplier-category-add-confirm" onclick="addSupplierCustomCategory()">新增</button>
+     <button type="button" class="supplier-category-add-confirm" onclick="addSupplierCustomCategory()"><span class="ui-box-text">新增</span></button>
    </span>`;
 }
 function toggleSupplierProfileCategory(value){
@@ -14741,7 +14903,7 @@ function renderSupplierStatsBody(){
         <div style="min-width:0;flex:1">
           <div style="font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${supplier}</div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
-            ${supplierCategoryLabels(s.profile).map(label=>`<span class="supplier-meta-chip category">${label}</span>`).join('')}
+            ${supplierCategoryLabels(s.profile).map(label=>`<span class="supplier-meta-chip category"><span class="ui-box-text">${label}</span></span>`).join('')}
             ${tags.map(t=>`<span class="supplier-meta-chip">${t}</span>`).join('')}
           </div>
         </div>
