@@ -85,9 +85,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .pc-quick-paw{position:absolute;top:7px;left:7px;z-index:5;width:20px;height:20px;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:0;opacity:1;transition:transform .15s ease;}
 .pc-quick-paw:hover{transform:scale(1.06);}
 .pc-quick-paw svg{display:block;width:20px;height:20px;overflow:visible;}
-.pc-quick-paw.state-outline{color:#9C8068;}
-.pc-quick-paw.state-half{color:#D8B98F;}
-.pc-quick-paw.state-full{color:#765039;}
+.pc-quick-paw.state-outline,.pc-quick-paw.state-half,.pc-quick-paw.state-full{color:#FAF7F2;}
 .product-img{width:100%;aspect-ratio:1;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .product-img img{width:100%;height:100%;object-fit:cover;padding:0;border-radius:inherit;background:transparent;}
 .product-img .no-img{font-size:36px;}
@@ -475,6 +473,13 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .orders-supplier-filter{height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);font:700 10px/1 inherit;cursor:pointer;padding:0 8px;transition:border-color .15s,background .15s,color .15s}
 .orders-supplier-filter:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2)}
 .orders-supplier-filter.active{background:var(--brown);border-color:var(--brown);color:#fff}
+.orders-supplier-filter-wrap{position:relative;min-width:0}
+.orders-supplier-filter-wrap .orders-supplier-filter{width:100%;padding-right:22px}
+.orders-supplier-filter-delete{position:absolute;right:4px;top:4px;width:18px;height:18px;border:0;border-radius:6px;background:transparent;color:var(--text3);font:800 11px/1 inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s,background .12s,color .12s}
+.orders-supplier-filter-wrap:hover .orders-supplier-filter-delete{opacity:1}
+.orders-supplier-filter-delete:hover{background:var(--cream2);color:var(--brown)}
+.orders-supplier-filter-wrap.active .orders-supplier-filter-delete{color:rgba(255,255,255,.8)}
+.orders-supplier-filter-wrap.active .orders-supplier-filter-delete:hover{background:rgba(255,255,255,.16);color:#fff}
 .orders-supplier-list{padding:8px;overflow-y:auto}
 .orders-supplier-all,.orders-supplier-item{width:100%;text-align:left;border:1.5px solid transparent;background:transparent;border-radius:11px;padding:9px 10px;cursor:pointer;color:var(--text2);font-family:inherit;transition:background .15s,border-color .15s}
 .orders-supplier-all{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:4px}
@@ -506,12 +511,23 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .supplier-meta-chip{display:inline-flex;align-items:center;min-height:20px;padding:2px 7px;border-radius:999px;background:var(--cream2);border:1px solid var(--cream3);font-size:9.5px;font-weight:700;color:var(--text2);white-space:nowrap}
 .supplier-meta-chip.category{color:var(--brown);background:#faf3e8;border-color:#ead8bc}
 .supplier-profile-history{border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden}
-.supplier-category-multi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.supplier-category-choice{height:34px;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);color:var(--text2);font:700 11px/1 inherit;cursor:pointer;padding:0 10px;display:flex;align-items:center;justify-content:flex-start;gap:7px;transition:background .15s,border-color .15s,color .15s}
+.supplier-category-multi{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+.supplier-category-choice{height:30px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text2);font:700 10.5px/1 inherit;cursor:pointer;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex:0 0 auto;transition:background .15s,border-color .15s,color .15s}
 .supplier-category-choice:hover{background:var(--cream2);border-color:var(--brown-light);color:var(--brown)}
 .supplier-category-choice.active{background:var(--sidebar-active-bg);border-color:var(--brown-light);color:var(--brown)}
 .supplier-category-choice .supplier-category-check{width:15px;height:15px;border:1.5px solid var(--cream4);border-radius:5px;background:var(--surface);display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex:0 0 15px}
 .supplier-category-choice.active .supplier-category-check{background:var(--brown);border-color:var(--brown)}
+.supplier-category-add{height:30px;border:1.5px dashed var(--cream4);border-radius:9px;background:var(--cream2);color:var(--brown);font:800 10.5px/1 inherit;cursor:pointer;padding:0 10px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto}
+.supplier-category-add:hover{border-color:var(--brown-light);background:var(--surface)}
+.supplier-category-custom-wrap{position:relative;display:inline-flex;flex:0 0 auto}
+.supplier-category-custom-remove{position:absolute;right:-4px;top:-5px;width:15px;height:15px;border-radius:50%;border:1.5px solid var(--surface);background:var(--brown);color:#fff;font:800 9px/1 inherit;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .12s;z-index:2}
+.supplier-category-custom-wrap:hover .supplier-category-custom-remove{opacity:1}
+.supplier-category-add-editor{display:none;align-items:center;gap:5px;flex:0 0 auto}
+.supplier-category-add-editor.show{display:flex}
+.supplier-category-add-input{width:110px;height:30px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--text);font:600 10.5px/1 inherit;padding:0 9px;outline:none}
+.supplier-category-add-input:focus{border-color:var(--brown);box-shadow:0 0 0 2px rgba(139,111,71,.08)}
+.supplier-category-add-confirm{height:30px;padding:0 9px;border:0;border-radius:9px;background:var(--brown);color:#fff;font:800 10px/1 inherit;cursor:pointer}
+
 
 #supplier-profile-summary>div{transform:translateY(-3px);}
 
@@ -3730,7 +3746,7 @@ function normalizeProductToCurrentSchema(p){
   return p;
 }
 
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];if(!Array.isArray(DB.supplierCategoryHidden))DB.supplierCategoryHidden=['tools'];
 if(Array.isArray(DB.orders)&&Array.isArray(DB.products)){
   DB.orders.forEach(o=>{
     const s=String(o.supplier||'').trim();
@@ -5170,11 +5186,11 @@ function getProductPawTitle(p){
 function renderProductPawIcon(p){
   const state=getProductPawState(p);
   // 依照參考圖重新描繪：兩顆上方腳趾較高、左右兩顆較低，
-  // 中央肉墊為寬而圓的拱形。線條視覺上調細為 1.5px，讓小尺寸貓掌看起來更接近垃圾桶的輕盈線感。
-  const filled=state!=='outline';
-  const fill=filled?'currentColor':'none';
-  const stroke='currentColor';
-  const strokeWidth=filled?'0':'1.5';
+  // 中央肉墊為寬而圓的拱形。貓掌改為實心，填色使用布貼管理最上方導覽列的背景色 #FAF7F2。
+  const filled=true;
+  const fill='currentColor';
+  const stroke='none';
+  const strokeWidth='0';
   return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" style="display:block;width:20px;height:20px;overflow:visible">
     <g fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="5.35" cy="8.65" rx="1.65" ry="2.30" transform="rotate(-18 5.35 8.65)"/>
@@ -10759,16 +10775,17 @@ function renderOrderSupplierSidebar(){
   const listEl=document.getElementById('orders-supplier-list');
   if(!filterEl||!listEl)return;
 
-  const cats=[
-    {value:'all',label:'全部'},
-    {value:'patch',label:'布貼'},
-    {value:'ribbon',label:'布條'},
-    {value:'packaging',label:'包裝'},
-    {value:'printing',label:'印刷'},
-    {value:'tools',label:'工具 / 配件'},
-    {value:'other',label:'其他'}
-  ];
-  filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')">${c.label}</button>`).join('');
+  const cats=[{value:'all',label:'全部'},...getSupplierCategoryOptions()];
+  filterEl.innerHTML=cats.map(c=>{
+    if(c.value==='all'){
+      return `<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory==='all'?'active':''}" onclick="setOrderSupplierCategory('all')">全部</button>`;
+    }
+    const active=activeOrderSupplierCategory===c.value;
+    return `<div class="orders-supplier-filter-wrap ${active?'active':''}">
+      <button type="button" class="orders-supplier-filter ${active?'active':''}" onclick="setOrderSupplierCategory('${c.value}')">${c.label}</button>
+      <button type="button" class="orders-supplier-filter-delete" title="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${c.value}')">×</button>
+    </div>`;
+  }).join('');
 
   const names=[...new Set((DB.orders||[]).map(o=>String(o.supplier||'').trim()).filter(Boolean))];
   const stats=names.map(name=>{
@@ -14248,7 +14265,7 @@ function addReorderListToNewOrder(){
 }
 
 
-const SUPPLIER_CATEGORY_OPTIONS=[
+const SUPPLIER_CATEGORY_DEFAULTS=[
   {value:'patch',label:'布貼'},
   {value:'ribbon',label:'布條'},
   {value:'packaging',label:'包裝'},
@@ -14261,25 +14278,37 @@ let supplierCategoryFilter='all';
 let activeSupplierProfileName='';
 let activeSupplierProfileCategories=[];
 
+function getSupplierCategoryOptions(){
+  if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];
+  if(!Array.isArray(DB.supplierCategoryHidden))DB.supplierCategoryHidden=['tools'];
+  const hidden=new Set(DB.supplierCategoryHidden);
+  const defaults=SUPPLIER_CATEGORY_DEFAULTS
+    .filter(x=>!hidden.has(x.value))
+    .map(x=>({...x,custom:false}));
+  const custom=DB.supplierCategoryCustom
+    .filter(x=>x&&x.value&&x.label)
+    .map(x=>({value:String(x.value),label:String(x.label),custom:true}));
+  return [...defaults,...custom];
+}
 function ensureSupplierProfile(name){
   const s=String(name||'').trim();
   if(!s)return null;
   if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};
+  if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];
   if(!DB.supplierProfiles[s])DB.supplierProfiles[s]={categories:['other'],tags:[]};
   const p=DB.supplierProfiles[s];
-  // 相容舊資料：原本只能選一個 category，第一次讀取時自動搬到 categories。
   if(!Array.isArray(p.categories)||!p.categories.length){
     p.categories=[p.category||'other'];
   }
-  p.categories=[...new Set(p.categories.filter(v=>SUPPLIER_CATEGORY_OPTIONS.some(o=>o.value===v)))];
+  const allowed=new Set(getSupplierCategoryOptions().map(o=>o.value));
+  p.categories=[...new Set(p.categories.filter(v=>allowed.has(v)))];
   if(!p.categories.length)p.categories=['other'];
-  // 留下 category 作舊版相容欄位，但新功能一律使用 categories。
   p.category=p.categories[0]||'other';
   if(!Array.isArray(p.tags))p.tags=[];
   return p;
 }
 function supplierCategoryLabel(value){
-  return SUPPLIER_CATEGORY_OPTIONS.find(x=>x.value===value)?.label||'其他';
+  return getSupplierCategoryOptions().find(x=>x.value===value)?.label||String(value||'其他');
 }
 function supplierCategoryLabels(profile){
   const values=Array.isArray(profile?.categories)&&profile.categories.length?profile.categories:[profile?.category||'other'];
@@ -14290,12 +14319,28 @@ function supplierHasCategory(profile,value){
   const values=Array.isArray(profile?.categories)&&profile.categories.length?profile.categories:[profile?.category||'other'];
   return values.includes(value);
 }
+function supplierCategoryValueFromLabel(label){
+  const base=String(label||'').trim();
+  const slug=base.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\u4e00-\u9fff-]/g,'').slice(0,24)||'custom';
+  let value='custom-'+slug;
+  let i=2;
+  const used=new Set(getSupplierCategoryOptions().map(o=>o.value));
+  while(used.has(value))value='custom-'+slug+'-'+(i++);
+  return value;
+}
 function renderSupplierProfileCategoryChoices(){
   const el=document.getElementById('supplier-profile-category-options');if(!el)return;
-  el.innerHTML=SUPPLIER_CATEGORY_OPTIONS.map(o=>{
+  const options=getSupplierCategoryOptions();
+  el.innerHTML=options.map(o=>{
     const active=activeSupplierProfileCategories.includes(o.value);
-    return `<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileCategory('${o.value}')"><span class="supplier-category-check">${active?'✓':''}</span><span>${o.label}</span></button>`;
-  }).join('');
+    const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileCategory('${o.value}')"><span class="supplier-category-check">${active?'✓':''}</span><span>${o.label}</span></button>`;
+    return `<span class="supplier-category-custom-wrap">${button}<button type="button" class="supplier-category-custom-remove" title="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${o.value}')">×</button></span>`;
+  }).join('')+
+  `<button type="button" class="supplier-category-add" onclick="openSupplierCategoryAddEditor()">＋ 新增類別</button>
+   <span class="supplier-category-add-editor" id="supplier-category-add-editor">
+     <input class="supplier-category-add-input" id="supplier-category-add-input" maxlength="18" placeholder="輸入類別" onkeydown="if(event.key==='Enter'){event.preventDefault();addSupplierCustomCategory();}else if(event.key==='Escape'){closeSupplierCategoryAddEditor();}">
+     <button type="button" class="supplier-category-add-confirm" onclick="addSupplierCustomCategory()">新增</button>
+   </span>`;
 }
 function toggleSupplierProfileCategory(value){
   if(activeSupplierProfileCategories.includes(value)){
@@ -14304,11 +14349,74 @@ function toggleSupplierProfileCategory(value){
     activeSupplierProfileCategories=[...activeSupplierProfileCategories,value];
   }
   if(!activeSupplierProfileCategories.length)activeSupplierProfileCategories=['other'];
-  // 若選了實際類別，就把「其他」自動移除；單獨選其他仍可保留。
   if(value!=='other'&&activeSupplierProfileCategories.length>1){
     activeSupplierProfileCategories=activeSupplierProfileCategories.filter(v=>v!=='other');
   }
   renderSupplierProfileCategoryChoices();
+}
+function openSupplierCategoryAddEditor(){
+  const editor=document.getElementById('supplier-category-add-editor');
+  const input=document.getElementById('supplier-category-add-input');
+  if(editor)editor.classList.add('show');
+  if(input){input.value='';setTimeout(()=>input.focus(),0);}
+}
+function closeSupplierCategoryAddEditor(){
+  const editor=document.getElementById('supplier-category-add-editor');
+  if(editor)editor.classList.remove('show');
+}
+function addSupplierCustomCategory(){
+  const input=document.getElementById('supplier-category-add-input');
+  const label=String(input?.value||'').trim();
+  if(!label){toast('請輸入類別名稱','error');return;}
+  const existing=getSupplierCategoryOptions().find(o=>o.label.toLowerCase()===label.toLowerCase());
+  if(existing){
+    if(!activeSupplierProfileCategories.includes(existing.value))activeSupplierProfileCategories.push(existing.value);
+    renderSupplierProfileCategoryChoices();
+    toast('這個類別已經存在，已幫你選取','info');
+    return;
+  }
+  const item={value:supplierCategoryValueFromLabel(label),label};
+  DB.supplierCategoryCustom.push(item);
+  activeSupplierProfileCategories=activeSupplierProfileCategories.filter(v=>v!=='other');
+  activeSupplierProfileCategories.push(item.value);
+  saveDB();
+  renderSupplierProfileCategoryChoices();
+  renderOrderSupplierSidebar();
+  renderSupplierCategoryFilters();
+  toast(`已新增類別「${label}」，可 ⌘Z 復原`,'success');
+}
+function removeSupplierCategory(value){
+  const options=getSupplierCategoryOptions();
+  if(options.length<=1){toast('至少要保留一個供應類別','error');return;}
+  const item=options.find(x=>x.value===value);
+  if(!item)return;
+
+  if(item.custom){
+    DB.supplierCategoryCustom=(DB.supplierCategoryCustom||[]).filter(x=>x.value!==value);
+  }else{
+    if(!Array.isArray(DB.supplierCategoryHidden))DB.supplierCategoryHidden=[];
+    if(!DB.supplierCategoryHidden.includes(value))DB.supplierCategoryHidden.push(value);
+  }
+
+  const remaining=getSupplierCategoryOptions();
+  const fallback=remaining.find(x=>x.value==='other')?.value||remaining[0]?.value||'';
+  Object.values(DB.supplierProfiles||{}).forEach(p=>{
+    if(Array.isArray(p.categories))p.categories=p.categories.filter(v=>v!==value);
+    if(!p.categories||!p.categories.length)p.categories=fallback?[fallback]:[];
+    p.category=p.categories[0]||'';
+  });
+
+  activeSupplierProfileCategories=activeSupplierProfileCategories.filter(v=>v!==value);
+  if(!activeSupplierProfileCategories.length&&fallback)activeSupplierProfileCategories=[fallback];
+  if(supplierCategoryFilter===value)supplierCategoryFilter='all';
+  if(activeOrderSupplierCategory===value)activeOrderSupplierCategory='all';
+
+  saveDB();
+  renderSupplierProfileCategoryChoices();
+  renderOrderSupplierSidebar();
+  renderSupplierCategoryFilters();
+  renderSupplierStatsBody();
+  toast(`已刪除分類「${item.label}」，可 ⌘Z 復原`,'success');
 }
 function getSupplierOrders(name){
   return (DB.orders||[]).filter(o=>String(o.supplier||'').trim()===String(name||'').trim())
@@ -14330,7 +14438,7 @@ function renderSupplierStatsTabs(){
 }
 function renderSupplierCategoryFilters(){
   const el=document.getElementById('supplier-category-filters');if(!el)return;
-  const opts=[{value:'all',label:'全部'},...SUPPLIER_CATEGORY_OPTIONS];
+  const opts=[{value:'all',label:'全部'},...getSupplierCategoryOptions()];
   el.innerHTML=opts.map(o=>`<button class="supplier-filter-chip ${supplierCategoryFilter===o.value?'active':''}" onclick="supplierCategoryFilter='${o.value}';renderSupplierCategoryFilters();renderSupplierStatsBody()">${o.label}</button>`).join('');
 }
 function renderSupplierStatsBody(){
@@ -17422,16 +17530,14 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
     </div>
     <div class="modal-body" style="max-height:84vh;overflow:auto">
       <div id="supplier-profile-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:11px 13px;margin-bottom:14px"></div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">供應類別 <span style="font-size:9px;color:var(--text3);font-weight:500">可複選</span></label>
-          <div class="supplier-category-multi" id="supplier-profile-category-options"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">標籤</label>
-          <input type="text" class="form-input" id="supplier-profile-tags" placeholder="客製、淘寶、中國…">
-          <div style="font-size:9px;color:var(--text3);margin-top:4px">用逗號或頓號分開，可複數。</div>
-        </div>
+      <div class="form-group">
+        <label class="form-label">供應類別 <span style="font-size:9px;color:var(--text3);font-weight:500">可複選</span></label>
+        <div class="supplier-category-multi" id="supplier-profile-category-options"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label class="form-label">標籤</label>
+        <input type="text" class="form-input" id="supplier-profile-tags" placeholder="客製、淘寶、中國、毛絨、少量可做…">
+        <div style="font-size:9px;color:var(--text3);margin-top:4px">用逗號或頓號分開，可複數。</div>
       </div>
       <div style="font-size:11px;font-weight:800;color:var(--text2);margin:4px 0 7px">歷史採購單</div>
       <div class="supplier-profile-history" id="supplier-profile-history"></div>
