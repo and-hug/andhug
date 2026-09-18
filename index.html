@@ -4937,12 +4937,25 @@ function getProductPawTitle(p){
 }
 function renderProductPawIcon(p){
   const state=getProductPawState(p);
-  const id='pawfill-'+String(p&&p.id||'x').replace(/[^a-zA-Z0-9_-]/g,'');
-  const outline='#9C8068',half='#D8B98F',full='#765039';
-  const fill=state==='full'?full:(state==='half'?`url(#${id})`:'none');
-  const stroke=state==='full'?full:outline;
-  const defs=state==='half'?`<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${half}"/><stop offset="50%" stop-color="${half}"/><stop offset="50.01%" stop-color="transparent"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>`:'';
-  return `<svg viewBox="0 0 22 22" aria-hidden="true">${defs}<g fill="${fill}" stroke="${stroke}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6.1" cy="6.2" rx="1.8" ry="2.45" transform="rotate(-18 6.1 6.2)"/><ellipse cx="9.7" cy="4.3" rx="1.62" ry="2.2" transform="rotate(-6 9.7 4.3)"/><ellipse cx="13.1" cy="4.45" rx="1.62" ry="2.2" transform="rotate(7 13.1 4.45)"/><ellipse cx="16.3" cy="6.7" rx="1.75" ry="2.4" transform="rotate(18 16.3 6.7)"/><path d="M10.95 8.9c-2.55 0-5.25 1.9-5.5 4.55-.2 2.18 1.65 4.2 5.5 4.2s5.7-2.02 5.5-4.2c-.25-2.65-2.95-4.55-5.5-4.55Z"/></g></svg>`;
+  // 直接依照使用者提供的貓掌圖形做成 20×20 PNG，避免 SVG 重新畫形狀跑掉。
+  // outline / 奶茶米色 / 深可可棕都使用完全相同的原始貓掌輪廓。
+  const icons={
+    outline:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB90lEQVR42o3UXYjMURjH8c/8Z1YIhUhcKW0p3MiyF8LdkBQ3rlx4y1JuXFCUNq3XlLcIzY1dF1xIUfJSFMpLyBVTaqNE1oXaLVvD7Lh5/vo3zczOqdN/OnOe7/M75/k9J1fq7dFg5FBDgrHM+mT81mIkTdZrmBqwdM8J/MDJWEvaAaYbL+MX+gK6FgfwCPuxLJJOaAXMR/AW7MJ9HMIsrMYrbMJHzAtgpRUwCWg3HmB9JJgfgZVQthBDmIE1rYB/UMUXrMLR+H8ID7ESr/EUH/AOj3Esc0JJVBSmowsX8AYHcQmf8QxLsR1F9GAKDmMbJsZpcoUATsI9rMCpUNiJcoBm432oymEzbgZkLE4GtdRn3RF4GnsjexlXQ+01fMOeKMat+N2H43FdCRQyvitEcB5zsRU7Yw7gYswRHEEHPqE/VFdTYIKXeIEboayMJziDUiTZEUr6sTj8mO0qKbAW7VTERjzHBszB+Uzh8tgdyc6GHweC8zdrm5Q+EtkHcQV38DVzLamAc2GXriyolbFnxuyNgEp8q/EtRucMNurlQt2DUMMohkPtPizAciyJQiwKo5eyxWgGTOI+1+E67uIn3uJ2ePF7uMF4CqVujxbrxLRQ2+i9lK1uM6C6h3U406dZe1TbVViv1HiAGB3BGi202FTT/vjfz/8ArlKLnEMtUJEAAAAASUVORK5CYII=',
+    half:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB3klEQVR42o3UT4iNURjH8c/7zjvjTsqwsbShEBFDiSQ7pZSRlCKlrBWxoFkpNMqapEQsLJSSrLCRGv/KZiSxQBLKZu7E3Pe1eV6d3u7cO0+9nXvPeZ7v+Z3zPOfJph5d1sVylMlYWwszelg+x3wZwWXicxpvMRH/s37ALL5BXME7nAroLlzACpzE5ogZ7AXMUWEMx7AMFzGC7QFuYxbLw/dvP2CO0XBsB2RlKM9jLPAFC7GpF3A2AJ/iKK1Y/4n7sUkLD+M6nmMS4xE/INkVFmEdbuJJbHANHyJ4Aw5hD45ibcQdCFgHWRGTw3iAbTiLnViFKWyM+3yGWyFgC/4EaDruM0NVJ2I0YCKLIwG7gZe4F1dxIvwnMRTAq2l51QrbMXYCNoy9OBxzVcxdwlecwwJ8xPVQ16mBOd7EkXfjFb7hePJKiuT3bayJq6nrt2rWXgf7cTCgY1gfawOJb63kDPbFWq5LMdfHvhPqxtNdG6+pjBLaUWc2dSga8AyLI6tlAiiTwDyUve/2llNgFd80fmNJjyZyN2r0fzLmAuZx9CM4j9XxzB7jBX7hM17P1b6KLm0LnmIrluJHoyemravqB2wm63viVyWQcr4Km0qzpHH0sqEQMVP0cazMz8ra9x8ZH39KifLLBQAAAABJRU5ErkJggg==',
+    full:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB30lEQVR42o3Uz4uNURzH8dfzzDPjTsqwsbShEBFD+ZFkp5QYSSlSylrRWNCslBH/AEmJWFgoJUtspMavsiGJBZJQNnMn5j6PzffR6enOvfOtp3PvOd/v+3zO+X7PNxvft1UXy1EmY20tzOhh+RzzZQSXic8ZvMGl+J/1A2bxDeIK3mE8oLsxiRU4jc0RM9gLmKPCGE5gGS5iBDsC3MYslofv337AHKPh2A7IylCex1jgCxZiUy/gbAA+xVFasf4T92OTFh7GdTzDFCYifkCyKyzCOtzE49jgGj5E8AYcwV4cx9qIOxSwDrIiJofxANtxDruwCm+xMe7zKW6FgC34E6DpuM8MVZ2I0YCJLI4E7AZe4F5cxanwn8JQAK+m5VUrbMfYCdgw9uNozFUxdxlfcR4L8BHXQ12nBuZ4HUfeg5f4hpPJKymS37exJq6mrt+qWXsdHMThgI5hfawNJL61krM4EGu5LsVcH/tOqJtId228pjJKaGed2dShaMAzLI6slgmgTALzUPa+21tOgVV80/iNJT2ayN2o0f/JmAuYx9GP4QJWxzN7hOf4hc94NVf7Krq0LXiCbViKH42emLauqh+wmazviV+VQMr5KmwqzZLG0cuGQsRM0cexMj8ra99/9gl+KWezB9sAAAAASUVORK5CYII='
+  };
+  return `<img src="${icons[state]}" alt="" aria-hidden="true" width="20" height="20" style="display:block;width:20px;height:20px">`;
+}
+function renderSidebarConfirmedPawIcon(size=14){
+  // 與商品卡「已完成」完全相同的深可可棕貓腳，只縮小給左側大分類使用。
+  const sample={name:'',sku:'PA0000-0000-001',type:'PA',size:'0',cost:1,price:0,img:'x',typeSubcat:'',ribbonSubtype:''};
+  sample.pawConfirmed=true;
+  sample.pawConfirmedSignature=getProductPawSignature(sample);
+  return renderProductPawIcon(sample)
+    .replace(/width="20"/g,`width="${size}"`)
+    .replace(/height="20"/g,`height="${size}"`)
+    .replace(/width:20px/g,`width:${size}px`)
+    .replace(/height:20px/g,`height:${size}px`);
 }
 function toggleProductPawConfirmed(id){
   const p=DB.products.find(x=>String(x.id)===String(id));
@@ -6156,7 +6169,8 @@ function renderCatSidebar(){
         return (Date.now()-new Date(last).getTime())/86400000>30;
       }).length;
       const incompleteCount=DB.products.filter(isProductIncomplete).length;
-      const completeCount=DB.products.filter(isProductComplete).length;
+      const completeCount=DB.products.filter(p=>isProductComplete(p)&&!isProductPawConfirmed(p)).length;
+      const confirmedCount=DB.products.filter(isProductPawConfirmed).length;
       let topRows=`<div class="cat-sidebar-item ${activeCat==='__hot__'?'active':''}" onclick="setCat('__hot__')">
         <span>🔥</span><span class="ui-editable" data-ui-key="catlabel-hot" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-hot','熱銷商品')}</span>
       </div>`;
@@ -6165,22 +6179,22 @@ function renderCatSidebar(){
           <span>🐌</span><span class="ui-editable" data-ui-key="catlabel-stale" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-stale','滯銷商品')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${staleCount}</span>
         </div>`;
       }
-      topRows+=`<div class="cat-sidebar-item ${activeCat==='all'?'active':''}" onclick="setCat('all');toggleAllStatusGroup(event)"
+      topRows+=`<div class="cat-sidebar-item ${activeCat==='all'?'active':''}" onclick="setCat('all')"
         ondragover="event.preventDefault();this.classList.add('drag-over');maybeShrinkGhostForSidebar()"
         ondragleave="this.classList.remove('drag-over')"
         ondrop="dropToCat(event,'all')">
         <span>📋</span><span class="ui-editable" data-ui-key="catlabel-all" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-all','全部')}</span>
         <span style="margin-left:auto;font-size:11px;color:var(--text3)">${DB.products.length}</span>
       </div>`;
-      if(allStatusExpanded){
-        topRows+=`<div class="cat-sidebar-item ${activeCat==='__incomplete__'?'active':''}" onclick="setCat('__incomplete__')"
-          style="padding-left:28px;${activeCat==='__incomplete__'?'':'color:var(--red);'}">
-          <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
-        </div>`;
-        topRows+=`<div class="cat-sidebar-item ${activeCat==='__complete__'?'active':''}" onclick="setCat('__complete__')" style="padding-left:28px">
-          <span>🌸</span><span class="ui-editable" data-ui-key="catlabel-complete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-complete','已完善')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${completeCount}</span>
-        </div>`;
-      }
+      topRows+=`<div class="cat-sidebar-item ${activeCat==='__incomplete__'?'active':''}" onclick="setCat('__incomplete__')" ${activeCat==='__incomplete__'?'':'style="color:var(--red)"'}>
+        <span>⚠️</span><span class="ui-editable" data-ui-key="catlabel-incomplete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-incomplete','待完善')}</span><span style="margin-left:auto;font-size:11px;font-weight:700;color:var(--red)">${incompleteCount}</span>
+      </div>`;
+      topRows+=`<div class="cat-sidebar-item ${activeCat==='__complete__'?'active':''}" onclick="setCat('__complete__')">
+        <span>🌸</span><span class="ui-editable" data-ui-key="catlabel-complete" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-complete','已完善')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${completeCount}</span>
+      </div>`;
+      topRows+=`<div class="cat-sidebar-item ${activeCat==='__confirmed__'?'active':''}" onclick="setCat('__confirmed__')">
+        <span style="width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px">${renderSidebarConfirmedPawIcon(14)}</span><span class="ui-editable" data-ui-key="catlabel-confirmed" onclick="handleUIEditableClick(event,this)">${getUILabel('catlabel-confirmed','已完成')}</span><span style="margin-left:auto;font-size:11px;color:var(--text3)">${confirmedCount}</span>
+      </div>`;
       return topRows;
     })()}`;
   normalTypes.forEach((t,idx)=>{
@@ -6298,7 +6312,7 @@ function renderCatSidebar(){
 function renderSizeFilters(){
   const el=document.getElementById('size-filters');
   if(!el)return;
-  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__complete__'||activeCat==='__stale__'||activeCat==='__merged__'){el.innerHTML='';return;}
+  if(activeCat==='all'||activeCat==='__hot__'||activeCat==='__incomplete__'||activeCat==='__complete__'||activeCat==='__confirmed__'||activeCat==='__stale__'||activeCat==='__merged__'){el.innerHTML='';return;}
   const allSizes=['0','XS','S','M','L','XL','XX'];
   const usedSizes=[...new Set(DB.products.filter(p=>p.type===activeCat).map(p=>p.size||'0'))];
   if(usedSizes.length<=1&&usedSizes[0]==='0'){el.innerHTML='';return;}
@@ -7030,10 +7044,10 @@ function getSharedPatchCategoryFilterRows(){
 function renderSubcatFilters(){
   const el=document.getElementById('subcat-filters');
   if(!el)return;
-  if(!['PA','PB','all','__incomplete__','__complete__'].includes(activeCat)){el.innerHTML='';return;}
+  if(!['PA','PB','all','__incomplete__','__complete__','__confirmed__'].includes(activeCat)){el.innerHTML='';return;}
   const categoryRows=getSharedPatchCategoryFilterRows();
   const patchProducts=(DB.products||[]).filter(p=>p.type==='PA'||p.type==='PB');
-  const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(isProductIncomplete):activeCat==='__complete__'?patchProducts.filter(isProductComplete):DB.products.filter(p=>p.type===activeCat);
+  const prods=activeCat==='all'?patchProducts:activeCat==='__incomplete__'?patchProducts.filter(isProductIncomplete):activeCat==='__complete__'?patchProducts.filter(p=>isProductComplete(p)&&!isProductPawConfirmed(p)):activeCat==='__confirmed__'?patchProducts.filter(isProductPawConfirmed):DB.products.filter(p=>p.type===activeCat);
   const counts={};
   prods.forEach(p=>{if(p.sku&&p.sku.length>=4){const c=p.sku.slice(2,4);counts[c]=(counts[c]||0)+1;}});
   el.innerHTML=categoryRows.map(row=>{
@@ -8420,7 +8434,9 @@ function renderProducts(options={}){
   if(activeCat==='__incomplete__'){
     ps=ps.filter(isProductIncomplete);
   } else if(activeCat==='__complete__'){
-    ps=ps.filter(isProductComplete);
+    ps=ps.filter(p=>isProductComplete(p)&&!isProductPawConfirmed(p));
+  } else if(activeCat==='__confirmed__'){
+    ps=ps.filter(isProductPawConfirmed);
   } else if(activeCat==='__hot__'){
     ps=ps.filter(p=>(salesMap[p.id]||0)>0);
   } else if(activeCat==='__stale__'){
