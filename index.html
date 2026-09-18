@@ -2945,6 +2945,195 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 </style>
 
+
+<style id="global-search-icons-complete">
+/* 紀錄頁搜尋：和採購單同款放大鏡 */
+.sales-history-search-wrap{
+  position:relative;
+  min-width:220px;
+  flex:1;
+}
+.sales-history-search-wrap .sales-history-input{
+  width:100% !important;
+  padding-left:32px !important;
+}
+.sales-history-search-wrap .search-icon,
+.price-compare-search-wrap .search-icon{
+  position:absolute !important;
+  left:11px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  width:14px !important;
+  height:14px !important;
+  color:var(--text3) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  pointer-events:none !important;
+  font-size:0 !important;
+  line-height:0 !important;
+}
+.sales-history-search-wrap .search-icon svg,
+.price-compare-search-wrap .search-icon svg{
+  width:14px !important;
+  height:14px !important;
+  display:block !important;
+}
+
+.price-compare-search-wrap{
+  position:relative;
+}
+.price-compare-search-wrap #price-compare-search{
+  width:100% !important;
+  padding-left:32px !important;
+}
+</style>
+
+
+<style id="supplier-profile-match-outside-v1">
+/* 供應商編輯視窗：分類框框恢復成外面供應商篩選同一套樣式 */
+#supplier-profile-category-options{
+  gap:6px !important;
+  padding-top:4px !important;
+  padding-bottom:5px !important;
+}
+
+#supplier-profile-category-options .supplier-category-choice,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle,
+#supplier-profile-category-options .supplier-category-add-input,
+#supplier-profile-category-options .supplier-category-add-confirm{
+  height:30px !important;
+  min-height:30px !important;
+  max-height:30px !important;
+  box-sizing:border-box !important;
+  border-radius:10px !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  line-height:1 !important;
+}
+
+/* 固定分類：完全跟外面「全部 / 布貼 / 布條」同款 */
+#supplier-profile-category-options .supplier-category-choice{
+  padding:0 10px !important;
+  border:1.5px solid var(--cream3) !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+}
+#supplier-profile-category-options .supplier-category-choice:hover{
+  border-color:var(--brown-light) !important;
+  color:var(--brown) !important;
+  background:var(--cream2) !important;
+}
+#supplier-profile-category-options .supplier-category-choice.active{
+  background:var(--cream2) !important;
+  border-color:var(--brown-light) !important;
+  color:var(--brown) !important;
+}
+
+/* 新增 / 完成保留功能差異，但尺寸和圓角跟外面一致 */
+#supplier-profile-category-options .supplier-category-add{
+  padding:0 10px !important;
+  border:1.5px dashed var(--cream4) !important;
+  background:var(--cream2) !important;
+  color:var(--brown) !important;
+  font-weight:700 !important;
+}
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  padding:0 10px !important;
+  border:1.5px solid var(--brown-light) !important;
+  background:var(--surface) !important;
+  color:var(--brown) !important;
+  font-weight:700 !important;
+}
+#supplier-profile-category-options .supplier-category-delete-toggle.active{
+  background:var(--cream2) !important;
+}
+
+/* 下面「客製化」文字改成品牌咖啡色 + 較柔的字重 */
+#supplier-profile-tags{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  color:var(--brown) !important;
+  font-family:"Noto Sans TC", sans-serif !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+#supplier-profile-tags::placeholder{
+  color:var(--text3) !important;
+  font-weight:500 !important;
+}
+</style>
+
+
+<style id="supplier-profile-align-and-infoicon">
+/* 讓上面的分類列左邊起點跟下面客製化輸入框對齊 */
+#supplier-profile-category-options{
+  padding:4px 0 5px 0 !important;
+  margin-left:0 !important;
+  justify-content:flex-start !important;
+}
+
+/* 標籤旁邊的圓圈 i */
+.label-info-badge{
+  width:14px;
+  height:14px;
+  border-radius:999px;
+  border:1.2px solid var(--cream4);
+  color:var(--text3);
+  background:var(--surface);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:700;
+  line-height:1;
+  cursor:help;
+  user-select:none;
+  transform:translateY(-0.5px);
+}
+</style>
+
+
+<style id="product-modal-paw-title-v1">
+/* 商品打開後：標題前面加貓掌，名稱往右退一點 */
+#stock-modal-title{
+  min-height:24px;
+}
+#stock-modal-title .stock-modal-title-row{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+#stock-modal-title .stock-modal-paw{
+  width:20px;
+  height:20px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 20px;
+  transform:translateY(-0.5px);
+}
+#stock-modal-title .stock-modal-paw svg{
+  width:20px !important;
+  height:20px !important;
+  display:block;
+}
+#stock-modal-title .stock-modal-paw.state-outline{color:var(--cream2);}
+#stock-modal-title .stock-modal-paw.state-half{color:#D8B98F;}
+#stock-modal-title .stock-modal-paw.state-full{color:#765039;}
+#stock-modal-title .stock-modal-title-text{
+  display:inline-block;
+  margin-left:2px;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -3074,7 +3263,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
                 <div id="price-compare-category-menu" class="hidden" style="position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:90;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 8px 22px rgba(139,111,71,.16);padding:5px;max-height:250px;overflow-y:auto"></div>
               </div>
             </div>
-            <input id="price-compare-search" type="text" class="form-input" placeholder="搜尋商品名稱 / SKU..." oninput="scheduleLightRender('price-compare',renderPriceComparePicker)" style="font-size:12px">
+            <div class="search-wrap price-compare-search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="price-compare-search" type="text" class="form-input" placeholder="搜尋商品名稱 / SKU…" oninput="scheduleLightRender('price-compare',renderPriceComparePicker)" style="font-size:12px"></div>
           </div>
           <div id="price-compare-picker" style="max-height:54vh;overflow-y:auto;padding:6px"></div>
         </div>
@@ -3210,7 +3399,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     <button class="btn btn-secondary btn-sm" onclick="openTrash()">🗑 已刪紀錄</button>
   </div>
   <div class="sales-history-toolbar">
-    <input id="sales-history-search" class="sales-history-input" type="text" placeholder="搜尋商品 / SKU / 供應商…" oninput="scheduleLightRender('sales-history',renderSalesHistoryPage)">
+    <div class="search-wrap sales-history-search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sales-history-search" class="sales-history-input" type="text" placeholder="搜尋商品 / SKU / 供應商…" oninput="scheduleLightRender('sales-history',renderSalesHistoryPage)"></div>
     <div class="sales-history-dd" id="sales-history-month-wrap">
       <input type="hidden" id="sales-history-month" value="all">
       <button type="button" class="sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'month')"><span id="sales-history-month-label">全部月份</span><span class="sales-history-dd-caret">⌄</span></button>
@@ -10578,7 +10767,7 @@ function openStockModal(id){
   const imgSrc=p.img||'';
   const usd=((p.cost||0)*DB.rate).toFixed(2);
   const skuParts=parseProductSkuParts(p.sku||'',p.type||'');
-  document.getElementById('stock-modal-title').textContent=p.name;
+  document.getElementById('stock-modal-title').innerHTML=`<span class="stock-modal-title-row"><span class="stock-modal-paw state-${getProductPawState(p)}" aria-hidden="true">${renderProductPawIcon(p)}</span><span class="stock-modal-title-text">${smartImportEsc(p.name||'商品詳情')}</span></span>`;
   const subcatRefHTML=getSkuTypes().map(t=>{
     const type=String(t.code||'').trim().toUpperCase();
     const rows=getTypeSubcats(type);
@@ -18095,9 +18284,8 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
         <div class="supplier-category-multi" id="supplier-profile-category-options"></div>
       </div>
       <div class="form-group" style="margin-top:14px">
-        <label class="form-label">標籤</label>
+        <label class="form-label" style="display:flex;align-items:center;gap:6px">標籤 <span class="label-info-badge" title="用逗號或頓號分開，可複數。" aria-label="用逗號或頓號分開，可複數。">i</span></label>
         <input type="text" class="form-input" id="supplier-profile-tags" placeholder="客製、淘寶、中國、毛絨、少量可做…">
-        <div style="font-size:9px;color:var(--text3);margin-top:4px">用逗號或頓號分開，可複數。</div>
       </div>
       <div style="font-size:11px;font-weight:800;color:var(--text2);margin:4px 0 7px">歷史採購單</div>
       <div class="supplier-profile-history" id="supplier-profile-history"></div>
