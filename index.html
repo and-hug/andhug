@@ -3377,66 +3377,151 @@ label.form-label:has(.label-info-badge){
 </style>
 
 
-<style id="supplier-sidebar-pagination-v1">
-.orders-supplier-list{
-  display:flex !important;
-  flex-direction:column !important;
-  min-height:0 !important;
-}
-.orders-supplier-page-list{
-  min-height:0;
-}
-.orders-supplier-pagination{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  padding:8px 2px 2px;
-  margin-top:2px;
-  border-top:1px solid var(--cream2);
-}
-.orders-supplier-page-btn{
-  width:27px;
-  height:27px;
-  padding:0;
-  border-radius:9px;
-  border:1.5px solid var(--cream3);
+<style id="supplier-sidebar-web-tabs-v1">
+.orders-supplier-tabs{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  padding:0 10px;
   background:var(--surface);
-  color:var(--brown);
-  font-family:inherit;
-  font-size:17px;
-  line-height:1;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-bottom:1px solid var(--cream2);
 }
-.orders-supplier-page-btn:hover:not(:disabled){
+.orders-supplier-tab{
+  position:relative;
+  height:35px;
+  border:0;
+  background:transparent;
+  color:var(--text3);
+  font-family:inherit;
+  font-size:9.5px;
+  font-weight:800;
+  cursor:pointer;
+  padding:0 2px;
+  white-space:nowrap;
+}
+.orders-supplier-tab:hover{color:var(--brown)}
+.orders-supplier-tab.active{color:var(--brown)}
+.orders-supplier-tab.active::after{
+  content:'';
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:-1px;
+  height:2px;
+  border-radius:2px 2px 0 0;
+  background:var(--brown-light);
+}
+.orders-supplier-meta-filters{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  padding:9px 10px 8px;
+  background:var(--cream);
+  border-bottom:1px solid var(--cream2);
+  max-height:128px;
+  overflow-y:auto;
+}
+.orders-supplier-meta-filters.hidden{display:none !important}
+.orders-supplier-meta-chip{
+  min-height:26px;
+  padding:4px 8px;
+  border:1.5px solid var(--cream3);
+  border-radius:9px;
+  background:var(--surface);
+  color:var(--text2);
+  font-family:inherit;
+  font-size:9px;
+  font-weight:700;
+  line-height:1.1;
+  cursor:pointer;
+}
+.orders-supplier-meta-chip:hover{
   border-color:var(--brown-light);
+  color:var(--brown);
   background:var(--cream2);
 }
-.orders-supplier-page-btn:disabled{
-  opacity:.35;
-  cursor:default;
+.orders-supplier-meta-chip.active{
+  background:var(--cream2);
+  border-color:var(--brown-light);
+  color:var(--brown);
 }
-.orders-supplier-page-status{
-  min-width:39px;
-  height:27px;
-  border-radius:9px;
-  border:1.5px solid var(--cream3);
-  background:var(--cream);
-  display:flex;
+.orders-supplier-mini-meta{
+  display:inline-flex;
+  align-items:center;
+  min-height:18px;
+  padding:1px 6px;
+  border-radius:7px;
+  background:var(--surface);
+  border:1px dashed var(--cream4);
+  font-size:8.5px;
+  font-weight:700;
+  color:var(--text3);
+}
+.orders-supplier-empty-filter{
+  padding:18px 10px;
+  text-align:center;
+  color:var(--text3);
+  font-size:10.5px;
+}
+</style>
+
+
+<style id="supplier-profile-fixed-footer-edit-v1">
+#modal-supplier-profile .supplier-profile-modal{
+  display:flex !important;
+  flex-direction:column !important;
+  width:min(620px,calc(100vw - 28px)) !important;
+  max-height:min(90vh,860px) !important;
+  overflow:hidden !important;
+}
+#modal-supplier-profile .modal-header{
+  flex:0 0 auto !important;
+}
+#modal-supplier-profile .supplier-profile-scroll{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  padding-bottom:18px !important;
+}
+#modal-supplier-profile .supplier-profile-footer{
+  position:relative !important;
+  z-index:8 !important;
+  flex:0 0 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding:11px 16px 13px !important;
+  background:var(--surface) !important;
+  border-top:1px solid var(--cream3) !important;
+  box-shadow:0 -5px 16px rgba(139,111,71,.055) !important;
+}
+#modal-supplier-profile .supplier-profile-footer-spacer{
+  flex:1 1 auto !important;
+}
+#modal-supplier-profile .supplier-profile-footer .btn{
+  flex:0 0 auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:36px !important;
+  padding:9px 20px !important;
+  border-radius:20px !important;
+  font-size:13px !important;
+  justify-content:center !important;
+}
+#modal-supplier-profile .supplier-profile-edit-footer-btn{
+  gap:6px !important;
+}
+#modal-supplier-profile .supplier-profile-edit-footer-btn.active{
+  background:var(--cream2) !important;
+  border-color:var(--brown-light) !important;
+  color:var(--brown) !important;
+}
+#modal-supplier-profile .supplier-profile-edit-icon{
+  display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:3px;
-  color:var(--text3);
-  font-size:9.5px;
-  font-weight:700;
-}
-.orders-supplier-page-status strong{
-  color:var(--brown);
-  font-size:10.5px;
+  line-height:1;
 }
 </style>
 
@@ -3600,6 +3685,8 @@ label.form-label:has(.label-info-badge){
         
       </div>
       <div class="orders-supplier-filter-row" id="orders-supplier-category-filters"></div>
+      <div class="orders-supplier-tabs" id="orders-supplier-tabs" role="tablist" aria-label="供應商快速篩選"></div>
+      <div class="orders-supplier-meta-filters hidden" id="orders-supplier-meta-filters"></div>
       <div class="orders-supplier-list" id="orders-supplier-list"></div>
     </aside>
   </div>
@@ -11847,15 +11934,33 @@ const expandedOrderAccordions=new Set();
 
 let activeOrderSupplierFilter='all';
 let activeOrderSupplierCategory='all';
-let orderSupplierPage=1;
-const ORDER_SUPPLIER_PAGE_SIZE=5;
+let activeOrderSupplierTab='suppliers';
+let activeOrderSupplierMetaFilter='all';
+
+function setOrderSupplierTab(tab){
+  activeOrderSupplierTab=['suppliers','capabilities','advantages','sources'].includes(tab)?tab:'suppliers';
+  activeOrderSupplierMetaFilter='all';
+  activeOrderSupplierFilter='all';
+  renderOrders();
+}
+function setOrderSupplierMetaFilter(value){
+  activeOrderSupplierMetaFilter=value||'all';
+  if(activeOrderSupplierFilter!=='all'){
+    const profile=ensureSupplierProfile(activeOrderSupplierFilter);
+    const list=activeOrderSupplierTab==='suppliers'?[]:(profile?.[activeOrderSupplierTab]||[]);
+    if(activeOrderSupplierMetaFilter!=='all'&&!list.includes(activeOrderSupplierMetaFilter)){
+      activeOrderSupplierFilter='all';
+    }
+  }
+  renderOrders();
+}
 
 function setOrderSupplierCategory(value){
   activeOrderSupplierCategory=value||'all';
-  orderSupplierPage=1;
   if(activeOrderSupplierFilter!=='all'){
     const profile=ensureSupplierProfile(activeOrderSupplierFilter);
-    if(activeOrderSupplierCategory!=='all'&&profile&&!supplierHasCategory(profile,activeOrderSupplierCategory)){
+    const metaOk=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
+    if((activeOrderSupplierCategory!=='all'&&profile&&!supplierHasCategory(profile,activeOrderSupplierCategory))||!metaOk){
       activeOrderSupplierFilter='all';
     }
   }
@@ -11865,72 +11970,79 @@ function setOrderSupplierFilter(name){
   activeOrderSupplierFilter=name||'all';
   renderOrders();
 }
-function setOrderSupplierPage(page){
-  const next=Math.max(1,Number(page)||1);
-  if(next===orderSupplierPage)return;
-  orderSupplierPage=next;
-  renderOrderSupplierSidebar();
-}
 function renderOrderSupplierSidebar(){
   const filterEl=document.getElementById('orders-supplier-category-filters');
+  const tabsEl=document.getElementById('orders-supplier-tabs');
+  const metaEl=document.getElementById('orders-supplier-meta-filters');
   const listEl=document.getElementById('orders-supplier-list');
-  if(!filterEl||!listEl)return;
+  if(!filterEl||!tabsEl||!metaEl||!listEl)return;
 
   const cats=[{value:'all',label:'全部'},...getSupplierCategoryOptions()];
   filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')"><span class="ui-box-text">${c.label}</span></button>`).join('');
+
+  const tabs=[
+    {value:'suppliers',label:'供應商'},
+    {value:'capabilities',label:'製作能力'},
+    {value:'advantages',label:'供應優勢'},
+    {value:'sources',label:'來源資訊'}
+  ];
+  tabsEl.innerHTML=tabs.map(t=>`<button type="button" class="orders-supplier-tab ${activeOrderSupplierTab===t.value?'active':''}" onclick="setOrderSupplierTab('${t.value}')">${t.label}</button>`).join('');
+
+  if(activeOrderSupplierTab==='suppliers'){
+    metaEl.classList.add('hidden');
+    metaEl.innerHTML='';
+  }else{
+    const options=getSupplierMetaOptions(activeOrderSupplierTab);
+    metaEl.classList.remove('hidden');
+    metaEl.innerHTML=
+      `<button type="button" class="orders-supplier-meta-chip ${activeOrderSupplierMetaFilter==='all'?'active':''}" onclick="setOrderSupplierMetaFilter('all')">全部</button>`+
+      options.map(o=>`<button type="button" class="orders-supplier-meta-chip ${activeOrderSupplierMetaFilter===o.value?'active':''}" onclick="setOrderSupplierMetaFilter('${String(o.value).replace(/'/g,"\\'")}')">${o.label}</button>`).join('');
+  }
 
   const names=[...new Set((DB.orders||[]).map(o=>String(o.supplier||'').trim()).filter(Boolean))];
   const stats=names.map(name=>{
     const orders=getSupplierOrders(name);
     const profile=ensureSupplierProfile(name);
     return {name,orders,profile,count:orders.length,latest:orders[0]?.date||''};
-  }).filter(s=>activeOrderSupplierCategory==='all'||supplierHasCategory(s.profile,activeOrderSupplierCategory))
-    .sort((a,b)=>(b.latest||'').localeCompare(a.latest||'')||a.name.localeCompare(b.name,'zh-Hant'));
+  }).filter(s=>{
+    const categoryOk=activeOrderSupplierCategory==='all'||supplierHasCategory(s.profile,activeOrderSupplierCategory);
+    if(!categoryOk)return false;
+    if(activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all')return true;
+    return (s.profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
+  }).sort((a,b)=>(b.latest||'').localeCompare(a.latest||'')||a.name.localeCompare(b.name,'zh-Hant'));
 
   const countEl=document.getElementById('orders-supplier-visible-count');
   if(countEl)countEl.textContent=`${stats.length} 家`;
 
-  const pageCount=Math.max(1,Math.ceil(stats.length/ORDER_SUPPLIER_PAGE_SIZE));
-  if(orderSupplierPage>pageCount)orderSupplierPage=pageCount;
-  if(orderSupplierPage<1)orderSupplierPage=1;
+  const filteredOrderCount=stats.reduce((sum,s)=>sum+s.count,0);
+  const activeTabLabel=tabs.find(t=>t.value===activeOrderSupplierTab)?.label||'供應商';
+  const activeMetaLabel=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'
+    ? ''
+    : (getSupplierMetaOptions(activeOrderSupplierTab).find(o=>o.value===activeOrderSupplierMetaFilter)?.label||'');
 
-  // If the currently selected supplier belongs to another page, keep it visible.
-  if(activeOrderSupplierFilter!=='all'){
-    const selectedIndex=stats.findIndex(s=>s.name===activeOrderSupplierFilter);
-    if(selectedIndex>=0){
-      const selectedPage=Math.floor(selectedIndex/ORDER_SUPPLIER_PAGE_SIZE)+1;
-      if(selectedPage!==orderSupplierPage)orderSupplierPage=selectedPage;
-    }
-  }
-
-  const startIndex=(orderSupplierPage-1)*ORDER_SUPPLIER_PAGE_SIZE;
-  const pageStats=stats.slice(startIndex,startIndex+ORDER_SUPPLIER_PAGE_SIZE);
-
-  const supplierCards=pageStats.length?pageStats.map(s=>{
-    const safeName=JSON.stringify(s.name).replace(/"/g,'&quot;');
-    return `<button type="button" class="orders-supplier-item ${activeOrderSupplierFilter===s.name?'active':''}" onclick="setOrderSupplierFilter(${safeName})">
-      <div class="orders-supplier-item-top">
-        <span class="orders-supplier-item-name">${s.name}</span>
-        <span class="orders-supplier-edit" title="編輯供應商" onclick="event.stopPropagation();openSupplierProfile(${safeName})">⋯</span>
-      </div>
-      <div class="orders-supplier-item-meta">
-        ${supplierCategoryLabels(s.profile).map(label=>`<span class="orders-supplier-mini-cat"><span class="ui-box-text">${label}</span></span>`).join('')}
-        <span class="orders-supplier-mini-text">${s.count} 次 · ${s.latest||'—'}</span>
-      </div>
-    </button>`;
-  }).join(''):`<div style="padding:18px 10px;text-align:center;color:var(--text3);font-size:10.5px">這個分類還沒有供應商</div>`;
-
-  const pager=stats.length>ORDER_SUPPLIER_PAGE_SIZE?`
-    <div class="orders-supplier-pagination" aria-label="供應商分頁">
-      <button type="button" class="orders-supplier-page-btn" onclick="setOrderSupplierPage(${orderSupplierPage-1})" ${orderSupplierPage<=1?'disabled':''} aria-label="上一頁">‹</button>
-      <span class="orders-supplier-page-status"><strong>${orderSupplierPage}</strong><span>/</span>${pageCount}</span>
-      <button type="button" class="orders-supplier-page-btn" onclick="setOrderSupplierPage(${orderSupplierPage+1})" ${orderSupplierPage>=pageCount?'disabled':''} aria-label="下一頁">›</button>
-    </div>`:'';
-
-  listEl.innerHTML=`<button type="button" class="orders-supplier-all ${activeOrderSupplierFilter==='all'?'active':''}" onclick="setOrderSupplierFilter('all')"><span>全部供應商</span><span class="orders-supplier-count">${(DB.orders||[]).length} 單</span></button>`+
-    `<div class="orders-supplier-page-list">${supplierCards}</div>${pager}`;
+  listEl.innerHTML=
+    `<button type="button" class="orders-supplier-all ${activeOrderSupplierFilter==='all'?'active':''}" onclick="setOrderSupplierFilter('all')">
+      <span>${activeMetaLabel||activeTabLabel==='供應商'?'全部供應商':`全部${activeTabLabel}`}</span>
+      <span class="orders-supplier-count">${filteredOrderCount} 單</span>
+    </button>`+
+    (stats.length?stats.map(s=>{
+      const safeName=JSON.stringify(s.name).replace(/"/g,'&quot;');
+      const selectedMetaLabels=activeOrderSupplierTab==='suppliers'
+        ? []
+        : supplierMetaLabels(s.profile,activeOrderSupplierTab);
+      return `<button type="button" class="orders-supplier-item ${activeOrderSupplierFilter===s.name?'active':''}" onclick="setOrderSupplierFilter(${safeName})">
+        <div class="orders-supplier-item-top">
+          <span class="orders-supplier-item-name">${s.name}</span>
+          <span class="orders-supplier-edit" title="編輯供應商" onclick="event.stopPropagation();openSupplierProfile(${safeName})">⋯</span>
+        </div>
+        <div class="orders-supplier-item-meta">
+          ${supplierCategoryLabels(s.profile).map(label=>`<span class="orders-supplier-mini-cat"><span class="ui-box-text">${label}</span></span>`).join('')}
+          ${selectedMetaLabels.slice(0,3).map(label=>`<span class="orders-supplier-mini-meta">${label}</span>`).join('')}
+          <span class="orders-supplier-mini-text">${s.count} 次 · ${s.latest||'—'}</span>
+        </div>
+      </button>`;
+    }).join(''):`<div class="orders-supplier-empty-filter">這個條件還沒有供應商</div>`);
 }
-
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
@@ -11940,6 +12052,15 @@ function renderOrders(){
   renderOrderSupplierSidebar();
   if(activeOrderSupplierFilter!=='all'){
     sorted=sorted.filter(o=>String(o.supplier||'').trim()===activeOrderSupplierFilter);
+  }else{
+    sorted=sorted.filter(o=>{
+      const supplierName=String(o.supplier||'').trim();
+      if(!supplierName)return activeOrderSupplierCategory==='all'&&activeOrderSupplierMetaFilter==='all';
+      const profile=ensureSupplierProfile(supplierName);
+      const categoryOk=activeOrderSupplierCategory==='all'||supplierHasCategory(profile,activeOrderSupplierCategory);
+      const metaOk=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
+      return categoryOk&&metaOk;
+    });
   }
   if(orderSortMode==='oldest'){
     sorted.sort(byTimeAsc);
@@ -15418,6 +15539,7 @@ const SUPPLIER_META_LABELS={
 let activeSupplierProfileMeta={capabilities:[],advantages:[],sources:[]};
 let supplierMetaDeleteMode={capabilities:false,advantages:false,sources:false};
 let activeSupplierMetaManageTarget=null;
+let supplierProfileEditMode=false;
 
 function getSupplierCategoryOptions(){
   if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];
@@ -15574,7 +15696,6 @@ function renderSupplierProfileCategoryChoices(){
     return `<span class="supplier-category-custom-wrap">${button}<button type="button" class="supplier-category-custom-remove" title="刪除分類" aria-label="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${o.value}')"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button></span>`;
   }).join('')+
   `<button type="button" class="supplier-category-add" onclick="openSupplierCategoryAddEditor()"><span class="ui-box-text">＋ 新增類別</span></button>
-   <button type="button" class="supplier-category-delete-toggle ${supplierCategoryDeleteMode?'active':''}" onclick="toggleSupplierCategoryDeleteMode()"><span class="ui-box-text">${supplierCategoryDeleteMode?'完成':'刪除類別'}</span></button>
    <span class="supplier-category-add-editor" id="supplier-category-add-editor">
      <input class="supplier-category-add-input" id="supplier-category-add-input" maxlength="18" placeholder="輸入類別" onkeydown="if(event.key==='Enter'){event.preventDefault();addSupplierCustomCategory();}else if(event.key==='Escape'){closeSupplierCategoryAddEditor();}">
      <button type="button" class="supplier-category-add-confirm" onclick="addSupplierCustomCategory()"><span class="ui-box-text">新增</span></button>
@@ -15688,7 +15809,6 @@ function renderSupplierProfileMetaChoices(kind){
     return `<span class="supplier-category-custom-wrap">${button}${manage}</span>`;
   }).join('')+
   `<button type="button" class="supplier-category-add" onclick="openSupplierMetaAddEditor('${kind}')"><span class="ui-box-text">＋ 新增</span></button>
-   <button type="button" class="supplier-category-delete-toggle ${manageMode?'active':''}" onclick="toggleSupplierMetaDeleteMode('${kind}')"><span class="ui-box-text">${manageMode?'完成':'管理'}</span></button>
    <span class="supplier-category-add-editor" id="supplier-${kind}-add-editor">
      <input class="supplier-category-add-input" id="supplier-${kind}-add-input" maxlength="24" placeholder="輸入${SUPPLIER_META_LABELS[kind]||'資訊'}" onkeydown="if(event.key==='Enter'){event.preventDefault();addSupplierMetaOption('${kind}');}else if(event.key==='Escape'){closeSupplierMetaAddEditor('${kind}');}">
      <button type="button" class="supplier-category-add-confirm" onclick="addSupplierMetaOption('${kind}')"><span class="ui-box-text">新增</span></button>
@@ -15706,6 +15826,30 @@ function toggleSupplierMetaDeleteMode(kind){
   supplierMetaDeleteMode[kind]=!supplierMetaDeleteMode[kind];
   closeSupplierMetaAddEditor(kind);
   renderSupplierProfileMetaChoices(kind);
+}
+
+function setSupplierProfileEditMode(on){
+  supplierProfileEditMode=!!on;
+  supplierCategoryDeleteMode=supplierProfileEditMode;
+  supplierMetaDeleteMode={
+    capabilities:supplierProfileEditMode,
+    advantages:supplierProfileEditMode,
+    sources:supplierProfileEditMode
+  };
+  closeSupplierCategoryAddEditor();
+  ['capabilities','advantages','sources'].forEach(closeSupplierMetaAddEditor);
+  renderSupplierProfileCategoryChoices();
+  renderAllSupplierProfileMetaChoices();
+  const btn=document.getElementById('supplier-profile-edit-btn');
+  if(btn){
+    btn.classList.toggle('active',supplierProfileEditMode);
+    btn.innerHTML=supplierProfileEditMode
+      ? '<span class="supplier-profile-edit-icon">✓</span><span>完成編輯</span>'
+      : '<span class="supplier-profile-edit-icon">✏️</span><span>編輯</span>';
+  }
+}
+function toggleSupplierProfileEditMode(){
+  setSupplierProfileEditMode(!supplierProfileEditMode);
 }
 function openSupplierMetaAddEditor(kind){
   const editor=document.getElementById(`supplier-${kind}-add-editor`);
@@ -15752,8 +15896,6 @@ function openSupplierMetaManager(kind,value){
   activeSupplierMetaManageTarget={kind,value};
   const input=document.getElementById('supplier-meta-manager-name');
   if(input)input.value=item.label;
-  const subtitle=document.getElementById('supplier-meta-manager-subtitle');
-  if(subtitle)subtitle.textContent=`目前在「${SUPPLIER_META_LABELS[kind]}」`;
   const hidden=document.getElementById('supplier-meta-manager-kind');
   if(hidden)hidden.value=kind;
   renderSupplierMetaMoveChoices(kind);
@@ -15944,6 +16086,8 @@ function openSupplierProfile(name){
     advantages:[...(profile.advantages||[])],
     sources:[...(profile.sources||[])]
   };
+  supplierProfileEditMode=false;
+  supplierCategoryDeleteMode=false;
   supplierMetaDeleteMode={capabilities:false,advantages:false,sources:false};
   renderAllSupplierProfileMetaChoices();
   const notesEl=document.getElementById('supplier-profile-notes');
@@ -18975,12 +19119,12 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
 
 
 <div class="modal-overlay hidden" id="modal-supplier-profile">
-  <div class="modal" style="max-width:620px">
+  <div class="modal supplier-profile-modal" style="max-width:620px">
     <div class="modal-header">
       <div class="modal-title" id="supplier-profile-title">供應商</div>
       <button class="modal-close" onclick="closeModal('modal-supplier-profile')">×</button>
     </div>
-    <div class="modal-body" style="max-height:84vh;overflow:auto">
+    <div class="modal-body supplier-profile-scroll">
       <div id="supplier-profile-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:11px 13px;margin-bottom:14px"></div>
       <div class="form-group">
         <label class="form-label">供應類別 <span style="font-size:9px;color:var(--text3);font-weight:500">可複選</span></label>
@@ -19004,10 +19148,14 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
       </div>
       <div style="font-size:11px;font-weight:800;color:var(--text2);margin:4px 0 7px">歷史採購單</div>
       <div class="supplier-profile-history" id="supplier-profile-history"></div>
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-supplier-profile')">取消</button>
-        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveSupplierProfile()">儲存供應商</button>
-      </div>
+    </div>
+    <div class="supplier-profile-footer">
+      <button type="button" class="btn btn-secondary supplier-profile-edit-footer-btn" id="supplier-profile-edit-btn" onclick="toggleSupplierProfileEditMode()">
+        <span class="supplier-profile-edit-icon">✏️</span><span>編輯</span>
+      </button>
+      <div class="supplier-profile-footer-spacer"></div>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-supplier-profile')">取消</button>
+      <button type="button" class="btn btn-primary" onclick="saveSupplierProfile()">儲存</button>
     </div>
   </div>
 </div>
@@ -19018,7 +19166,6 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
     <div class="modal-header">
       <div>
         <div class="modal-title">管理標籤</div>
-        <div id="supplier-meta-manager-subtitle" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
       </div>
       <button class="modal-close" onclick="closeModal('modal-supplier-meta-manager')">×</button>
     </div>
