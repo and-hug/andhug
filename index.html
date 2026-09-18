@@ -3609,6 +3609,60 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
+
+<style id="supplier-manager-compact-height-v1">
+/* 管理標籤視窗：收緊整體高度，維持網站原本尺寸感 */
+#modal-supplier-meta-manager .modal{
+  max-width:430px !important;
+  overflow:hidden !important;
+}
+#modal-supplier-meta-manager .modal-header{
+  padding:16px 20px 0 !important;
+}
+#modal-supplier-meta-manager .modal-body{
+  padding:14px 20px 18px !important;
+}
+#modal-supplier-meta-manager .form-label{
+  margin-bottom:6px !important;
+}
+#modal-supplier-meta-manager #supplier-meta-manager-name{
+  height:34px !important;
+  min-height:34px !important;
+  padding:6px 12px !important;
+  box-sizing:border-box !important;
+}
+#modal-supplier-meta-manager .form-group + .form-group{
+  margin-top:10px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions{
+  margin-top:14px !important;
+}
+#modal-supplier-meta-manager .modal-close{
+  width:34px !important;
+  height:34px !important;
+}
+</style>
+
+
+<style id="supplier-sidebar-filter-tags-taller-v1">
+/* 外側供應商快速篩選標籤：稍微加高，增加上下留白 */
+.orders-supplier-meta-chip{
+  min-height:30px !important;
+  padding:6px 9px !important;
+}
+</style>
+
+
+<style id="supplier-card-count-next-line-v1">
+/* 供應商卡片：採購次數／日期固定另起一行 */
+.orders-supplier-item-meta .orders-supplier-mini-text{
+  flex:0 0 100% !important;
+  width:100% !important;
+  display:block !important;
+  margin-top:1px !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -8673,6 +8727,24 @@ function _refreshAfterUndo(){
   // Undo / Redo 已先把 DB 還原；這裡只負責持久化並刷新目前頁面。
   // 所有 showPage() 可到達的主頁都必須覆蓋，避免「提示已撤銷但畫面沒更新」。
   saveDB({skipUndo:true});
+
+  // 供應商編輯視窗可能仍開著：不論目前頁面狀態，都要同步回復後的 DB。
+  // 這對「拖移標籤 → ⌘Z / Ctrl+Z」尤其重要，否則資料已回復但畫面仍停在拖移後。
+  const openSupplierModal=document.getElementById('modal-supplier-profile');
+  if(openSupplierModal && !openSupplierModal.classList.contains('hidden') && activeSupplierProfileName){
+    const restoredProfile=ensureSupplierProfile(activeSupplierProfileName);
+    activeSupplierProfileCategories=[...(restoredProfile?.categories||[restoredProfile?.category||'other'])];
+    activeSupplierProfileMeta={
+      capabilities:[...(restoredProfile?.capabilities||[])],
+      advantages:[...(restoredProfile?.advantages||[])],
+      sources:[...(restoredProfile?.sources||[])]
+    };
+    if(typeof renderSupplierProfileCategoryChoices==='function')renderSupplierProfileCategoryChoices();
+    if(typeof renderAllSupplierProfileMetaChoices==='function')renderAllSupplierProfileMetaChoices();
+    const restoredNotes=document.getElementById('supplier-profile-notes');
+    if(restoredNotes)restoredNotes.value=restoredProfile?.notes||'';
+    if(typeof renderSupplierProfileHistory==='function')renderSupplierProfileHistory();
+  }
   if(currentPage==='overview'){
     renderOverview();
     return;
@@ -8688,15 +8760,6 @@ function _refreshAfterUndo(){
     renderOrders();
     if(typeof renderOrderSupplierSidebar==='function')renderOrderSupplierSidebar();
     if(typeof renderSupplierCategoryFilters==='function')renderSupplierCategoryFilters();
-    const supplierModal=document.getElementById('modal-supplier-profile');
-    if(supplierModal && !supplierModal.classList.contains('hidden') && activeSupplierProfileName){
-      const profile=ensureSupplierProfile(activeSupplierProfileName);
-      activeSupplierProfileCategories=[...(profile?.categories||[profile?.category||'other'])];
-      if(typeof renderSupplierProfileCategoryChoices==='function')renderSupplierProfileCategoryChoices();
-      const tagsInput=document.getElementById('supplier-profile-tags');
-      if(tagsInput)tagsInput.value=(profile?.tags||[]).join('、');
-      if(typeof renderSupplierProfileHistory==='function')renderSupplierProfileHistory();
-    }
     if(typeof renderOverview==='function')renderOverview();
     return;
   }
