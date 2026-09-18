@@ -2808,6 +2808,143 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 </style>
 
+
+<style id="remove-native-search-cancel">
+/* 採購單搜尋框：移除瀏覽器原生藍色清除 ×，只保留網站自己的咖啡色 × */
+#order-search-input::-webkit-search-cancel-button,
+#order-search-input::-webkit-search-decoration{
+  -webkit-appearance:none;
+  appearance:none;
+  display:none;
+}
+#order-search-input::-ms-clear,
+#order-search-input::-ms-reveal{
+  display:none;
+  width:0;
+  height:0;
+}
+</style>
+
+
+<style id="supplier-top-filters-text-down-1">
+/* 右側供應商上方六個分類：只把文字往下 1px。
+   下方供應商卡片的小標籤位置維持不動。 */
+#orders-supplier-category-filters .orders-supplier-filter > .ui-box-text{
+  transform:translateY(0) !important;
+}
+</style>
+
+
+<style id="supplier-profile-compact-32">
+/* 供應商編輯視窗：分類與標籤統一 32px，整體收緊 */
+#supplier-profile-category-options{
+  gap:5px !important;
+  padding-top:4px !important;
+  padding-bottom:5px !important;
+}
+
+#supplier-profile-category-options .supplier-category-choice,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle,
+#supplier-profile-category-options .supplier-category-add-input,
+#supplier-profile-category-options .supplier-category-add-confirm{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  box-sizing:border-box !important;
+}
+
+#supplier-profile-category-options .supplier-category-choice{
+  padding-left:11px !important;
+  padding-right:11px !important;
+}
+
+#supplier-profile-category-options .supplier-category-add{
+  padding-left:10px !important;
+  padding-right:10px !important;
+}
+
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  padding-left:11px !important;
+  padding-right:11px !important;
+}
+
+/* 標籤輸入框縮到 32px */
+#supplier-profile-tags{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  box-sizing:border-box !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+/* 分類區與標籤區之間縮短一點 */
+#supplier-profile-category-options + .form-group{
+  margin-top:10px !important;
+}
+</style>
+
+
+<style id="records-search-match-order-search">
+/* 記錄頁搜尋框：改成和採購單搜尋同樣的字感與顏色 */
+.sales-history-input{
+  color:var(--text1) !important;
+  font:600 12px/1 inherit !important;
+}
+.sales-history-input::placeholder{
+  color:var(--text3) !important;
+  font-weight:500 !important;
+}
+</style>
+
+
+<style id="global-search-match-order-style">
+/* 讓所有搜尋框的文字、placeholder、icon 都跟採購單搜尋同一個風格 */
+.search-input,
+.sales-history-input,
+#price-compare-search{
+  color:var(--text1) !important;
+  font:600 12px/1 inherit !important;
+}
+
+.search-input::placeholder,
+.sales-history-input::placeholder,
+#price-compare-search::placeholder{
+  color:var(--text3) !important;
+  font-weight:500 !important;
+  opacity:1 !important;
+}
+
+/* 有放大鏡 icon 的搜尋框統一成採購單搜尋的 icon 風格 */
+.search-wrap .search-icon{
+  width:14px !important;
+  height:14px !important;
+  color:var(--text3) !important;
+  pointer-events:none;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  font-size:0 !important;
+  line-height:0 !important;
+}
+.search-wrap .search-icon svg{
+  width:14px !important;
+  height:14px !important;
+  display:block;
+}
+
+/* 客戶 / 商品 / 開單商品的搜尋框高度也統一成 34px */
+#page-products .search-input,
+#page-sales .search-input,
+#page-customers .search-input{
+  height:34px !important;
+  box-sizing:border-box !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -2865,7 +3002,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header">
     <div class="section-title">📦 商品庫</div>
     <div class="product-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋名稱 / SKU..." id="product-search" oninput="requestProductGridRender()"></div>
+      <div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋商品 / SKU…" id="product-search" oninput="requestProductGridRender()"></div>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
       <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
@@ -2981,7 +3118,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   </div>
   <div class="cart-layout">
     <div>
-      <div class="section-header"><div class="section-title">🏪 選商品</div><div class="sale-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋商品..." id="sale-search" oninput="scheduleLightRender('sale-products',renderSaleProducts)"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表"><span class="view-glyph">☰</span></button></div><button type="button" class="btn btn-secondary btn-sm" onclick="openSaleHistoryModal()" title="快速查看銷售紀錄" style="height:34px;padding:0 12px;border-radius:12px">📋 銷售紀錄</button></div></div>
+      <div class="section-header"><div class="section-title">🏪 選商品</div><div class="sale-search-toolbar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋商品…" id="sale-search" oninput="scheduleLightRender('sale-products',renderSaleProducts)"></div><div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="svbtn-grid" onclick="setSaleView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="svbtn-large" onclick="setSaleView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="svbtn-list" onclick="setSaleView('list')" title="列表"><span class="view-glyph">☰</span></button></div><button type="button" class="btn btn-secondary btn-sm" onclick="openSaleHistoryModal()" title="快速查看銷售紀錄" style="height:34px;padding:0 12px;border-radius:12px">📋 銷售紀錄</button></div></div>
       <div class="sale-cat-layout" style="display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:stretch">
         <div>
           <div id="sale-cat-sidebar" class="sticky-sidebar"></div>
@@ -3073,7 +3210,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     <button class="btn btn-secondary btn-sm" onclick="openTrash()">🗑 已刪紀錄</button>
   </div>
   <div class="sales-history-toolbar">
-    <input id="sales-history-search" class="sales-history-input" type="text" placeholder="搜尋顧客、商品、SKU、單號…" oninput="scheduleLightRender('sales-history',renderSalesHistoryPage)">
+    <input id="sales-history-search" class="sales-history-input" type="text" placeholder="搜尋商品 / SKU / 供應商…" oninput="scheduleLightRender('sales-history',renderSalesHistoryPage)">
     <div class="sales-history-dd" id="sales-history-month-wrap">
       <input type="hidden" id="sales-history-month" value="all">
       <button type="button" class="sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'month')"><span id="sales-history-month-label">全部月份</span><span class="sales-history-dd-caret">⌄</span></button>
@@ -3147,7 +3284,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
     <div class="section-title">🧸 顧客</div>
     <button class="btn btn-primary" onclick="openAddCustomer()">+ 新增顧客</button>
   </div>
-  <div class="search-wrap" style="margin-bottom:16px"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="搜尋姓名 / 電話..." id="customer-search" oninput="scheduleLightRender('customers',renderCustomers)"></div>
+  <div class="search-wrap" style="margin-bottom:16px"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋姓名 / 電話…" id="customer-search" oninput="scheduleLightRender('customers',renderCustomers)"></div>
   <div id="customer-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px"></div>
 </div>
 
