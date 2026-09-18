@@ -453,6 +453,19 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .order-search-match{background:rgba(216,185,143,.20)!important;border-radius:8px;}
 .order-search-group-match{background:rgba(216,185,143,.14)!important;border-radius:8px;}
 @media(max-width:900px){.order-search-wrap{width:100%;min-width:180px;order:-1;flex-basis:100%;}.order-search-input{width:100%;}}
+
+.supplier-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.supplier-filter-chip{border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);border-radius:999px;padding:5px 11px;font:700 11px/1.2 inherit;cursor:pointer}
+.supplier-filter-chip.active{background:var(--brown);border-color:var(--brown);color:#fff}
+.supplier-card{padding:12px 13px;border:1.5px solid var(--cream3);border-radius:13px;background:var(--surface);margin-bottom:8px;cursor:pointer;transition:border-color .15s,background .15s}
+.supplier-card:hover{border-color:var(--brown-light);background:#fffdf9}
+.supplier-meta-chip{display:inline-flex;align-items:center;min-height:20px;padding:2px 7px;border-radius:999px;background:var(--cream2);border:1px solid var(--cream3);font-size:9.5px;font-weight:700;color:var(--text2);white-space:nowrap}
+.supplier-meta-chip.category{color:var(--brown);background:#faf3e8;border-color:#ead8bc}
+.supplier-profile-history{border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden}
+.supplier-profile-order{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--cream2);cursor:pointer}
+.supplier-profile-order:last-child{border-bottom:0}
+.supplier-profile-order:hover{background:var(--cream2)}
+
 .alert-card{background:var(--yellow-light);border:1.5px solid var(--yellow);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px;}
 .cat-sidebar-item{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:8px;}
 .cat-sidebar-item:hover{background:var(--cream2);color:var(--brown);}
@@ -2477,7 +2490,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">🏪 供應商</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-search-summary" class="order-search-summary" aria-live="polite"></div>
@@ -3652,12 +3665,13 @@ function normalizeProductToCurrentSchema(p){
   return p;
 }
 
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};
 if(Array.isArray(DB.orders)&&Array.isArray(DB.products)){
   DB.orders.forEach(o=>{
     const s=String(o.supplier||'').trim();
     if(!s)return;
     if(!DB.suppliers.includes(s))DB.suppliers.push(s);
+    if(!DB.supplierProfiles[s])DB.supplierProfiles[s]={category:'other',tags:[]};
     (o.items||[]).forEach(it=>{
       let p=it.productId?DB.products.find(x=>x.id===it.productId):null;
       if(!p&&it.name)p=DB.products.find(x=>x.name===it.name);
@@ -3689,8 +3703,128 @@ function backfillMissingSortOrders(){
     }
   });
 }
+
+/* === 採購單 → 商品庫庫存連動 v1 ===
+   正常可賣庫存 = 已到貨良品 - 已售出/樣品 + 手動盤點調整
+   未到貨採購不進現有庫存；商品卡既有「待到貨」資訊維持分開顯示。 */
+function buildStockLedgerSnapshot(){
+  const byProduct=new Map();
+  const ensure=(pid)=>{
+    pid=String(pid||'');
+    if(!byProduct.has(pid))byProduct.set(pid,{base:0,variants:new Map()});
+    return byProduct.get(pid);
+  };
+  const add=(pid,qty,variantId)=>{
+    if(!pid||!qty)return;
+    const rec=ensure(pid);
+    if(variantId){
+      const vid=String(variantId);
+      rec.variants.set(vid,(rec.variants.get(vid)||0)+qty);
+    }else rec.base+=qty;
+  };
+  const resolveItemProductIds=(item)=>{
+    if(Array.isArray(item&&item.linkedProducts)&&item.linkedProducts.length){
+      return item.linkedProducts.map(String);
+    }
+    if(item&&item.productId)return [String(item.productId)];
+    if(item&&item.name){
+      const p=DB.products.find(x=>x.name===item.name);
+      if(p)return [String(p.id)];
+    }
+    return [];
+  };
+
+  (DB.orders||[]).forEach(o=>{
+    if(o.status!=='received')return;
+    (o.items||[]).forEach(item=>{
+      const received=item.receivedQty!==undefined?Math.max(0,Number(item.receivedQty)||0):Math.max(0,Number(item.qty)||0);
+      const defect=Math.max(0,Number(item.defectQty)||0);
+      const good=Math.max(0,received-defect);
+      if(!good)return;
+      resolveItemProductIds(item).forEach(pid=>add(pid,good,item.variantId||null));
+    });
+  });
+
+  Object.values(DB.todaySales||{}).forEach(day=>{
+    ((day&&day.records)||[]).forEach(rec=>{
+      ((rec&&rec.rawItems)||[]).forEach(item=>{
+        const q=Math.max(0,Number(item.qty)||0);
+        if(item.id&&q)add(String(item.id),-q,item.variantId||null);
+      });
+    });
+  });
+  (DB.samples||[]).forEach(rec=>{
+    ((rec&&rec.rawItems)||[]).forEach(item=>{
+      const q=Math.max(0,Number(item.qty)||0);
+      if(item.id&&q)add(String(item.id),-q,item.variantId||null);
+    });
+  });
+  return byProduct;
+}
+function getLedgerBaseForProduct(p,variantId=null,snapshot=null){
+  if(!p)return 0;
+  const map=snapshot||buildStockLedgerSnapshot();
+  const rec=map.get(String(p.id));
+  if(!rec)return 0;
+  if(variantId)return Number(rec.variants.get(String(variantId))||0);
+  return Number(rec.base||0);
+}
+function setManualStockTarget(p,target,variantId=null,snapshot=null){
+  if(!p)return;
+  const desired=Math.max(0,Number(target)||0);
+  const map=snapshot||buildStockLedgerSnapshot();
+  if(variantId&&Array.isArray(p.variants)){
+    const v=p.variants.find(x=>String(x.id)===String(variantId));
+    if(!v)return;
+    const base=getLedgerBaseForProduct(p,variantId,map);
+    v.manualStockAdjustment=desired-base;
+    v.stock=desired;
+    return;
+  }
+  const base=getLedgerBaseForProduct(p,null,map);
+  p.manualStockAdjustment=desired-base;
+  p.stock=desired;
+}
+function syncAllProductStocksFromLedger(){
+  if(!Array.isArray(DB.products))return;
+  const map=buildStockLedgerSnapshot();
+  DB.products.forEach(p=>{
+    const rec=map.get(String(p.id))||{base:0,variants:new Map()};
+    if(Array.isArray(p.variants)&&p.variants.length){
+      let total=0;
+      p.variants.forEach(v=>{
+        const base=Number(rec.variants.get(String(v.id))||0);
+        const adj=Number(v.manualStockAdjustment)||0;
+        v.stock=Math.max(0,base+adj);
+        total+=v.stock;
+      });
+      const unassignedBase=Number(rec.base)||0;
+      const unassignedAdj=Number(p.manualStockAdjustment)||0;
+      p.unassignedVariantStock=Math.max(0,unassignedBase+unassignedAdj);
+      p.stock=total+p.unassignedVariantStock;
+    }else{
+      const base=Number(rec.base)||0;
+      const adj=Number(p.manualStockAdjustment)||0;
+      p.stock=Math.max(0,base+adj);
+    }
+  });
+}
+function initializeLedgerStockSync(){
+  if(!Array.isArray(DB.products))return false;
+  if(DB.stockLedgerSyncV1)return false;
+  // 第一次啟用時，以採購/銷售紀錄為準，不把舊的手填庫存當成額外加成。
+  DB.products.forEach(p=>{
+    p.manualStockAdjustment=0;
+    if(Array.isArray(p.variants))p.variants.forEach(v=>{v.manualStockAdjustment=0;});
+  });
+  DB.stockLedgerSyncV1=true;
+  syncAllProductStocksFromLedger();
+  return true;
+}
+
 function saveDB(options={}){
   migrateSockTypeSTtoSK();
+  if(DB.stockLedgerSyncV1)syncAllProductStocksFromLedger();
   migrateClothingTypeGTtoCL();
   backfillMissingSortOrders();
 
@@ -4970,14 +5104,19 @@ function getProductPawTitle(p){
 }
 function renderProductPawIcon(p){
   const state=getProductPawState(p);
-  // 直接依照使用者提供的貓掌圖形做成 20×20 PNG，避免 SVG 重新畫形狀跑掉。
-  // outline / 奶茶米色 / 深可可棕都使用完全相同的原始貓掌輪廓。
-  const icons={
-    outline:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB90lEQVR42o3UXYjMURjH8c/8Z1YIhUhcKW0p3MiyF8LdkBQ3rlx4y1JuXFCUNq3XlLcIzY1dF1xIUfJSFMpLyBVTaqNE1oXaLVvD7Lh5/vo3zczOqdN/OnOe7/M75/k9J1fq7dFg5FBDgrHM+mT81mIkTdZrmBqwdM8J/MDJWEvaAaYbL+MX+gK6FgfwCPuxLJJOaAXMR/AW7MJ9HMIsrMYrbMJHzAtgpRUwCWg3HmB9JJgfgZVQthBDmIE1rYB/UMUXrMLR+H8ID7ESr/EUH/AOj3Esc0JJVBSmowsX8AYHcQmf8QxLsR1F9GAKDmMbJsZpcoUATsI9rMCpUNiJcoBm432oymEzbgZkLE4GtdRn3RF4GnsjexlXQ+01fMOeKMat+N2H43FdCRQyvitEcB5zsRU7Yw7gYswRHEEHPqE/VFdTYIKXeIEboayMJziDUiTZEUr6sTj8mO0qKbAW7VTERjzHBszB+Uzh8tgdyc6GHweC8zdrm5Q+EtkHcQV38DVzLamAc2GXriyolbFnxuyNgEp8q/EtRucMNurlQt2DUMMohkPtPizAciyJQiwKo5eyxWgGTOI+1+E67uIn3uJ2ePF7uMF4CqVujxbrxLRQ2+i9lK1uM6C6h3U406dZe1TbVViv1HiAGB3BGi202FTT/vjfz/8ArlKLnEMtUJEAAAAASUVORK5CYII=',
-    half:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB3klEQVR42o3UT4iNURjH8c/7zjvjTsqwsbShEBFDiSQ7pZSRlCKlrBWxoFkpNMqapEQsLJSSrLCRGv/KZiSxQBLKZu7E3Pe1eV6d3u7cO0+9nXvPeZ7v+Z3zPOfJph5d1sVylMlYWwszelg+x3wZwWXicxpvMRH/s37ALL5BXME7nAroLlzACpzE5ogZ7AXMUWEMx7AMFzGC7QFuYxbLw/dvP2CO0XBsB2RlKM9jLPAFC7GpF3A2AJ/iKK1Y/4n7sUkLD+M6nmMS4xE/INkVFmEdbuJJbHANHyJ4Aw5hD45ibcQdCFgHWRGTw3iAbTiLnViFKWyM+3yGWyFgC/4EaDruM0NVJ2I0YCKLIwG7gZe4F1dxIvwnMRTAq2l51QrbMXYCNoy9OBxzVcxdwlecwwJ8xPVQ16mBOd7EkXfjFb7hePJKiuT3bayJq6nrt2rWXgf7cTCgY1gfawOJb63kDPbFWq5LMdfHvhPqxtNdG6+pjBLaUWc2dSga8AyLI6tlAiiTwDyUve/2llNgFd80fmNJjyZyN2r0fzLmAuZx9CM4j9XxzB7jBX7hM17P1b6KLm0LnmIrluJHoyemravqB2wm63viVyWQcr4Km0qzpHH0sqEQMVP0cazMz8ra9x8ZH39KifLLBQAAAABJRU5ErkJggg==',
-    full:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB30lEQVR42o3Uz4uNURzH8dfzzDPjTsqwsbShEBFD+ZFkp5QYSSlSylrRWNCslBH/AEmJWFgoJUtspMavsiGJBZJQNnMn5j6PzffR6enOvfOtp3PvOd/v+3zO+X7PNxvft1UXy1EmY20tzOhh+RzzZQSXic8ZvMGl+J/1A2bxDeIK3mE8oLsxiRU4jc0RM9gLmKPCGE5gGS5iBDsC3MYslofv337AHKPh2A7IylCex1jgCxZiUy/gbAA+xVFasf4T92OTFh7GdTzDFCYifkCyKyzCOtzE49jgGj5E8AYcwV4cx9qIOxSwDrIiJofxANtxDruwCm+xMe7zKW6FgC34E6DpuM8MVZ2I0YCJLI4E7AZe4F5cxanwn8JQAK+m5VUrbMfYCdgw9uNozFUxdxlfcR4L8BHXQ12nBuZ4HUfeg5f4hpPJKymS37exJq6mrt+qWXsdHMThgI5hfawNJL61krM4EGu5LsVcH/tOqJtId228pjJKaGed2dShaMAzLI6slgmgTALzUPa+21tOgVV80/iNJT2ayN2o0f/JmAuYx9GP4QJWxzN7hOf4hc94NVf7Krq0LXiCbViKH42emLauqh+wmazviV+VQMr5KmwqzZLG0cuGQsRM0cexMj8ra99/9gl+KWezB9sAAAAASUVORK5CYII='
-  };
-  return `<img src="${icons[state]}" alt="" aria-hidden="true" width="20" height="20" style="display:block;width:20px;height:20px">`;
+  // 使用 inline SVG 向量貓掌，20×20 顯示時在 Retina / 高解析螢幕也能保持銳利。
+  // 三種狀態共用同一個輪廓，只透過 currentColor 與填色方式切換。
+  const filled=state!=='outline';
+  const fill=filled?'currentColor':'none';
+  const stroke='currentColor';
+  const strokeWidth=filled?'0':'1.9';
+  return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" style="display:block;width:20px;height:20px;overflow:visible">
+    <ellipse cx="7.1" cy="5.8" rx="2.15" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(-18 7.1 5.8)"/>
+    <ellipse cx="12" cy="4.55" rx="2.1" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+    <ellipse cx="16.9" cy="5.8" rx="2.15" ry="2.85" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(18 16.9 5.8)"/>
+    <ellipse cx="4.5" cy="10.25" rx="1.95" ry="2.55" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" transform="rotate(-28 4.5 10.25)"/>
+    <path d="M12 9.4c-2.25 0-4.15 1.22-5.4 3.1-1.02 1.55-1.48 3.18-.86 4.42.55 1.1 1.82 1.5 3.28 1.18.97-.21 1.82-.68 2.98-.68s2.01.47 2.98.68c1.46.32 2.73-.08 3.28-1.18.62-1.24.16-2.87-.86-4.42C16.15 10.62 14.25 9.4 12 9.4Z" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linejoin="round"/>
+  </svg>`;
 }
 function renderSidebarConfirmedPawIcon(size=14){
   // 與商品卡「已完成」完全相同的深可可棕貓腳，只縮小給左側大分類使用。
@@ -9570,7 +9709,9 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
-  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
+  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
+  if(DB.stockLedgerSyncV1&&!(p.variants&&p.variants.length))setManualStockTarget(p,Math.max(0,parseInt(document.getElementById('p-stock').value,10)||0));
+  delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
   const wasEditing=!!editingId;
   await saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
   if(!wasEditing){
@@ -9944,7 +10085,7 @@ function openStockModal(id){
           <div style="display:flex;gap:3px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
         </div>`).join('')}
       </div>`:`
-      <div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
+      <div style="margin:0 0 7px 106px;font-size:9.5px;color:var(--text3);line-height:1.45">庫存會依「已到貨 − 已售出/樣品」自動同步；這裡手動改數字會記為盤點調整。</div><div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
         const sampleQty=getTotalSampleQty(p.id);
         const defectQty=p.defectStock||0;
         return `<div style="display:flex;flex-direction:column;gap:2px;font-size:11px;margin-left:20px">
@@ -10181,14 +10322,15 @@ async function saveFromStock(id){
   p.status=document.getElementById('edit-status').value;
   // 儲存時再直接讀一次畫面上的庫存值，避免使用者輸入後立刻按「儲存」時，change 事件尚未可靠寫回 DB。
   if(p.variants&&p.variants.length){
+    const ledgerSnapshot=buildStockLedgerSnapshot();
     p.variants.forEach(v=>{
       const input=document.getElementById('sc-v-'+v.id);
-      if(input)v.stock=Math.max(0,parseInt(input.value,10)||0);
+      if(input)setManualStockTarget(p,Math.max(0,parseInt(input.value,10)||0),v.id,ledgerSnapshot);
     });
     p.stock=p.variants.reduce((sum,v)=>sum+(Number(v.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
   }else{
     const stockInput=document.getElementById('sc-ok');
-    if(stockInput)p.stock=Math.max(0,parseInt(stockInput.value,10)||0);
+    if(stockInput)setManualStockTarget(p,Math.max(0,parseInt(stockInput.value,10)||0));
   }
   p.size=p.type==='RB'?'0':(document.getElementById('edit-size').value||'0');
   if(p.type==='RB'){
@@ -10230,7 +10372,7 @@ async function saveFromStock(id){
 }
 function setStockDirect(id,val){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
-  p.stock=Math.max(0,parseInt(val,10)||0);
+  setManualStockTarget(p,Math.max(0,parseInt(val,10)||0));
   p.status='ok';
   // 直接輸入庫存也一定要更新版本時間；否則同步前的雲端合併可能把舊庫存判定成較新而蓋回來。
   p.updatedAt=Date.now();
@@ -10239,7 +10381,7 @@ function setStockDirect(id,val){
 function setVariantStockDirect(productId,variantId,val){
   const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
-  v.stock=Math.max(0,parseInt(val,10)||0);
+  setManualStockTarget(p,Math.max(0,parseInt(val,10)||0),variantId);
   p.stock=p.variants.reduce((sum,item)=>sum+(Number(item.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
   p.status='ok';
   p.updatedAt=Date.now();
@@ -10254,7 +10396,7 @@ function _applyQuickStockValue(id,type,value){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
   const n=Math.max(0,Number(value)||0);
   if(type==='ok'){
-    p.stock=n;p.status='ok';
+    setManualStockTarget(p,n);p.status='ok';
     const el=document.getElementById('sc-ok');if(el)el.value=n;
   }else if(type==='defect'){
     p.defectStock=n;
@@ -10360,6 +10502,22 @@ function isOrderItemSearchMatch(item,q=orderSearchQuery){
   const needle=normalizeOrderSearchText(q);
   return !!needle&&getOrderItemSearchText(item).includes(needle);
 }
+// 搜尋摘要只計算「商品本身」真正符合的項目。
+// 不把 groupLabel / note / tags 裡碰巧包含關鍵字的同組商品算進數量。
+function getOrderItemDirectSearchText(item){
+  const p=item&&item.productId?DB.products.find(x=>String(x.id)===String(item.productId)):null;
+  return normalizeOrderSearchText([
+    item&&item.name,
+    item&&item.sku,
+    item&&item.variantLabel,
+    p&&p.name,
+    p&&p.sku
+  ].filter(Boolean).join(' '));
+}
+function isOrderItemDirectSearchMatch(item,q=orderSearchQuery){
+  const needle=normalizeOrderSearchText(q);
+  return !!needle&&getOrderItemDirectSearchText(item).includes(needle);
+}
 function orderMatchesSearch(order,q=orderSearchQuery){
   const needle=normalizeOrderSearchText(q);
   if(!needle)return true;
@@ -10463,7 +10621,7 @@ function getOrderSearchSummary(q){
   const rows=new Map();
   let totalQty=0;
   (DB.orders||[]).forEach(order=>{
-    const matched=(order.items||[]).filter(item=>isOrderItemSearchMatch(item,needle));
+    const matched=(order.items||[]).filter(item=>isOrderItemDirectSearchMatch(item,needle));
     if(!matched.length)return;
     matchedOrders.push(order);
     matched.forEach(item=>{
@@ -13368,6 +13526,7 @@ function attachSupplierToProduct(p,supplier,date){
 
   if(!Array.isArray(DB.suppliers))DB.suppliers=[];
   if(!DB.suppliers.includes(s))DB.suppliers.push(s);
+  ensureSupplierProfile(s);
 
   const oldGeneratedNote=`${s} · ${date||''}`.trim();
   if(date && String(p.note||'').trim()===oldGeneratedNote)p.note='';
@@ -13950,9 +14109,40 @@ function addReorderListToNewOrder(){
   toast(`已把 ${items.length} 項商品加進新採購單，記得填單價再儲存`,'success');
 }
 
+
+const SUPPLIER_CATEGORY_OPTIONS=[
+  {value:'patch',label:'布貼'},
+  {value:'packaging',label:'包裝'},
+  {value:'printing',label:'印刷'},
+  {value:'tools',label:'工具 / 配件'},
+  {value:'other',label:'其他'}
+];
 let supplierStatsRange='month';
+let supplierCategoryFilter='all';
+let activeSupplierProfileName='';
+
+function ensureSupplierProfile(name){
+  const s=String(name||'').trim();
+  if(!s)return null;
+  if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};
+  if(!DB.supplierProfiles[s])DB.supplierProfiles[s]={category:'other',tags:[]};
+  const p=DB.supplierProfiles[s];
+  if(!p.category)p.category='other';
+  if(!Array.isArray(p.tags))p.tags=[];
+  return p;
+}
+function supplierCategoryLabel(value){
+  return SUPPLIER_CATEGORY_OPTIONS.find(x=>x.value===value)?.label||'其他';
+}
+function getSupplierOrders(name){
+  return (DB.orders||[]).filter(o=>String(o.supplier||'').trim()===String(name||'').trim())
+    .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||Number(b.createdAt||0)-Number(a.createdAt||0));
+}
 function openSupplierStats(){
+  (DB.suppliers||[]).forEach(ensureSupplierProfile);
+  (DB.orders||[]).forEach(o=>{if(o.supplier)ensureSupplierProfile(o.supplier);});
   renderSupplierStatsTabs();
+  renderSupplierCategoryFilters();
   renderSupplierStatsBody();
   openModal('modal-supplier-stats');
 }
@@ -13962,37 +14152,103 @@ function renderSupplierStatsTabs(){
     `<button type="button" onclick="supplierStatsRange='${k}';renderSupplierStatsTabs();renderSupplierStatsBody()" style="font-size:12px;padding:5px 12px;border-radius:8px;border:1.5px solid var(--cream3);background:${supplierStatsRange===k?'var(--brown)':'var(--surface)'};color:${supplierStatsRange===k?'#fff':'var(--text2)'};cursor:pointer;font-family:inherit;font-weight:700">${label}</button>`
   ).join('');
 }
+function renderSupplierCategoryFilters(){
+  const el=document.getElementById('supplier-category-filters');if(!el)return;
+  const opts=[{value:'all',label:'全部'},...SUPPLIER_CATEGORY_OPTIONS];
+  el.innerHTML=opts.map(o=>`<button class="supplier-filter-chip ${supplierCategoryFilter===o.value?'active':''}" onclick="supplierCategoryFilter='${o.value}';renderSupplierCategoryFilters();renderSupplierStatsBody()">${o.label}</button>`).join('');
+}
 function renderSupplierStatsBody(){
   const thisMonth=todayStr().slice(0,7);
   const orders=(DB.orders||[]).filter(o=>supplierStatsRange==='all'||(o.date||'').slice(0,7)===thisMonth);
+  const allNames=new Set([...(DB.suppliers||[]),...orders.map(o=>o.supplier).filter(Boolean)]);
   const bySupplier={};
+  allNames.forEach(name=>{
+    const profile=ensureSupplierProfile(name);
+    if(supplierCategoryFilter!=='all'&&profile.category!==supplierCategoryFilter)return;
+    bySupplier[name]={spend:0,spendUsd:0,count:0,leadTimes:[],latestDate:'',profile};
+  });
   orders.forEach(o=>{
     const s=o.supplier||'（未填店家）';
-    if(!bySupplier[s])bySupplier[s]={spend:0,spendUsd:0,count:0,leadTimes:[]};
+    const profile=ensureSupplierProfile(s);
+    if(supplierCategoryFilter!=='all'&&profile.category!==supplierCategoryFilter)return;
+    if(!bySupplier[s])bySupplier[s]={spend:0,spendUsd:0,count:0,leadTimes:[],latestDate:'',profile};
     bySupplier[s].spend+=o.total||0;
     bySupplier[s].spendUsd+=o.totalPaidUsdActual||o.totalUsd||((o.total||0)*(o.rateUsed||DB.rate));
     bySupplier[s].count++;
+    if(!bySupplier[s].latestDate||String(o.date||'')>bySupplier[s].latestDate)bySupplier[s].latestDate=o.date||'';
     if(o.status==='received'&&o.receivedAt&&o.date){
       const days=Math.round((o.receivedAt-new Date(o.date).getTime())/86400000);
       if(days>=0)bySupplier[s].leadTimes.push(days);
     }
   });
-  const rows=Object.entries(bySupplier).sort((a,b)=>b[1].spendUsd-a[1].spendUsd);
+  const rows=Object.entries(bySupplier).filter(([name,s])=>supplierStatsRange==='all'||s.count>0)
+    .sort((a,b)=>(b[1].latestDate||'').localeCompare(a[1].latestDate||'')||b[1].spendUsd-a[1].spendUsd);
   const body=document.getElementById('supplier-stats-body');
   if(!rows.length){
-    body.innerHTML='<div style="text-align:center;color:var(--text3);padding:24px">這段期間沒有採購單資料 🌸</div>';
+    body.innerHTML='<div style="text-align:center;color:var(--text3);padding:24px">這個分類目前沒有供應商 🌸</div>';
     return;
   }
   body.innerHTML=rows.map(([supplier,s])=>{
     const avgLead=s.leadTimes.length?Math.round(s.leadTimes.reduce((a,b)=>a+b,0)/s.leadTimes.length):null;
-    return `<div style="padding:11px 4px;border-bottom:1px solid var(--cream2)">
-      <div style="display:flex;justify-content:space-between;align-items:baseline">
-        <div style="font-size:13px;font-weight:700">${supplier}</div>
-        <div style="text-align:right"><span style="font-weight:800;color:var(--brown)">$${s.spendUsd.toFixed(2)}</span> <span style="font-size:10px;color:var(--text3)">¥${s.spend.toFixed(2)}</span></div>
+    const tags=(s.profile.tags||[]).slice(0,4);
+    const latest=s.latestDate||getSupplierOrders(supplier)[0]?.date||'—';
+    return `<div class="supplier-card" onclick="openSupplierProfile(${JSON.stringify(supplier).replace(/"/g,'&quot;')})">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+        <div style="min-width:0;flex:1">
+          <div style="font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${supplier}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
+            <span class="supplier-meta-chip category">${supplierCategoryLabel(s.profile.category)}</span>
+            ${tags.map(t=>`<span class="supplier-meta-chip">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-weight:800;color:var(--brown)">$${s.spendUsd.toFixed(2)}</div>
+          <div style="font-size:9.5px;color:var(--text3);margin-top:1px">¥${s.spend.toFixed(2)}</div>
+        </div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:2px">${s.count} 張採購單${avgLead!==null?` · 🚚 平均 ${avgLead} 天到貨`:''}</div>
+      <div style="font-size:10.5px;color:var(--text3);margin-top:7px">${s.count} 張採購單 · 最後採購 ${latest}${avgLead!==null?` · 平均 ${avgLead} 天到貨`:''}</div>
     </div>`;
   }).join('');
+}
+function openSupplierProfile(name){
+  activeSupplierProfileName=String(name||'').trim();
+  const profile=ensureSupplierProfile(activeSupplierProfileName);
+  if(!profile)return;
+  document.getElementById('supplier-profile-title').textContent=activeSupplierProfileName;
+  document.getElementById('supplier-profile-category').value=profile.category||'other';
+  document.getElementById('supplier-profile-tags').value=(profile.tags||[]).join('、');
+  renderSupplierProfileHistory();
+  openModal('modal-supplier-profile');
+}
+function renderSupplierProfileHistory(){
+  const body=document.getElementById('supplier-profile-history');if(!body)return;
+  const orders=getSupplierOrders(activeSupplierProfileName);
+  const totalUsd=orders.reduce((sum,o)=>sum+(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*(o.rateUsed||DB.rate))),0);
+  const totalCny=orders.reduce((sum,o)=>sum+(Number(o.total)||0),0);
+  const latest=orders[0]?.date||'—';
+  const summary=document.getElementById('supplier-profile-summary');
+  if(summary)summary.innerHTML=`<div><span style="font-size:10px;color:var(--text3)">採購次數</span><div style="font-size:16px;font-weight:800">${orders.length}</div></div><div><span style="font-size:10px;color:var(--text3)">累積採購</span><div style="font-size:16px;font-weight:800;color:var(--brown)">$${totalUsd.toFixed(2)}</div></div><div><span style="font-size:10px;color:var(--text3)">最後採購</span><div style="font-size:13px;font-weight:700">${latest}</div></div>`;
+  if(!orders.length){body.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3)">還沒有採購紀錄</div>';return;}
+  body.innerHTML=orders.map((o,i)=>{
+    const usd=o.totalPaidUsdActual||o.totalUsd||((o.total||0)*(o.rateUsed||DB.rate));
+    const itemQty=(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0);
+    return `<div class="supplier-profile-order" onclick="closeModal('modal-supplier-profile');closeModal('modal-supplier-stats');openOrderDetail('${o.id}')">
+      <div style="width:28px;height:28px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown);font:800 11px 'Nunito',sans-serif">${orders.length-i}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:800">${o.date||'未填日期'}</div><div style="font-size:10px;color:var(--text3);margin-top:1px">${itemQty} 件 · ${o.status==='received'?'已到貨':'未到貨'}</div></div>
+      <div style="text-align:right"><div style="font-size:12px;font-weight:800;color:var(--brown)">$${usd.toFixed(2)}</div><div style="font-size:9px;color:var(--text3)">¥${(o.total||0).toFixed(0)}</div></div>
+    </div>`;
+  }).join('');
+}
+function saveSupplierProfile(){
+  const name=activeSupplierProfileName;
+  const profile=ensureSupplierProfile(name);if(!profile)return;
+  profile.category=document.getElementById('supplier-profile-category').value||'other';
+  profile.tags=document.getElementById('supplier-profile-tags').value.split(/[、,，]/).map(x=>x.trim()).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).slice(0,12);
+  saveDB();
+  renderSupplierCategoryFilters();
+  renderSupplierStatsBody();
+  closeModal('modal-supplier-profile');
+  toast('供應商分類已儲存','success');
 }
 
 function checkStaleOrders(){
@@ -16767,7 +17023,7 @@ function addVariantToCart(productId,variantId,variantLabel){
 function _applyQuickVariantStockValue(productId,variantId,value){
   const p=DB.products.find(x=>x.id===productId);if(!p||!p.variants)return;
   const v=p.variants.find(x=>x.id===variantId);if(!v)return;
-  v.stock=Math.max(0,Number(value)||0);
+  setManualStockTarget(p,Math.max(0,Number(value)||0),variantId);
   p.stock=p.variants.reduce((s,item)=>s+(Number(item.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
   p.status='ok';
   p.updatedAt=Date.now();
@@ -16810,6 +17066,9 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
   try{
     loadDB();
     migrateExistingAutoVariantSets();
+    const didInitLedgerStock=initializeLedgerStockSync();
+    if(!didInitLedgerStock&&DB.stockLedgerSyncV1)syncAllProductStocksFromLedger();
+    if(didInitLedgerStock)await saveDB({skipUndo:true});
     _undoStableSnapshot=_dbUndoSnapshot();
   }catch(e){console.error('loadDB / 舊商品款式遷移失敗:',e);}
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
@@ -16956,12 +17215,50 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
 <div class="modal-overlay hidden" id="modal-supplier-stats">
   <div class="modal" style="max-width:640px">
     <div class="modal-header">
-      <div class="modal-title">📊 供應商統計</div>
+      <div class="modal-title">🏪 供應商</div>
       <button class="modal-close" onclick="closeModal('modal-supplier-stats')">×</button>
     </div>
     <div class="modal-body" style="max-height:84vh;overflow:auto">
-      <div style="display:flex;gap:6px;margin-bottom:12px" id="supplier-stats-range-tabs"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px" id="supplier-stats-range-tabs"></div>
+      <div class="supplier-filter-row" id="supplier-category-filters"></div>
+      <div style="font-size:10px;color:var(--text3);margin:-2px 0 10px">點供應商可以設定主要分類、標籤，並查看同一家店不同日期的採購紀錄。</div>
       <div id="supplier-stats-body" style="max-height:55vh;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay hidden" id="modal-supplier-profile">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <div class="modal-title" id="supplier-profile-title">供應商</div>
+      <button class="modal-close" onclick="closeModal('modal-supplier-profile')">×</button>
+    </div>
+    <div class="modal-body" style="max-height:84vh;overflow:auto">
+      <div id="supplier-profile-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:11px 13px;margin-bottom:14px"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">主要分類</label>
+          <select class="form-select" id="supplier-profile-category">
+            <option value="patch">布貼</option>
+            <option value="packaging">包裝</option>
+            <option value="printing">印刷</option>
+            <option value="tools">工具 / 配件</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">標籤</label>
+          <input type="text" class="form-input" id="supplier-profile-tags" placeholder="客製、淘寶、中國…">
+          <div style="font-size:9px;color:var(--text3);margin-top:4px">用逗號或頓號分開，可複數。</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:800;color:var(--text2);margin:4px 0 7px">歷史採購單</div>
+      <div class="supplier-profile-history" id="supplier-profile-history"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-supplier-profile')">取消</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveSupplierProfile()">儲存分類</button>
+      </div>
     </div>
   </div>
 </div>
