@@ -421,6 +421,17 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-copy-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px}
 @media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn{width:100%}}
 .order-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--cream3);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.order-search-wrap{position:relative;width:230px;min-width:190px;height:38px;display:flex;align-items:center;}
+.order-search-wrap .order-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);pointer-events:none;}
+.order-search-input{width:100%;height:38px;box-sizing:border-box;border:1.5px solid var(--cream3);border-radius:10px;background:var(--surface);color:var(--text1);font:600 12px/1 inherit;padding:0 32px 0 32px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;}
+.order-search-input::placeholder{color:var(--text3);font-weight:500;}
+.order-search-input:focus{border-color:var(--brown);box-shadow:0 0 0 3px rgba(139,111,71,.08);background:#fff;}
+.order-search-clear{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:22px;height:22px;border:0;border-radius:7px;background:transparent;color:var(--text3);font:700 16px/22px inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.order-search-clear:hover{background:var(--cream2);color:var(--brown);}
+.order-search-clear.hidden{display:none!important;}
+.order-search-match{background:rgba(216,185,143,.20)!important;border-radius:8px;}
+.order-search-group-match{background:rgba(216,185,143,.14)!important;border-radius:8px;}
+@media(max-width:900px){.order-search-wrap{width:100%;min-width:180px;order:-1;flex-basis:100%;}.order-search-input{width:100%;}}
 .alert-card{background:var(--yellow-light);border:1.5px solid var(--yellow);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:13px;}
 .cat-sidebar-item{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:8px;}
 .cat-sidebar-item:hover{background:var(--cream2);color:var(--brown);}
@@ -2445,7 +2456,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 </div>
 
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary" onclick="openSupplierStats()">📊 供應商統計</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
   <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
   <div class="rate-bar"><span>💱 匯率</span><span class="rate-val" id="rate-display">¥1 = $0.138</span><span style="margin-left:auto;font-size:11px;color:var(--text3)" id="rate-time">載入中...</span><button class="btn btn-secondary btn-sm" onclick="fetchRate()">刷新</button></div>
   <div id="order-list"></div>
@@ -4977,6 +4988,9 @@ function toggleProductPawConfirmed(id){
   p.updatedAt=Date.now();
   saveDB();
   renderProducts({gridOnly:true});
+  // 貓腳狀態會同時影響左側「已完善 / 已完成」數量，必須立即重畫側欄。
+  // 之前只更新商品格，導致已完成實際有多筆，但側欄數字停留在舊值。
+  if(typeof renderCatSidebar==='function')renderCatSidebar();
 }
 function toggleAllStatusGroup(event){if(event)event.stopPropagation();allStatusExpanded=!allStatusExpanded;renderCatSidebar();}
 let nativeProductDragId=null; // 原生拖曳的穩定備援 ID，直到 dragend 才清掉
@@ -10143,6 +10157,17 @@ async function saveFromStock(id){
   }
   p.price=newPrice;
   p.status=document.getElementById('edit-status').value;
+  // 儲存時再直接讀一次畫面上的庫存值，避免使用者輸入後立刻按「儲存」時，change 事件尚未可靠寫回 DB。
+  if(p.variants&&p.variants.length){
+    p.variants.forEach(v=>{
+      const input=document.getElementById('sc-v-'+v.id);
+      if(input)v.stock=Math.max(0,parseInt(input.value,10)||0);
+    });
+    p.stock=p.variants.reduce((sum,v)=>sum+(Number(v.stock)||0),0)+(Number(p.unassignedVariantStock)||0);
+  }else{
+    const stockInput=document.getElementById('sc-ok');
+    if(stockInput)p.stock=Math.max(0,parseInt(stockInput.value,10)||0);
+  }
   p.size=p.type==='RB'?'0':(document.getElementById('edit-size').value||'0');
   if(p.type==='RB'){
     p.ribbonLength=document.getElementById('edit-ribbon-length')?.value.trim()||'';
@@ -10183,8 +10208,10 @@ async function saveFromStock(id){
 }
 function setStockDirect(id,val){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
-  p.stock=Math.max(0,parseInt(val)||0);
+  p.stock=Math.max(0,parseInt(val,10)||0);
   p.status='ok';
+  // 直接輸入庫存也一定要更新版本時間；否則同步前的雲端合併可能把舊庫存判定成較新而蓋回來。
+  p.updatedAt=Date.now();
   saveDB();
 }
 function setVariantStockDirect(productId,variantId,val){
@@ -10290,12 +10317,66 @@ function setOrderSortMode(v){
   renderOrderSortMenu();
   renderOrders();
 }
+let orderSearchQuery='';
+function normalizeOrderSearchText(v){
+  return String(v==null?'':v).trim().toLowerCase();
+}
+function getOrderItemSearchText(item){
+  const p=item&&item.productId?DB.products.find(x=>String(x.id)===String(item.productId)):null;
+  return normalizeOrderSearchText([
+    item&&item.name,
+    item&&item.sku,
+    item&&item.variantLabel,
+    item&&item.groupLabel,
+    p&&p.name,
+    p&&p.sku,
+    p&&p.note,
+    p&&Array.isArray(p.tags)?p.tags.join(' '):''
+  ].filter(Boolean).join(' '));
+}
+function isOrderItemSearchMatch(item,q=orderSearchQuery){
+  const needle=normalizeOrderSearchText(q);
+  return !!needle&&getOrderItemSearchText(item).includes(needle);
+}
+function orderMatchesSearch(order,q=orderSearchQuery){
+  const needle=normalizeOrderSearchText(q);
+  if(!needle)return true;
+  const orderText=normalizeOrderSearchText([
+    order&&order.supplier,
+    order&&order.note,
+    order&&order.id,
+    order&&order.date,
+    order&&order.rawPaymentText,
+    order&&order.expectedDate
+  ].filter(Boolean).join(' '));
+  if(orderText.includes(needle))return true;
+  return (order&&order.items||[]).some(item=>isOrderItemSearchMatch(item,needle));
+}
+function syncOrderSearchUI(){
+  const input=document.getElementById('order-search-input');
+  const clear=document.getElementById('order-search-clear');
+  if(input&&input.value!==orderSearchQuery)input.value=orderSearchQuery;
+  if(clear)clear.classList.toggle('hidden',!normalizeOrderSearchText(orderSearchQuery));
+}
+function handleOrderSearchInput(value){
+  orderSearchQuery=String(value||'');
+  syncOrderSearchUI();
+  renderOrders();
+}
+function clearOrderSearch(){
+  orderSearchQuery='';
+  syncOrderSearchUI();
+  renderOrders();
+  const input=document.getElementById('order-search-input');
+  if(input)input.focus();
+}
 function renderOrderItemsGrouped(items){
   const rowHtml=i=>{
     const p=i.productId?DB.products.find(x=>x.id===i.productId):null;
     const imgSrc=i.img||(p?p.img||'':'');
-    const sku=p&&p.sku?p.sku:'';
-    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream3)">
+    const sku=(p&&p.sku)||i.sku||'';
+    const searchMatch=isOrderItemSearchMatch(i);
+    return `<div class="${searchMatch?'order-search-match':''}" style="display:flex;align-items:center;gap:8px;padding:6px ${searchMatch?'8px':'0'};${searchMatch?'margin:0 -8px;':''}border-bottom:1px solid var(--cream3)">
       <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">${imgSrc?`<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain">`:'📦'}</div>
       <div style="flex:1;min-width:0">
         ${sku?`<div style="font-size:9px;font-family:monospace;color:var(--text3);font-weight:700">${sku}</div>`:''}
@@ -10319,8 +10400,10 @@ function renderOrderItemsGrouped(items){
         const gLabel=it.groupLabel||members.map(m=>m.name).join('、');
         const gTotal=members.reduce((sum,m)=>sum+(m.cost||0)*(m.qty||1),0);
         const gid2=`oig-${gid}`;
+        const q=normalizeOrderSearchText(orderSearchQuery);
+        const groupSearchMatch=!!q&&(normalizeOrderSearchText(gLabel).includes(q)||members.some(m=>isOrderItemSearchMatch(m,q)));
         html+=`<div style="border-bottom:1px solid var(--cream3)">
-          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer" onclick="toggleOrderItemGroupRow('${gid2}')">
+          <div class="${groupSearchMatch?'order-search-group-match':''}" style="display:flex;align-items:center;gap:8px;padding:6px ${groupSearchMatch?'8px':'0'};${groupSearchMatch?'margin:0 -8px;':''}cursor:pointer" onclick="toggleOrderItemGroupRow('${gid2}')">
             <div style="width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px">${gImg?`<img src="${gImg}" style="width:100%;height:100%;object-fit:contain">`:'📦'}</div>
             <div style="flex:1;min-width:0">
               <div style="font-size:9px;color:var(--text3);font-weight:700;display:flex;align-items:center;gap:3px"><svg viewBox="0 0 24 24" width="10" height="10" style="flex-shrink:0"><path d="M8.5 12.8 6.8 14.5a3.4 3.4 0 0 0 4.8 4.8l3.1-3.1a3.4 3.4 0 0 0 0-4.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m15.5 11.2 1.7-1.7a3.4 3.4 0 0 0-4.8-4.8L9.3 7.8a3.4 3.4 0 0 0 0 4.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="m9.7 14.3 4.6-4.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>組合 · ${members.length}項</div>
@@ -10365,10 +10448,22 @@ function renderOrders(){
   }else{
     sorted.sort(byTimeDesc);
   }
-  if(!sorted.length){container.innerHTML='';em.classList.remove('hidden');return;}
+  const activeSearch=normalizeOrderSearchText(orderSearchQuery);
+  if(activeSearch)sorted=sorted.filter(o=>orderMatchesSearch(o,activeSearch));
+  syncOrderSearchUI();
+  if(!sorted.length){
+    container.innerHTML='';
+    const emptyText=em?em.querySelector('.empty-text'):null;
+    if(emptyText)emptyText.textContent=activeSearch?'找不到符合的採購單':'還沒有採購單';
+    em.classList.remove('hidden');
+    return;
+  }
+  const emptyText=em?em.querySelector('.empty-text'):null;
+  if(emptyText)emptyText.textContent='還沒有採購單';
   em.classList.add('hidden');
   let healedAnyProductId=false;
-  const liveOrderIds=new Set(sorted.map(o=>String(o.id)));
+  // 搜尋只是暫時隱藏訂單，不應該把原本展開狀態清掉。
+  const liveOrderIds=new Set((DB.orders||[]).map(o=>String(o.id)));
   [...expandedOrderAccordions].forEach(id=>{if(!liveOrderIds.has(String(id)))expandedOrderAccordions.delete(id);});
   container.innerHTML=sorted.map(o=>{
     const isExpanded=expandedOrderAccordions.has(String(o.id));
