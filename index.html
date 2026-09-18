@@ -3525,6 +3525,90 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
+
+<style id="supplier-tags-click-drag-basic-buttons-v1">
+/* 供應商視窗與管理標籤視窗：統一使用網站基本 btn-sm 尺寸 */
+#modal-supplier-profile .supplier-profile-footer .btn{
+  min-height:0 !important;
+  height:auto !important;
+  padding:6px 14px !important;
+  border-radius:20px !important;
+  font-size:12px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  margin-top:18px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions-spacer{
+  flex:1 1 auto !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions .btn{
+  flex:0 0 auto !important;
+  min-width:0 !important;
+  padding:6px 14px !important;
+  font-size:12px !important;
+  border-radius:20px !important;
+}
+
+/* 管理模式：圓圈改成 X；點標籤本體則進入管理標籤 */
+#supplier-profile-capabilities-options .supplier-meta-manage-btn,
+#supplier-profile-advantages-options .supplier-meta-manage-btn,
+#supplier-profile-sources-options .supplier-meta-manage-btn{
+  width:15px !important;
+  height:15px !important;
+  min-width:15px !important;
+  min-height:15px !important;
+  top:-5px !important;
+  right:-5px !important;
+  border-radius:999px !important;
+}
+.supplier-meta-manage-btn svg{
+  width:7px !important;
+  height:7px !important;
+}
+
+/* 拖曳標籤 */
+.supplier-meta-draggable.is-manage{
+  cursor:grab;
+}
+.supplier-meta-draggable.is-manage:active{
+  cursor:grabbing;
+}
+.supplier-meta-dragging{
+  opacity:.48 !important;
+}
+.supplier-meta-drop-target > .supplier-category-choice{
+  border-color:var(--brown) !important;
+  box-shadow:0 0 0 2px rgba(139,111,71,.10) !important;
+}
+.supplier-meta-group-drop-target{
+  border-radius:12px !important;
+  box-shadow:inset 0 0 0 1.5px var(--brown-light) !important;
+}
+</style>
+
+
+<style id="supplier-sidebar-three-filter-tabs-v1">
+.orders-supplier-tabs{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+.orders-supplier-tab{
+  font-size:10px !important;
+}
+</style>
+
+
+<style id="supplier-footer-line-only-v1">
+/* 供應商視窗底部：不要白底，只留上方分隔線 */
+#modal-supplier-profile .supplier-profile-footer{
+  background:transparent !important;
+  box-shadow:none !important;
+  border-top:1px solid var(--cream3) !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -11934,11 +12018,13 @@ const expandedOrderAccordions=new Set();
 
 let activeOrderSupplierFilter='all';
 let activeOrderSupplierCategory='all';
-let activeOrderSupplierTab='suppliers';
+let activeOrderSupplierTab='';
 let activeOrderSupplierMetaFilter='all';
 
 function setOrderSupplierTab(tab){
-  activeOrderSupplierTab=['suppliers','capabilities','advantages','sources'].includes(tab)?tab:'suppliers';
+  const valid=['capabilities','advantages','sources'];
+  const next=valid.includes(tab)?tab:'';
+  activeOrderSupplierTab=(activeOrderSupplierTab===next)?'':next;
   activeOrderSupplierMetaFilter='all';
   activeOrderSupplierFilter='all';
   renderOrders();
@@ -11947,7 +12033,7 @@ function setOrderSupplierMetaFilter(value){
   activeOrderSupplierMetaFilter=value||'all';
   if(activeOrderSupplierFilter!=='all'){
     const profile=ensureSupplierProfile(activeOrderSupplierFilter);
-    const list=activeOrderSupplierTab==='suppliers'?[]:(profile?.[activeOrderSupplierTab]||[]);
+    const list=!activeOrderSupplierTab?[]:(profile?.[activeOrderSupplierTab]||[]);
     if(activeOrderSupplierMetaFilter!=='all'&&!list.includes(activeOrderSupplierMetaFilter)){
       activeOrderSupplierFilter='all';
     }
@@ -11959,7 +12045,7 @@ function setOrderSupplierCategory(value){
   activeOrderSupplierCategory=value||'all';
   if(activeOrderSupplierFilter!=='all'){
     const profile=ensureSupplierProfile(activeOrderSupplierFilter);
-    const metaOk=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
+    const metaOk=!activeOrderSupplierTab||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
     if((activeOrderSupplierCategory!=='all'&&profile&&!supplierHasCategory(profile,activeOrderSupplierCategory))||!metaOk){
       activeOrderSupplierFilter='all';
     }
@@ -11981,14 +12067,13 @@ function renderOrderSupplierSidebar(){
   filterEl.innerHTML=cats.map(c=>`<button type="button" class="orders-supplier-filter ${activeOrderSupplierCategory===c.value?'active':''}" onclick="setOrderSupplierCategory('${c.value}')"><span class="ui-box-text">${c.label}</span></button>`).join('');
 
   const tabs=[
-    {value:'suppliers',label:'供應商'},
     {value:'capabilities',label:'製作能力'},
     {value:'advantages',label:'供應優勢'},
     {value:'sources',label:'來源資訊'}
   ];
   tabsEl.innerHTML=tabs.map(t=>`<button type="button" class="orders-supplier-tab ${activeOrderSupplierTab===t.value?'active':''}" onclick="setOrderSupplierTab('${t.value}')">${t.label}</button>`).join('');
 
-  if(activeOrderSupplierTab==='suppliers'){
+  if(!activeOrderSupplierTab){
     metaEl.classList.add('hidden');
     metaEl.innerHTML='';
   }else{
@@ -12007,7 +12092,7 @@ function renderOrderSupplierSidebar(){
   }).filter(s=>{
     const categoryOk=activeOrderSupplierCategory==='all'||supplierHasCategory(s.profile,activeOrderSupplierCategory);
     if(!categoryOk)return false;
-    if(activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all')return true;
+    if(!activeOrderSupplierTab||activeOrderSupplierMetaFilter==='all')return true;
     return (s.profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
   }).sort((a,b)=>(b.latest||'').localeCompare(a.latest||'')||a.name.localeCompare(b.name,'zh-Hant'));
 
@@ -12015,19 +12100,19 @@ function renderOrderSupplierSidebar(){
   if(countEl)countEl.textContent=`${stats.length} 家`;
 
   const filteredOrderCount=stats.reduce((sum,s)=>sum+s.count,0);
-  const activeTabLabel=tabs.find(t=>t.value===activeOrderSupplierTab)?.label||'供應商';
-  const activeMetaLabel=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'
+  const activeTabLabel=tabs.find(t=>t.value===activeOrderSupplierTab)?.label||'';
+  const activeMetaLabel=!activeOrderSupplierTab||activeOrderSupplierMetaFilter==='all'
     ? ''
     : (getSupplierMetaOptions(activeOrderSupplierTab).find(o=>o.value===activeOrderSupplierMetaFilter)?.label||'');
 
   listEl.innerHTML=
     `<button type="button" class="orders-supplier-all ${activeOrderSupplierFilter==='all'?'active':''}" onclick="setOrderSupplierFilter('all')">
-      <span>${activeMetaLabel||activeTabLabel==='供應商'?'全部供應商':`全部${activeTabLabel}`}</span>
+      <span>${activeMetaLabel||(activeTabLabel?`全部${activeTabLabel}`:'全部供應商')}</span>
       <span class="orders-supplier-count">${filteredOrderCount} 單</span>
     </button>`+
     (stats.length?stats.map(s=>{
       const safeName=JSON.stringify(s.name).replace(/"/g,'&quot;');
-      const selectedMetaLabels=activeOrderSupplierTab==='suppliers'
+      const selectedMetaLabels=!activeOrderSupplierTab
         ? []
         : supplierMetaLabels(s.profile,activeOrderSupplierTab);
       return `<button type="button" class="orders-supplier-item ${activeOrderSupplierFilter===s.name?'active':''}" onclick="setOrderSupplierFilter(${safeName})">
@@ -12058,7 +12143,7 @@ function renderOrders(){
       if(!supplierName)return activeOrderSupplierCategory==='all'&&activeOrderSupplierMetaFilter==='all';
       const profile=ensureSupplierProfile(supplierName);
       const categoryOk=activeOrderSupplierCategory==='all'||supplierHasCategory(profile,activeOrderSupplierCategory);
-      const metaOk=activeOrderSupplierTab==='suppliers'||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
+      const metaOk=!activeOrderSupplierTab||activeOrderSupplierMetaFilter==='all'||(profile?.[activeOrderSupplierTab]||[]).includes(activeOrderSupplierMetaFilter);
       return categoryOk&&metaOk;
     });
   }
@@ -15557,9 +15642,11 @@ function getSupplierCategoryOptions(){
 function ensureSupplierMetaStorage(){
   if(!DB.supplierMetaCustom||typeof DB.supplierMetaCustom!=='object')DB.supplierMetaCustom={};
   if(!DB.supplierMetaHidden||typeof DB.supplierMetaHidden!=='object')DB.supplierMetaHidden={};
+  if(!DB.supplierMetaOrder||typeof DB.supplierMetaOrder!=='object')DB.supplierMetaOrder={};
   ['capabilities','advantages','sources'].forEach(kind=>{
     if(!Array.isArray(DB.supplierMetaCustom[kind]))DB.supplierMetaCustom[kind]=[];
     if(!Array.isArray(DB.supplierMetaHidden[kind]))DB.supplierMetaHidden[kind]=[];
+    if(!Array.isArray(DB.supplierMetaOrder[kind]))DB.supplierMetaOrder[kind]=[];
   });
 }
 function supplierMetaValueFromLabel(kind,label){
@@ -15579,7 +15666,15 @@ function getSupplierMetaOptions(kind){
   const custom=(DB.supplierMetaCustom[kind]||[])
     .filter(x=>x&&x.value&&x.label)
     .map(x=>({value:String(x.value),label:String(x.label),custom:true}));
-  return [...defaults,...custom];
+  const all=[...defaults,...custom];
+  const order=DB.supplierMetaOrder[kind]||[];
+  if(!order.length)return all;
+  const rank=new Map(order.map((v,i)=>[v,i]));
+  return all.slice().sort((a,b)=>{
+    const ar=rank.has(a.value)?rank.get(a.value):99999;
+    const br=rank.has(b.value)?rank.get(b.value):99999;
+    return ar-br;
+  });
 }
 function supplierMetaLabels(profile,kind){
   const values=Array.isArray(profile?.[kind])?profile[kind]:[];
@@ -15801,12 +15896,16 @@ function renderSupplierProfileMetaChoices(kind){
   const selected=activeSupplierProfileMeta[kind]||[];
   const manageMode=!!supplierMetaDeleteMode[kind];
   el.classList.toggle('supplier-meta-manage-mode',manageMode);
+  el.dataset.metaKind=kind;
+  el.ondragover=(event)=>overSupplierMetaGroup(event,kind);
+  el.ondrop=(event)=>dropSupplierMetaGroup(event,kind);
   el.innerHTML=options.map(o=>{
     const active=selected.includes(o.value);
     const safeValue=String(o.value).replace(/'/g,"\\'");
-    const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileMeta('${kind}','${safeValue}')"><span class="ui-box-text">${o.label}</span></button>`;
-    const manage=`<button type="button" class="supplier-meta-manage-btn" title="管理「${o.label}」" aria-label="管理「${o.label}」" onclick="event.stopPropagation();openSupplierMetaManager('${kind}','${safeValue}')"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4.1 13.9 3.5 16.5l2.6-.6L14.5 7.5l-2-2-8.4 8.4Z" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/><path d="m11.7 6.3 2 2" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"/></svg></button>`;
-    return `<span class="supplier-category-custom-wrap">${button}${manage}</span>`;
+    const safeLabel=String(o.label).replace(/"/g,'&quot;');
+    const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="handleSupplierMetaTagClick(event,'${kind}','${safeValue}')"><span class="ui-box-text">${o.label}</span></button>`;
+    const remove=`<button type="button" class="supplier-meta-manage-btn" title="刪除「${safeLabel}」" aria-label="刪除「${safeLabel}」" onclick="event.stopPropagation();removeSupplierMetaOption('${kind}','${safeValue}')"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button>`;
+    return `<span class="supplier-category-custom-wrap supplier-meta-draggable ${manageMode?'is-manage':''}" draggable="${manageMode?'true':'false'}" data-meta-kind="${kind}" data-meta-value="${safeValue}" ondragstart="startSupplierMetaTagDrag(event,'${kind}','${safeValue}')" ondragover="overSupplierMetaTag(event,'${kind}','${safeValue}')" ondrop="dropSupplierMetaTag(event,'${kind}','${safeValue}')" ondragend="endSupplierMetaTagDrag(event)">${button}${remove}</span>`;
   }).join('')+
   `<button type="button" class="supplier-category-add" onclick="openSupplierMetaAddEditor('${kind}')"><span class="ui-box-text">＋ 新增</span></button>
    <span class="supplier-category-add-editor" id="supplier-${kind}-add-editor">
@@ -15814,6 +15913,7 @@ function renderSupplierProfileMetaChoices(kind){
      <button type="button" class="supplier-category-add-confirm" onclick="addSupplierMetaOption('${kind}')"><span class="ui-box-text">新增</span></button>
    </span>`;
 }
+
 function renderAllSupplierProfileMetaChoices(){
   ['capabilities','advantages','sources'].forEach(renderSupplierProfileMetaChoices);
 }
@@ -15821,6 +15921,15 @@ function toggleSupplierProfileMeta(kind,value){
   const list=activeSupplierProfileMeta[kind]||[];
   activeSupplierProfileMeta[kind]=list.includes(value)?list.filter(v=>v!==value):[...list,value];
   renderSupplierProfileMetaChoices(kind);
+}
+function handleSupplierMetaTagClick(event,kind,value){
+  if(supplierProfileEditMode){
+    event?.preventDefault();
+    event?.stopPropagation();
+    openSupplierMetaManager(kind,value);
+    return;
+  }
+  toggleSupplierProfileMeta(kind,value);
 }
 function toggleSupplierMetaDeleteMode(kind){
   supplierMetaDeleteMode[kind]=!supplierMetaDeleteMode[kind];
@@ -15844,7 +15953,7 @@ function setSupplierProfileEditMode(on){
   if(btn){
     btn.classList.toggle('active',supplierProfileEditMode);
     btn.innerHTML=supplierProfileEditMode
-      ? '<span class="supplier-profile-edit-icon">✓</span><span>完成編輯</span>'
+      ? '<span>完成</span>'
       : '<span class="supplier-profile-edit-icon">✏️</span><span>編輯</span>';
   }
 }
@@ -15882,6 +15991,125 @@ function addSupplierMetaOption(kind){
   toast(`已新增「${label}」，可 ⌘Z 復原`,'success');
 }
 
+
+let supplierMetaDragState=null;
+
+function clearSupplierMetaDragVisuals(){
+  document.querySelectorAll('.supplier-meta-dragging,.supplier-meta-drop-target,.supplier-meta-group-drop-target')
+    .forEach(el=>el.classList.remove('supplier-meta-dragging','supplier-meta-drop-target','supplier-meta-group-drop-target'));
+}
+function startSupplierMetaTagDrag(event,kind,value){
+  if(!supplierProfileEditMode){event.preventDefault();return;}
+  supplierMetaDragState={kind,value};
+  event.dataTransfer.effectAllowed='move';
+  try{event.dataTransfer.setData('text/plain',`${kind}|${value}`);}catch(e){}
+  event.currentTarget.classList.add('supplier-meta-dragging');
+}
+function endSupplierMetaTagDrag(){
+  supplierMetaDragState=null;
+  clearSupplierMetaDragVisuals();
+}
+function overSupplierMetaTag(event,kind,value){
+  if(!supplierProfileEditMode||!supplierMetaDragState)return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.dataTransfer.dropEffect='move';
+  clearSupplierMetaDragVisuals();
+  event.currentTarget.classList.add('supplier-meta-drop-target');
+}
+function overSupplierMetaGroup(event,kind){
+  if(!supplierProfileEditMode||!supplierMetaDragState)return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect='move';
+  const el=document.getElementById(`supplier-profile-${kind}-options`);
+  if(el)el.classList.add('supplier-meta-group-drop-target');
+}
+function getSupplierMetaOrderedValues(kind){
+  return getSupplierMetaOptions(kind).map(o=>o.value);
+}
+function writeSupplierMetaOrder(kind,values){
+  ensureSupplierMetaStorage();
+  DB.supplierMetaOrder[kind]=[...new Set(values)];
+}
+function transferSupplierMetaAssignments(oldKind,oldValue,newKind,newValue){
+  Object.values(DB.supplierProfiles||{}).forEach(p=>{
+    const had=Array.isArray(p?.[oldKind])&&p[oldKind].includes(oldValue);
+    if(Array.isArray(p?.[oldKind]))p[oldKind]=p[oldKind].filter(v=>v!==oldValue);
+    if(had){
+      if(!Array.isArray(p[newKind]))p[newKind]=[];
+      if(!p[newKind].includes(newValue))p[newKind].push(newValue);
+    }
+  });
+  const activeHad=(activeSupplierProfileMeta[oldKind]||[]).includes(oldValue);
+  activeSupplierProfileMeta[oldKind]=(activeSupplierProfileMeta[oldKind]||[]).filter(v=>v!==oldValue);
+  if(activeHad&&!((activeSupplierProfileMeta[newKind]||[]).includes(newValue))){
+    activeSupplierProfileMeta[newKind].push(newValue);
+  }
+}
+function moveSupplierMetaTagByDrag(oldKind,oldValue,newKind,beforeValue=null){
+  if(!supplierProfileEditMode)return;
+  ensureSupplierMetaStorage();
+  const item=getSupplierMetaManageItem(oldKind,oldValue);if(!item)return;
+  if(oldKind===newKind && oldValue===beforeValue)return;
+
+  const beforeJson=_dbUndoSnapshot();
+
+  if(oldKind===newKind){
+    const values=getSupplierMetaOrderedValues(oldKind).filter(v=>v!==oldValue);
+    const idx=beforeValue?values.indexOf(beforeValue):-1;
+    if(idx>=0)values.splice(idx,0,oldValue);else values.push(oldValue);
+    writeSupplierMetaOrder(oldKind,values);
+    saveSupplierChangeWithUndo(`調整${SUPPLIER_META_LABELS[oldKind]}標籤順序`,beforeJson);
+    renderAllSupplierProfileMetaChoices();
+    toast('標籤順序已調整','success');
+    return;
+  }
+
+  const sameLabel=getSupplierMetaOptions(newKind).find(o=>o.label.trim().toLowerCase()===item.label.trim().toLowerCase());
+  let newValue=sameLabel?.value||'';
+
+  if(!newValue){
+    newValue=supplierMetaValueFromLabel(newKind,item.label);
+    DB.supplierMetaCustom[newKind].push({value:newValue,label:item.label});
+  }
+
+  if(item.custom){
+    DB.supplierMetaCustom[oldKind]=(DB.supplierMetaCustom[oldKind]||[]).filter(x=>x.value!==oldValue);
+  }else if(!DB.supplierMetaHidden[oldKind].includes(oldValue)){
+    DB.supplierMetaHidden[oldKind].push(oldValue);
+  }
+
+  transferSupplierMetaAssignments(oldKind,oldValue,newKind,newValue);
+
+  const oldOrder=getSupplierMetaOrderedValues(oldKind).filter(v=>v!==oldValue);
+  writeSupplierMetaOrder(oldKind,oldOrder);
+
+  const newOrder=getSupplierMetaOrderedValues(newKind).filter(v=>v!==newValue);
+  const idx=beforeValue?newOrder.indexOf(beforeValue):-1;
+  if(idx>=0)newOrder.splice(idx,0,newValue);else newOrder.push(newValue);
+  writeSupplierMetaOrder(newKind,newOrder);
+
+  saveSupplierChangeWithUndo(`移動標籤「${item.label}」到${SUPPLIER_META_LABELS[newKind]}`,beforeJson);
+  renderAllSupplierProfileMetaChoices();
+  toast(`已移到「${SUPPLIER_META_LABELS[newKind]}」`,'success');
+}
+function dropSupplierMetaTag(event,kind,value){
+  if(!supplierProfileEditMode||!supplierMetaDragState)return;
+  event.preventDefault();
+  event.stopPropagation();
+  const {kind:oldKind,value:oldValue}=supplierMetaDragState;
+  clearSupplierMetaDragVisuals();
+  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,value);
+  supplierMetaDragState=null;
+}
+function dropSupplierMetaGroup(event,kind){
+  if(!supplierProfileEditMode||!supplierMetaDragState)return;
+  event.preventDefault();
+  const {kind:oldKind,value:oldValue}=supplierMetaDragState;
+  clearSupplierMetaDragVisuals();
+  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,null);
+  supplierMetaDragState=null;
+}
 function getSupplierMetaManageItem(kind,value){
   return getSupplierMetaOptions(kind).find(x=>x.value===value)||null;
 }
@@ -19150,12 +19378,12 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
       <div class="supplier-profile-history" id="supplier-profile-history"></div>
     </div>
     <div class="supplier-profile-footer">
-      <button type="button" class="btn btn-secondary supplier-profile-edit-footer-btn" id="supplier-profile-edit-btn" onclick="toggleSupplierProfileEditMode()">
+      <button type="button" class="btn btn-secondary btn-sm supplier-profile-edit-footer-btn" id="supplier-profile-edit-btn" onclick="toggleSupplierProfileEditMode()">
         <span class="supplier-profile-edit-icon">✏️</span><span>編輯</span>
       </button>
       <div class="supplier-profile-footer-spacer"></div>
-      <button type="button" class="btn btn-secondary" onclick="closeModal('modal-supplier-profile')">取消</button>
-      <button type="button" class="btn btn-primary" onclick="saveSupplierProfile()">儲存</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modal-supplier-profile')">取消</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveSupplierProfile()">儲存</button>
     </div>
   </div>
 </div>
@@ -19179,10 +19407,11 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
         <input type="hidden" id="supplier-meta-manager-kind">
         <div id="supplier-meta-manager-move" class="supplier-meta-move-row"></div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:18px">
-        <button type="button" class="btn btn-secondary supplier-meta-delete-btn" onclick="deleteSupplierMetaManagedTarget()">刪除標籤</button>
-        <button type="button" class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-supplier-meta-manager')">取消</button>
-        <button type="button" class="btn btn-primary" style="flex:1;justify-content:center" onclick="applySupplierMetaManagedChange()">儲存</button>
+      <div class="supplier-meta-manager-actions">
+        <button type="button" class="btn btn-secondary btn-sm supplier-meta-delete-btn" onclick="deleteSupplierMetaManagedTarget()">刪除</button>
+        <span class="supplier-meta-manager-actions-spacer"></span>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modal-supplier-meta-manager')">取消</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="applySupplierMetaManagedChange()">儲存</button>
       </div>
     </div>
   </div>
