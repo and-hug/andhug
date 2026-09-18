@@ -3664,17 +3664,117 @@ label.form-label:has(.label-info-badge){
 </style>
 
 
-<style id="supplier-four-fixes-combined-aligned-v1">
-/* 第 4 點：採購次數／日期固定下一行，並和上方第一個標籤左邊對齊 */
+<style id="supplier-manager-compact-v3">
+#modal-supplier-meta-manager .modal{
+  width:min(390px,calc(100vw - 28px)) !important;
+  max-width:390px !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+}
+#modal-supplier-meta-manager .modal-header{
+  padding:13px 16px 0 !important;
+  min-height:0 !important;
+}
+#modal-supplier-meta-manager .modal-title{
+  font-size:15px !important;
+  line-height:1.2 !important;
+}
+#modal-supplier-meta-manager .modal-close{
+  width:31px !important;
+  height:31px !important;
+  min-width:31px !important;
+  min-height:31px !important;
+  border-radius:10px !important;
+  font-size:17px !important;
+}
+#modal-supplier-meta-manager .modal-body{
+  padding:11px 16px 14px !important;
+}
+#modal-supplier-meta-manager .form-group{
+  margin:0 !important;
+}
+#modal-supplier-meta-manager .form-group + .form-group{
+  margin-top:9px !important;
+}
+#modal-supplier-meta-manager .form-label{
+  font-size:11px !important;
+  margin-bottom:5px !important;
+  line-height:1.2 !important;
+}
+#modal-supplier-meta-manager #supplier-meta-manager-name{
+  height:32px !important;
+  min-height:32px !important;
+  padding:5px 10px !important;
+  border-radius:10px !important;
+  font-size:12px !important;
+  box-sizing:border-box !important;
+}
+#modal-supplier-meta-manager .supplier-meta-move-row{
+  gap:5px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-move-choice{
+  height:29px !important;
+  min-height:29px !important;
+  padding:0 9px !important;
+  border-radius:9px !important;
+  font-size:10px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions{
+  margin-top:12px !important;
+  gap:6px !important;
+}
+#modal-supplier-meta-manager .supplier-meta-manager-actions .btn{
+  padding:6px 14px !important;
+  font-size:12px !important;
+  border-radius:20px !important;
+}
+</style>
+
+
+<style id="supplier-card-compact-header-meta-v1">
+.orders-supplier-item{
+  padding:13px 14px !important;
+}
+.orders-supplier-item-top{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto auto !important;
+  align-items:center !important;
+  column-gap:8px !important;
+  margin-bottom:9px !important;
+}
+.orders-supplier-item-name{
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+.orders-supplier-top-meta{
+  font-size:9.5px !important;
+  font-weight:600 !important;
+  color:var(--text3) !important;
+  white-space:nowrap !important;
+}
+.orders-supplier-edit{
+  align-self:center !important;
+}
+.orders-supplier-categories-row{
+  margin-top:0 !important;
+  gap:5px !important;
+}
+.orders-supplier-selected-meta-row{
+  margin-top:6px !important;
+  gap:5px !important;
+}
 .orders-supplier-item-meta .orders-supplier-mini-text{
-  flex:0 0 100% !important;
-  width:100% !important;
-  display:block !important;
-  margin-top:2px !important;
-  margin-left:0 !important;
-  padding-left:0 !important;
-  text-align:left !important;
-  align-self:flex-start !important;
+  display:none !important;
+}
+.orders-supplier-mini-cat{
+  min-height:20px !important;
+  padding:2px 7px !important;
+}
+.orders-supplier-mini-meta{
+  min-height:20px !important;
+  padding:2px 7px !important;
 }
 </style>
 
@@ -12196,13 +12296,15 @@ function renderOrderSupplierSidebar(){
       return `<button type="button" class="orders-supplier-item ${activeOrderSupplierFilter===s.name?'active':''}" onclick="setOrderSupplierFilter(${safeName})">
         <div class="orders-supplier-item-top">
           <span class="orders-supplier-item-name">${s.name}</span>
+          <span class="orders-supplier-top-meta">${s.count} 次 · ${s.latest||'—'}</span>
           <span class="orders-supplier-edit" title="編輯供應商" onclick="event.stopPropagation();openSupplierProfile(${safeName})">⋯</span>
         </div>
-        <div class="orders-supplier-item-meta">
+        <div class="orders-supplier-item-meta orders-supplier-categories-row">
           ${supplierCategoryLabels(s.profile).map(label=>`<span class="orders-supplier-mini-cat"><span class="ui-box-text">${label}</span></span>`).join('')}
-          ${selectedMetaLabels.slice(0,3).map(label=>`<span class="orders-supplier-mini-meta">${label}</span>`).join('')}
-          <span class="orders-supplier-mini-text">${s.count} 次 · ${s.latest||'—'}</span>
         </div>
+        ${selectedMetaLabels.length?`<div class="orders-supplier-item-meta orders-supplier-selected-meta-row">
+          ${selectedMetaLabels.slice(0,3).map(label=>`<span class="orders-supplier-mini-meta">${label}</span>`).join('')}
+        </div>`:''}
       </button>`;
     }).join(''):`<div class="orders-supplier-empty-filter">這個條件還沒有供應商</div>`);
 }
@@ -16078,7 +16180,9 @@ function clearSupplierMetaDragVisuals(){
 }
 function startSupplierMetaTagDrag(event,kind,value){
   if(!supplierProfileEditMode){event.preventDefault();return;}
-  supplierMetaDragState={kind,value};
+  const focused=document.activeElement;
+  if(focused&&focused!==document.body&&typeof focused.blur==='function')focused.blur();
+  supplierMetaDragState={kind,value,beforeJson:_dbUndoSnapshot()};
   event.dataTransfer.effectAllowed='move';
   try{event.dataTransfer.setData('text/plain',`${kind}|${value}`);}catch(e){}
   event.currentTarget.classList.add('supplier-meta-dragging');
@@ -16124,13 +16228,13 @@ function transferSupplierMetaAssignments(oldKind,oldValue,newKind,newValue){
     activeSupplierProfileMeta[newKind].push(newValue);
   }
 }
-function moveSupplierMetaTagByDrag(oldKind,oldValue,newKind,beforeValue=null){
+function moveSupplierMetaTagByDrag(oldKind,oldValue,newKind,beforeValue=null,beforeJsonOverride=''){
   if(!supplierProfileEditMode)return;
   ensureSupplierMetaStorage();
   const item=getSupplierMetaManageItem(oldKind,oldValue);if(!item)return;
   if(oldKind===newKind && oldValue===beforeValue)return;
 
-  const beforeJson=_dbUndoSnapshot();
+  const beforeJson=beforeJsonOverride||_dbUndoSnapshot();
 
   if(oldKind===newKind){
     const values=getSupplierMetaOrderedValues(oldKind).filter(v=>v!==oldValue);
@@ -16175,17 +16279,17 @@ function dropSupplierMetaTag(event,kind,value){
   if(!supplierProfileEditMode||!supplierMetaDragState)return;
   event.preventDefault();
   event.stopPropagation();
-  const {kind:oldKind,value:oldValue}=supplierMetaDragState;
+  const {kind:oldKind,value:oldValue,beforeJson}=supplierMetaDragState;
   clearSupplierMetaDragVisuals();
-  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,value);
+  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,value,beforeJson);
   supplierMetaDragState=null;
 }
 function dropSupplierMetaGroup(event,kind){
   if(!supplierProfileEditMode||!supplierMetaDragState)return;
   event.preventDefault();
-  const {kind:oldKind,value:oldValue}=supplierMetaDragState;
+  const {kind:oldKind,value:oldValue,beforeJson}=supplierMetaDragState;
   clearSupplierMetaDragVisuals();
-  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,null);
+  moveSupplierMetaTagByDrag(oldKind,oldValue,kind,null,beforeJson);
   supplierMetaDragState=null;
 }
 function getSupplierMetaManageItem(kind,value){
