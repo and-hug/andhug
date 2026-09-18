@@ -2570,6 +2570,87 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 </style>
 
+
+<style id="sales-toolbar-height-fix">
+#page-sales .sale-search-toolbar > .search-wrap,
+#page-sales .sale-search-toolbar > .search-wrap .search-input{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+}
+#page-sales .sale-search-toolbar > .search-wrap .search-input{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  border-radius:17px !important;
+}
+#page-sales .sale-search-toolbar .view-switcher-align{
+  height:34px !important;
+  align-items:center !important;
+}
+#page-sales .sale-search-toolbar .toolbar-icon-round.view-btn{
+  width:34px !important;
+  min-width:34px !important;
+  max-width:34px !important;
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  flex:0 0 34px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+}
+#page-sales .sale-search-toolbar > .btn.btn-sm{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+}
+</style>
+
+
+<style id="supplier-delete-ui-fix-v2">
+#supplier-profile-category-options{
+  position:relative !important;
+  top:2px !important;
+}
+#supplier-profile-category-options .supplier-category-choice,
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  height:26px !important;
+  min-height:26px !important;
+  max-height:26px !important;
+  align-self:center !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  box-sizing:border-box !important;
+}
+#supplier-profile-category-options .supplier-category-custom-remove{
+  width:14px !important;
+  height:14px !important;
+  min-width:14px !important;
+  min-height:14px !important;
+  right:-5px !important;
+  top:-7px !important;
+  padding:0 !important;
+  border:1px solid var(--cream4) !important;
+  border-radius:50% !important;
+  background:var(--cream) !important;
+  color:var(--text2) !important;
+  box-shadow:none !important;
+  line-height:1 !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+}
+#supplier-profile-category-options .supplier-category-custom-remove svg{
+  display:block !important;
+  width:7px !important;
+  height:7px !important;
+  flex:0 0 7px !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -7645,6 +7726,17 @@ function _refreshAfterUndo(){
   }
   if(currentPage==='orders'){
     renderOrders();
+    if(typeof renderOrderSupplierSidebar==='function')renderOrderSupplierSidebar();
+    if(typeof renderSupplierCategoryFilters==='function')renderSupplierCategoryFilters();
+    const supplierModal=document.getElementById('modal-supplier-profile');
+    if(supplierModal && !supplierModal.classList.contains('hidden') && activeSupplierProfileName){
+      const profile=ensureSupplierProfile(activeSupplierProfileName);
+      activeSupplierProfileCategories=[...(profile?.categories||[profile?.category||'other'])];
+      if(typeof renderSupplierProfileCategoryChoices==='function')renderSupplierProfileCategoryChoices();
+      const tagsInput=document.getElementById('supplier-profile-tags');
+      if(tagsInput)tagsInput.value=(profile?.tags||[]).join('、');
+      if(typeof renderSupplierProfileHistory==='function')renderSupplierProfileHistory();
+    }
     if(typeof renderOverview==='function')renderOverview();
     return;
   }
@@ -14484,7 +14576,7 @@ function renderSupplierProfileCategoryChoices(){
   el.innerHTML=options.map(o=>{
     const active=activeSupplierProfileCategories.includes(o.value);
     const button=`<button type="button" class="supplier-category-choice ${active?'active':''}" onclick="toggleSupplierProfileCategory('${o.value}')"><span>${o.label}</span></button>`;
-    return `<span class="supplier-category-custom-wrap">${button}<button type="button" class="supplier-category-custom-remove" title="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${o.value}')">×</button></span>`;
+    return `<span class="supplier-category-custom-wrap">${button}<button type="button" class="supplier-category-custom-remove" title="刪除分類" aria-label="刪除分類" onclick="event.stopPropagation();removeSupplierCategory('${o.value}')"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></button></span>`;
   }).join('')+
   `<button type="button" class="supplier-category-add" onclick="openSupplierCategoryAddEditor()">＋ 新增類別</button>
    <button type="button" class="supplier-category-delete-toggle ${supplierCategoryDeleteMode?'active':''}" onclick="toggleSupplierCategoryDeleteMode()">${supplierCategoryDeleteMode?'完成':'刪除類別'}</button>
@@ -14520,7 +14612,18 @@ function closeSupplierCategoryAddEditor(){
   const editor=document.getElementById('supplier-category-add-editor');
   if(editor)editor.classList.remove('show');
 }
+
+function saveSupplierChangeWithUndo(label,beforeJson){
+  saveDB({skipUndo:true});
+  const afterJson=_dbUndoSnapshot();
+  if(beforeJson&&afterJson&&beforeJson!==afterJson){
+    _pushUndoRaw(_makeDbSnapshotUndoEntry(label,beforeJson,afterJson));
+    _undoStableSnapshot=afterJson;
+    if(_autoUndoContext)_autoUndoContext.manualHandled=true;
+  }
+}
 function addSupplierCustomCategory(){
+  const beforeJson=_dbUndoSnapshot();
   const input=document.getElementById('supplier-category-add-input');
   const label=String(input?.value||'').trim();
   if(!label){toast('請輸入類別名稱','error');return;}
@@ -14535,13 +14638,14 @@ function addSupplierCustomCategory(){
   DB.supplierCategoryCustom.push(item);
   activeSupplierProfileCategories=activeSupplierProfileCategories.filter(v=>v!=='other');
   activeSupplierProfileCategories.push(item.value);
-  saveDB();
+  saveSupplierChangeWithUndo(`新增供應類別「${label}」`,beforeJson);
   renderSupplierProfileCategoryChoices();
   renderOrderSupplierSidebar();
   renderSupplierCategoryFilters();
   toast(`已新增類別「${label}」，可 ⌘Z 復原`,'success');
 }
 function removeSupplierCategory(value){
+  const beforeJson=_dbUndoSnapshot();
   const options=getSupplierCategoryOptions();
   if(options.length<=1){toast('至少要保留一個供應類別','error');return;}
   const item=options.find(x=>x.value===value);
@@ -14567,7 +14671,7 @@ function removeSupplierCategory(value){
   if(supplierCategoryFilter===value)supplierCategoryFilter='all';
   if(activeOrderSupplierCategory===value)activeOrderSupplierCategory='all';
 
-  saveDB();
+  saveSupplierChangeWithUndo(`刪除供應類別「${item.label}」`,beforeJson);
   renderSupplierProfileCategoryChoices();
   renderOrderSupplierSidebar();
   renderSupplierCategoryFilters();
@@ -14681,12 +14785,13 @@ function renderSupplierProfileHistory(){
   }).join('');
 }
 function saveSupplierProfile(){
+  const beforeJson=_dbUndoSnapshot();
   const name=activeSupplierProfileName;
   const profile=ensureSupplierProfile(name);if(!profile)return;
   profile.categories=[...new Set(activeSupplierProfileCategories.length?activeSupplierProfileCategories:['other'])];
   profile.category=profile.categories[0]||'other';
   profile.tags=document.getElementById('supplier-profile-tags').value.split(/[、,，]/).map(x=>x.trim()).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).slice(0,12);
-  saveDB();
+  saveSupplierChangeWithUndo(`儲存供應商「${name}」類別與標籤`,beforeJson);
   renderSupplierCategoryFilters();
   renderSupplierStatsBody();
   renderOrderSupplierSidebar();
