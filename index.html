@@ -2434,6 +2434,142 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 }
 </style>
 
+
+<style id="recent-fixes-reconciled">
+/* Supplier profile category row: small tag-like buttons, no checkbox/checkmark */
+#supplier-profile-category-options{
+  display:flex !important;
+  align-items:center !important;
+  gap:6px !important;
+  flex-wrap:nowrap !important;
+  overflow:visible !important;
+  padding:8px 8px 10px 8px !important;
+}
+#supplier-profile-category-options .supplier-category-check{
+  display:none !important;
+}
+#supplier-profile-category-options .supplier-category-choice{
+  height:26px !important;
+  min-height:26px !important;
+  padding:0 11px !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:999px !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:9.5px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+  gap:0 !important;
+  box-shadow:none !important;
+}
+#supplier-profile-category-options .supplier-category-choice.active{
+  background:#faf3e8 !important;
+  border-color:#ead8bc !important;
+  color:var(--brown) !important;
+}
+#supplier-profile-category-options .supplier-category-add,
+#supplier-profile-category-options .supplier-category-delete-toggle{
+  height:26px !important;
+  min-height:26px !important;
+  padding:0 10px !important;
+  border-radius:999px !important;
+  font-size:9.5px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+#supplier-profile-category-options .supplier-category-custom-wrap{
+  position:relative !important;
+  display:inline-flex !important;
+  overflow:visible !important;
+}
+#supplier-profile-category-options .supplier-category-custom-remove{
+  display:none !important;
+  position:absolute !important;
+  top:-8px !important;
+  right:-7px !important;
+  width:17px !important;
+  height:17px !important;
+  padding:0 !important;
+  border:1px solid var(--cream4) !important;
+  border-radius:50% !important;
+  background:var(--cream) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+  line-height:15px !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  z-index:50 !important;
+}
+#supplier-profile-category-options.supplier-category-delete-mode .supplier-category-custom-remove{
+  display:flex !important;
+}
+
+/* Supplier sidebar: filter only, 3 equal buttons per row, never show delete X */
+#orders-supplier-category-filters{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:6px !important;
+  padding:9px 10px 8px !important;
+}
+#orders-supplier-category-filters .orders-supplier-filter{
+  width:100% !important;
+  min-width:0 !important;
+  height:30px !important;
+  min-height:30px !important;
+  padding:0 5px !important;
+  border-radius:10px !important;
+  border:1.5px solid var(--cream3) !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#orders-supplier-category-filters .orders-supplier-filter.active{
+  background:var(--cream2) !important;
+  border-color:var(--brown-light) !important;
+  color:var(--brown) !important;
+}
+#orders-supplier-category-filters .orders-supplier-filter-delete,
+#orders-supplier-category-filters .orders-supplier-filter-wrap .orders-supplier-filter-delete{
+  display:none !important;
+}
+
+/* Reports: flower icon + exact same height for both controls */
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 14px !important;
+  border-radius:17px !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  gap:6px !important;
+  vertical-align:middle !important;
+}
+#page-reports #report-current-month-btn .report-flower-icon{
+  display:inline-block !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -2726,7 +2862,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   <div class="section-header">
     <div class="section-title">📊 銷售報表</div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月">🌸 本月</button>
+      <button id="report-current-month-btn" class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月"><span class="report-flower-icon">🌸</span><span>本月</span></button>
       <div style="position:relative">
         <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span style="font-size:10px;color:var(--text3)">▾</span></button>
         <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:280px;overflow-y:auto"></div>
@@ -5206,11 +5342,12 @@ function getProductPawTitle(p){
 function renderProductPawIcon(p){
   const state=getProductPawState(p);
   // 依照參考圖重新描繪：兩顆上方腳趾較高、左右兩顆較低，
-  // 中央肉墊為寬而圓的拱形。未完成時回到空心，outline 顏色改成 SKU 規則頁那種淡奶油底色。
-  const filled=state!=='outline';
-  const fill=filled?'currentColor':'none';
-  const stroke='currentColor';
-  const strokeWidth=filled?'0':'1.5';
+  // 中央肉墊為寬而圓的拱形。第一個狀態不再空心，改成實心，
+  // 顏色使用 SKU 規則區塊底色同系的淡奶油色 var(--cream2)。
+  const filled=true;
+  const fill='currentColor';
+  const stroke='none';
+  const strokeWidth='0';
   return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" style="display:block;width:20px;height:20px;overflow:visible">
     <g fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
       <ellipse cx="5.35" cy="8.65" rx="1.65" ry="2.30" transform="rotate(-18 5.35 8.65)"/>
@@ -19881,51 +20018,36 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
 }
 
 </style>
+
+<style id="report-month-control-fix">
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 14px !important;
+  border-radius:17px !important;
+  line-height:1 !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  vertical-align:middle !important;
+}
+#page-reports #report-current-month-btn{
+  gap:6px !important;
+}
+#page-reports #report-current-month-btn .report-flower-icon{
+  display:inline-block !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#page-reports #report-month-btn{
+  gap:6px !important;
+}
+</style>
+
 </body>
 </html>
-
-<style>
-.orders-supplier-filter{
-  min-height:34px!important;
-  border-radius:11px!important;
-  font-size:11px!important;
-  font-weight:700!important;
-  padding:6px 10px!important;
-}
-.orders-supplier-filter.active{
-  background:var(--cream2)!important;
-  border-color:var(--brown-light)!important;
-  color:var(--brown)!important;
-}
-</style>
-
-<style>
-#order-supplier-category-filters{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:7px!important;
-}
-#order-supplier-category-filters .orders-supplier-filter{
-  width:100%!important;
-  min-width:0!important;
-  min-height:34px!important;
-  height:34px!important;
-  padding:0 6px!important;
-  border-radius:11px!important;
-  font-size:11px!important;
-  font-weight:700!important;
-  line-height:1!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-#order-supplier-category-filters .orders-supplier-filter.active{
-  background:var(--cream2)!important;
-  border-color:var(--brown-light)!important;
-  color:var(--brown)!important;
-}
-#order-supplier-category-filters .orders-supplier-filter-delete,
-#order-supplier-category-filters .orders-supplier-filter-wrap .orders-supplier-filter-delete{
-  display:none!important;
-}
-</style>
