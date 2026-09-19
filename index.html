@@ -4310,6 +4310,95 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
+
+<style id="supplier-profile-info-icons-v3">
+/* 小圓圈 i：縮小並和標題真正垂直置中 */
+.supplier-profile-section-label{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:3px !important;
+  line-height:1.2 !important;
+}
+.supplier-info-icon{
+  width:11px !important;
+  height:11px !important;
+  flex:0 0 11px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border-width:1px !important;
+  font-size:6.5px !important;
+  line-height:11px !important;
+  font-weight:800 !important;
+  vertical-align:middle !important;
+  transform:none !important;
+  align-self:center !important;
+}
+</style>
+
+
+<style id="supplier-arrow-svg-centered-v1">
+/* 改用 SVG chevron，避免字型符號本身上下偏移 */
+.orders-supplier-accordion-arrow{
+  width:16px !important;
+  height:16px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  transform:none !important;
+}
+.orders-supplier-accordion-arrow svg{
+  display:block !important;
+  width:10px !important;
+  height:7px !important;
+  transform:none !important;
+  transform-origin:50% 50% !important;
+}
+.orders-supplier-accordion.open .orders-supplier-accordion-arrow{
+  transform:none !important;
+}
+.orders-supplier-accordion.open .orders-supplier-accordion-arrow svg{
+  transform:rotate(180deg) !important;
+}
+</style>
+
+
+<style id="supplier-filter-clear-button-v1">
+.orders-supplier-sidebar-actions{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:7px !important;
+  margin-left:auto !important;
+}
+.orders-supplier-clear{
+  height:22px !important;
+  min-height:22px !important;
+  padding:0 7px !important;
+  border:0 !important;
+  border-radius:7px !important;
+  background:transparent !important;
+  color:var(--text3) !important;
+  font-family:inherit !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+}
+.orders-supplier-clear.active{
+  color:var(--brown) !important;
+}
+.orders-supplier-clear.active:hover{
+  background:var(--surface) !important;
+}
+.orders-supplier-clear:disabled{
+  opacity:.38 !important;
+  cursor:default !important;
+  background:transparent !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -4466,7 +4555,13 @@ label.form-label:has(.label-info-badge){
     </div>
     <aside class="orders-supplier-sidebar" aria-label="供應商">
       <div class="orders-supplier-sidebar-head">
-        <div class="orders-supplier-sidebar-title"><span>🏪 供應商</span><span id="orders-supplier-visible-count" class="orders-supplier-count"></span></div>
+        <div class="orders-supplier-sidebar-title">
+          <span>🏪 供應商</span>
+          <span class="orders-supplier-sidebar-actions">
+            <span id="orders-supplier-visible-count" class="orders-supplier-count"></span>
+            <button type="button" id="orders-supplier-clear" class="orders-supplier-clear" onclick="clearOrderSupplierFilters()" disabled>清除</button>
+          </span>
+        </div>
         
       </div>
       <div class="orders-supplier-filter-row" id="orders-supplier-category-filters"></div>
@@ -12794,6 +12889,16 @@ function setOrderSupplierCategory(value){
   }
   renderOrders();
 }
+function hasActiveOrderSupplierFilters(){
+  const hasMeta=['capabilities','advantages','sources'].some(kind=>getOrderSupplierMetaSelected(kind).length>0);
+  return activeOrderSupplierCategory!=='all'||hasMeta||activeOrderSupplierFilter!=='all';
+}
+function clearOrderSupplierFilters(){
+  activeOrderSupplierCategory='all';
+  activeOrderSupplierFilter='all';
+  activeOrderSupplierMetaFilters={capabilities:[],advantages:[],sources:[]};
+  renderOrders();
+}
 function setOrderSupplierFilter(name){
   activeOrderSupplierFilter=name||'all';
   renderOrders();
@@ -12826,7 +12931,7 @@ function renderOrderSupplierSidebar(){
         <span class="orders-supplier-accordion-title">${t.label}</span>
         <span class="orders-supplier-accordion-right">
           ${selected.length?`<span class="orders-supplier-tab-count">${selected.length}</span>`:''}
-          <span class="orders-supplier-accordion-arrow" aria-hidden="true">⌄</span>
+          <span class="orders-supplier-accordion-arrow" aria-hidden="true"><svg viewBox="0 0 12 8" focusable="false"><path d="M2 2.25 6 6l4-3.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </span>
       </button>
       <div class="orders-supplier-accordion-body ${isOpen?'':'hidden'}">${chips}</div>
@@ -12850,6 +12955,12 @@ function renderOrderSupplierSidebar(){
 
   const countEl=document.getElementById('orders-supplier-visible-count');
   if(countEl)countEl.textContent=`${stats.length} 家`;
+  const clearEl=document.getElementById('orders-supplier-clear');
+  if(clearEl){
+    const active=hasActiveOrderSupplierFilters();
+    clearEl.disabled=!active;
+    clearEl.classList.toggle('active',active);
+  }
 
   const filteredOrderCount=stats.reduce((sum,s)=>sum+s.count,0);
   listEl.innerHTML=
