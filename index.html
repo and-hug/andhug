@@ -5642,36 +5642,154 @@ function __productCountFromRaw(raw){
   const db=__safeParsePatchDB(raw);
   return db?db.products.length:-1;
 }
-function __collectRescueCandidates(){
-  const candidates=[];
-  const seen=new Set();
-  const add=(raw,label,key,source)=>{
-    if(!raw||seen.has(raw))return;
-    const db=__safeParsePatchDB(raw);
-    if(!db)return;
-    seen.add(raw);
-    candidates.push({raw,label,key,source,count:db.products.length});
+function __extractProductDbCandidate(value,meta,depth){
+  depth=depth||0;
+  if(depth>3||value==null)return [];
+  const found=[];
+  const pushDb=(db,labelSuffix)=>{
+    if(db&&Array.isArray(db.products)){
+      found.push({
+        raw:JSON.stringify(db),
+        label:(meta.label||'瀏覽器資料')+(labelSuffix||''),
+        key:meta.key||'',
+        source:meta.source||'unknown',
+        count:db.products.length,
+        detail:meta.detail||''
+      });
+    }
   };
 
-  // 目前 IndexedDB/LS_CACHE 中已存在的主資料與自動備份
+  if(typeof value==='string'){
+    if(value.length>20_000_000)return found;
+    try{
+      const parsed=JSON.parse(value);
+      return __extractProductDbCandidate(parsed,meta,depth+1);
+    }catch(e){return found;}
+  }
+
+  if(typeof value!=='object')return found;
+  pushDb(value,'');
+
+  // 常見備份包裝結構
+  ['db','data','backup','payload','state','value'].forEach(k=>{
+    if(value[k]!=null){
+      const sub=__extractProductDbCandidate(
+        value[k],
+        {...meta,label:(meta.label||'瀏覽器資料')+` · ${k}`},
+        depth+1
+      );
+      found.push(...sub);
+    }
+  });
+  return found;
+}
+
+async function __scanAllIndexedDBRescueCandidates(){
+  const out=[];
+  if(!indexedDB||typeof indexedDB.databases!=='function')return out;
+  let dbInfos=[];
+  try{dbInfos=await indexedDB.databases();}catch(e){return out;}
+
+  for(const info of dbInfos){
+    if(!info||!info.name)continue;
+    let db=null;
+    try{
+      db=await new Promise((resolve,reject)=>{
+        const req=indexedDB.open(info.name);
+        req.onsuccess=()=>resolve(req.result);
+        req.onerror=()=>reject(req.error);
+        req.onblocked=()=>reject(new Error('blocked'));
+      });
+      const stores=[...db.objectStoreNames];
+      for(const storeName of stores){
+        try{
+          const values=await new Promise((resolve,reject)=>{
+            const tx=db.transaction(storeName,'readonly');
+            const store=tx.objectStore(storeName);
+            if(typeof store.getAll==='function'){
+              const r=store.getAll();
+              r.onsuccess=()=>resolve(r.result||[]);
+              r.onerror=()=>reject(r.error);
+            }else{
+              const arr=[];
+              const r=store.openCursor();
+              r.onsuccess=e=>{
+                const c=e.target.result;
+                if(!c)return resolve(arr);
+                arr.push(c.value);
+                c.continue();
+              };
+              r.onerror=()=>reject(r.error);
+            }
+          });
+          values.forEach((v,idx)=>{
+            out.push(...__extractProductDbCandidate(v,{
+              label:`IndexedDB ${info.name} / ${storeName}`,
+              key:`${info.name}/${storeName}/${idx}`,
+              source:'indexeddb-deep',
+              detail:`資料庫 ${info.name}，store ${storeName}`
+            },0));
+          });
+        }catch(e){}
+      }
+    }catch(e){}
+    try{db&&db.close();}catch(e){}
+  }
+  return out;
+}
+
+async function __collectRescueCandidates(){
+  const candidates=[];
+  const seen=new Set();
+  const addCandidate=(c)=>{
+    if(!c||!c.raw||!Number.isFinite(c.count))return;
+    const sig=c.raw.length+':'+c.count+':'+c.raw.slice(0,180);
+    if(seen.has(sig))return;
+    seen.add(sig);
+    candidates.push(c);
+  };
+  const addRaw=(raw,label,key,source,detail)=>{
+    __extractProductDbCandidate(raw,{label,key,source,detail},0).forEach(addCandidate);
+  };
+
+  // 目前 app 的 IDB cache
   LS_CACHE.forEach((raw,key)=>{
-    if(key==='patchDB_v3')add(raw,'目前 IndexedDB 主資料',key,'indexeddb');
-    else if(key.indexOf('patchDB_autobackup_')===0)add(raw,'IndexedDB 自動備份',key,'indexeddb');
+    addRaw(raw,
+      key==='patchDB_v3'?'目前 IndexedDB 主資料':'IndexedDB 快取 / 備份',
+      key,'indexeddb-cache',`key: ${key}`);
   });
 
-  // 舊 localStorage 可能仍保留較完整的 125 筆資料，即使 migration 標記已經存在
+  // 所有 localStorage key，不只 patchDB 開頭
   try{
     for(let i=0;i<localStorage.length;i++){
       const key=localStorage.key(i);
-      if(!key||key.indexOf('patchDB')!==0)continue;
-      const raw=localStorage.getItem(key);
-      if(key==='patchDB_v3')add(raw,'舊版 localStorage 主資料',key,'localStorage');
-      else if(key.indexOf('patchDB_autobackup_')===0)add(raw,'舊版 localStorage 自動備份',key,'localStorage');
+      if(!key)continue;
+      addRaw(localStorage.getItem(key),
+        key==='patchDB_v3'?'舊版 localStorage 主資料':'localStorage 資料',
+        key,'localStorage',`key: ${key}`);
     }
   }catch(e){console.warn('讀取 localStorage 救援資料失敗:',e);}
 
+  // sessionStorage 也做只讀掃描
+  try{
+    for(let i=0;i<sessionStorage.length;i++){
+      const key=sessionStorage.key(i);
+      if(!key)continue;
+      addRaw(sessionStorage.getItem(key),
+        'sessionStorage 資料',
+        key,'sessionStorage',`key: ${key}`);
+    }
+  }catch(e){}
+
+  // 深度掃描此網域所有 IndexedDB database / object store
+  try{
+    const deep=await __scanAllIndexedDBRescueCandidates();
+    deep.forEach(addCandidate);
+  }catch(e){console.warn('IndexedDB 深度掃描失敗:',e);}
+
   return candidates;
 }
+
 async function __applyRescueCandidate(raw,label){
   const db=__safeParsePatchDB(raw);
   if(!db)throw new Error('救援資料格式不完整');
@@ -5738,18 +5856,52 @@ function __showRescueDialog(currentCount,candidate){
     };
   });
 }
+function __showRescueNothingFound(currentCount,candidates){
+  const old=document.getElementById('patchdb-rescue-overlay');
+  if(old)old.remove();
+
+  const counts=[...new Set((candidates||[]).map(c=>c.count).filter(n=>n>=0))].sort((a,b)=>b-a);
+  const overlay=document.createElement('div');
+  overlay.id='patchdb-rescue-overlay';
+  overlay.innerHTML=`
+    <div class="patchdb-rescue-card" role="dialog" aria-modal="true">
+      <div class="patchdb-rescue-icon">🔎</div>
+      <div class="patchdb-rescue-title">完整掃描完成</div>
+      <div class="patchdb-rescue-desc">這個 GitHub 網址目前能讀到的商品資料，最多只有 <b>${currentCount}</b> 個。</div>
+      <div class="patchdb-rescue-note">
+        已掃描 localStorage、sessionStorage，以及這個網址底下所有可讀取的 IndexedDB 資料庫 / object store。<br>
+        ${counts.length?`找到的商品筆數版本：${counts.join('、')}`:'沒有找到其他可辨識的商品資料版本。'}
+      </div>
+      <div class="patchdb-rescue-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="patchdb-rescue-close">知道了</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#patchdb-rescue-close').onclick=()=>overlay.remove();
+}
+
 async function __checkForBetterRescueData(){
   try{
     const currentRaw=await idbGet('patchDB_v3');
     const currentCount=Math.max(0,__productCountFromRaw(currentRaw));
-    const candidates=__collectRescueCandidates()
+    const candidates=(await __collectRescueCandidates())
       .filter(c=>c.count>currentCount)
       .sort((a,b)=>b.count-a.count);
 
-    if(!candidates.length)return true;
+    if(!candidates.length){
+      const all=await __collectRescueCandidates();
+      console.warn('🔎 深度救援掃描完成，沒有找到比目前更完整的資料。',{
+        currentCount,
+        foundCounts:[...new Set(all.map(c=>c.count))].sort((a,b)=>b-a)
+      });
+      __showRescueNothingFound(currentCount,all);
+      return false;
+    }
 
     const best=candidates[0];
-    console.warn('🛟 找到較完整的舊資料:',{currentCount,candidateCount:best.count,source:best.label,key:best.key});
+    console.warn('🛟 找到較完整的舊資料:',{
+      currentCount,candidateCount:best.count,source:best.label,key:best.key,detail:best.detail
+    });
     return await __showRescueDialog(currentCount,best);
   }catch(e){
     console.warn('救援檢查失敗，繼續正常啟動:',e);
@@ -5760,6 +5912,7 @@ async function __checkForBetterRescueData(){
 window.__patchDBRescue={
   check:__checkForBetterRescueData,
   collect:__collectRescueCandidates,
+  deepIndexedDB:__scanAllIndexedDBRescueCandidates,
   apply:__applyRescueCandidate
 };
 
