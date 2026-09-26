@@ -4399,6 +4399,197 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
+
+<style id="supplier-clear-arrow-fix-v2">
+/* 箭頭：以整條標題列為基準做絕對垂直置中，避免字型/行高造成視覺偏移 */
+.orders-supplier-accordion-head{
+  position:relative !important;
+  padding-right:24px !important;
+}
+.orders-supplier-accordion-right{
+  position:absolute !important;
+  right:1px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  height:18px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+}
+.orders-supplier-accordion-arrow{
+  position:relative !important;
+  width:16px !important;
+  height:16px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:0 !important;
+  line-height:0 !important;
+  transform:none !important;
+}
+.orders-supplier-accordion-arrow svg{
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:10px !important;
+  height:7px !important;
+  display:block !important;
+  transform:translate(-50%,-50%) !important;
+  transform-origin:50% 50% !important;
+}
+.orders-supplier-accordion.open .orders-supplier-accordion-arrow svg{
+  transform:translate(-50%,-50%) rotate(180deg) !important;
+}
+
+/* 清除篩選：直接放在篩選區，不藏在上方標題裡 */
+.orders-supplier-filter-tools{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  min-height:28px !important;
+  padding:3px 10px 4px !important;
+  border-bottom:1px solid var(--cream2) !important;
+  background:var(--surface) !important;
+}
+.orders-supplier-filter-tools .orders-supplier-clear{
+  height:22px !important;
+  min-height:22px !important;
+  padding:0 8px !important;
+  border:1px solid transparent !important;
+  border-radius:7px !important;
+  background:transparent !important;
+  color:var(--brown) !important;
+  font-family:inherit !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  opacity:1 !important;
+}
+.orders-supplier-filter-tools .orders-supplier-clear:hover:not(:disabled){
+  background:var(--cream2) !important;
+  border-color:var(--cream3) !important;
+}
+.orders-supplier-filter-tools .orders-supplier-clear:disabled{
+  color:var(--text3) !important;
+  opacity:.55 !important;
+  cursor:default !important;
+}
+</style>
+
+
+<style id="supplier-clear-border-count-center-v1">
+/* 清除篩選：加回清楚可見的邊框，停用時也保留輪廓 */
+.orders-supplier-filter-tools .orders-supplier-clear{
+  border:1.5px solid var(--cream4) !important;
+  background:var(--surface) !important;
+}
+.orders-supplier-filter-tools .orders-supplier-clear:hover:not(:disabled){
+  border-color:var(--brown-light) !important;
+  background:var(--cream2) !important;
+}
+.orders-supplier-filter-tools .orders-supplier-clear:disabled{
+  border-color:var(--cream3) !important;
+  background:var(--surface) !important;
+}
+
+/* 已選數量圓：圓本身與數字各自置中 */
+.orders-supplier-accordion .orders-supplier-tab-count{
+  min-width:20px !important;
+  height:20px !important;
+  padding:0 5px !important;
+  box-sizing:border-box !important;
+  display:inline-grid !important;
+  place-items:center !important;
+  border-radius:999px !important;
+  line-height:1 !important;
+}
+.orders-supplier-tab-count-number{
+  display:block !important;
+  line-height:1 !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:translateY(-0.5px) !important;
+}
+</style>
+
+
+<style id="patchdb-rescue-ui-v1">
+#patchdb-rescue-overlay{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(61,47,31,.18);
+  backdrop-filter:blur(2px);
+}
+.patchdb-rescue-card{
+  width:min(430px,calc(100vw - 32px));
+  padding:22px;
+  border:1px solid var(--cream3);
+  border-radius:18px;
+  background:var(--surface);
+  box-shadow:0 18px 50px rgba(61,47,31,.18);
+  color:var(--text);
+  text-align:center;
+}
+.patchdb-rescue-icon{
+  font-size:26px;
+  margin-bottom:7px;
+}
+.patchdb-rescue-title{
+  font-size:17px;
+  font-weight:900;
+  color:var(--brown);
+  margin-bottom:9px;
+}
+.patchdb-rescue-desc{
+  font-size:12px;
+  line-height:1.7;
+  color:var(--text2);
+}
+.patchdb-rescue-desc b{
+  color:var(--brown);
+  font-size:14px;
+}
+.patchdb-rescue-source{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  margin-top:10px;
+  padding:0 9px;
+  border:1px solid var(--cream3);
+  border-radius:999px;
+  background:var(--cream2);
+  color:var(--brown);
+  font-size:10px;
+  font-weight:800;
+}
+.patchdb-rescue-note{
+  margin-top:11px;
+  padding:9px 10px;
+  border-radius:10px;
+  background:var(--cream);
+  color:var(--text3);
+  font-size:10px;
+  line-height:1.55;
+}
+.patchdb-rescue-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  margin-top:16px;
+}
+.patchdb-rescue-actions .btn{
+  min-width:92px;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -4559,12 +4750,14 @@ label.form-label:has(.label-info-badge){
           <span>🏪 供應商</span>
           <span class="orders-supplier-sidebar-actions">
             <span id="orders-supplier-visible-count" class="orders-supplier-count"></span>
-            <button type="button" id="orders-supplier-clear" class="orders-supplier-clear" onclick="clearOrderSupplierFilters()" disabled>清除</button>
           </span>
         </div>
         
       </div>
       <div class="orders-supplier-filter-row" id="orders-supplier-category-filters"></div>
+      <div class="orders-supplier-filter-tools">
+        <button type="button" id="orders-supplier-clear" class="orders-supplier-clear" onclick="clearOrderSupplierFilters()" disabled>清除篩選</button>
+      </div>
       <div class="orders-supplier-tabs" id="orders-supplier-tabs" role="tablist" aria-label="供應商快速篩選"></div>
       <div class="orders-supplier-meta-filters hidden" id="orders-supplier-meta-filters"></div>
       <div class="orders-supplier-list" id="orders-supplier-list"></div>
@@ -5428,6 +5621,146 @@ window.__patchDB={
   exportAll:async function(){var keys=await idbAllKeys();var out={};for(var i=0;i<keys.length;i++){out[keys[i]]=await idbGet(keys[i]);}console.log(out);return out;},
   rollback:async function(){customConfirm('⚠️ 將清空 IndexedDB,下次開頁會從 localStorage 重新遷移。確定?',async()=>{await idbClear();toast('已清空 IDB,請重新整理頁面','success');});},
   stats:function(){var n=lsAllPatchKeys().length;var size=0;LS_CACHE.forEach(function(v){if(typeof v==='string')size+=v.length;});console.log('keys: '+n+' / 估算大小: '+(size/1024).toFixed(1)+' KB');return{keys:n,sizeKB:(size/1024).toFixed(1)};}
+};
+
+/* ===== 資料救援檢查 v1 =====
+   目的：避免 IndexedDB 只剩 45 筆 seed 時，舊 localStorage / 自動備份中較完整的資料被忽略。
+   安全原則：
+   1. 只在候選資料的 products 數量「明顯大於」目前主資料時提示。
+   2. 不自動覆蓋，必須由使用者按「還原這份資料」。
+   3. 還原前先把目前主資料另存一份 rescue emergency backup。
+*/
+function __safeParsePatchDB(raw){
+  if(!raw||typeof raw!=='string')return null;
+  try{
+    const db=JSON.parse(raw);
+    if(!db||!Array.isArray(db.products))return null;
+    return db;
+  }catch(e){return null;}
+}
+function __productCountFromRaw(raw){
+  const db=__safeParsePatchDB(raw);
+  return db?db.products.length:-1;
+}
+function __collectRescueCandidates(){
+  const candidates=[];
+  const seen=new Set();
+  const add=(raw,label,key,source)=>{
+    if(!raw||seen.has(raw))return;
+    const db=__safeParsePatchDB(raw);
+    if(!db)return;
+    seen.add(raw);
+    candidates.push({raw,label,key,source,count:db.products.length});
+  };
+
+  // 目前 IndexedDB/LS_CACHE 中已存在的主資料與自動備份
+  LS_CACHE.forEach((raw,key)=>{
+    if(key==='patchDB_v3')add(raw,'目前 IndexedDB 主資料',key,'indexeddb');
+    else if(key.indexOf('patchDB_autobackup_')===0)add(raw,'IndexedDB 自動備份',key,'indexeddb');
+  });
+
+  // 舊 localStorage 可能仍保留較完整的 125 筆資料，即使 migration 標記已經存在
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(!key||key.indexOf('patchDB')!==0)continue;
+      const raw=localStorage.getItem(key);
+      if(key==='patchDB_v3')add(raw,'舊版 localStorage 主資料',key,'localStorage');
+      else if(key.indexOf('patchDB_autobackup_')===0)add(raw,'舊版 localStorage 自動備份',key,'localStorage');
+    }
+  }catch(e){console.warn('讀取 localStorage 救援資料失敗:',e);}
+
+  return candidates;
+}
+async function __applyRescueCandidate(raw,label){
+  const db=__safeParsePatchDB(raw);
+  if(!db)throw new Error('救援資料格式不完整');
+
+  const currentRaw=await idbGet('patchDB_v3');
+  if(currentRaw){
+    const emergencyKey='patchDB_rescue_before_restore_'+Date.now();
+    await idbSet(emergencyKey,currentRaw);
+    LS_CACHE.set(emergencyKey,currentRaw);
+  }
+
+  await idbSet('patchDB_v3',raw);
+  LS_CACHE.set('patchDB_v3',raw);
+
+  // 同步回舊 localStorage 一份，讓未來 rollback / 舊版 HTML 也有機會讀到完整資料。
+  try{localStorage.setItem('patchDB_v3',raw);}catch(e){console.warn('同步 localStorage 失敗:',e);}
+
+  return {count:db.products.length,label:label||'救援資料'};
+}
+function __showRescueDialog(currentCount,candidate){
+  return new Promise(resolve=>{
+    const old=document.getElementById('patchdb-rescue-overlay');
+    if(old)old.remove();
+
+    const overlay=document.createElement('div');
+    overlay.id='patchdb-rescue-overlay';
+    overlay.innerHTML=`
+      <div class="patchdb-rescue-card" role="dialog" aria-modal="true" aria-labelledby="patchdb-rescue-title">
+        <div class="patchdb-rescue-icon">🛟</div>
+        <div class="patchdb-rescue-title" id="patchdb-rescue-title">找到較完整的舊資料</div>
+        <div class="patchdb-rescue-desc">目前這份資料只有 <b>${currentCount}</b> 個商品，但系統找到一份有 <b>${candidate.count}</b> 個商品的舊資料。</div>
+        <div class="patchdb-rescue-source">${candidate.label}</div>
+        <div class="patchdb-rescue-note">不會自動覆蓋。按還原前，系統也會先替目前資料留一份安全備份。</div>
+        <div class="patchdb-rescue-actions">
+          <button type="button" class="btn btn-secondary btn-sm" id="patchdb-rescue-skip">先不要</button>
+          <button type="button" class="btn btn-primary btn-sm" id="patchdb-rescue-restore">還原這份資料</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    const skip=overlay.querySelector('#patchdb-rescue-skip');
+    const restore=overlay.querySelector('#patchdb-rescue-restore');
+
+    skip.onclick=()=>{
+      overlay.remove();
+      resolve(true);
+    };
+    restore.onclick=async()=>{
+      restore.disabled=true;
+      skip.disabled=true;
+      restore.textContent='還原中…';
+      try{
+        await __applyRescueCandidate(candidate.raw,candidate.label);
+        restore.textContent=`已還原 ${candidate.count} 個商品`;
+        setTimeout(()=>location.reload(),450);
+        resolve(false);
+      }catch(e){
+        console.error('救援還原失敗:',e);
+        restore.disabled=false;
+        skip.disabled=false;
+        restore.textContent='還原這份資料';
+        alert('還原失敗：'+e.message);
+      }
+    };
+  });
+}
+async function __checkForBetterRescueData(){
+  try{
+    const currentRaw=await idbGet('patchDB_v3');
+    const currentCount=Math.max(0,__productCountFromRaw(currentRaw));
+    const candidates=__collectRescueCandidates()
+      .filter(c=>c.count>currentCount)
+      .sort((a,b)=>b.count-a.count);
+
+    if(!candidates.length)return true;
+
+    const best=candidates[0];
+    console.warn('🛟 找到較完整的舊資料:',{currentCount,candidateCount:best.count,source:best.label,key:best.key});
+    return await __showRescueDialog(currentCount,best);
+  }catch(e){
+    console.warn('救援檢查失敗，繼續正常啟動:',e);
+    return true;
+  }
+}
+
+window.__patchDBRescue={
+  check:__checkForBetterRescueData,
+  collect:__collectRescueCandidates,
+  apply:__applyRescueCandidate
 };
 
 const __bootSteps=[];
@@ -12930,7 +13263,7 @@ function renderOrderSupplierSidebar(){
       <button type="button" class="orders-supplier-accordion-head ${selected.length?'has-selection':''}" onclick="setOrderSupplierTab('${t.value}')" aria-expanded="${isOpen?'true':'false'}">
         <span class="orders-supplier-accordion-title">${t.label}</span>
         <span class="orders-supplier-accordion-right">
-          ${selected.length?`<span class="orders-supplier-tab-count">${selected.length}</span>`:''}
+          ${selected.length?`<span class="orders-supplier-tab-count"><span class="orders-supplier-tab-count-number">${selected.length}</span></span>`:''}
           <span class="orders-supplier-accordion-arrow" aria-hidden="true"><svg viewBox="0 0 12 8" focusable="false"><path d="M2 2.25 6 6l4-3.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </span>
       </button>
@@ -20039,6 +20372,11 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
     alert('系統啟動失敗,請截圖回報:'+e.message);
     return;
   }
+
+  // 先檢查舊 localStorage / 自動備份是否有比目前主資料更完整的商品集合。
+  const rescueContinue=await __checkForBetterRescueData();
+  if(!rescueContinue)return;
+
   for(var i=0;i<__bootSteps.length;i++){
     try{__bootSteps[i]();}catch(e){console.error('啟動步驟 #'+i+' 失敗:',e);}
   }
