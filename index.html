@@ -4513,81 +4513,92 @@ label.form-label:has(.label-info-badge){
   padding:0 !important;
   transform:translateY(-0.5px) !important;
 }
+
+/* 右上角清除按鈕移回標題列 */
+.orders-supplier-sidebar-actions{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+.orders-supplier-clear-top{
+  height:30px !important;
+  padding:0 12px !important;
+  border:1.5px solid var(--cream3) !important;
+  border-radius:11px !important;
+  background:var(--surface) !important;
+  color:var(--brown) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+.orders-supplier-clear-top:hover:not(:disabled){
+  background:var(--cream2) !important;
+  border-color:var(--brown-light) !important;
+}
+.orders-supplier-clear-top:disabled{
+  opacity:.52 !important;
+}
+.orders-supplier-filter-tools{
+  display:none !important;
+}
+.orders-supplier-accordion .orders-supplier-tab-count{
+  font-weight:900 !important;
+}
+.orders-supplier-tab-count-number{
+  font-weight:900 !important;
+  color:var(--brown) !important;
+}
 </style>
 
+<meta name="andhug-build" content="supabase-safe-v2-clear-top-20260926">
 
-<style id="patchdb-rescue-ui-v1">
-#patchdb-rescue-overlay{
-  position:fixed;
-  inset:0;
-  z-index:999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:rgba(61,47,31,.18);
-  backdrop-filter:blur(2px);
+<style id="andhug-disable-rescue-ui">
+#patchdb-rescue-overlay,
+[id^="patchdb-rescue"],
+[class*="patchdb-rescue"]{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
 }
-.patchdb-rescue-card{
-  width:min(430px,calc(100vw - 32px));
-  padding:22px;
-  border:1px solid var(--cream3);
-  border-radius:18px;
-  background:var(--surface);
-  box-shadow:0 18px 50px rgba(61,47,31,.18);
-  color:var(--text);
-  text-align:center;
+</style>
+<script>
+(function(){
+  const killRescueUI=()=>{
+    document.querySelectorAll(
+      '#patchdb-rescue-overlay,[id^="patchdb-rescue"],[class*="patchdb-rescue"]'
+    ).forEach(el=>el.remove());
+  };
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',killRescueUI,{once:true});
+  }else{
+    killRescueUI();
+  }
+  const observer=new MutationObserver(killRescueUI);
+  const start=()=>{ if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true}); };
+  if(document.documentElement) start(); else document.addEventListener('DOMContentLoaded',start,{once:true});
+  window.__PATCHDB_RESCUE_DISABLED__=true;
+})();
+</script>
+
+
+<style id="safe-cloud-status-style">
+#safe-cloud-status{
+ position:fixed;right:18px;bottom:18px;z-index:9500;
+ display:flex;align-items:center;gap:6px;height:30px;padding:0 11px;
+ border:1px solid var(--cream3);border-radius:999px;background:rgba(255,255,255,.94);
+ box-shadow:0 5px 18px rgba(61,47,31,.08);font-size:10px;font-weight:800;color:var(--text2);
+ backdrop-filter:blur(8px)
 }
-.patchdb-rescue-icon{
-  font-size:26px;
-  margin-bottom:7px;
-}
-.patchdb-rescue-title{
-  font-size:17px;
-  font-weight:900;
-  color:var(--brown);
-  margin-bottom:9px;
-}
-.patchdb-rescue-desc{
-  font-size:12px;
-  line-height:1.7;
-  color:var(--text2);
-}
-.patchdb-rescue-desc b{
-  color:var(--brown);
-  font-size:14px;
-}
-.patchdb-rescue-source{
-  display:inline-flex;
-  align-items:center;
-  min-height:24px;
-  margin-top:10px;
-  padding:0 9px;
-  border:1px solid var(--cream3);
-  border-radius:999px;
-  background:var(--cream2);
-  color:var(--brown);
-  font-size:10px;
-  font-weight:800;
-}
-.patchdb-rescue-note{
-  margin-top:11px;
-  padding:9px 10px;
-  border-radius:10px;
-  background:var(--cream);
-  color:var(--text3);
-  font-size:10px;
-  line-height:1.55;
-}
-.patchdb-rescue-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:7px;
-  margin-top:16px;
-}
-.patchdb-rescue-actions .btn{
-  min-width:92px;
-}
+#safe-cloud-status .dot{width:7px;height:7px;border-radius:50%;background:#c9c0b3}
+#safe-cloud-status[data-state="saved"] .dot{background:#6fae7d}
+#safe-cloud-status[data-state="saving"] .dot{background:#d6a85d}
+#safe-cloud-status[data-state="error"] .dot{background:#c45f7a}
+#safe-cloud-status[data-state="offline"] .dot{background:#c9c0b3}
 </style>
 
 </head>
@@ -4750,14 +4761,12 @@ label.form-label:has(.label-info-badge){
           <span>🏪 供應商</span>
           <span class="orders-supplier-sidebar-actions">
             <span id="orders-supplier-visible-count" class="orders-supplier-count"></span>
+            <button type="button" id="orders-supplier-clear" class="orders-supplier-clear orders-supplier-clear-top" onclick="clearOrderSupplierFilters()" disabled>清除</button>
           </span>
         </div>
-        
       </div>
       <div class="orders-supplier-filter-row" id="orders-supplier-category-filters"></div>
-      <div class="orders-supplier-filter-tools">
-        <button type="button" id="orders-supplier-clear" class="orders-supplier-clear" onclick="clearOrderSupplierFilters()" disabled>清除篩選</button>
-      </div>
+      <div class="orders-supplier-filter-tools"></div>
       <div class="orders-supplier-tabs" id="orders-supplier-tabs" role="tablist" aria-label="供應商快速篩選"></div>
       <div class="orders-supplier-meta-filters hidden" id="orders-supplier-meta-filters"></div>
       <div class="orders-supplier-list" id="orders-supplier-list"></div>
@@ -5528,6 +5537,12 @@ label.form-label:has(.label-info-badge){
 
       <div class="settings-divider"></div>
 
+      
+<div id="clean-slate-status" style="margin:0 0 12px;padding:10px 12px;border:1px solid var(--cream3);border-radius:10px;background:var(--cream);font-size:10px;line-height:1.55;color:var(--text2)">
+  ☁️ <b style="color:var(--brown)">Supabase 正式資料模式</b><br>
+  正式資料存 Supabase；瀏覽器只做快取。每次雲端更新前，伺服器會自動保留上一版完整快照。Supabase Storage 圖片獨立保留。
+</div>
+
       <div class="settings-section-title">☁️ 雲端同步</div>
       <div id="auth-status-card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--surface,#fff);border:1px solid var(--peach);border-radius:12px;padding:10px 14px;margin-bottom:10px;">
         <div style="display:flex;align-items:center;gap:8px;min-width:0;">
@@ -5540,7 +5555,8 @@ label.form-label:has(.label-info-badge){
         </div>
       </div>
       <div class="settings-btn-row" style="margin-bottom:8px">
-        <button class="btn btn-secondary btn-sm" onclick="syncToSupabase()">☁️ 同步到雲端</button>
+        <button class="btn btn-secondary btn-sm" onclick="safeCloudSave(false,'manual')">☁️ 立即同步</button>
+        <button class="btn btn-secondary btn-sm" onclick="downloadPermanentBackup()">⬇️ 下載完整備份</button>
       </div>
       <details style="border:1px solid var(--cream3);border-radius:10px;background:var(--surface);padding:8px 10px">
         <summary style="cursor:pointer;font-size:11px;font-weight:800;color:var(--text2);user-select:none">🧰 進階工具</summary>
@@ -5587,22 +5603,79 @@ function lsAllPatchKeys(){var out=[];LS_CACHE.forEach(function(_,k){if(k.indexOf
 
 async function __initStorage(){
   try{
-    var migrated=await idbGet('_migrated_from_ls_v1');
-    if(!migrated){
-      var lsKeys=[];
-      for(var i=0;i<localStorage.length;i++){
-        var k=localStorage.key(i);
-        if(k&&k.indexOf('patchDB')===0)lsKeys.push(k);
-      }
-      if(lsKeys.length>0){
-            for(var j=0;j<lsKeys.length;j++){
-          await idbSet(lsKeys[j],localStorage.getItem(lsKeys[j]));
+    const CLEAN_MARKER='andhug_clean_slate_20260926_v2_no_rescue';
+
+    // 使用者已決定重新建立資料：第一次開啟這版時，移除舊 patchDB 本機資料。
+    // marker 不以 patchDB 開頭，所以之後不會每次 reload 都重新清空。
+    let cleanDone=false;
+    try{ cleanDone=localStorage.getItem(CLEAN_MARKER)==='1'; }catch(e){}
+
+    if(!cleanDone){
+      // 先清 IndexedDB 舊資料，包括舊主資料、自動備份、救援候選、undo/草稿等 patchDB 資料。
+      await idbClear();
+      LS_CACHE.clear();
+
+      // 清除舊 localStorage patchDB*，避免 migration 再把舊資料搬回來。
+      try{
+        const removeKeys=[];
+        const keepKey=(k)=>/^sb-[^-]+-auth-token$/.test(String(k||'')) || String(k||'').startsWith('supabase.auth.');
+        for(let i=0;i<localStorage.length;i++){
+          const k=localStorage.key(i);
+          if(!k)continue;
+          // 保留登入憑證；其餘舊庫存/救援/介面暫存都清掉。
+          if(!keepKey(k)) removeKeys.push(k);
         }
-        await idbSet('_migrated_from_ls_v1','1');
-          }else{
-        await idbSet('_migrated_from_ls_v1','1');
+        removeKeys.forEach(k=>localStorage.removeItem(k));
+
+        try{
+          const sessionRemove=[];
+          for(let i=0;i<sessionStorage.length;i++){
+            const k=sessionStorage.key(i);
+            if(k)sessionRemove.push(k);
+          }
+          sessionRemove.forEach(k=>sessionStorage.removeItem(k));
+        }catch(e){}
+
+        localStorage.setItem(CLEAN_MARKER,'1');
+      }catch(e){
+        console.warn('清除舊 localStorage / sessionStorage 資料失敗:',e);
       }
+
+      // 明確建立一份「空白主資料」，不再依賴舊 seed。
+      const cleanDB={
+        products:[],
+        orders:[],
+        rate:0.138,
+        rateTime:null,
+        todaySales:{},
+        suppliers:[],
+        supplierProfiles:{},
+        supplierCategoryCustom:[],
+        supplierCategoryHidden:['tools'],
+        supplierMetaCustom:{capabilities:[],advantages:[],sources:[]},
+        supplierMetaHidden:{capabilities:[],advantages:[],sources:[]},
+        customers:[],
+        samples:[],
+        productTrash:[],
+        orderTrash:[],
+        trash:[],
+        smartImportDrafts:[],
+        settings:{
+          lowStockAlertEnabled:true,
+          outOfStockAlertEnabled:true,
+          cloudSyncFailAlertEnabled:true,
+          uiEditMode:false,
+          theme:'cream',
+          legacyCloudSyncPaused:true
+        },
+        uiOverrides:{}
+      };
+      const raw=JSON.stringify(cleanDB);
+      await idbSet('patchDB_v3',raw);
+      await idbSet('_migrated_from_ls_v1','1');
     }
+
+    // 正常載入目前 IndexedDB 內容。
     var allKeys=await idbAllKeys();
     for(var m=0;m<allKeys.length;m++){
       var ak=allKeys[m];
@@ -5610,7 +5683,7 @@ async function __initStorage(){
         LS_CACHE.set(ak,await idbGet(ak));
       }
     }
-    }catch(e){
+  }catch(e){
     console.error('❌ 儲存層初始化失敗:',e);
     alert('儲存系統初始化失敗,請截圖回報:'+e.message);
     throw e;
@@ -5621,299 +5694,6 @@ window.__patchDB={
   exportAll:async function(){var keys=await idbAllKeys();var out={};for(var i=0;i<keys.length;i++){out[keys[i]]=await idbGet(keys[i]);}console.log(out);return out;},
   rollback:async function(){customConfirm('⚠️ 將清空 IndexedDB,下次開頁會從 localStorage 重新遷移。確定?',async()=>{await idbClear();toast('已清空 IDB,請重新整理頁面','success');});},
   stats:function(){var n=lsAllPatchKeys().length;var size=0;LS_CACHE.forEach(function(v){if(typeof v==='string')size+=v.length;});console.log('keys: '+n+' / 估算大小: '+(size/1024).toFixed(1)+' KB');return{keys:n,sizeKB:(size/1024).toFixed(1)};}
-};
-
-/* ===== 資料救援檢查 v1 =====
-   目的：避免 IndexedDB 只剩 45 筆 seed 時，舊 localStorage / 自動備份中較完整的資料被忽略。
-   安全原則：
-   1. 只在候選資料的 products 數量「明顯大於」目前主資料時提示。
-   2. 不自動覆蓋，必須由使用者按「還原這份資料」。
-   3. 還原前先把目前主資料另存一份 rescue emergency backup。
-*/
-function __safeParsePatchDB(raw){
-  if(!raw||typeof raw!=='string')return null;
-  try{
-    const db=JSON.parse(raw);
-    if(!db||!Array.isArray(db.products))return null;
-    return db;
-  }catch(e){return null;}
-}
-function __productCountFromRaw(raw){
-  const db=__safeParsePatchDB(raw);
-  return db?db.products.length:-1;
-}
-function __extractProductDbCandidate(value,meta,depth){
-  depth=depth||0;
-  if(depth>3||value==null)return [];
-  const found=[];
-  const pushDb=(db,labelSuffix)=>{
-    if(db&&Array.isArray(db.products)){
-      found.push({
-        raw:JSON.stringify(db),
-        label:(meta.label||'瀏覽器資料')+(labelSuffix||''),
-        key:meta.key||'',
-        source:meta.source||'unknown',
-        count:db.products.length,
-        detail:meta.detail||''
-      });
-    }
-  };
-
-  if(typeof value==='string'){
-    if(value.length>20_000_000)return found;
-    try{
-      const parsed=JSON.parse(value);
-      return __extractProductDbCandidate(parsed,meta,depth+1);
-    }catch(e){return found;}
-  }
-
-  if(typeof value!=='object')return found;
-  pushDb(value,'');
-
-  // 常見備份包裝結構
-  ['db','data','backup','payload','state','value'].forEach(k=>{
-    if(value[k]!=null){
-      const sub=__extractProductDbCandidate(
-        value[k],
-        {...meta,label:(meta.label||'瀏覽器資料')+` · ${k}`},
-        depth+1
-      );
-      found.push(...sub);
-    }
-  });
-  return found;
-}
-
-async function __scanAllIndexedDBRescueCandidates(){
-  const out=[];
-  if(!indexedDB||typeof indexedDB.databases!=='function')return out;
-  let dbInfos=[];
-  try{dbInfos=await indexedDB.databases();}catch(e){return out;}
-
-  for(const info of dbInfos){
-    if(!info||!info.name)continue;
-    let db=null;
-    try{
-      db=await new Promise((resolve,reject)=>{
-        const req=indexedDB.open(info.name);
-        req.onsuccess=()=>resolve(req.result);
-        req.onerror=()=>reject(req.error);
-        req.onblocked=()=>reject(new Error('blocked'));
-      });
-      const stores=[...db.objectStoreNames];
-      for(const storeName of stores){
-        try{
-          const values=await new Promise((resolve,reject)=>{
-            const tx=db.transaction(storeName,'readonly');
-            const store=tx.objectStore(storeName);
-            if(typeof store.getAll==='function'){
-              const r=store.getAll();
-              r.onsuccess=()=>resolve(r.result||[]);
-              r.onerror=()=>reject(r.error);
-            }else{
-              const arr=[];
-              const r=store.openCursor();
-              r.onsuccess=e=>{
-                const c=e.target.result;
-                if(!c)return resolve(arr);
-                arr.push(c.value);
-                c.continue();
-              };
-              r.onerror=()=>reject(r.error);
-            }
-          });
-          values.forEach((v,idx)=>{
-            out.push(...__extractProductDbCandidate(v,{
-              label:`IndexedDB ${info.name} / ${storeName}`,
-              key:`${info.name}/${storeName}/${idx}`,
-              source:'indexeddb-deep',
-              detail:`資料庫 ${info.name}，store ${storeName}`
-            },0));
-          });
-        }catch(e){}
-      }
-    }catch(e){}
-    try{db&&db.close();}catch(e){}
-  }
-  return out;
-}
-
-async function __collectRescueCandidates(){
-  const candidates=[];
-  const seen=new Set();
-  const addCandidate=(c)=>{
-    if(!c||!c.raw||!Number.isFinite(c.count))return;
-    const sig=c.raw.length+':'+c.count+':'+c.raw.slice(0,180);
-    if(seen.has(sig))return;
-    seen.add(sig);
-    candidates.push(c);
-  };
-  const addRaw=(raw,label,key,source,detail)=>{
-    __extractProductDbCandidate(raw,{label,key,source,detail},0).forEach(addCandidate);
-  };
-
-  // 目前 app 的 IDB cache
-  LS_CACHE.forEach((raw,key)=>{
-    addRaw(raw,
-      key==='patchDB_v3'?'目前 IndexedDB 主資料':'IndexedDB 快取 / 備份',
-      key,'indexeddb-cache',`key: ${key}`);
-  });
-
-  // 所有 localStorage key，不只 patchDB 開頭
-  try{
-    for(let i=0;i<localStorage.length;i++){
-      const key=localStorage.key(i);
-      if(!key)continue;
-      addRaw(localStorage.getItem(key),
-        key==='patchDB_v3'?'舊版 localStorage 主資料':'localStorage 資料',
-        key,'localStorage',`key: ${key}`);
-    }
-  }catch(e){console.warn('讀取 localStorage 救援資料失敗:',e);}
-
-  // sessionStorage 也做只讀掃描
-  try{
-    for(let i=0;i<sessionStorage.length;i++){
-      const key=sessionStorage.key(i);
-      if(!key)continue;
-      addRaw(sessionStorage.getItem(key),
-        'sessionStorage 資料',
-        key,'sessionStorage',`key: ${key}`);
-    }
-  }catch(e){}
-
-  // 深度掃描此網域所有 IndexedDB database / object store
-  try{
-    const deep=await __scanAllIndexedDBRescueCandidates();
-    deep.forEach(addCandidate);
-  }catch(e){console.warn('IndexedDB 深度掃描失敗:',e);}
-
-  return candidates;
-}
-
-async function __applyRescueCandidate(raw,label){
-  const db=__safeParsePatchDB(raw);
-  if(!db)throw new Error('救援資料格式不完整');
-
-  const currentRaw=await idbGet('patchDB_v3');
-  if(currentRaw){
-    const emergencyKey='patchDB_rescue_before_restore_'+Date.now();
-    await idbSet(emergencyKey,currentRaw);
-    LS_CACHE.set(emergencyKey,currentRaw);
-  }
-
-  await idbSet('patchDB_v3',raw);
-  LS_CACHE.set('patchDB_v3',raw);
-
-  // 同步回舊 localStorage 一份，讓未來 rollback / 舊版 HTML 也有機會讀到完整資料。
-  try{localStorage.setItem('patchDB_v3',raw);}catch(e){console.warn('同步 localStorage 失敗:',e);}
-
-  return {count:db.products.length,label:label||'救援資料'};
-}
-function __showRescueDialog(currentCount,candidate){
-  return new Promise(resolve=>{
-    const old=document.getElementById('patchdb-rescue-overlay');
-    if(old)old.remove();
-
-    const overlay=document.createElement('div');
-    overlay.id='patchdb-rescue-overlay';
-    overlay.innerHTML=`
-      <div class="patchdb-rescue-card" role="dialog" aria-modal="true" aria-labelledby="patchdb-rescue-title">
-        <div class="patchdb-rescue-icon">🛟</div>
-        <div class="patchdb-rescue-title" id="patchdb-rescue-title">找到較完整的舊資料</div>
-        <div class="patchdb-rescue-desc">目前這份資料只有 <b>${currentCount}</b> 個商品，但系統找到一份有 <b>${candidate.count}</b> 個商品的舊資料。</div>
-        <div class="patchdb-rescue-source">${candidate.label}</div>
-        <div class="patchdb-rescue-note">不會自動覆蓋。按還原前，系統也會先替目前資料留一份安全備份。</div>
-        <div class="patchdb-rescue-actions">
-          <button type="button" class="btn btn-secondary btn-sm" id="patchdb-rescue-skip">先不要</button>
-          <button type="button" class="btn btn-primary btn-sm" id="patchdb-rescue-restore">還原這份資料</button>
-        </div>
-      </div>`;
-    document.body.appendChild(overlay);
-
-    const skip=overlay.querySelector('#patchdb-rescue-skip');
-    const restore=overlay.querySelector('#patchdb-rescue-restore');
-
-    skip.onclick=()=>{
-      overlay.remove();
-      resolve(true);
-    };
-    restore.onclick=async()=>{
-      restore.disabled=true;
-      skip.disabled=true;
-      restore.textContent='還原中…';
-      try{
-        await __applyRescueCandidate(candidate.raw,candidate.label);
-        restore.textContent=`已還原 ${candidate.count} 個商品`;
-        setTimeout(()=>location.reload(),450);
-        resolve(false);
-      }catch(e){
-        console.error('救援還原失敗:',e);
-        restore.disabled=false;
-        skip.disabled=false;
-        restore.textContent='還原這份資料';
-        alert('還原失敗：'+e.message);
-      }
-    };
-  });
-}
-function __showRescueNothingFound(currentCount,candidates){
-  const old=document.getElementById('patchdb-rescue-overlay');
-  if(old)old.remove();
-
-  const counts=[...new Set((candidates||[]).map(c=>c.count).filter(n=>n>=0))].sort((a,b)=>b-a);
-  const overlay=document.createElement('div');
-  overlay.id='patchdb-rescue-overlay';
-  overlay.innerHTML=`
-    <div class="patchdb-rescue-card" role="dialog" aria-modal="true">
-      <div class="patchdb-rescue-icon">🔎</div>
-      <div class="patchdb-rescue-title">完整掃描完成</div>
-      <div class="patchdb-rescue-desc">這個 GitHub 網址目前能讀到的商品資料，最多只有 <b>${currentCount}</b> 個。</div>
-      <div class="patchdb-rescue-note">
-        已掃描 localStorage、sessionStorage，以及這個網址底下所有可讀取的 IndexedDB 資料庫 / object store。<br>
-        ${counts.length?`找到的商品筆數版本：${counts.join('、')}`:'沒有找到其他可辨識的商品資料版本。'}
-      </div>
-      <div class="patchdb-rescue-actions">
-        <button type="button" class="btn btn-primary btn-sm" id="patchdb-rescue-close">知道了</button>
-      </div>
-    </div>`;
-  document.body.appendChild(overlay);
-  overlay.querySelector('#patchdb-rescue-close').onclick=()=>overlay.remove();
-}
-
-async function __checkForBetterRescueData(){
-  try{
-    const currentRaw=await idbGet('patchDB_v3');
-    const currentCount=Math.max(0,__productCountFromRaw(currentRaw));
-    const candidates=(await __collectRescueCandidates())
-      .filter(c=>c.count>currentCount)
-      .sort((a,b)=>b.count-a.count);
-
-    if(!candidates.length){
-      const all=await __collectRescueCandidates();
-      console.warn('🔎 深度救援掃描完成，沒有找到比目前更完整的資料。',{
-        currentCount,
-        foundCounts:[...new Set(all.map(c=>c.count))].sort((a,b)=>b-a)
-      });
-      __showRescueNothingFound(currentCount,all);
-      return false;
-    }
-
-    const best=candidates[0];
-    console.warn('🛟 找到較完整的舊資料:',{
-      currentCount,candidateCount:best.count,source:best.label,key:best.key,detail:best.detail
-    });
-    return await __showRescueDialog(currentCount,best);
-  }catch(e){
-    console.warn('救援檢查失敗，繼續正常啟動:',e);
-    return true;
-  }
-}
-
-window.__patchDBRescue={
-  check:__checkForBetterRescueData,
-  collect:__collectRescueCandidates,
-  deepIndexedDB:__scanAllIndexedDBRescueCandidates,
-  apply:__applyRescueCandidate
 };
 
 const __bootSteps=[];
@@ -6225,7 +6005,7 @@ function normalizeProductToCurrentSchema(p){
   return p;
 }
 
-function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!DB.suppliers)DB.suppliers=['花丸刺繡DIY工坊','DIY刺繡工坊'];if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];if(!Array.isArray(DB.supplierCategoryHidden))DB.supplierCategoryHidden=['tools'];if(!DB.supplierMetaCustom||typeof DB.supplierMetaCustom!=='object')DB.supplierMetaCustom={capabilities:[],advantages:[],sources:[]};if(!DB.supplierMetaHidden||typeof DB.supplierMetaHidden!=='object')DB.supplierMetaHidden={capabilities:[],advantages:[],sources:[]};
+function loadDB(){const s=lsGet('patchDB_v3');if(s){try{DB={...DB,...JSON.parse(s)};}catch(e){}}const removedLegacySales=Object.prototype.hasOwnProperty.call(DB,'sales');if(removedLegacySales)delete DB.sales;const migratedSockType=migrateSockTypeSTtoSK();const migratedClothingType=migrateClothingTypeGTtoCL();/* 舊的題材/節慶 migration 已完成歷史資料整理，不能每次 reload 再依商品名稱強制改 SKU，否則使用者手動分類會被覆蓋。 */const migratedTheme=false;if(!DB.todaySales)DB.todaySales={};if(!Array.isArray(DB.suppliers))DB.suppliers=[];if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};if(!Array.isArray(DB.supplierCategoryCustom))DB.supplierCategoryCustom=[];if(!Array.isArray(DB.supplierCategoryHidden))DB.supplierCategoryHidden=['tools'];if(!DB.supplierMetaCustom||typeof DB.supplierMetaCustom!=='object')DB.supplierMetaCustom={capabilities:[],advantages:[],sources:[]};if(!DB.supplierMetaHidden||typeof DB.supplierMetaHidden!=='object')DB.supplierMetaHidden={capabilities:[],advantages:[],sources:[]};
 if(Array.isArray(DB.orders)&&Array.isArray(DB.products)){
   DB.orders.forEach(o=>{
     const s=String(o.supplier||'').trim();
@@ -6400,9 +6180,9 @@ function saveDB(options={}){
   const persistPromise=lsSet('patchDB_v3',JSON.stringify(DB));
   maybeAutoBackup();
   _scheduleAutoUndoFinalize();
-  if(!options.skipCloudSync&&typeof window.syncToSupabase==='function'){
+  if(!options.skipCloudSync&&typeof window.safeCloudSave==='function'){
     clearTimeout(_autoSyncTimer);
-    _autoSyncTimer=setTimeout(()=>{window.syncToSupabase(true);},2500);
+    _autoSyncTimer=setTimeout(()=>{window.safeCloudSave(true,'saveDB');},1200);
   }
   return persistPromise;
 }
@@ -20297,46 +20077,24 @@ function applyStocktake(){
 <script>
 
 __bootSteps.push(function(){
-  try {
-    const existing = lsGet('patchDB_v3');
-    let db = existing ? JSON.parse(existing) : {};
-    if (true) {
-      const SEED_PRODUCTS = [{"id":"p001","name":"咖哩飯布貼","sku":"PA0501-9900-001","type":"PA","size":"0","cost":3.0,"price":0,"stock":5,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p002","name":"海苔飯糰布貼","sku":"PA0501-0102-001","type":"PA","size":"0","cost":1.6,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p003","name":"章魚燒布貼","sku":"PA0501-0400-001","type":"PA","size":"0","cost":0,"price":0,"stock":1,"minStock":5,"note":"有眼睛，角色臉譜","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p004","name":"黑色貓爪布貼","sku":"PA0799-0201-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":5,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p005","name":"黑色卡車布貼","sku":"PA0901-0203-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p006","name":"藍色土星布貼","sku":"PA1501-0806-001","type":"PA","size":"0","cost":1.25,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p007","name":"灰色兔子毛布貼","sku":"PB0104-0300-001","type":"PB","size":"0","cost":3.0,"price":0,"stock":5,"minStock":5,"note":"毛布貼","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p008","name":"黑色四角星布貼","sku":"PA0702-0200-001","type":"PA","size":"0","cost":0.88,"price":0,"stock":9,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p009","name":"粉色土星布貼","sku":"PA1501-9900-001","type":"PA","size":"0","cost":1.25,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p010","name":"黃色星星布貼","sku":"PA0702-0600-001","type":"PA","size":"0","cost":0.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p011","name":"金黃色星星布貼","sku":"PA0702-0600-001","type":"PA","size":"0","cost":0,"price":0,"stock":1,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p012","name":"粉綠星星布貼","sku":"PA0702-1300-001","type":"PA","size":"0","cost":0.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p013","name":"粉色星星布貼","sku":"PA0702-1200-001","type":"PA","size":"0","cost":0.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p014","name":"OK繃布貼","sku":"PA0899-1000-001","type":"PA","size":"0","cost":1.27,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p015","name":"黑色復古相機布貼","sku":"PA0802-0201-001","type":"PA","size":"0","cost":2.0,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p016","name":"綠色葉子布貼","sku":"PA0402-0700-001","type":"PA","size":"0","cost":0,"price":0,"stock":1,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p017","name":"點點樹布貼","sku":"PA0403-0799-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":9,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p018","name":"粉色兔子毛布貼","sku":"PB0104-1208-001","type":"PB","size":"0","cost":3.0,"price":0,"stock":3,"minStock":5,"note":"毛布貼","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p019","name":"黑白線條愛心PEACE布貼","sku":"PA1001-0201-001","type":"PA","size":"0","cost":1.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p020","name":"煎蛋平底鍋布貼","sku":"PA0502-9900-001","type":"PA","size":"0","cost":1.2,"price":0,"stock":5,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p021","name":"麥克風布貼","sku":"PA0705-0203-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p022","name":"白色幽靈布貼","sku":"PA0302-0199-001","type":"PA","size":"0","cost":4.0,"price":0,"stock":4,"minStock":5,"note":"有眼睛，角色臉譜","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p023","name":"黑色幽靈布貼","sku":"PA0302-0299-001","type":"PA","size":"0","cost":4.0,"price":0,"stock":4,"minStock":5,"note":"有眼睛，角色臉譜","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p024","name":"幽靈貓布貼","sku":"PA0302-0102-001","type":"PA","size":"0","cost":4.0,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p025","name":"黑色花朵眼睛布貼","sku":"PA0304-0201-001","type":"PA","size":"0","cost":0.75,"price":0,"stock":4,"minStock":5,"note":"有眼睛，角色臉譜","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p026","name":"白色貴賓狗毛布貼","sku":"PB0102-0107-001","type":"PB","size":"0","cost":4.5,"price":0,"stock":5,"minStock":5,"note":"毛布貼","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p027","name":"黑白線條躺著狗布貼","sku":"PA0102-0102-001","type":"PA","size":"0","cost":1.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p028","name":"黑白線條站著狗布貼","sku":"PA0102-0102-002","type":"PA","size":"0","cost":1.35,"price":0,"stock":7,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p029","name":"黑白線條LUCK四葉草布貼","sku":"PA0402-0201-001","type":"PA","size":"0","cost":1.23,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p030","name":"罐頭布貼","sku":"PA0599-9900-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p031","name":"茄子熊布貼","sku":"PA0301-0900-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":5,"minStock":5,"note":"擬人動物，茄子造型熊","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p032","name":"黑白線條熊頭布貼","sku":"PA0103-0201-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p033","name":"粉藍星星布貼","sku":"PA0702-1400-001","type":"PA","size":"0","cost":0.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p034","name":"Oops! 文字布貼","sku":"PA1001-0201-002","type":"PA","size":"0","cost":0.75,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p035","name":"黑白相機布貼","sku":"PA0802-0102-001","type":"PA","size":"0","cost":3.0,"price":0,"stock":5,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p036","name":"黑色蝴蝶結布貼","sku":"PA0703-0200-001","type":"PA","size":"0","cost":1.0,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p037","name":"飯糰布貼","sku":"PA0501-0104-001","type":"PA","size":"0","cost":1.6,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p038","name":"黑白線條大耳朵狗頭布貼","sku":"PA0102-0102-003","type":"PA","size":"0","cost":1.2,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p039","name":"黑白線條三層愛心布貼","sku":"PA0701-0102-001","type":"PA","size":"0","cost":1.45,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p040","name":"黑白線條貓頭布貼","sku":"PA0101-0102-002","type":"PA","size":"0","cost":0.75,"price":0,"stock":4,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p041","name":"英文字母布貼","sku":"PA1101-0200-001","type":"PA","size":"0","cost":0,"price":1.0,"stock":0,"minStock":3,"note":"A-Z 26個字母","status":"ok","variants":[{"id":"vA","label":"A","stock":0},{"id":"vB","label":"B","stock":0},{"id":"vC","label":"C","stock":0},{"id":"vD","label":"D","stock":0},{"id":"vE","label":"E","stock":0},{"id":"vF","label":"F","stock":0},{"id":"vG","label":"G","stock":0},{"id":"vH","label":"H","stock":0},{"id":"vI","label":"I","stock":0},{"id":"vJ","label":"J","stock":0},{"id":"vK","label":"K","stock":0},{"id":"vL","label":"L","stock":0},{"id":"vM","label":"M","stock":0},{"id":"vN","label":"N","stock":0},{"id":"vO","label":"O","stock":0},{"id":"vP","label":"P","stock":0},{"id":"vQ","label":"Q","stock":0},{"id":"vR","label":"R","stock":0},{"id":"vS","label":"S","stock":0},{"id":"vT","label":"T","stock":0},{"id":"vU","label":"U","stock":0},{"id":"vV","label":"V","stock":0},{"id":"vW","label":"W","stock":0},{"id":"vX","label":"X","stock":0},{"id":"vY","label":"Y","stock":0},{"id":"vZ","label":"Z","stock":0}],"suppliers":[],"supplier":"","link":""},{"id":"p042","name":"細黑色蝴蝶結布貼","sku":"PA0703-0200-002","type":"PA","size":"0","cost":1.0,"price":0,"stock":2,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p043","name":"黑白偷看貓布貼","sku":"PA0301-0201-001","type":"PA","size":"0","cost":7.83,"price":0,"stock":1,"minStock":5,"note":"拿著有洞的東西偷看","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p044","name":"酸奶布貼","sku":"PA0602-9900-001","type":"PA","size":"0","cost":1.5,"price":0,"stock":3,"minStock":5,"note":"","status":"ok","suppliers":[],"supplier":"","link":""},{"id":"p045","name":"黑色數字貼","sku":"PA1102-0200-001","type":"PA","size":"0","cost":0.4,"price":1.0,"stock":30,"minStock":3,"note":"0-9 數字款式","status":"ok","variants":[{"id":"vN0","label":"0","stock":3},{"id":"vN1","label":"1","stock":3},{"id":"vN2","label":"2","stock":3},{"id":"vN3","label":"3","stock":3},{"id":"vN4","label":"4","stock":3},{"id":"vN5","label":"5","stock":3},{"id":"vN6","label":"6","stock":3},{"id":"vN7","label":"7","stock":3},{"id":"vN8","label":"8","stock":3},{"id":"vN9","label":"9","stock":3}],"suppliers":[],"supplier":"","link":""}];
-      db.products = db.products || [];
-      const _exIds = new Set(db.products.map(p=>p.id));
-      let _added = 0;
-      const normalizeBuiltInProduct=(raw)=>{
-        const p={...raw};
-        delete p.img;
-        delete p.color;
-        delete p.style;
-        if(!Array.isArray(p.suppliers))p.suppliers=[];
-        if(typeof p.supplier!=='string')p.supplier=p.suppliers[0]||'';
-        if(typeof p.link!=='string')p.link='';
-        if(!Array.isArray(p.sourceAliases))p.sourceAliases=[];
-        return p;
-      };
-      SEED_PRODUCTS.forEach(raw=>{
-        const p=normalizeBuiltInProduct(raw);
-        if(!_exIds.has(p.id)){ db.products.push(p); _added++; }
-      });
-      db.orders = db.orders || [];
-            db.todaySales = db.todaySales || {};
-      db.productTrash = db.productTrash || [];
-      db.trash = db.trash || [];
-      db.rate = db.rate || 0.138;
-      db.suppliers = db.suppliers || ['花丸刺繡DIY工坊', 'DIY刺繡工坊'];
-      lsSet('patchDB_v3', JSON.stringify(db));
-        if (typeof loadDB === 'function') {
-        loadDB();
-        if (typeof renderProducts === 'function') renderProducts();
-        if (typeof renderCatSidebar === 'function') renderCatSidebar();
-        if (typeof renderSubcatFilters === 'function') renderSubcatFilters();
-        if (typeof renderSizeFilters === 'function') renderSizeFilters();
-        if (typeof renderOverview === 'function') renderOverview();
-      }
-    }
-  } catch(e) { console.error('種子載入失敗:', e); }
+  try{
+    const existing=lsGet('patchDB_v3');
+    let db=existing?JSON.parse(existing):{};
+    if(!Array.isArray(db.products))db.products=[];
+    if(!Array.isArray(db.orders))db.orders=[];
+    if(!db.todaySales||typeof db.todaySales!=='object')db.todaySales={};
+    if(!Array.isArray(db.suppliers))db.suppliers=[];
+    if(!db.supplierProfiles||typeof db.supplierProfiles!=='object')db.supplierProfiles={};
+    if(!Array.isArray(db.customers))db.customers=[];
+    if(!Array.isArray(db.samples))db.samples=[];
+    if(!Array.isArray(db.productTrash))db.productTrash=[];
+    if(!Array.isArray(db.orderTrash))db.orderTrash=[];
+    if(!Array.isArray(db.trash))db.trash=[];
+    if(!Array.isArray(db.smartImportDrafts))db.smartImportDrafts=[];
+    db.rate=Number(db.rate)||0.138;
+    lsSet('patchDB_v3',JSON.stringify(db));
+    if(typeof loadDB==='function')loadDB();
+  }catch(e){console.error('clean empty-state init failed',e);}
 });
 
 let currentVariantProductId = null;
@@ -20525,11 +20283,6 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
     alert('系統啟動失敗,請截圖回報:'+e.message);
     return;
   }
-
-  // 先檢查舊 localStorage / 自動備份是否有比目前主資料更完整的商品集合。
-  const rescueContinue=await __checkForBetterRescueData();
-  if(!rescueContinue)return;
-
   for(var i=0;i<__bootSteps.length;i++){
     try{__bootSteps[i]();}catch(e){console.error('啟動步驟 #'+i+' 失敗:',e);}
   }
@@ -20848,6 +20601,139 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.__sb = sb;
 
 
+const SAFE_APP_SCHEMA_VERSION=1;
+let __safeCloudSaveInFlight=null;
+let __safeCloudSaveQueued=false;
+let __safeCloudLoaded=false;
+
+function setSafeCloudStatus(state,label){
+  const el=document.getElementById('safe-cloud-status');
+  if(!el)return;
+  el.dataset.state=state;
+  const txt=el.querySelector('.label');
+  if(txt)txt.textContent=label;
+}
+
+function buildSafeCloudPayload(){
+  return cloneJsonSafe(DB,{});
+}
+
+async function safeCloudFetchState(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return null;
+  const {data,error}=await sb.from('app_state')
+    .select('data,schema_version,updated_at')
+    .eq('user_id',session.user.id)
+    .maybeSingle();
+  if(error)throw error;
+  return data||null;
+}
+
+async function applySafeCloudState(row){
+  if(!row||!row.data)return false;
+  const cloud=cloneJsonSafe(row.data,{});
+  if(!cloud||typeof cloud!=='object')return false;
+  DB=cloud;
+  if(!Array.isArray(DB.products))DB.products=[];
+  if(!Array.isArray(DB.orders))DB.orders=[];
+  if(!Array.isArray(DB.suppliers))DB.suppliers=[];
+  if(!DB.supplierProfiles||typeof DB.supplierProfiles!=='object')DB.supplierProfiles={};
+  if(!Array.isArray(DB.customers))DB.customers=[];
+  if(!Array.isArray(DB.samples))DB.samples=[];
+  if(!Array.isArray(DB.productTrash))DB.productTrash=[];
+  if(!Array.isArray(DB.orderTrash))DB.orderTrash=[];
+  if(!DB.todaySales||typeof DB.todaySales!=='object')DB.todaySales={};
+  await lsSet('patchDB_v3',JSON.stringify(DB));
+  if(typeof populateTypeDropdowns==='function')populateTypeDropdowns();
+  if(typeof renderCatSidebar==='function'&&document.getElementById('cat-sidebar'))renderCatSidebar();
+  if(typeof renderProducts==='function'&&typeof currentPage!=='undefined'&&currentPage==='products')renderProducts();
+  if(typeof renderOrders==='function'&&typeof currentPage!=='undefined'&&currentPage==='orders')renderOrders();
+  if(typeof renderOverview==='function'&&typeof currentPage!=='undefined'&&currentPage==='overview')renderOverview();
+  if(typeof renderSkuPage==='function'&&typeof currentPage!=='undefined'&&currentPage==='sku')renderSkuPage();
+  return true;
+}
+
+window.safeCloudSave=async function(silent,source){
+  if(__safeCloudSaveInFlight){
+    __safeCloudSaveQueued=true;
+    return __safeCloudSaveInFlight;
+  }
+  __safeCloudSaveInFlight=(async()=>{
+    try{
+      const {data:{session}}=await sb.auth.getSession();
+      if(!session){
+        setSafeCloudStatus('offline','☁ 尚未登入');
+        if(!silent)toast('請先用 Google 登入，資料才會永久同步','error');
+        return false;
+      }
+      setSafeCloudStatus('saving','☁ 同步中…');
+      const row={
+        user_id:session.user.id,
+        data:buildSafeCloudPayload(),
+        schema_version:SAFE_APP_SCHEMA_VERSION,
+        updated_at:new Date().toISOString()
+      };
+      const {error}=await sb.from('app_state').upsert(row,{onConflict:'user_id'});
+      if(error)throw error;
+      const tm=new Date();
+      setSafeCloudStatus('saved','☁ 已同步 '+tm.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+      if(!silent)toast('☁️ 已安全同步到 Supabase','success');
+      return true;
+    }catch(e){
+      console.error('安全雲端同步失敗:',e);
+      setSafeCloudStatus('error','⚠ 尚未同步');
+      if(!silent)toast('☁️ 同步失敗：'+e.message,'error');
+      return false;
+    }finally{
+      __safeCloudSaveInFlight=null;
+      if(__safeCloudSaveQueued){
+        __safeCloudSaveQueued=false;
+        setTimeout(()=>window.safeCloudSave(true,'queued'),150);
+      }
+    }
+  })();
+  return __safeCloudSaveInFlight;
+};
+
+window.safeCloudBootstrap=async function(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){
+      setSafeCloudStatus('offline','☁ 尚未登入');
+      return;
+    }
+    setSafeCloudStatus('saving','☁ 載入雲端…');
+    const row=await safeCloudFetchState();
+    if(row&&row.data){
+      await applySafeCloudState(row);
+      __safeCloudLoaded=true;
+      setSafeCloudStatus('saved','☁ 已載入雲端資料');
+    }else{
+      await window.safeCloudSave(true,'first-bootstrap');
+      __safeCloudLoaded=true;
+    }
+  }catch(e){
+    console.error('安全雲端載入失敗:',e);
+    setSafeCloudStatus('error','⚠ 雲端載入失敗');
+  }
+};
+
+window.downloadPermanentBackup=function(){
+  const payload={
+    exportedAt:new Date().toISOString(),
+    schemaVersion:SAFE_APP_SCHEMA_VERSION,
+    data:buildSafeCloudPayload()
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='andhug_PERMANENT_BACKUP_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+};
+
+
+
 const SKU_SETTINGS_FIELDS=[
   'skuTypes','skuSizes','skuCats','skuColors','typeSubcats','typeDetails',
   'customTypes','deletedCustomTypes','hiddenTypes','deletedTypes','catOrder','skuColorPresetHidden'
@@ -20876,15 +20762,10 @@ function applySkuSettingsCloudRecord(row){
   return changed;
 }
 window.syncSkuSettingsToCloud=async function(silent){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){if(!silent)toast('請先用 Google 登入 🔑','error');return false;}
-  const uid=session.user.id;
-  const localTime=Number(DB.skuSettingsUpdatedAt)||Date.now();
-  const row={user_id:uid,data:getSkuSettingsCloudPayload(),updated_at:new Date(localTime).toISOString()};
-  const {error}=await sb.from('sku_settings').upsert(row,{onConflict:'user_id'});
-  if(error)throw error;
-  if(!silent)toast('☁️ SKU 規則已同步到其他裝置','success');
-  return true;
+  if(typeof window.safeCloudSave==='function'){
+    return await window.safeCloudSave(!!silent,'sku-settings');
+  }
+  return false;
 };
 
 async function fetchAndMergeCloudState(uid){
@@ -21156,6 +21037,12 @@ async function performSupabaseSync(silent) {
   }
 }
 window.syncToSupabase = function(silent) {
+  try{
+    if(localStorage.getItem('andhug_clean_slate_20260926_v2_no_rescue')==='1'){
+      if(!silent && typeof toast==='function')toast('☁️ 舊雲端同步已暫停，等新的安全資料庫完成後再啟用','success');
+      return Promise.resolve();
+    }
+  }catch(e){}
   if (__syncInFlight) {
     __syncQueued = true;
     __queuedSyncSilent = __queuedSyncSilent && !!silent;
@@ -21352,6 +21239,9 @@ function afterCloudMergeApplied(silent) {
   }, 120);
 }
 window.pullFromSupabase = async function(silent) {
+  try{
+    if(localStorage.getItem('andhug_clean_slate_20260926_v2_no_rescue')==='1')return;
+  }catch(e){}
   if (__pullingFromCloud) return; // 避免同時重疊拉好幾次
   __pullingFromCloud = true;
   try {
@@ -21384,6 +21274,9 @@ window.pullFromSupabase = async function(silent) {
 };
 let __realtimeChannel = null;
 async function setupRealtimeSync() {
+  try{
+    if(localStorage.getItem('andhug_clean_slate_20260926_v2_no_rescue')==='1')return;
+  }catch(e){}
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return;
   const uid = session.user.id;
@@ -21748,6 +21641,15 @@ window.addEventListener('load', () => {
     syncToSupabase(true);
   }, 1500);
 });
+
+sb.auth.onAuthStateChange((_event, session) => {
+  if(session){
+    setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),50);
+  }else{
+    setSafeCloudStatus('offline','☁ 尚未登入');
+  }
+});
+setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),250);
 </script>
 <script>
 (function(){
@@ -23113,5 +23015,6 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
 }
 </style>
 
+<div id="safe-cloud-status" data-state="offline"><span class="dot"></span><span class="label">☁ 尚未同步</span></div>
 </body>
 </html>
