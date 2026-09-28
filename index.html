@@ -4588,6 +4588,7 @@ label.form-label:has(.label-info-badge){
 
 <style id="safe-cloud-status-style">
 #safe-cloud-status{
+ border:1px solid var(--cream3);font-family:inherit;cursor:pointer;
  position:fixed;right:18px;bottom:18px;z-index:9500;
  display:flex;align-items:center;gap:6px;height:30px;padding:0 11px;
  border:1px solid var(--cream3);border-radius:999px;background:rgba(255,255,255,.94);
@@ -4601,6 +4602,66 @@ label.form-label:has(.label-info-badge){
 #safe-cloud-status[data-state="offline"] .dot{background:#c9c0b3}
 </style>
 
+
+<style id="supplier-clear-top-match-count-v3">
+/* 右上角清楚：字體、大小比照前面的「家」 */
+.orders-supplier-sidebar-actions{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+.orders-supplier-clear-top{
+  height:24px !important;
+  min-height:24px !important;
+  padding:0 9px !important;
+  border:1.5px solid var(--cream3) !important;
+  border-radius:9px !important;
+  background:var(--surface) !important;
+  color:var(--text3) !important;
+  font-family:'Nunito',sans-serif !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+.orders-supplier-clear-top:hover:not(:disabled){
+  background:var(--cream2) !important;
+  border-color:var(--brown-light) !important;
+  color:var(--brown) !important;
+}
+.orders-supplier-clear-top:disabled{
+  opacity:.6 !important;
+  color:var(--text3) !important;
+}
+/* 已選數量圓：數字再大一點 */
+.orders-supplier-accordion .orders-supplier-tab-count{
+  min-width:22px !important;
+  height:22px !important;
+  padding:0 6px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:999px !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+}
+.orders-supplier-tab-count-number{
+  display:block !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:none !important;
+  color:var(--brown) !important;
+}
+</style>
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -4688,7 +4749,7 @@ label.form-label:has(.label-info-badge){
         <input type="number" id="stock-range-min" placeholder="最少" min="0" oninput="requestProductGridRender()" style="width:70px;font-size:12px;font-family:inherit;padding:5px 8px;border:1.5px solid var(--cream3);border-radius:8px;background:var(--surface)">
         ～
         <input type="number" id="stock-range-max" placeholder="最多" min="0" oninput="requestProductGridRender()" style="width:70px;font-size:12px;font-family:inherit;padding:5px 8px;border:1.5px solid var(--cream3);border-radius:8px;background:var(--surface)">
-        <button type="button" onclick="document.getElementById('stock-range-min').value='';document.getElementById('stock-range-max').value='';requestProductGridRender()" style="background:none;border:none;color:var(--text3);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit">清除</button>
+        <button type="button" onclick="document.getElementById('stock-range-min').value='';document.getElementById('stock-range-max').value='';requestProductGridRender()" style="background:none;border:none;color:var(--text3);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit">清楚</button>
       </div>
       <div class="product-grid" id="product-grid"></div>
     </div>
@@ -5508,7 +5569,7 @@ label.form-label:has(.label-info-badge){
             <span style="font-size:14px">🗄️</span>
             <div>
               <div style="font-size:12px;font-weight:800;color:var(--text)">本機資料空間</div>
-              <div style="font-size:9.5px;color:var(--text3);margin-top:1px">PDF 原檔不會存進這裡；商品照片、草稿與自動備份才會佔空間</div>
+              <div style="font-size:9.5px;color:var(--text3);margin-top:1px">正式資料在 Supabase；這裡只顯示瀏覽器快取、登入與介面設定使用量</div>
             </div>
           </div>
           <button type="button" class="btn btn-secondary btn-sm" onclick="refreshLocalStorageUsage()" title="重新計算目前用量" style="flex-shrink:0;padding:5px 8px">↻</button>
@@ -5519,14 +5580,14 @@ label.form-label:has(.label-info-badge){
             <div id="settings-storage-main" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
           </div>
           <div style="background:var(--cream2);border-radius:9px;padding:8px 9px">
-            <div style="font-size:9.5px;color:var(--text3);font-weight:700">庫存系統本機總用量</div>
+            <div style="font-size:9.5px;color:var(--text3);font-weight:700">本機快取／設定用量</div>
             <div id="settings-storage-total" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
           </div>
         </div>
         <div id="settings-storage-browser" style="font-size:9.5px;color:var(--text3);margin-top:7px;line-height:1.5"></div>
       </div>
       <div class="settings-btn-row">
-        <button class="btn btn-secondary btn-sm" onclick="exportBackup()">⬇️ 匯出完整備份</button>
+        
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 還原備份</button>
         <button class="btn btn-secondary btn-sm" onclick="openAutoBackupList()">🕐 自動備份紀錄</button>
       </div>
@@ -5555,7 +5616,7 @@ label.form-label:has(.label-info-badge){
         </div>
       </div>
       <div class="settings-btn-row" style="margin-bottom:8px">
-        <button class="btn btn-secondary btn-sm" onclick="safeCloudSave(false,'manual')">☁️ 立即同步</button>
+        <button class="btn btn-secondary btn-sm" onclick="safeCloudRetry()">☁️ 立即同步</button>
         <button class="btn btn-secondary btn-sm" onclick="downloadPermanentBackup()">⬇️ 下載完整備份</button>
       </div>
       <details style="border:1px solid var(--cream3);border-radius:10px;background:var(--surface);padding:8px 10px">
@@ -5603,6 +5664,39 @@ function lsAllPatchKeys(){var out=[];LS_CACHE.forEach(function(_,k){if(k.indexOf
 
 async function __initStorage(){
   try{
+    const SAFE_CACHE_CLEAN_MARKER='andhug_safe_cache_clean_20260927_v1';
+    let safeCacheCleaned=false;
+    try{safeCacheCleaned=localStorage.getItem(SAFE_CACHE_CLEAN_MARKER)==='1';}catch(e){}
+    if(!safeCacheCleaned){
+      try{
+        const db=await idbOpen();
+        const keys=await idbAllKeys();
+        for(const key of keys){
+          const k=String(key||'');
+          if(k==='patchDB_v3' || k==='_migrated_from_ls_v1')continue;
+          if(k.indexOf('patchDB')===0){
+            await new Promise((resolve,reject)=>{
+              const tx=db.transaction(IDB_STORE,'readwrite');
+              const req=tx.objectStore(IDB_STORE).delete(key);
+              req.onsuccess=()=>resolve();
+              req.onerror=()=>reject(req.error);
+            });
+          }
+        }
+        LS_CACHE.clear();
+        const main=await idbGet('patchDB_v3');
+        if(main!=null)LS_CACHE.set('patchDB_v3',main);
+      }catch(e){console.warn('清除舊本機備份失敗:',e);}
+      try{
+        const rm=[];
+        for(let i=0;i<localStorage.length;i++){
+          const k=localStorage.key(i);
+          if(k && k.indexOf('patchDB')===0)rm.push(k);
+        }
+        rm.forEach(k=>localStorage.removeItem(k));
+        localStorage.setItem(SAFE_CACHE_CLEAN_MARKER,'1');
+      }catch(e){}
+    }
     const CLEAN_MARKER='andhug_clean_slate_20260926_v2_no_rescue';
 
     // 使用者已決定重新建立資料：第一次開啟這版時，移除舊 patchDB 本機資料。
@@ -20605,6 +20699,7 @@ const SAFE_APP_SCHEMA_VERSION=1;
 let __safeCloudSaveInFlight=null;
 let __safeCloudSaveQueued=false;
 let __safeCloudLoaded=false;
+let __safeCloudBootstrapping=false;
 
 function setSafeCloudStatus(state,label){
   const el=document.getElementById('safe-cloud-status');
@@ -20654,6 +20749,13 @@ async function applySafeCloudState(row){
 }
 
 window.safeCloudSave=async function(silent,source){
+  // 關鍵保護：正式雲端資料尚未載入完成前，禁止任何一般自動寫回。
+  // 避免空白本機資料在頁面啟動時先覆蓋 Supabase。
+  if(!__safeCloudLoaded && source!=='first-bootstrap'){
+    __safeCloudSaveQueued=true;
+    setSafeCloudStatus('saving','☁ 等待雲端載入…');
+    return false;
+  }
   if(__safeCloudSaveInFlight){
     __safeCloudSaveQueued=true;
     return __safeCloudSaveInFlight;
@@ -20696,6 +20798,8 @@ window.safeCloudSave=async function(silent,source){
 };
 
 window.safeCloudBootstrap=async function(){
+  if(__safeCloudBootstrapping)return;
+  __safeCloudBootstrapping=true;
   try{
     const {data:{session}}=await sb.auth.getSession();
     if(!session){
@@ -20703,18 +20807,60 @@ window.safeCloudBootstrap=async function(){
       return;
     }
     setSafeCloudStatus('saving','☁ 載入雲端…');
+
+    // 先讀，再允許寫。這段完成前 saveDB 不准把本機空資料寫回去。
     const row=await safeCloudFetchState();
+
     if(row&&row.data){
       await applySafeCloudState(row);
       __safeCloudLoaded=true;
       setSafeCloudStatus('saved','☁ 已載入雲端資料');
     }else{
-      await window.safeCloudSave(true,'first-bootstrap');
+      // 真正第一次使用：確認雲端沒有正式資料後，才允許建立第一份。
       __safeCloudLoaded=true;
+      await window.safeCloudSave(true,'first-bootstrap');
+    }
+
+    // 如果載入期間有本機變更排隊，現在才允許同步。
+    if(__safeCloudSaveQueued){
+      __safeCloudSaveQueued=false;
+      setTimeout(()=>window.safeCloudSave(true,'queued-after-bootstrap'),180);
     }
   }catch(e){
     console.error('安全雲端載入失敗:',e);
     setSafeCloudStatus('error','⚠ 雲端載入失敗');
+  }finally{
+    __safeCloudBootstrapping=false;
+  }
+};
+
+window.__safeCloudPendingCheck=function(){
+  return !!(__safeCloudSaveInFlight || __safeCloudSaveQueued || __safeCloudBootstrapping);
+};
+
+
+window.safeCloudRetry=async function(){
+  try{
+    setSafeCloudStatus('saving','☁ 重新同步中…');
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session){
+      setSafeCloudStatus('offline','☁ 尚未登入');
+      toast('請先登入，再同步資料','error');
+      return false;
+    }
+    __safeCloudLoaded=false;
+    __safeCloudBootstrapping=false;
+    await window.safeCloudBootstrap();
+    if(__safeCloudLoaded){
+      await window.safeCloudSave(false,'manual-retry');
+      return true;
+    }
+    return false;
+  }catch(e){
+    console.error('重新同步失敗:',e);
+    setSafeCloudStatus('error','⚠ 尚未同步');
+    toast('重新同步失敗：'+e.message,'error');
+    return false;
   }
 };
 
@@ -23015,6 +23161,18 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
 }
 </style>
 
-<div id="safe-cloud-status" data-state="offline"><span class="dot"></span><span class="label">☁ 尚未同步</span></div>
+<button type="button" id="safe-cloud-status" data-state="offline" onclick="safeCloudRetry()" title="點一下重新同步"><span class="dot"></span><span class="label">☁ 尚未同步</span></button>
+
+<script id="safe-cloud-unload-guard">
+window.addEventListener('beforeunload',function(e){
+  try{
+    if(window.__safeCloudPendingCheck && window.__safeCloudPendingCheck()){
+      e.preventDefault();
+      e.returnValue='';
+    }
+  }catch(_){}
+});
+</script>
+
 </body>
 </html>
