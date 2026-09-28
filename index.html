@@ -4555,7 +4555,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="settings-cleanup-v1-20260927">
+<meta name="andhug-build" content="settings-cleanup-v2-sync-badge">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -4679,6 +4679,31 @@ label.form-label:has(.label-info-badge){
 #settings-storage-card,#settings-autobackup-status{display:none!important}
 @media(max-width:620px){.settings-action-grid-3,.settings-action-grid-2{grid-template-columns:1fr}}
 </style>
+
+<style id="safe-cloud-status-position-v2">
+#safe-cloud-status{
+  right:14px !important;
+  bottom:12px !important;
+  height:27px !important;
+  padding:0 9px !important;
+  font-size:9.5px !important;
+  box-shadow:0 4px 14px rgba(61,47,31,.08) !important;
+}
+@media (max-width:700px){
+  #safe-cloud-status{
+    right:10px !important;
+    bottom:10px !important;
+    height:26px !important;
+    padding:0 8px !important;
+    font-size:9px !important;
+  }
+}
+/* 設定視窗開啟時，狀態膠囊不要壓住下方按鈕 */
+body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
+  bottom:76px !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
