@@ -887,8 +887,7 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
   .order-accordion-head,.today-stat-label{overflow-wrap:anywhere;}
 .section-header .view-btn{color:var(--text2);}
   .section-header .view-btn.active{color:#fff;}
-
-  .cart-qty-spinner{width:62px;height:26px;}
+.cart-qty-spinner{width:62px;height:26px;}
   .cart-remove-btn{width:36px;height:36px;font-size:16px;}
   .adj-btn{width:32px;height:32px;font-size:16px;}
   .modal-close{width:36px;height:36px;}
@@ -3713,8 +3712,8 @@ label.form-label:has(.label-info-badge){
   gap:5px !important;
 }
 #modal-supplier-meta-manager .supplier-meta-move-choice{
-  height:29px !important;
-  min-height:29px !important;
+  height:28px !important;
+  min-height:28px !important;
   padding:0 9px !important;
   border-radius:9px !important;
   font-size:10px !important;
@@ -4555,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="cloud-only-boot-v1">
+<meta name="andhug-build" content="view-buttons-record-color-v32">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -4745,6 +4744,1121 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
 </style>
 
 
+
+<style id="toolbar-dropdown-typography-unified-v1">
+/* 頂部各頁下拉：字體、字重、字級、控制高度全部比照報表的「本月」 */
+#page-products #sort-mode-btn,
+#page-orders #order-sort-btn,
+#page-sales-history .sales-history-dd-btn,
+#page-reports #report-month-btn{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  border-radius:17px !important;
+  font-family:'Noto Sans TC','Nunito',sans-serif !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+}
+
+/* 按鈕裡面的文字也強制繼承同一套，不再各頁大小不一 */
+#page-products #sort-mode-btn > span:first-child,
+#page-orders #order-sort-btn > span:first-child,
+#page-sales-history .sales-history-dd-btn > span:first-child,
+#page-reports #report-month-btn-label{
+  font-family:'Noto Sans TC','Nunito',sans-serif !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+}
+
+/* 下拉箭頭大小也統一 */
+#page-products #sort-mode-btn > span:last-child,
+#page-orders #order-sort-btn > span:last-child,
+#page-sales-history .sales-history-dd-caret,
+#page-reports #report-month-btn > span:last-child{
+  font-size:10px !important;
+  line-height:1 !important;
+}
+
+/* 展開後的選項文字也統一 */
+#page-sales-history .sales-history-dd-option,
+#sort-mode-menu button,
+#order-sort-menu button,
+#report-month-dropdown button{
+  font-family:'Noto Sans TC','Nunito',sans-serif !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+}
+</style>
+
+
+<style id="orders-records-search-round-unified-v1">
+/* 採購單 + 紀錄搜尋框：圓角統一成商品庫/其他搜尋框的膠囊感 */
+#page-orders .order-search-input,
+#page-sales-history .sales-history-input{
+  height:34px !important;
+  min-height:34px !important;
+  box-sizing:border-box !important;
+  border-radius:17px !important;
+  border:1.5px solid var(--cream3) !important;
+  background:var(--surface) !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+/* 外層也保持圓形，不讓清除鍵/背景露出方角 */
+#page-orders .order-search-wrap,
+#page-sales-history .sales-history-search-wrap{
+  border-radius:17px !important;
+}
+
+/* focus 仍維持網站原本咖啡色 */
+#page-orders .order-search-input:focus,
+#page-sales-history .sales-history-input:focus{
+  border-color:var(--brown) !important;
+}
+</style>
+<style id="all-action-controls-31px-v1">
+:root{--app-control-h:31px;}
+
+/* 全站一般操作按鈕統一：跟「清除篩選」同一套 */
+button.btn{
+  height:var(--app-control-h) !important;
+  min-height:var(--app-control-h) !important;
+  max-height:var(--app-control-h) !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  border-radius:16px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+/* 格狀 / 大圖 / 列表 + 各種 icon-only 工具按鈕 */
+button.view-btn,
+button.toolbar-icon-round,
+button.btn-icon.toolbar-icon-round,
+.records-trash-icon-btn{
+  width:var(--app-control-h) !important;
+  min-width:var(--app-control-h) !important;
+  max-width:var(--app-control-h) !important;
+  height:var(--app-control-h) !important;
+  min-height:var(--app-control-h) !important;
+  max-height:var(--app-control-h) !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+}
+
+/* 商品 / 採購 / 紀錄 / 報表的工具列下拉同高 */
+#sort-mode-btn,
+#order-sort-btn,
+#report-month-btn,
+#page-sales-history .sales-history-dd-btn{
+  height:var(--app-control-h) !important;
+  min-height:var(--app-control-h) !important;
+  max-height:var(--app-control-h) !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  border-radius:16px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+
+/* 顧客新增、表格式匯入等主按鈕也一樣高 */
+#page-customers .section-header .btn-primary,
+#page-orders .section-header .btn-primary,
+#page-products .section-header .btn-primary{
+  height:var(--app-control-h) !important;
+  min-height:var(--app-control-h) !important;
+  max-height:var(--app-control-h) !important;
+}
+
+/* 開單頁工具列內舊的 inline 34px 一律覆蓋 */
+#page-sales .sale-search-toolbar .btn{
+  height:var(--app-control-h) !important;
+  min-height:var(--app-control-h) !important;
+  max-height:var(--app-control-h) !important;
+}
+
+/* 紀錄：清除篩選旁只留垃圾桶 icon */
+#page-sales-history .records-trash-icon-btn{
+  flex:0 0 var(--app-control-h) !important;
+  font-size:13px !important;
+}
+
+/* 搜尋框維持原本 34px，不跟按鈕一起壓縮 */
+</style>
+
+
+<style id="top-page-controls-exact-31px-v2">
+:root{--top-control-h:31px;}
+
+/* 全站「頁面第一排工具列」文字按鈕：全部跟紀錄頁清除篩選同高 */
+#page-overview .section-header .btn,
+#page-products .product-search-toolbar .btn:not(.toolbar-icon-round),
+#page-products #sort-mode-btn,
+#page-orders .section-header .btn:not(.toolbar-icon-round),
+#page-orders #order-sort-btn,
+#page-sales .sale-search-toolbar .btn:not(.toolbar-icon-round),
+#page-sales-history .sales-history-dd-btn,
+#page-sales-history .sales-history-toolbar > .btn:not(.records-trash-icon-btn),
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn,
+#page-customers .section-header .btn,
+#page-sku #sku-edit-toggle-btn{
+  height:var(--top-control-h) !important;
+  min-height:var(--top-control-h) !important;
+  max-height:var(--top-control-h) !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+
+/* 第一排 icon-only / 格狀 / 列表 / 垃圾桶：統一 31×31 */
+#page-products .product-search-toolbar .toolbar-icon-round,
+#page-products .product-search-toolbar .view-btn,
+#page-orders .section-header .toolbar-icon-round,
+#page-sales .sale-search-toolbar .toolbar-icon-round,
+#page-sales .sale-search-toolbar .view-btn,
+#page-sales-history .records-trash-icon-btn{
+  width:var(--top-control-h) !important;
+  min-width:var(--top-control-h) !important;
+  max-width:var(--top-control-h) !important;
+  height:var(--top-control-h) !important;
+  min-height:var(--top-control-h) !important;
+  max-height:var(--top-control-h) !important;
+  box-sizing:border-box !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  flex:0 0 var(--top-control-h) !important;
+}
+
+/* 紀錄頁三個下拉 + 清除篩選 + 垃圾桶，全部精準同高 */
+#page-sales-history .sales-history-toolbar > *{
+  align-self:center !important;
+}
+#page-sales-history .sales-history-dd{
+  height:var(--top-control-h) !important;
+  min-height:var(--top-control-h) !important;
+}
+#page-sales-history .sales-history-dd-btn,
+#page-sales-history button[onclick*="resetSalesHistoryFilters"],
+#page-sales-history .records-trash-icon-btn{
+  height:var(--top-control-h) !important;
+  min-height:var(--top-control-h) !important;
+  max-height:var(--top-control-h) !important;
+}
+
+/* 商品庫/開單的 view switch 外框本身也不另外撐高 */
+#page-products .view-switcher-align,
+#page-sales .view-switcher-align{
+  height:var(--top-control-h) !important;
+  align-items:center !important;
+}
+
+/* 取消原本 hover 造成的視覺位移，避免看起來像高度改變 */
+#page-overview .section-header .btn:hover,
+#page-products .product-search-toolbar .btn:hover,
+#page-orders .section-header .btn:hover,
+#page-sales .sale-search-toolbar .btn:hover,
+#page-sales-history .sales-history-toolbar .btn:hover,
+#page-reports .section-header .btn:hover,
+#page-customers .section-header .btn:hover{
+  transform:none !important;
+}
+
+/* 搜尋框仍維持 34px，不列入按鈕高度 */
+</style>
+<style id="nav-normal-arrow-newcolor-v13">
+/* 上方主導覽列恢復原本字重，不再整排粗體 */
+nav .nav-link,
+nav .nav-link.active,
+nav .nav-link .ui-editable,
+nav .nav-link.active .ui-editable{
+  font-family:inherit !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+}
+
+</style>
+
+<style id="records-toolbar-final-v16">
+/* 紀錄頁第一排唯一正式規則：不再疊舊版 override */
+#page-sales-history .sales-history-toolbar{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  flex-wrap:wrap !important;
+}
+
+/* 搜尋 */
+#page-sales-history .sales-history-search-wrap{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:20px !important;
+  display:flex !important;
+  align-items:center !important;
+}
+#page-sales-history input.sales-history-input{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  transform:none !important;
+}
+
+/* 三個下拉：依內容寬度，不硬撐；文字+箭頭整組置中 */
+#page-sales-history .sales-history-dd{
+  position:relative !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  flex:0 0 auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  margin:0 !important;
+}
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 12px !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  transform:none !important;
+}
+
+/* 實心三角形：靠近文字、整組置中 */
+#page-sales-history .sales-history-dd-caret{
+  position:static !important;
+  display:block !important;
+  width:0 !important;
+  height:0 !important;
+  flex:0 0 auto !important;
+  margin:1px 0 0 0 !important;
+  padding:0 !important;
+  border-left:4px solid transparent !important;
+  border-right:4px solid transparent !important;
+  border-top:5px solid #9f897b !important;
+  color:transparent !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  transform:none !important;
+}
+
+/* 清除篩選 */
+#page-sales-history button.btn.btn-secondary.btn-sm[onclick*="resetSalesHistoryFilters"]{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 14px !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  transform:none !important;
+}
+
+/* 已刪紀錄：只留垃圾桶 icon */
+#page-sales-history button.btn.btn-secondary.btn-sm.records-trash-icon-btn{
+  width:28px !important;
+  min-width:28px !important;
+  max-width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  flex:0 0 28px !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:50% !important;
+  background:var(--surface) !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  transform:none !important;
+}
+</style>
+
+<style id="history-controls-exact-match-v18">
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn,
+#page-sales-history button.btn.btn-secondary.btn-sm[onclick*="resetSalesHistoryFilters"]{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  margin:0 !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:normal !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  transform:none !important;
+}
+
+/* 下拉只多一個小箭頭，不改按鈕本身尺寸 */
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn{
+  gap:5px !important;
+}
+
+#page-sales-history .sales-history-dd-caret{
+  width:0 !important;
+  height:0 !important;
+  flex:0 0 auto !important;
+  margin:1px 0 0 0 !important;
+  border-left:3px solid transparent !important;
+  border-right:3px solid transparent !important;
+  border-top:4px solid #9f897b !important;
+}
+</style>
+
+
+<style id="history-arrow-slightly-bigger-v19">
+#page-sales-history .sales-history-dd-caret{
+  border-left-width:4px !important;
+  border-right-width:4px !important;
+  border-top-width:5px !important;
+}
+</style>
+
+<style id="top-buttons-unified-v20">
+/* =========================================================
+   全站主要頁面第一排工具按鈕唯一規格
+   以紀錄頁目前按鈕為標準：28px / inherit / 12px / 700
+   ========================================================= */
+:root{ --top-action-h:28px; }
+
+/* 商品庫、採購單、開單、報表、顧客：所有文字工具按鈕 */
+#page-products .product-search-toolbar button.btn:not(.toolbar-icon-round),
+#page-products #sort-mode-btn,
+#page-orders .section-header button.btn:not(.toolbar-icon-round),
+#page-orders #order-sort-btn,
+#page-sales .sale-search-toolbar button.btn:not(.toolbar-icon-round):not(.view-btn),
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn,
+#page-customers .section-header button.btn{
+  height:var(--top-action-h) !important;
+  min-height:var(--top-action-h) !important;
+  max-height:var(--top-action-h) !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 14px !important;
+  border-width:1px !important;
+  border-style:solid !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:normal !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  white-space:nowrap !important;
+  transform:none !important;
+}
+
+/* 次要白底按鈕 */
+#page-products .product-search-toolbar button.btn-secondary:not(.toolbar-icon-round),
+#page-orders .section-header button.btn-secondary:not(.toolbar-icon-round),
+#page-sales .sale-search-toolbar button.btn-secondary:not(.toolbar-icon-round):not(.view-btn),
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn{
+  border-color:var(--cream3) !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+}
+
+/* 主要咖啡色按鈕：高度/字體相同，只保留主色 */
+#page-products .product-search-toolbar button.btn-primary,
+#page-orders .section-header button.btn-primary,
+#page-customers .section-header button.btn-primary{
+  border-color:var(--brown) !important;
+  background:var(--brown) !important;
+  color:#fff !important;
+}
+
+/* 所有 icon-only / 格狀 / 大圖 / 列表：28×28 正圓 */
+#page-products .product-search-toolbar .toolbar-icon-round,
+#page-products .product-search-toolbar .view-btn,
+#page-orders .section-header .toolbar-icon-round,
+#page-sales .sale-search-toolbar .toolbar-icon-round,
+#page-sales .sale-search-toolbar .view-btn{
+  width:var(--top-action-h) !important;
+  min-width:var(--top-action-h) !important;
+  max-width:var(--top-action-h) !important;
+  height:var(--top-action-h) !important;
+  min-height:var(--top-action-h) !important;
+  max-height:var(--top-action-h) !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 !important;
+  border-width:1px !important;
+  border-style:solid !important;
+  border-color:var(--cream3) !important;
+  border-radius:50% !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 var(--top-action-h) !important;
+  transform:none !important;
+}
+
+/* view active 保留咖啡底 */
+#page-products .product-search-toolbar .view-btn.active,
+#page-sales .sale-search-toolbar .view-btn.active{
+  background:var(--brown) !important;
+  color:#fff !important;
+  border-color:var(--brown) !important;
+}
+
+/* view switch 外框不能再把高度撐大 */
+#page-products .view-switcher-align,
+#page-sales .view-switcher-align{
+  height:var(--top-action-h) !important;
+  min-height:var(--top-action-h) !important;
+  max-height:var(--top-action-h) !important;
+  display:flex !important;
+  align-items:center !important;
+}
+
+/* 商品/採購/報表下拉：箭頭、字體跟紀錄頁一致 */
+#page-products #sort-mode-btn > span:last-child,
+#page-orders #order-sort-btn > span:last-child,
+#page-reports #report-month-btn > span:last-child{
+  color:#9f897b !important;
+  font-size:11px !important;
+  line-height:1 !important;
+  margin:0 !important;
+}
+
+/* 行內 style 的舊尺寸一律不生效 */
+#page-products #sort-mode-btn,
+#page-orders #order-sort-btn,
+#page-reports #report-month-btn{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+/* 本月花朵不要把按鈕撐高 */
+#page-reports #report-current-month-btn .report-flower-icon{
+  line-height:1 !important;
+  margin:0 !important;
+}
+
+/* hover 不做上下位移 */
+#page-products .product-search-toolbar button:hover,
+#page-orders .section-header button:hover,
+#page-sales .sale-search-toolbar button:hover,
+#page-reports .section-header button:hover,
+#page-customers .section-header button:hover{
+  transform:none !important;
+}
+</style>
+
+
+<style id="top-buttons-unified-v21-fixed">
+/* 最終高優先級：第一排所有按鈕真的固定 28px */
+
+/* 商品庫文字按鈕 */
+#page-products .section-header .product-search-toolbar button.btn.btn-secondary:not(.toolbar-icon-round),
+#page-products .section-header .product-search-toolbar button.btn.btn-primary,
+#page-products .section-header .product-search-toolbar #sort-mode-btn{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 14px !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+
+/* 商品庫三個 view + icon 按鈕 */
+#page-products .section-header .product-search-toolbar #vbtn-grid,
+#page-products .section-header .product-search-toolbar #vbtn-large,
+#page-products .section-header .product-search-toolbar #vbtn-list,
+#page-products .section-header .product-search-toolbar button.toolbar-icon-round{
+  width:28px !important;
+  min-width:28px !important;
+  max-width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+
+/* 開單 */
+#page-sales .section-header .sale-search-toolbar #svbtn-grid,
+#page-sales .section-header .sale-search-toolbar #svbtn-large,
+#page-sales .section-header .sale-search-toolbar #svbtn-list{
+  width:28px !important;
+  min-width:28px !important;
+  max-width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+#page-sales .section-header .sale-search-toolbar button.btn.btn-secondary.btn-sm{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 14px !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+
+/* 報表 */
+#page-reports .section-header #report-current-month-btn,
+#page-reports .section-header #report-month-btn{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 14px !important;
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  transform:none !important;
+}
+
+/* 顧客 */
+#page-customers .section-header button.btn.btn-primary{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 14px !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+
+/* 採購單再鎖一次，避免任何舊規則回蓋 */
+#page-orders .section-header #order-sort-btn,
+#page-orders .section-header button.btn.btn-secondary,
+#page-orders .section-header button.btn.btn-primary{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  border-radius:20px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+  transform:none !important;
+}
+#page-orders .section-header button.toolbar-icon-round{
+  width:28px !important;
+  min-width:28px !important;
+  max-width:28px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+}
+</style>
+
+
+<style id="top-searches-unified-v22">
+/* 商品庫 / 採購單 / 開單 / 顧客：搜尋框也跟第一排按鈕一樣高 28px */
+#page-products .product-search-toolbar .search-wrap,
+#page-products .product-search-toolbar .search-input,
+#page-orders .order-search-wrap,
+#page-orders .order-search-input,
+#page-sales .sale-search-toolbar .search-wrap,
+#page-sales .sale-search-toolbar .search-input,
+#page-customers .search-wrap,
+#page-customers .search-input{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+}
+
+/* 搜尋輸入框外觀統一 */
+#page-products .product-search-toolbar .search-input,
+#page-orders .order-search-input,
+#page-sales .sale-search-toolbar .search-input,
+#page-customers .search-input{
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+/* 有左側搜尋 icon 的欄位保留 icon 空間 */
+#page-products .product-search-toolbar .search-input,
+#page-sales .sale-search-toolbar .search-input,
+#page-customers .search-input{
+  padding-left:34px !important;
+  padding-right:12px !important;
+}
+
+/* 採購單右邊還有清除叉叉，保留空間 */
+#page-orders .order-search-input{
+  padding-left:32px !important;
+  padding-right:32px !important;
+}
+
+/* wrapper 不另外撐高 */
+#page-products .product-search-toolbar .search-wrap,
+#page-orders .order-search-wrap,
+#page-sales .sale-search-toolbar .search-wrap,
+#page-customers .search-wrap{
+  display:flex !important;
+  align-items:center !important;
+  padding:0 !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+}
+
+/* 搜尋 icon 仍然垂直置中 */
+#page-products .product-search-toolbar .search-icon,
+#page-orders .order-search-icon,
+#page-sales .sale-search-toolbar .search-icon,
+#page-customers .search-icon{
+  top:50% !important;
+  transform:translateY(-50%) !important;
+}
+</style>
+
+
+<style id="top-searches-unified-v23-fixed">
+/* 開單搜尋框：壓掉舊 sales-toolbar-height-fix 的 34px */
+#page-sales .section-header .sale-search-toolbar > .search-wrap,
+#page-sales .section-header .sale-search-toolbar > .search-wrap > input.search-input{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  box-sizing:border-box !important;
+}
+#page-sales .section-header .sale-search-toolbar > .search-wrap > input.search-input{
+  border:1px solid var(--cream3) !important;
+  border-radius:20px !important;
+  background:var(--surface) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  padding-left:34px !important;
+  padding-right:12px !important;
+}
+</style>
+
+
+<style id="top-controls-29px-v24">
+:root{ --top-action-h:29px !important; }
+
+/* 紀錄頁第一排 */
+#page-sales-history .sales-history-search-wrap,
+#page-sales-history input.sales-history-input,
+#page-sales-history .sales-history-dd,
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn,
+#page-sales-history button.btn.btn-secondary.btn-sm[onclick*="resetSalesHistoryFilters"],
+#page-sales-history button.btn.btn-secondary.btn-sm.records-trash-icon-btn{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+}
+#page-sales-history button.btn.btn-secondary.btn-sm.records-trash-icon-btn{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  flex:0 0 29px !important;
+}
+
+/* 商品庫 / 採購單 / 開單 / 報表 / 顧客：第一排所有按鈕 */
+#page-products .section-header .product-search-toolbar button,
+#page-orders .section-header button,
+#page-sales .section-header .sale-search-toolbar button,
+#page-reports .section-header button,
+#page-customers .section-header button{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+
+/* icon-only / 格狀 / 列表 */
+#page-products .section-header .product-search-toolbar .toolbar-icon-round,
+#page-products .section-header .product-search-toolbar .view-btn,
+#page-sales .section-header .sale-search-toolbar .toolbar-icon-round,
+#page-sales .section-header .sale-search-toolbar .view-btn,
+#page-orders .section-header .toolbar-icon-round{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  flex:0 0 29px !important;
+}
+
+/* 商品庫 / 採購單 / 開單 / 顧客搜尋框 */
+#page-products .product-search-toolbar .search-wrap,
+#page-products .product-search-toolbar .search-input,
+#page-orders .order-search-wrap,
+#page-orders .order-search-input,
+#page-sales .section-header .sale-search-toolbar > .search-wrap,
+#page-sales .section-header .sale-search-toolbar > .search-wrap > input.search-input,
+#page-customers .search-wrap,
+#page-customers .search-input{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+</style>
+
+
+<style id="top-controls-29px-v25-fixed">
+/* 最終高優先級：把上一版 28px 規則全部確實覆蓋成 29px */
+
+/* 商品庫 */
+#page-products .section-header .product-search-toolbar #sort-mode-btn,
+#page-products .section-header .product-search-toolbar #vbtn-grid,
+#page-products .section-header .product-search-toolbar #vbtn-large,
+#page-products .section-header .product-search-toolbar #vbtn-list,
+#page-products .section-header .product-search-toolbar button.btn,
+#page-products .section-header .product-search-toolbar button.toolbar-icon-round{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+#page-products .section-header .product-search-toolbar #vbtn-grid,
+#page-products .section-header .product-search-toolbar #vbtn-large,
+#page-products .section-header .product-search-toolbar #vbtn-list,
+#page-products .section-header .product-search-toolbar button.toolbar-icon-round{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  flex:0 0 29px !important;
+}
+
+/* 採購單 */
+#page-orders .section-header #order-sort-btn,
+#page-orders .section-header button.btn,
+#page-orders .section-header button.toolbar-icon-round{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+#page-orders .section-header button.toolbar-icon-round{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  flex:0 0 29px !important;
+}
+
+/* 開單 */
+#page-sales .section-header .sale-search-toolbar #svbtn-grid,
+#page-sales .section-header .sale-search-toolbar #svbtn-large,
+#page-sales .section-header .sale-search-toolbar #svbtn-list,
+#page-sales .section-header .sale-search-toolbar button.btn{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+#page-sales .section-header .sale-search-toolbar #svbtn-grid,
+#page-sales .section-header .sale-search-toolbar #svbtn-large,
+#page-sales .section-header .sale-search-toolbar #svbtn-list{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  flex:0 0 29px !important;
+}
+
+/* 報表 */
+#page-reports .section-header #report-current-month-btn,
+#page-reports .section-header #report-month-btn{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+
+/* 顧客 */
+#page-customers .section-header button.btn.btn-primary{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+
+/* 搜尋框 */
+#page-products .product-search-toolbar .search-wrap,
+#page-products .product-search-toolbar .search-input,
+#page-orders .order-search-wrap,
+#page-orders .order-search-input,
+#page-sales .section-header .sale-search-toolbar > .search-wrap,
+#page-sales .section-header .sale-search-toolbar > .search-wrap > input.search-input,
+#page-customers .search-wrap,
+#page-customers .search-input,
+#page-sales-history .sales-history-search-wrap,
+#page-sales-history .sales-history-input{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  box-sizing:border-box !important;
+}
+
+/* 紀錄頁 */
+#page-sales-history .sales-history-dd,
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn,
+#page-sales-history button.btn.btn-secondary.btn-sm[onclick*="resetSalesHistoryFilters"],
+#page-sales-history button.btn.btn-secondary.btn-sm.records-trash-icon-btn{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+}
+#page-sales-history button.btn.btn-secondary.btn-sm.records-trash-icon-btn{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  flex:0 0 29px !important;
+}
+</style>
+
+
+<style id="top-controls-bold-v26">
+/* 所有第一排操作按鈕 / 下拉按鈕：文字一律粗體 */
+#page-products .section-header .product-search-toolbar button,
+#page-orders .section-header button,
+#page-sales .section-header .sale-search-toolbar button,
+#page-sales-history .sales-history-toolbar button,
+#page-reports .section-header button,
+#page-customers .section-header button{
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+}
+
+/* 下拉按鈕裡的文字 span 也鎖粗體，避免被舊規則蓋掉 */
+#page-products #sort-mode-btn > span:first-child,
+#page-orders #order-sort-btn > span:first-child,
+#page-sales-history .sales-history-dd-btn > span:first-child,
+#page-reports #report-month-btn-label{
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+}
+</style>
+
+<style id="history-dropdown-padding-fixed-v28">
+/* 紀錄頁三個下拉：回到單純 flex，不再塞透明占位 */
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn{
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  padding:0 14px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+}
+
+/* 文字 + 箭頭當成一整組置中 */
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn::before{
+  content:none !important;
+  display:none !important;
+}
+
+#page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn > span:first-child{
+  margin:0 !important;
+}
+
+#page-sales-history .sales-history-dd-caret{
+  position:static !important;
+  margin:1px 0 0 0 !important;
+  flex:0 0 auto !important;
+}
+</style>
+
+
+<style id="top-dropdown-arrows-unified-v29">
+/* 上方工具列的下拉箭頭：統一成和「全部月份」同款實心小三角 */
+.unified-top-dd-caret{
+  display:inline-block !important;
+  width:0 !important;
+  height:0 !important;
+  border-left:4px solid transparent !important;
+  border-right:4px solid transparent !important;
+  border-top:5px solid #9f897b !important;
+  margin-top:1px !important;
+  flex:0 0 auto !important;
+}
+.unified-top-dd-caret-sm{
+  border-left-width:4px !important;
+  border-right-width:4px !important;
+  border-top-width:5px !important;
+}
+/* 常見上方按鈕的箭頭間距微調 */
+#sort-mode-btn, #order-sort-btn, #report-month-btn{
+  gap:6px !important;
+}
+</style>
+
+
+<style id="view-buttons-record-color-v32">
+/* 商品庫＋開單的格狀 / 大圖 / 列表：
+   顏色統一成「銷售紀錄」那種白底＋棕字，不再用棕色實心選中狀態 */
+#page-products .section-header .product-search-toolbar .view-btn,
+#page-products .section-header .product-search-toolbar .view-btn.active,
+#page-sales .section-header .sale-search-toolbar .view-btn,
+#page-sales .section-header .sale-search-toolbar .view-btn.active{
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  border-color:var(--cream3) !important;
+  box-shadow:none !important;
+}
+
+#page-products .section-header .product-search-toolbar .view-btn .view-glyph,
+#page-products .section-header .product-search-toolbar .view-btn.active .view-glyph,
+#page-sales .section-header .sale-search-toolbar .view-btn .view-glyph,
+#page-sales .section-header .sale-search-toolbar .view-btn.active .view-glyph{
+  color:var(--text2) !important;
+}
+
+/* 選中的模式只用稍深邊框表示，不改成棕底 */
+#page-products .section-header .product-search-toolbar .view-btn.active,
+#page-sales .section-header .sale-search-toolbar .view-btn.active{
+  border-color:var(--brown-light) !important;
+}
+
+/* hover 同一色系 */
+#page-products .section-header .product-search-toolbar .view-btn:hover,
+#page-sales .section-header .sale-search-toolbar .view-btn:hover{
+  background:var(--surface) !important;
+  color:var(--text2) !important;
+  border-color:var(--brown-light) !important;
+}
+</style>
+
 </head>
 <body>
 <div id="print-labels-container"></div>
@@ -4805,7 +5919,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
       <div class="search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input type="text" class="search-input" placeholder="搜尋商品 / SKU…" id="product-search" oninput="requestProductGridRender()"></div>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" id="stock-filter-toggle-btn" onclick="toggleStockRangeFilter()" title="庫存範圍篩選" style="padding:9px 14px;position:relative">🎚️<span id="stock-filter-active-dot" class="hidden" style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red)"></span></button>
       <button class="btn btn-secondary btn-icon toolbar-icon-round" onclick="openScanModal()" title="掃描 QR 找商品" style="padding:9px 14px">📷</button>
-      <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
+      <div style="position:relative" id="sort-mode-wrap"><button type="button" id="sort-mode-btn" onclick="toggleSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="sort-mode-btn-label">📋 預設順序</span><span class="unified-top-dd-caret" aria-hidden="true"></span></button><div id="sort-mode-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div>
 
       <div class="view-switcher-align" style="display:flex;gap:4px"><button class="view-btn active toolbar-icon-round" id="vbtn-grid" onclick="setView('grid')" title="格狀"><span class="view-glyph">⊞</span></button><button class="view-btn toolbar-icon-round" id="vbtn-large" onclick="setView('large')" title="更多"><span class="view-glyph">⊟</span></button><button class="view-btn toolbar-icon-round" id="vbtn-list" onclick="setView('list')" title="列表"><span class="view-glyph">☰</span></button></div>
       <button class="btn btn-secondary" onclick="toggleBatchMode()" id="batch-btn">✏️ 批次編輯</button>
@@ -4851,7 +5965,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
         <div style="position:relative" id="price-compare-sort-wrap">
           <button type="button" id="price-compare-sort-btn" onclick="togglePriceCompareSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 11px;font-size:12px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">
             <span id="price-compare-sort-label">📋 預設順序</span>
-            <span style="font-size:9px;color:var(--text3)">▾</span>
+            <span class="unified-top-dd-caret unified-top-dd-caret-sm" aria-hidden="true"></span>
           </button>
           <div id="price-compare-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:80;min-width:220px"></div>
         </div>
@@ -4890,7 +6004,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
 </div>
 
 <div class="page" id="page-orders">
-  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商 / 供應資訊…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span style="font-size:10px;color:var(--text3)">▾</span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
+  <div class="section-header"><div class="section-title" style="display:flex;align-items:center;gap:6px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>採購單</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="order-search-wrap"><svg class="order-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="order-search-input" class="order-search-input" type="search" autocomplete="off" placeholder="搜尋商品 / SKU / 供應商 / 供應資訊…" oninput="handleOrderSearchInput(this.value)" onkeydown="if(event.key==='Escape'){event.preventDefault();clearOrderSearch();}"><button type="button" id="order-search-clear" class="order-search-clear hidden" title="清除搜尋" aria-label="清除搜尋" onclick="clearOrderSearch()">×</button></div><div style="position:relative" id="order-sort-wrap"><button type="button" id="order-sort-btn" onclick="toggleOrderSortMenu()" style="border:1.5px solid var(--cream3);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;color:var(--text2);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><span id="order-sort-btn-label">🆕 最新採購在前</span><span class="unified-top-dd-caret" aria-hidden="true"></span></button><div id="order-sort-menu" class="hidden" style="position:absolute;top:calc(100% + 4px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:12px;box-shadow:0 6px 20px rgba(139,111,71,.18);padding:6px;z-index:50;min-width:200px"></div></div><button class="btn btn-secondary" onclick="openReorderList()">📋 待補貨清單</button><button class="btn btn-secondary btn-icon toolbar-icon-round order-trash-round" onclick="openOrderTrash()" title="已刪採購單">🗑</button><button class="btn btn-secondary" onclick="openImportDrafts()" id="import-drafts-btn" style="position:relative">📋 草稿<span id="import-drafts-badge" class="hidden" style="position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;border-radius:10px;font-size:8.5px;padding:0 4px;min-width:13px;text-align:center;line-height:1.45;box-shadow:0 0 0 2px var(--surface)">0</span></button><button class="btn btn-secondary" onclick="openSmartImport()">🛸 智慧匯入</button><button class="btn btn-primary" onclick="openAddOrder()">📝 表格式匯入</button></div></div>
   <div class="orders-supplier-layout">
     <div class="orders-main-column">
       <div id="stale-order-banner" class="hidden" style="background:var(--yellow-light);border:1.5px solid #e0c168;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:12.5px;color:#8a6a1a;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
@@ -5015,26 +6129,26 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
       <div class="section-title">🧾 紀錄</div>
       
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="openTrash()">🗑 已刪紀錄</button>
   </div>
   <div class="sales-history-toolbar">
     <div class="search-wrap sales-history-search-wrap"><span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><input id="sales-history-search" class="sales-history-input" type="text" placeholder="搜尋商品 / SKU / 供應商…" oninput="scheduleLightRender('sales-history',renderSalesHistoryPage)"></div>
     <div class="sales-history-dd" id="sales-history-month-wrap">
       <input type="hidden" id="sales-history-month" value="all">
-      <button type="button" class="sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'month')"><span id="sales-history-month-label">全部月份</span><span class="sales-history-dd-caret">⌄</span></button>
+      <button type="button" class="btn btn-secondary btn-sm sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'month')"><span id="sales-history-month-label">全部月份</span><span class="sales-history-dd-caret">⌄</span></button>
       <div class="sales-history-dd-menu hidden" id="sales-history-month-menu" onclick="pickSalesHistoryDropdown(event,'month')"></div>
     </div>
     <div class="sales-history-dd" id="sales-history-customer-wrap">
       <input type="hidden" id="sales-history-customer" value="all">
-      <button type="button" class="sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'customer')"><span id="sales-history-customer-label">全部顧客</span><span class="sales-history-dd-caret">⌄</span></button>
+      <button type="button" class="btn btn-secondary btn-sm sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'customer')"><span id="sales-history-customer-label">全部顧客</span><span class="sales-history-dd-caret">⌄</span></button>
       <div class="sales-history-dd-menu hidden" id="sales-history-customer-menu" onclick="pickSalesHistoryDropdown(event,'customer')"></div>
     </div>
     <div class="sales-history-dd" id="sales-history-kind-wrap">
       <input type="hidden" id="sales-history-kind" value="all">
-      <button type="button" class="sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'kind')"><span id="sales-history-kind-label">全部交易</span><span class="sales-history-dd-caret">⌄</span></button>
+      <button type="button" class="btn btn-secondary btn-sm sales-history-dd-btn" onclick="toggleSalesHistoryDropdown(event,'kind')"><span id="sales-history-kind-label">全部交易</span><span class="sales-history-dd-caret">⌄</span></button>
       <div class="sales-history-dd-menu hidden" id="sales-history-kind-menu" onclick="pickSalesHistoryDropdown(event,'kind')"></div>
     </div>
     <button class="btn btn-secondary btn-sm" onclick="resetSalesHistoryFilters()">清除篩選</button>
+    <button class="btn btn-secondary btn-sm records-trash-icon-btn" onclick="openTrash()" title="已刪紀錄" aria-label="已刪紀錄">🗑</button>
   </div>
   <div id="sales-history-summary" class="sales-history-summary"></div>
   <div id="sales-history-result-note" style="font-size:11px;color:var(--text3);font-weight:700;margin:2px 2px 9px"></div>
@@ -5047,7 +6161,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
     <div style="display:flex;gap:8px;align-items:center">
       <button id="report-current-month-btn" class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月"><span class="report-flower-icon">🌸</span><span>本月</span></button>
       <div style="position:relative">
-        <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span style="font-size:10px;color:var(--text3)">▾</span></button>
+        <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span class="unified-top-dd-caret" aria-hidden="true"></span></button>
         <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:280px;overflow-y:auto"></div>
       </div>
     </div>
@@ -7073,7 +8187,7 @@ async function fetchRate(){
   if(displayEl)displayEl.textContent=`¥1 = $${DB.rate.toFixed(4)}`;
   if(timeEl)timeEl.textContent=DB.rateTime?`更新: ${DB.rateTime}`:'離線';
 }
-function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products'){if(currentView!=='grid'&&currentView!=='large'&&currentView!=='list')currentView='grid';sortMode=getDefaultProductSort();setView(currentView||'grid');renderProducts();}if(id==='orders'){renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='sales-history')renderSalesHistoryPage();if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();
+function showPage(id,btn){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');updateBatchToolbar();if(id==='overview')renderOverview();if(id==='products'){if(currentView!=='grid'&&currentView!=='large'&&currentView!=='list')currentView='grid';sortMode=getDefaultProductSort();setView(currentView||'grid');renderProducts();}if(id==='orders'){orderSortMode=getDefaultOrderSort();renderOrderSortMenu();renderOrders();fetchRate();updateImportDraftsBadge();checkStaleOrders();}if(id==='sales'){renderSaleCatSidebar();renderSaleProducts();renderSaleHistory();updateTodayStats();refreshSaleCustomerSelect();}if(id==='sales-history')renderSalesHistoryPage();if(id==='reports')renderReports();if(id==='customers')renderCustomers();if(id==='sku')renderSkuPage();
   try{localStorage.setItem('andhug_last_page',id);}catch(e){}
 }
 function renderOverview(){
@@ -7109,14 +8223,14 @@ function renderOverview(){
   }
   const ls=document.getElementById('low-stock-list');
   if(!low.length){
-    ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好 ✓</div>';
+    ls.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">庫存狀況良好</div>';
   }else{
     ls.innerHTML=low.slice(0,8).map(p=>`<div class="alert-card">⚠️ <strong>${p.name}</strong> <span style="margin-left:auto;font-weight:700;color:#8a6a1a">剩 ${p.stock} 件</span></div>`).join('');
   }
   const il=document.getElementById('in-transit-list');
   const inTransit=DB.orders.filter(o=>o.status!=='received').sort((a,b)=>(a.expectedDate||'9999').localeCompare(b.expectedDate||'9999')).slice(0,8);
   if(!inTransit.length){
-    il.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">沒有運送中的採購單 ✓</div>';
+    il.innerHTML='<div style="color:var(--text3);font-size:13px;font-weight:600;padding:12px">沒有運送中的採購單</div>';
   }else{
     il.innerHTML=inTransit.map(o=>{
       const isLate=(Date.now()-new Date(o.date).getTime())/86400000>14;
@@ -13051,11 +14165,38 @@ const ORDER_SORT_OPTIONS=[
   {value:'pending_first',label:'🚚 未到貨優先'},
   {value:'received_first',label:'<svg viewBox="0 0 24 24" width="12" height="12" style="display:inline-block;vertical-align:-1.5px;margin-right:1px"><path d="M5,13 L10,18 L19,7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> 已到貨優先'}
 ];
+function getDefaultOrderSort(){
+  const v=DB.settings&&DB.settings.defaultOrderSort;
+  return ORDER_SORT_OPTIONS.some(o=>o.value===v)?v:'newest';
+}
+function pinDefaultOrderSort(v,event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  if(!ORDER_SORT_OPTIONS.some(o=>o.value===v))return;
+  if(!DB.settings)DB.settings={};
+  DB.settings.defaultOrderSort=v;
+  orderSortMode=v;
+  saveDB();
+  renderOrderSortMenu();
+  renderOrders();
+  const opt=ORDER_SORT_OPTIONS.find(o=>o.value===v);
+  toast('📌 已設為每次進採購單的排序：'+(opt?opt.label.replace(/^[^\s]+\s*/, ''):'最新採購在前'),'success');
+}
 function renderOrderSortMenu(){
   const menu=document.getElementById('order-sort-menu');
   if(!menu)return;
-  menu.innerHTML=ORDER_SORT_OPTIONS.map(o=>`<div onclick="setOrderSortMode('${o.value}')" style="padding:9px 10px;border-radius:8px;font-size:13px;cursor:pointer;color:${orderSortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${orderSortMode===o.value?'700':'400'}"
-    onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${o.label}</div>`).join('');
+  const pinned=getDefaultOrderSort();
+  menu.innerHTML=ORDER_SORT_OPTIONS.map(o=>`<div style="display:flex;align-items:center;gap:6px;border-radius:8px;color:${orderSortMode===o.value?'var(--brown)':'var(--text2)'};font-weight:${orderSortMode===o.value?'700':'400'};background:${pinned===o.value?'var(--cream2)':'transparent'}"
+    onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='${pinned===o.value?'var(--cream2)':'transparent'}'">
+      <div onclick="setOrderSortMode('${o.value}')" style="flex:1;padding:9px 4px 9px 10px;font-size:13px;cursor:pointer">${o.label}</div>
+      <button type="button" onclick="pinDefaultOrderSort('${o.value}',event)" title="${pinned===o.value?'目前是進入採購單時的固定排序':'固定成每次進採購單的排序'}" aria-label="固定排序" style="width:28px;height:28px;margin-right:6px;border:1.5px solid ${pinned===o.value?'var(--brown)':'transparent'};border-radius:8px;cursor:pointer;background:${pinned===o.value?'var(--cream2)':'transparent'};color:${pinned===o.value?'var(--brown)':'var(--text3)'};display:flex;align-items:center;justify-content:center;padding:0">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 4h6l-.8 5.2 3.3 3.3H6.5l3.3-3.3L9 4z"/>
+            <path d="M12 12.5V20"/>
+          </g>
+        </svg>
+      </button>
+    </div>`).join('');
   const btnLabel=document.getElementById('order-sort-btn-label');
   if(btnLabel){const cur=ORDER_SORT_OPTIONS.find(o=>o.value===orderSortMode);btnLabel.innerHTML=cur?cur.label:'';}
 }
@@ -13072,7 +14213,6 @@ function setOrderSortMode(v){
   renderOrderSortMenu();
   renderOrders();
 }
-let orderSearchQuery='';
 function normalizeOrderSearchText(v){
   return String(v==null?'':v).trim().toLowerCase();
 }
