@@ -4555,7 +4555,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="sku-rules-safe-v1">
+<meta name="andhug-build" content="cloud-only-boot-v1">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -4743,6 +4743,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
   transform:translateY(-0.5px) !important;
 }
 </style>
+
 
 </head>
 <body>
@@ -20279,9 +20280,13 @@ __bootSteps.push(function(){
     if(!Array.isArray(db.smartImportDrafts))db.smartImportDrafts=[];
     db.rate=Number(db.rate)||0.138;
     lsSet('patchDB_v3',JSON.stringify(db));
-    if(typeof loadDB==='function')loadDB();
+    // cloud-only boot：不要把本機舊資料重新載入記憶體。
   }catch(e){console.error('clean empty-state init failed',e);}
 });
+
+
+// 舊版 migration 僅保留程式碼供歷史參考，不再參與正式啟動。
+window.__legacyBootStepsDisabled=true;
 
 let currentVariantProductId = null;
 
@@ -20469,17 +20474,36 @@ window.addEventListener('pagehide',()=>{if(typeof flushAllQuickStockBursts==='fu
     alert('系統啟動失敗,請截圖回報:'+e.message);
     return;
   }
-  for(var i=0;i<__bootSteps.length;i++){
-    try{__bootSteps[i]();}catch(e){console.error('啟動步驟 #'+i+' 失敗:',e);}
-  }
-  try{
-    loadDB();
-    migrateExistingAutoVariantSets();
-    const didInitLedgerStock=initializeLedgerStockSync();
-    if(!didInitLedgerStock&&DB.stockLedgerSyncV1)syncAllProductStocksFromLedger();
-    if(didInitLedgerStock)await saveDB({skipUndo:true});
-    _undoStableSnapshot=_dbUndoSnapshot();
-  }catch(e){console.error('loadDB / 舊商品款式遷移失敗:',e);}
+  // 新架構：啟動時完全不讀舊本機 patchDB，也不跑舊 migration。
+  // 正式資料只等 Supabase app_state 載入；本機只在之後作快取。
+  DB={
+    products:[],
+    orders:[],
+    rate:0.138,
+    rateTime:null,
+    todaySales:{},
+    suppliers:[],
+    supplierProfiles:{},
+    supplierCategoryCustom:[],
+    supplierCategoryHidden:['tools'],
+    supplierMetaCustom:{capabilities:[],advantages:[],sources:[]},
+    supplierMetaHidden:{capabilities:[],advantages:[],sources:[]},
+    customers:[],
+    samples:[],
+    productTrash:[],
+    orderTrash:[],
+    trash:[],
+    smartImportDrafts:[],
+    settings:{
+      lowStockAlertEnabled:true,
+      outOfStockAlertEnabled:true,
+      cloudSyncFailAlertEnabled:true,
+      uiEditMode:false,
+      theme:'cream'
+    },
+    uiOverrides:{}
+  };
+  _undoStableSnapshot=_dbUndoSnapshot();
   try{fetchRate();}catch(e){console.error('fetchRate 失敗:',e);}
   try{
     const savedPage=localStorage.getItem('andhug_last_page');
@@ -20792,6 +20816,7 @@ let __safeCloudSaveInFlight=null;
 let __safeCloudSaveQueued=false;
 let __safeCloudLoaded=false;
 let __safeCloudBootstrapping=false;
+
 
 function setSafeCloudStatus(state,label){
   const el=document.getElementById('safe-cloud-status');
@@ -21901,8 +21926,8 @@ window.syncSortOrderToCloud = async function() {
 
 window.addEventListener('load', () => {
   setTimeout(async () => {
+    // 圖片仍可從 Storage 補回；正式資料只由 safeCloudBootstrap/app_state 管理。
     await pullImagesFromCloud();
-    syncToSupabase(true);
   }, 1500);
 });
 
