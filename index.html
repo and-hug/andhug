@@ -4555,7 +4555,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="supabase-safe-v2-clear-top-20260926">
+<meta name="andhug-build" content="settings-cleanup-v1-20260927">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -4661,6 +4661,23 @@ label.form-label:has(.label-info-badge){
   transform:none !important;
   color:var(--brown) !important;
 }
+</style>
+
+<style id="settings-clean-data-layout-v1">
+.settings-clean-card{border:1.5px solid var(--cream3);border-radius:14px;background:var(--surface);padding:13px;margin-bottom:14px}
+.settings-clean-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:11px}
+.settings-clean-title{font-size:12px;font-weight:900;color:var(--text);line-height:1.2}
+.settings-clean-desc{margin-top:3px;font-size:9.5px;line-height:1.55;color:var(--text3)}
+.settings-cloud-pill{height:24px;padding:0 9px;border:1px solid var(--cream3);border-radius:999px;display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;color:var(--text2);background:var(--cream);font-size:9px;font-weight:800;white-space:nowrap}
+.settings-cloud-dot{width:7px;height:7px;border-radius:50%;background:#6fb780}
+.settings-auth-card{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:9px 10px!important;margin:0 0 10px!important;border:1px solid var(--cream3)!important;border-radius:10px!important;background:var(--cream)!important}
+.settings-auth-main{display:flex;align-items:center;gap:7px;min-width:0}.settings-auth-dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px;background:#c9c0b3}.settings-auth-text{font-size:10.5px;font-weight:800;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.settings-auth-actions{display:flex;gap:6px;flex:0 0 auto}
+.settings-action-grid{display:grid;gap:7px}.settings-action-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.settings-action-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.settings-action-grid .btn{width:100%;min-width:0;height:31px;padding:0 9px;border-radius:10px;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-clean-note{margin-top:9px;font-size:9px;line-height:1.5;color:var(--text3)}.settings-clean-subtitle{margin:2px 0 8px;font-size:10px;font-weight:900;color:var(--text2)}
+.settings-tools-details{margin-top:13px;padding:9px 11px;border:1px solid var(--cream3);border-radius:11px;background:var(--surface)}.settings-tools-details summary{cursor:pointer;list-style:none;font-size:10.5px;font-weight:900;color:var(--text2);user-select:none}.settings-tools-details summary::-webkit-details-marker{display:none}.settings-tools-details summary::after{content:'⌄';float:right;color:var(--text3);font-size:13px;line-height:1}.settings-tools-details[open] summary::after{transform:rotate(180deg)}
+#settings-storage-card,#settings-autobackup-status{display:none!important}
+@media(max-width:620px){.settings-action-grid-3,.settings-action-grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -5561,71 +5578,47 @@ label.form-label:has(.label-info-badge){
 
       <div class="settings-divider"></div>
 
-      <div class="settings-section-title">💾 備份與資料</div>
-      <div id="settings-autobackup-status" class="settings-row-desc" style="margin-bottom:10px"></div>
-      <div id="settings-storage-card" style="border:1.5px solid var(--cream3);border-radius:12px;background:var(--surface);padding:11px 12px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:7px;min-width:0">
-            <span style="font-size:14px">🗄️</span>
-            <div>
-              <div style="font-size:12px;font-weight:800;color:var(--text)">本機資料空間</div>
-              <div style="font-size:9.5px;color:var(--text3);margin-top:1px">正式資料在 Supabase；這裡只顯示瀏覽器快取、登入與介面設定使用量</div>
-            </div>
+      <div class="settings-section-title">☁️ 資料與備份</div>
+
+      <div class="settings-clean-card settings-cloud-card">
+        <div class="settings-clean-head">
+          <div>
+            <div class="settings-clean-title">Supabase 正式資料</div>
+            <div class="settings-clean-desc">商品、採購、供應商與 SKU 規則都存雲端；瀏覽器只保留暫時快取。</div>
           </div>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="refreshLocalStorageUsage()" title="重新計算目前用量" style="flex-shrink:0;padding:5px 8px">↻</button>
+          <div class="settings-cloud-pill"><span class="settings-cloud-dot"></span><span id="settings-cloud-mini-status">同步狀態</span></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-          <div style="background:var(--cream2);border-radius:9px;padding:8px 9px">
-            <div style="font-size:9.5px;color:var(--text3);font-weight:700">目前主資料</div>
-            <div id="settings-storage-main" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
+        <div id="auth-status-card" class="settings-auth-card">
+          <div class="settings-auth-main">
+            <span id="auth-status-dot" class="settings-auth-dot"></span>
+            <span id="auth-status-text" class="settings-auth-text">登入狀態載入中...</span>
           </div>
-          <div style="background:var(--cream2);border-radius:9px;padding:8px 9px">
-            <div style="font-size:9.5px;color:var(--text3);font-weight:700">本機快取／設定用量</div>
-            <div id="settings-storage-total" style="font-size:15px;font-weight:800;color:var(--brown);margin-top:1px">計算中…</div>
+          <div class="settings-auth-actions">
+            <button class="btn btn-secondary btn-sm" id="google-login-btn" onclick="signInWithGoogle()" style="display:none;">Google 登入</button>
+            <button class="btn btn-secondary btn-sm" id="logout-btn" onclick="signOutSupabase()" style="display:none;">登出</button>
           </div>
         </div>
-        <div id="settings-storage-browser" style="font-size:9.5px;color:var(--text3);margin-top:7px;line-height:1.5"></div>
-      </div>
-      <div class="settings-btn-row">
-        
-        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 還原備份</button>
-        <button class="btn btn-secondary btn-sm" onclick="openAutoBackupList()">🕐 自動備份紀錄</button>
-      </div>
-      <div class="settings-btn-row" style="margin-top:8px;flex-wrap:nowrap;">
-        <button class="btn btn-secondary btn-sm" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onclick="exportProductsExcel()">📊 匯出商品清單(Excel)</button>
-        <button class="btn btn-secondary btn-sm" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onclick="printProductLabels()">🏷️ 列商品標籤(QR code)</button>
-      </div>
-
-      <div class="settings-divider"></div>
-
-      
-<div id="clean-slate-status" style="margin:0 0 12px;padding:10px 12px;border:1px solid var(--cream3);border-radius:10px;background:var(--cream);font-size:10px;line-height:1.55;color:var(--text2)">
-  ☁️ <b style="color:var(--brown)">Supabase 正式資料模式</b><br>
-  正式資料存 Supabase；瀏覽器只做快取。每次雲端更新前，伺服器會自動保留上一版完整快照。Supabase Storage 圖片獨立保留。
-</div>
-
-      <div class="settings-section-title">☁️ 雲端同步</div>
-      <div id="auth-status-card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--surface,#fff);border:1px solid var(--peach);border-radius:12px;padding:10px 14px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-          <span id="auth-status-dot" style="flex-shrink:0;width:9px;height:9px;border-radius:50%;background:#c9c0b3;"></span>
-          <span id="auth-status-text" style="font-size:12px;color:var(--text2,var(--brown));font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">登入狀態載入中...</span>
+        <div class="settings-action-grid settings-action-grid-3">
+          <button class="btn btn-secondary btn-sm" onclick="safeCloudRetry()">☁️ 立即同步</button>
+          <button class="btn btn-secondary btn-sm" onclick="downloadPermanentBackup()">⬇️ 下載備份</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">↩️ 還原備份</button>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0;">
-          <button class="btn btn-secondary btn-sm" id="google-login-btn" onclick="signInWithGoogle()" style="display:none;">🔑 使用 Google 登入</button>
-          <button class="btn btn-secondary btn-sm" id="logout-btn" onclick="signOutSupabase()" style="display:none;">🐾 登出</button>
-        </div>
+        <div class="settings-clean-note">每次雲端資料更新前，Supabase 會自動保留上一版完整快照。</div>
       </div>
-      <div class="settings-btn-row" style="margin-bottom:8px">
-        <button class="btn btn-secondary btn-sm" onclick="safeCloudRetry()">☁️ 立即同步</button>
-        <button class="btn btn-secondary btn-sm" onclick="downloadPermanentBackup()">⬇️ 下載完整備份</button>
+
+      <div class="settings-clean-subtitle">輸出</div>
+      <div class="settings-action-grid settings-action-grid-2">
+        <button class="btn btn-secondary btn-sm" onclick="exportProductsExcel()">📊 商品清單 Excel</button>
+        <button class="btn btn-secondary btn-sm" onclick="printProductLabels()">🏷️ 商品標籤 QR</button>
       </div>
-      <details style="border:1px solid var(--cream3);border-radius:10px;background:var(--surface);padding:8px 10px">
-        <summary style="cursor:pointer;font-size:11px;font-weight:800;color:var(--text2);user-select:none">🧰 進階工具</summary>
-        <div class="settings-row-desc" style="margin:6px 0 8px">圖片遷移、網址修復與批量上傳通常只在維護時使用。</div>
-        <div class="settings-btn-row">
-          <button class="btn btn-secondary btn-sm" onclick="migrateImagesToCloud()">🖼️ 遷移圖片到雲端</button>
-          <button class="btn btn-secondary btn-sm" onclick="repairImageUrls()">🔧 修復圖片網址</button>
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('batch-img-input').click()">📦 批量上傳圖片</button>
+
+      <details class="settings-tools-details">
+        <summary>🧰 進階工具</summary>
+        <div class="settings-clean-desc" style="margin:7px 0 9px">只有圖片維護時才需要使用。</div>
+        <div class="settings-action-grid settings-action-grid-3">
+          <button class="btn btn-secondary btn-sm" onclick="migrateImagesToCloud()">🖼️ 遷移圖片</button>
+          <button class="btn btn-secondary btn-sm" onclick="repairImageUrls()">🔧 修復網址</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('batch-img-input').click()">📦 批量上傳</button>
         </div>
       </details>
 
@@ -5664,6 +5657,38 @@ function lsAllPatchKeys(){var out=[];LS_CACHE.forEach(function(_,k){if(k.indexOf
 
 async function __initStorage(){
   try{
+    const FINAL_CLEAN_MARKER='andhug_final_clean_20260927_v1';
+    let finalCleanDone=false;
+    try{finalCleanDone=localStorage.getItem(FINAL_CLEAN_MARKER)==='1';}catch(e){}
+
+    if(!finalCleanDone){
+      try{await idbClear();LS_CACHE.clear();}catch(e){console.warn('清除舊 IndexedDB 失敗:',e);}
+      try{
+        const rm=[];
+        for(let i=0;i<localStorage.length;i++){
+          const k=localStorage.key(i);
+          if(!k)continue;
+          const keep=/^sb-[^-]+-auth-token$/.test(k) || k.startsWith('supabase.auth.');
+          if(!keep)rm.push(k);
+        }
+        rm.forEach(k=>localStorage.removeItem(k));
+        try{sessionStorage.clear();}catch(_){}
+      }catch(e){console.warn('清除舊瀏覽器資料失敗:',e);}
+      const cleanDB={
+        products:[],orders:[],rate:0.138,rateTime:null,todaySales:{},suppliers:[],supplierProfiles:{},
+        supplierCategoryCustom:[],supplierCategoryHidden:['tools'],
+        supplierMetaCustom:{capabilities:[],advantages:[],sources:[]},
+        supplierMetaHidden:{capabilities:[],advantages:[],sources:[]},
+        customers:[],samples:[],productTrash:[],orderTrash:[],trash:[],smartImportDrafts:[],
+        settings:{lowStockAlertEnabled:true,outOfStockAlertEnabled:true,cloudSyncFailAlertEnabled:true,uiEditMode:false,theme:'cream'},
+        uiOverrides:{}
+      };
+      const raw=JSON.stringify(cleanDB);
+      await idbSet('patchDB_v3',raw);
+      await idbSet('_migrated_from_ls_v1','1');
+      LS_CACHE.set('patchDB_v3',raw);
+      try{localStorage.setItem(FINAL_CLEAN_MARKER,'1');}catch(_){}
+    }
     const SAFE_CACHE_CLEAN_MARKER='andhug_safe_cache_clean_20260927_v1';
     let safeCacheCleaned=false;
     try{safeCacheCleaned=localStorage.getItem(SAFE_CACHE_CLEAN_MARKER)==='1';}catch(e){}
@@ -6272,7 +6297,6 @@ function saveDB(options={}){
   if(afterSnapshot)_undoStableSnapshot=afterSnapshot;
 
   const persistPromise=lsSet('patchDB_v3',JSON.stringify(DB));
-  maybeAutoBackup();
   _scheduleAutoUndoFinalize();
   if(!options.skipCloudSync&&typeof window.safeCloudSave==='function'){
     clearTimeout(_autoSyncTimer);
@@ -20707,6 +20731,10 @@ function setSafeCloudStatus(state,label){
   el.dataset.state=state;
   const txt=el.querySelector('.label');
   if(txt)txt.textContent=label;
+  const mini=document.getElementById('settings-cloud-mini-status');
+  const miniDot=document.querySelector('.settings-cloud-dot');
+  if(mini)mini.textContent=String(label||'').replace(/^☁\s*/,'');
+  if(miniDot)miniDot.style.background=state==='saved'?'#6fb780':state==='saving'?'#d6a85d':state==='error'?'#c45f7a':'#c9c0b3';
 }
 
 function buildSafeCloudPayload(){
