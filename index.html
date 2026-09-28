@@ -4555,7 +4555,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="settings-cleanup-v2-sync-badge">
+<meta name="andhug-build" content="sku-rules-safe-v1">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -4698,9 +4698,49 @@ label.form-label:has(.label-info-badge){
     font-size:9px !important;
   }
 }
-/* 設定視窗開啟時，狀態膠囊不要壓住下方按鈕 */
+</style>
+
+
+<style id="supplier-selected-count-size-v4">
+.orders-supplier-accordion .orders-supplier-tab-count{
+  min-width:20px !important;
+  height:20px !important;
+  padding:0 5px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+}
+.orders-supplier-tab-count-number{
+  font-size:10px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+}
+</style>
+
+<style id="settings-hide-floating-sync-v4">
 body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
-  bottom:76px !important;
+  display:none !important;
+}
+</style>
+
+
+<style id="smart-import-info-icon-fix-v1">
+#modal-smart-import .supplier-info-icon,
+#smart-import-modal .supplier-info-icon,
+.smart-import-modal .supplier-info-icon{
+  width:11px !important;
+  height:11px !important;
+  flex:0 0 11px !important;
+  border-width:1px !important;
+  font-size:7px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  padding:0 !important;
+  margin:0 0 0 3px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  vertical-align:middle !important;
+  transform:translateY(-0.5px) !important;
 }
 </style>
 
@@ -9637,11 +9677,14 @@ async function saveSkuEdits(options){
   // SKU 規則本身使用獨立雲端表同步；只有使用者真的按「儲存變更」才會上傳，
   // 避免另一台舊電腦只是開啟網頁就把舊規則覆蓋到雲端。
   if(typeof window.syncSkuSettingsToCloud==='function'){
-    try{await window.syncSkuSettingsToCloud(true);}catch(e){console.warn('SKU 規則雲端同步失敗，已保留本機資料',e);}
-  }
-  if(typeof window.syncToSupabase==='function'){
-    clearTimeout(_autoSyncTimer);
-    _autoSyncTimer=setTimeout(()=>window.syncToSupabase(true),300);
+    try{
+      await window.syncSkuSettingsToCloud(true);
+    }catch(e){
+      console.error('SKU 規則雲端同步失敗',e);
+      toast('⚠ SKU 規則目前只存到本機，雲端尚未成功；請先不要關閉頁面，再按一次儲存','error');
+      setSafeCloudStatus('error','⚠ SKU 尚未同步');
+      return false;
+    }
   }
 
   if(keepEditing){
@@ -9667,7 +9710,7 @@ async function saveSkuEdits(options){
 
     updateSkuUndoButton();
     const savedTime=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    toast((renamePairs.length?'✅ 已儲存並同步分類':'✅ SKU 規則已儲存')+' · '+savedTime,'success');
+    toast((renamePairs.length?'✅ 已儲存並備份分類':'✅ SKU 規則已安全存到雲端')+' · '+savedTime,'success');
     return true;
   }
 
@@ -9682,7 +9725,7 @@ async function saveSkuEdits(options){
   if(typeof renderProducts==='function')renderProducts();
   if(document.getElementById('p-type-subcat'))refreshTypeSubcatSelect('p','p-type','');
   if(document.getElementById('edit-type-subcat'))refreshTypeSubcatSelect('edit','edit-type',editingId||'');
-  toast(renamePairs.length?'✅ SKU 與商品分類已一起更新':'✅ SKU 規則已儲存，分類已同步','success');
+  toast(renamePairs.length?'✅ SKU 與商品分類已安全存到雲端':'✅ SKU 規則已安全存到雲端','success');
   return true;
 }
 function cancelSkuEdits(){
@@ -20758,7 +20801,7 @@ function setSafeCloudStatus(state,label){
   if(txt)txt.textContent=label;
   const mini=document.getElementById('settings-cloud-mini-status');
   const miniDot=document.querySelector('.settings-cloud-dot');
-  if(mini)mini.textContent=String(label||'').replace(/^☁\s*/,'');
+  if(mini)mini.textContent=String(label||'');
   if(miniDot)miniDot.style.background=state==='saved'?'#6fb780':state==='saving'?'#d6a85d':state==='error'?'#c45f7a':'#c9c0b3';
 }
 
@@ -20806,7 +20849,7 @@ window.safeCloudSave=async function(silent,source){
   // 避免空白本機資料在頁面啟動時先覆蓋 Supabase。
   if(!__safeCloudLoaded && source!=='first-bootstrap'){
     __safeCloudSaveQueued=true;
-    setSafeCloudStatus('saving','☁ 等待雲端載入…');
+    setSafeCloudStatus('saving','等待載入…');
     return false;
   }
   if(__safeCloudSaveInFlight){
@@ -20817,11 +20860,11 @@ window.safeCloudSave=async function(silent,source){
     try{
       const {data:{session}}=await sb.auth.getSession();
       if(!session){
-        setSafeCloudStatus('offline','☁ 尚未登入');
+        setSafeCloudStatus('offline','尚未登入');
         if(!silent)toast('請先用 Google 登入，資料才會永久同步','error');
         return false;
       }
-      setSafeCloudStatus('saving','☁ 同步中…');
+      setSafeCloudStatus('saving','同步中…');
       const row={
         user_id:session.user.id,
         data:buildSafeCloudPayload(),
@@ -20831,7 +20874,7 @@ window.safeCloudSave=async function(silent,source){
       const {error}=await sb.from('app_state').upsert(row,{onConflict:'user_id'});
       if(error)throw error;
       const tm=new Date();
-      setSafeCloudStatus('saved','☁ 已同步 '+tm.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+      setSafeCloudStatus('saved','已同步 '+tm.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
       if(!silent)toast('☁️ 已安全同步到 Supabase','success');
       return true;
     }catch(e){
@@ -20856,10 +20899,10 @@ window.safeCloudBootstrap=async function(){
   try{
     const {data:{session}}=await sb.auth.getSession();
     if(!session){
-      setSafeCloudStatus('offline','☁ 尚未登入');
+      setSafeCloudStatus('offline','尚未登入');
       return;
     }
-    setSafeCloudStatus('saving','☁ 載入雲端…');
+    setSafeCloudStatus('saving','載入中…');
 
     // 先讀，再允許寫。這段完成前 saveDB 不准把本機空資料寫回去。
     const row=await safeCloudFetchState();
@@ -20867,7 +20910,8 @@ window.safeCloudBootstrap=async function(){
     if(row&&row.data){
       await applySafeCloudState(row);
       __safeCloudLoaded=true;
-      setSafeCloudStatus('saved','☁ 已載入雲端資料');
+      const loadedTm=new Date();
+      setSafeCloudStatus('saved','已同步 '+loadedTm.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
     }else{
       // 真正第一次使用：確認雲端沒有正式資料後，才允許建立第一份。
       __safeCloudLoaded=true;
@@ -20894,10 +20938,10 @@ window.__safeCloudPendingCheck=function(){
 
 window.safeCloudRetry=async function(){
   try{
-    setSafeCloudStatus('saving','☁ 重新同步中…');
+    setSafeCloudStatus('saving','重新同步中…');
     const {data:{session}}=await sb.auth.getSession();
     if(!session){
-      setSafeCloudStatus('offline','☁ 尚未登入');
+      setSafeCloudStatus('offline','尚未登入');
       toast('請先登入，再同步資料','error');
       return false;
     }
@@ -20961,10 +21005,31 @@ function applySkuSettingsCloudRecord(row){
   return changed;
 }
 window.syncSkuSettingsToCloud=async function(silent){
-  if(typeof window.safeCloudSave==='function'){
-    return await window.safeCloudSave(!!silent,'sku-settings');
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){
+    if(!silent)toast('請先登入，SKU 規則才會同步到雲端','error');
+    throw new Error('尚未登入 Supabase');
   }
-  return false;
+
+  const payload=getSkuSettingsCloudPayload();
+  const row={
+    user_id:session.user.id,
+    data:payload,
+    updated_at:new Date().toISOString()
+  };
+
+  // 第一層：SKU 規則自己的獨立雲端表。
+  // 每次更新前 Supabase trigger 會把舊版放進 sku_settings_snapshots。
+  const {error}=await sb.from('sku_settings').upsert(row,{onConflict:'user_id'});
+  if(error)throw error;
+
+  // 第二層：整份網站正式狀態也同步一份。
+  if(typeof window.safeCloudSave==='function'){
+    const ok=await window.safeCloudSave(true,'sku-settings');
+    if(!ok)throw new Error('完整雲端資料同步失敗');
+  }
+
+  return true;
 };
 
 async function fetchAndMergeCloudState(uid){
@@ -21845,7 +21910,7 @@ sb.auth.onAuthStateChange((_event, session) => {
   if(session){
     setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),50);
   }else{
-    setSafeCloudStatus('offline','☁ 尚未登入');
+    setSafeCloudStatus('offline','尚未登入');
   }
 });
 setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),250);
@@ -23214,7 +23279,7 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
 }
 </style>
 
-<button type="button" id="safe-cloud-status" data-state="offline" onclick="safeCloudRetry()" title="點一下重新同步"><span class="dot"></span><span class="label">☁ 尚未同步</span></button>
+<button type="button" id="safe-cloud-status" data-state="offline" onclick="safeCloudRetry()" title="點一下重新同步"><span class="dot"></span><span class="label">尚未同步</span></button>
 
 <script id="safe-cloud-unload-guard">
 window.addEventListener('beforeunload',function(e){
