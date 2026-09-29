@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="view-buttons-record-color-v32">
+<meta name="andhug-build" content="records-dropdown-flower-icon-v40">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -5856,6 +5856,135 @@ nav .nav-link.active .ui-editable{
   background:var(--surface) !important;
   color:var(--text2) !important;
   border-color:var(--brown-light) !important;
+}
+</style>
+
+
+<style id="nav-active-normal-weight-v33">
+nav .nav-link.active,
+nav .nav-link.active .ui-editable{
+  font-weight:650 !important;
+}
+</style>
+
+<style id="products-view-icons-centered-v38">
+/* 只改商品庫：三個檢視 icon，完全照開單目前的置中方式 */
+#page-products .section-header .product-search-toolbar #vbtn-grid,
+#page-products .section-header .product-search-toolbar #vbtn-large,
+#page-products .section-header .product-search-toolbar #vbtn-list{
+  width:29px !important;
+  min-width:29px !important;
+  max-width:29px !important;
+  height:29px !important;
+  min-height:29px !important;
+  max-height:29px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  box-sizing:border-box !important;
+}
+
+/* 跟開單一樣：glyph 本身用 block + 上移 1px 做 optical centering */
+#page-products .section-header .product-search-toolbar #vbtn-grid .view-glyph,
+#page-products .section-header .product-search-toolbar #vbtn-large .view-glyph,
+#page-products .section-header .product-search-toolbar #vbtn-list .view-glyph{
+  display:block !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:translateY(-1px) !important;
+  pointer-events:none !important;
+}
+</style>
+
+
+<style id="records-dropdown-flower-icon-v40">
+/* 只改「紀錄」頁的三個下拉選單；商品庫 / 採購單完全不動 */
+#page-sales-history .sales-history-dd-menu{
+  left:0 !important;
+  right:auto !important;
+  width:max-content !important;
+  min-width:145px !important;
+  max-width:230px !important;
+  max-height:240px !important;
+  overflow:auto !important;
+  padding:5px !important;
+  background:var(--surface) !important;
+  border:1.5px solid var(--cream3) !important;
+  border-radius:13px !important;
+  box-shadow:0 10px 24px rgba(99,76,50,.13) !important;
+}
+
+/* 顧客選單可以稍寬，但不要拉得很長 */
+#page-sales-history #sales-history-customer-menu{
+  min-width:150px !important;
+  max-width:220px !important;
+}
+
+#page-sales-history .sales-history-dd-option{
+  width:100% !important;
+  min-width:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:var(--text2) !important;
+  border-radius:9px !important;
+  padding:8px 10px !important;
+  text-align:left !important;
+  font-family:inherit !important;
+  font-size:13px !important;
+  font-weight:500 !important;
+  line-height:1.25 !important;
+  cursor:pointer !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:7px !important;
+  white-space:nowrap !important;
+}
+
+/* 不要原本的勾勾占位 */
+#page-sales-history .sales-history-dd-option::before{
+  content:none !important;
+  display:none !important;
+}
+
+#page-sales-history .sales-history-dd-option:hover{
+  background:var(--cream2) !important;
+}
+
+#page-sales-history .sales-history-dd-option.active{
+  background:var(--cream2) !important;
+  color:var(--brown) !important;
+  font-weight:700 !important;
+}
+
+#page-sales-history .sales-history-option-icon{
+  width:18px !important;
+  min-width:18px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 18px !important;
+  font-size:13px !important;
+  line-height:1 !important;
+}
+
+/* 上面的按鈕也顯示目前選項 icon；字維持單行 */
+#page-sales-history .sales-history-dd-btn > span:first-child{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  white-space:nowrap !important;
+}
+#page-sales-history .sales-history-current-icon{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:12px !important;
+  line-height:1 !important;
 }
 </style>
 
@@ -9424,6 +9553,26 @@ function salesHistoryDropdownOptions(key){
   ];
   return [];
 }
+
+function salesHistoryDropdownIcon(key,value){
+  value=String(value||'all');
+  if(key==='month'){
+    return value==='all' ? '📅' : '🗓️';
+  }
+  if(key==='customer'){
+    if(value==='all')return '👥';
+    if(value==='none')return '👤';
+    return '👤';
+  }
+  if(key==='kind'){
+    if(value==='all')return '🧾';
+    if(value==='deal')return '🎁';
+    if(value==='discount')return '🏷️';
+    if(value==='plain')return '🌸';
+  }
+  return '•';
+}
+
 function renderSalesHistoryDropdown(key,options,selected){
   const input=document.getElementById('sales-history-'+key);
   const menu=document.getElementById('sales-history-'+key+'-menu');
@@ -9432,8 +9581,14 @@ function renderSalesHistoryDropdown(key,options,selected){
   const valid=options.some(o=>String(o.value)===String(selected))?String(selected):'all';
   const current=options.find(o=>String(o.value)===valid)||options[0];
   input.value=valid;
-  label.textContent=current?.label||'全部';
-  menu.innerHTML=options.map(o=>`<button type="button" class="sales-history-dd-option ${String(o.value)===valid?'active':''}" data-value="${salesHistoryEsc(o.value)}" data-label="${salesHistoryEsc(o.label)}">${salesHistoryEsc(o.label)}</button>`).join('');
+
+  const currentIcon=salesHistoryDropdownIcon(key,current?.value);
+  label.innerHTML=`<span class="sales-history-current-icon" aria-hidden="true">${currentIcon}</span><span>${salesHistoryEsc(current?.label||'全部')}</span>`;
+
+  menu.innerHTML=options.map(o=>{
+    const icon=salesHistoryDropdownIcon(key,o.value);
+    return `<button type="button" class="sales-history-dd-option ${String(o.value)===valid?'active':''}" data-value="${salesHistoryEsc(o.value)}" data-label="${salesHistoryEsc(o.label)}"><span class="sales-history-option-icon" aria-hidden="true">${icon}</span><span>${salesHistoryEsc(o.label)}</span></button>`;
+  }).join('');
 }
 function closeSalesHistoryDropdowns(except){
   ['month','customer','kind'].forEach(key=>{
@@ -9459,7 +9614,6 @@ function pickSalesHistoryDropdown(event,key){
   const input=document.getElementById('sales-history-'+key);
   const label=document.getElementById('sales-history-'+key+'-label');
   if(input)input.value=option.dataset.value||'all';
-  if(label)label.textContent=option.dataset.label||option.textContent.trim();
   closeSalesHistoryDropdowns();
   renderSalesHistoryPage();
 }
