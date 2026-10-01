@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="typography-exact-v62">
+<meta name="andhug-build" content="order-save-exit-detail-v63">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -16796,6 +16796,7 @@ function backToSmartImportReview(){
   toast('已返回智慧匯入，剛才的組合商品與照片都還在','success');
 }
 function openAddOrder(){
+  setOrderSaveBusy(false);
   setOrderEditFooterFixed(false);
   editingOrderId=null;
   orderItemsUnlocked=false;
@@ -17365,7 +17366,7 @@ function setOrderEditFooterFixed(fixed){
 }
 
 function openEditOrder(id){
-  const o=DB.orders.find(x=>x.id===id);
+  setOrderSaveBusy(false);const o=DB.orders.find(x=>x.id===id);
   if(!o)return;
   setOrderEditFooterFixed(true);
   editingOrderId=id;
@@ -18138,10 +18139,30 @@ function syncOrderItemImagesToProducts(orderItems,supplier,date){
     }
   });
 }
+
+let orderSaveInProgress=false;
+function setOrderSaveBusy(isBusy){
+  orderSaveInProgress=!!isBusy;
+  const btn=document.getElementById('order-save-btn');
+  if(!btn)return;
+  btn.disabled=!!isBusy;
+  btn.style.pointerEvents=isBusy?'none':'';
+  btn.style.opacity=isBusy?'.72':'';
+  if(isBusy){
+    btn.dataset.prevHtml=btn.innerHTML;
+    btn.innerHTML='儲存中…';
+  }else if(btn.dataset.prevHtml){
+    btn.innerHTML=btn.dataset.prevHtml;
+    delete btn.dataset.prevHtml;
+  }
+}
+
 function saveOrder(event){
   if(event){event.preventDefault();event.stopPropagation();}
+  if(orderSaveInProgress)return;
   const supplier=document.getElementById('o-supplier').value.trim();
   if(!supplier){toast('請輸入店家名稱 🌸','error');return;}
+  setOrderSaveBusy(true);
   const rows=document.querySelectorAll('#order-items-list .order-item-row');
   const items=[];
   const isOriginalRow=[];
@@ -18179,7 +18200,7 @@ function saveOrder(event){
   const totalUsd=total*orderRate+feeUsd; // 支付手續費淘寶是直接用美金收的，不是人民幣換算過來的，要直接加，不能跟著匯率一起乘
   if(editingOrderId){
     const o=DB.orders.find(x=>x.id===editingOrderId);
-    if(!o){toast('找不到採購單','error');return;}
+    if(!o){setOrderSaveBusy(false);toast('找不到採購單','error');return;}
     const isReceived=o.status==='received';
     const productsBefore=JSON.parse(JSON.stringify(DB.products));
     const orderBefore=JSON.parse(JSON.stringify(o));
@@ -18260,10 +18281,12 @@ function saveOrder(event){
     }
     syncOrderItemImagesToProducts(o.items,supplier,o.date);
     saveDB();renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();
-    openModal('modal-order');
     const productsAfter=JSON.parse(JSON.stringify(DB.products));
     const orderAfter=JSON.parse(JSON.stringify(o));
     pushUndo({label:'編輯採購單「'+supplier+'」',undo:()=>{DB.products=productsBefore;const oi=DB.orders.findIndex(x=>x.id===o.id);if(oi!==-1)DB.orders[oi]=orderBefore;},redo:()=>{DB.products=productsAfter;const oi2=DB.orders.findIndex(x=>x.id===o.id);if(oi2!==-1)DB.orders[oi2]=orderAfter;}});
+    _actuallyCloseModal('modal-order');
+    setOrderSaveBusy(false);
+    openOrderDetail(o.id);
     toast('✅ 採購單已更新（⌘Z 撤銷）','success');
     return;
   }
@@ -18283,13 +18306,10 @@ function saveOrder(event){
   editingOrderId=order.id;
   orderItemsUnlocked=false;
   currentOrderFormRate=order.rateUsed;
-  document.getElementById('order-modal-title').textContent='✏️ 編輯採購單';
-  document.getElementById('order-save-btn').innerHTML='💾 儲存修改';
-  setOrderBackButtonMode('detail');
-  document.getElementById('order-unlock-btn').classList.add('hidden');
-  document.getElementById('order-save-draft-btn').classList.add('hidden');
-  openModal('modal-order');
-  toast(`✅ 採購單已建立！按「確認到貨」才會更新庫存與成本（⌘Z 撤銷）`, 'success');
+  _actuallyCloseModal('modal-order');
+  setOrderSaveBusy(false);
+  openOrderDetail(order.id);
+  toast(`✅ 採購單已建立！已開啟這筆採購單詳情（⌘Z 撤銷）`, 'success');
 }
 
 function renderOrderDetailRowsGrouped(items,cnyToUsdRatio){
