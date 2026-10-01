@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="typography-lighter-v60">
+<meta name="andhug-build" content="typography-exact-v62">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -6268,70 +6268,101 @@ nav .nav-link.active .ui-editable{
   font-size:12px !important;
 }
 </style>
-
-
-<style id="typography-lighter-v60">
-/* 只調字重，不動字體大小、間距、按鈕尺寸或版面位置 */
-.nav-item,
-.top-nav-item,
-.page-title,
-.section-title,
-.toolbar-label,
-.filter-label,
-.form-label,
-.modal-title,
-.cat-sidebar-item,
-.btn,
-button,
-.custom-select,
-.custom-dropdown,
-input,
-select,
-textarea{
-  font-weight:500 !important;
+<style id="combo-price-arrow-match-v61">
+/* 組合價展開/收起箭頭：改成和其他下拉選單一樣的小實心三角形 */
+#cart-deal-toggle-icon.cart-deal-toggle-triangle{
+  width:0 !important;
+  height:0 !important;
+  flex:0 0 auto !important;
+  display:inline-block !important;
+  border-left:4px solid transparent !important;
+  border-right:4px solid transparent !important;
+  border-top:5px solid #9f897b !important;
+  margin-right:1px !important;
+  transform:rotate(0deg) !important;
+  transform-origin:50% 45% !important;
+  transition:transform .15s ease !important;
 }
-
-/* 按鈕仍保留清楚的份量，但比原本輕 */
-.btn.btn-primary,
-.btn.btn-secondary,
-.btn-sm,
-.toolbar .btn,
-.topbar .btn,
-.modal .btn{
-  font-weight:600 !important;
+#cart-deal-toggle-icon.cart-deal-toggle-triangle.is-open{
+  transform:rotate(180deg) !important;
 }
+</style>
 
-/* 品牌與主要標題保留辨識度 */
-.brand,
-.brand-name,
-.logo-text,
-.app-brand,
-h1,
-h2,
-h3{
+
+<style id="typography-exact-v62">
+/* 最終字重規則：使用網站真正的 class 名稱，放在所有舊規則後面。
+   只改 font-weight，不動 font-size / padding / spacing / dimensions。 */
+
+/* 品牌名稱：700 */
+body nav .nav-brand,
+body nav .nav-brand .ui-editable{
   font-weight:700 !important;
 }
 
-/* 選中狀態稍微比一般項目重 */
-.nav-item.active,
-.top-nav-item.active,
-.nav-active,
-.sidebar-item.active,
-.cat-sidebar-item.active{
+/* 一般主導覽：500 */
+body nav .nav-link,
+body nav .nav-link .ui-editable{
+  font-weight:500 !important;
+}
+
+/* 選中的主導覽：600 */
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
   font-weight:600 !important;
 }
 
-/* 數值維持清楚，但避免過厚 */
-.total-value,
-.summary-value,
-.stat-value,
-.price,
-.amount{
+/* 一般頁面標籤 / 標題文字：500 */
+body .page-title,
+body .section-title,
+body .toolbar-label,
+body .filter-label,
+body .form-label,
+body label,
+body .modal-title,
+body .cat-sidebar-item,
+body .cat-sidebar-item .ui-editable,
+body .custom-select,
+body .custom-dropdown{
+  font-weight:500 !important;
+}
+
+/* 按鈕：600 */
+body .btn,
+body .btn.btn-primary,
+body .btn.btn-secondary,
+body .btn.btn-sm,
+body button.btn,
+body .toolbar .btn,
+body .topbar .btn,
+body .modal .btn{
   font-weight:600 !important;
 }
 
-.ui-editable,
-.ui-box-text{
+/* 側欄 / 選中狀態：600 */
+body .sidebar-item.active,
+body .cat-sidebar-item.active,
+body .cat-sidebar-item.active .ui-editable{
+  font-weight:600 !important;
+}
+
+/* 主要標題：700 */
+body h1,
+body h2,
+body h3{
+  font-weight:700 !important;
+}
+
+/* 常見數值：600 */
+body .total-value,
+body .summary-value,
+body .stat-value,
+body .price,
+body .amount{
+  font-weight:600 !important;
+}
+
+/* editable 跟隨父層，不自行被舊規則拉粗 */
+body .ui-editable{
   font-weight:inherit !important;
 }
 </style>
@@ -6541,7 +6572,7 @@ h3{
           <div class="checkout-box-title"><span>🧾 結帳資訊</span></div>
         <div id="cart-deal-wrap" style="margin:0 0 12px">
           <button type="button" onclick="toggleSaleDealPanel()" style="width:100%;box-sizing:border-box;border:1.5px solid var(--cream3);border-radius:12px;background:var(--cream2);padding:10px 11px;display:flex;align-items:center;justify-content:space-between;font-family:inherit;font-size:12px;font-weight:800;color:var(--text2);cursor:pointer">
-            <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.18"><span>🎁 組合價</span><span id="cart-deal-collapsed-value" style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--brown);margin-top:4px;display:none">0</span></span><span id="cart-deal-toggle-icon" style="font-size:10px;color:var(--text3)">▾</span>
+            <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.18"><span>🎁 組合價</span><span id="cart-deal-collapsed-value" style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--brown);margin-top:4px;display:none">0</span></span><span id="cart-deal-toggle-icon" class="cart-deal-toggle-triangle" aria-hidden="true"></span>
           </button>
           <div id="cart-deal-panel" class="hidden" style="margin-top:6px;background:var(--cream2);border-radius:12px;padding:7px"></div>
         </div>
@@ -19564,7 +19595,7 @@ function saleDealTargetLabel(target,targets){
 function toggleSaleDealPanel(force){
   const panel=document.getElementById('cart-deal-panel');if(!panel)return;
   const shouldOpen=typeof force==='boolean'?force:panel.classList.contains('hidden');panel.classList.toggle('hidden',!shouldOpen);
-  const ico=document.getElementById('cart-deal-toggle-icon');if(ico)ico.textContent=shouldOpen?'▴':'▾';
+  const ico=document.getElementById('cart-deal-toggle-icon');if(ico)ico.classList.toggle('is-open',shouldOpen);
   const collapsedValue=document.getElementById('cart-deal-collapsed-value');if(collapsedValue)collapsedValue.style.display=shouldOpen?'none':(cartDealInstances.length?'block':'none');
   if(shouldOpen)renderSaleDeals();
 }
