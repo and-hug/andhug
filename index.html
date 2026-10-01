@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="order-save-exit-detail-v63">
+<meta name="andhug-build" content="orders-render-fix-v66">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -6364,6 +6364,17 @@ body .amount{
 /* editable 跟隨父層，不自行被舊規則拉粗 */
 body .ui-editable{
   font-weight:inherit !important;
+}
+</style>
+
+
+<style id="overview-stock-alert-align-v64">
+/* 總覽三欄標題列高度一致：
+   庫存警示沒有「查看全部」按鈕，原本標題列只有 19px，
+   所以第一張警示卡會比左右兩欄高 12px。只補齊標題列高度，不改卡片本身。 */
+#page-overview .form-row > div:nth-child(3) > .section-header{
+  min-height:31px !important;
+  box-sizing:border-box !important;
 }
 </style>
 
@@ -14854,8 +14865,8 @@ function renderOrderItemsGrouped(items){
         ${sku?`<div style="font-size:9px;font-family:monospace;color:var(--text3);font-weight:700">${sku}</div>`:''}
         <div style="font-size:12px;color:var(--text1)">${i.name}</div>
       </div>
-      <div style="font-size:11px;color:var(--text3);white-space:nowrap">¥${(i.cost||0).toFixed(2)} × ${i.qty}</div>
-      <div style="font-size:12px;font-weight:700;color:var(--brown);white-space:nowrap;min-width:52px;text-align:right">¥${((i.cost||0)*(i.qty||1)).toFixed(2)}</div>
+      <div style="font-size:11px;color:var(--text3);white-space:nowrap">¥${Number(i.cost||0).toFixed(2)} × ${Number(i.qty||1)}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--brown);white-space:nowrap;min-width:52px;text-align:right">¥${(Number(i.cost||0)*Number(i.qty||1)).toFixed(2)}</div>
     </div>`;
   };
   let html='';
@@ -14870,7 +14881,7 @@ function renderOrderItemsGrouped(items){
         const gid=it.groupId;
         const gImg=members.find(m=>m.groupImg)?.groupImg||members.find(m=>m.img)?.img||'';
         const gLabel=it.groupLabel||members.map(m=>m.name).join('、');
-        const gTotal=members.reduce((sum,m)=>sum+(m.cost||0)*(m.qty||1),0);
+        const gTotal=members.reduce((sum,m)=>sum+Number(m.cost||0)*Number(m.qty||1),0);
         const gid2=`oig-${gid}`;
         const q=normalizeOrderSearchText(orderSearchQuery);
         const groupSearchMatch=!!q&&(normalizeOrderSearchText(gLabel).includes(q)||members.some(m=>isOrderItemSearchMatch(m,q)));
@@ -15041,6 +15052,10 @@ function clearOrderSupplierFilters(){
 }
 function setOrderSupplierFilter(name){
   activeOrderSupplierFilter=name||'all';
+  if(activeOrderSupplierFilter!=='all'){
+    orderSearchQuery='';
+    syncOrderSearchUI();
+  }
   renderOrders();
 }
 function renderOrderSupplierSidebar(){
@@ -15127,7 +15142,7 @@ function renderOrderSupplierSidebar(){
 function renderOrders(){
   const em=document.getElementById('order-empty');
   const container=document.getElementById('order-list');
-  const byTimeDesc=(a,b)=>{const d=b.date.localeCompare(a.date);if(d!==0)return d;return(b.createdAt||0)-(a.createdAt||0);};
+  const byTimeDesc=(a,b)=>{const d=String(b?.date||'').localeCompare(String(a?.date||''));if(d!==0)return d;return Number(b?.createdAt||0)-Number(a?.createdAt||0);};
   const byTimeAsc=(a,b)=>-byTimeDesc(a,b);
   let sorted=[...DB.orders];
   renderOrderSupplierSidebar();
@@ -15174,8 +15189,12 @@ function renderOrders(){
   const liveOrderIds=new Set((DB.orders||[]).map(o=>String(o.id)));
   [...expandedOrderAccordions].forEach(id=>{if(!liveOrderIds.has(String(id)))expandedOrderAccordions.delete(id);});
   container.innerHTML=sorted.map(o=>{
-    const isExpanded=expandedOrderAccordions.has(String(o.id));
-    const usd=(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2);
+    try{
+    const isExpanded=expandedOrderAccordions.has(String(o?.id||''));
+    const totalRmb=Number(o?.total||0);
+    const paidUsdRaw=o?.totalPaidUsdActual!==''&&o?.totalPaidUsdActual!=null?o.totalPaidUsdActual:o?.totalUsd;
+    const usdBase=paidUsdRaw!==''&&paidUsdRaw!=null?Number(paidUsdRaw):(totalRmb*Number(DB.rate||0));
+    const usd=(Number.isFinite(usdBase)?usdBase:0).toFixed(2);
     (o.items||[]).forEach(i=>{
       if(!i.productId){
         const p=DB.products.find(x=>x.name===i.name); // 舊資料沒存 productId 時，退回用名稱找
@@ -15191,7 +15210,7 @@ function renderOrders(){
         </div>
         <div style="text-align:right;margin-right:10px">
           <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px">$${usd}</div>
-          <div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(2)}</div>
+          <div style="font-size:10px;color:var(--text3);font-weight:600">¥${(Number.isFinite(totalRmb)?totalRmb:0).toFixed(2)}</div>
         </div>
         ${statusBadge(o.status||'ordered')}
         <span class="accordion-arrow" id="arrow-${o.id}">${isExpanded?'▲':'▼'}</span>
@@ -15206,6 +15225,21 @@ function renderOrders(){
         </div>
       </div>
     </div>`;
+    }catch(err){
+      console.error('採購單顯示失敗：',o,err);
+      const safeId=String(o?.id||'').replace(/'/g,"\\'");
+      const safeSupplier=escapeOrderSearchHtml(o?.supplier||'未命名採購單');
+      const safeDate=escapeOrderSearchHtml(o?.date||'日期未填');
+      return `<div class="order-accordion">
+        <div class="order-accordion-head" style="border-color:var(--cream4)">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:13px">${safeSupplier}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${safeDate} · 這筆資料格式需要修正</div>
+          </div>
+          ${safeId?`<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openEditOrder('${safeId}')">✏️ 編輯</button>`:''}
+        </div>
+      </div>`;
+    }
   }).join('');
   if(healedAnyProductId)saveDB(); // 把剛剛補上的 productId 連結存下來，下次就不用再找
   checkStaleOrders();
@@ -18150,11 +18184,20 @@ function setOrderSaveBusy(isBusy){
   btn.style.opacity=isBusy?'.72':'';
   if(isBusy){
     btn.dataset.prevHtml=btn.innerHTML;
-    btn.innerHTML='儲存中…';
+    btn.innerHTML='已送出';
   }else if(btn.dataset.prevHtml){
     btn.innerHTML=btn.dataset.prevHtml;
     delete btn.dataset.prevHtml;
   }
+}
+
+function showOrderSavedState(){
+  const btn=document.getElementById('order-save-btn');
+  if(!btn)return;
+  btn.disabled=true;
+  btn.style.pointerEvents='none';
+  btn.style.opacity='1';
+  btn.innerHTML='已儲存';
 }
 
 function saveOrder(event){
@@ -18284,6 +18327,7 @@ function saveOrder(event){
     const productsAfter=JSON.parse(JSON.stringify(DB.products));
     const orderAfter=JSON.parse(JSON.stringify(o));
     pushUndo({label:'編輯採購單「'+supplier+'」',undo:()=>{DB.products=productsBefore;const oi=DB.orders.findIndex(x=>x.id===o.id);if(oi!==-1)DB.orders[oi]=orderBefore;},redo:()=>{DB.products=productsAfter;const oi2=DB.orders.findIndex(x=>x.id===o.id);if(oi2!==-1)DB.orders[oi2]=orderAfter;}});
+    showOrderSavedState();
     _actuallyCloseModal('modal-order');
     setOrderSaveBusy(false);
     openOrderDetail(o.id);
@@ -18306,6 +18350,7 @@ function saveOrder(event){
   editingOrderId=order.id;
   orderItemsUnlocked=false;
   currentOrderFormRate=order.rateUsed;
+  showOrderSavedState();
   _actuallyCloseModal('modal-order');
   setOrderSaveBusy(false);
   openOrderDetail(order.id);
