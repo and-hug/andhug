@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="sidebar-all-product-label-v59">
+<meta name="andhug-build" content="typography-lighter-v60">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -6266,6 +6266,73 @@ nav .nav-link.active .ui-editable{
 #page-products .cat-status-child{
   padding-left:28px !important;
   font-size:12px !important;
+}
+</style>
+
+
+<style id="typography-lighter-v60">
+/* 只調字重，不動字體大小、間距、按鈕尺寸或版面位置 */
+.nav-item,
+.top-nav-item,
+.page-title,
+.section-title,
+.toolbar-label,
+.filter-label,
+.form-label,
+.modal-title,
+.cat-sidebar-item,
+.btn,
+button,
+.custom-select,
+.custom-dropdown,
+input,
+select,
+textarea{
+  font-weight:500 !important;
+}
+
+/* 按鈕仍保留清楚的份量，但比原本輕 */
+.btn.btn-primary,
+.btn.btn-secondary,
+.btn-sm,
+.toolbar .btn,
+.topbar .btn,
+.modal .btn{
+  font-weight:600 !important;
+}
+
+/* 品牌與主要標題保留辨識度 */
+.brand,
+.brand-name,
+.logo-text,
+.app-brand,
+h1,
+h2,
+h3{
+  font-weight:700 !important;
+}
+
+/* 選中狀態稍微比一般項目重 */
+.nav-item.active,
+.top-nav-item.active,
+.nav-active,
+.sidebar-item.active,
+.cat-sidebar-item.active{
+  font-weight:600 !important;
+}
+
+/* 數值維持清楚，但避免過厚 */
+.total-value,
+.summary-value,
+.stat-value,
+.price,
+.amount{
+  font-weight:600 !important;
+}
+
+.ui-editable,
+.ui-box-text{
+  font-weight:inherit !important;
 }
 </style>
 
