@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="drag-big-category-sku-only-v76">
+<meta name="andhug-build" content="drag-subcat-sku-prefix-only-v78">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -12142,18 +12142,12 @@ async function dropToSubcat(event,newSubcat){
   const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku,type:p.type}:null;}).filter(Boolean);
   const applyOne=(p)=>{
     if(!p)return false;
-    if(p.sku&&p.sku.length>=4){
-      p.sku=p.sku.slice(0,2)+newSubcat+p.sku.slice(4);
-      p.updatedAt=Date.now();
-      return true;
-    }
+    /* 拖到 01/AN、06/DR 這類子分類時，只寫「大分類 + 子分類」到 SKU。
+       不再保留舊的細項/顏色/流水號，也不再自動補 99 / 9900 / 001。 */
     let type=String(p.type||activeCat||'PA').toUpperCase();
-    if(!['PA','PB'].includes(type))type='PA';
-    const detail=(typeof inferSkuDetailFromName==='function'?(inferSkuDetailFromName(newSubcat,p.name)||'99'):'99');
-    const color='9900';
-    const serial=(typeof getNextSkuSerial==='function'?(getNextSkuSerial(type,newSubcat,detail,color,p.id)||'001'):'001');
+    if(!type)type='PA';
     p.type=type;
-    p.sku=`${type}${newSubcat}${detail}-${color}-${serial}`;
+    p.sku=`${type}${String(newSubcat||'').toUpperCase()}`;
     p.updatedAt=Date.now();
     return true;
   };
@@ -12176,7 +12170,7 @@ async function dropToSubcat(event,newSubcat){
   scheduleProductDragDropRefresh({products:true,subcats:true,cats:true});
   scheduleProductDragDropPersistence();
   const subLabel=(typeof SUBCAT_MAP!=='undefined'&&SUBCAT_MAP[newSubcat])?SUBCAT_MAP[newSubcat].split(' ')[0]:newSubcat;
-  toast(`已移動 ${count} 件到 ${newSubcat}/${subLabel}（⌘Z 撤銷）`,'success');
+  toast(`已移動 ${count} 件到 ${newSubcat}/${subLabel}；SKU 只填到子分類（⌘Z 撤銷）`,'success');
 }
 
 async function dropToTypeSubcat(event,newType,newSubtype){
@@ -25511,6 +25505,15 @@ window.addEventListener('beforeunload',function(e){
   display:block !important;
   flex:0 0 12px !important;
   transform:none !important;
+}
+</style>
+
+
+<style id="nav-active-lighter-v77">
+/* 選中的主導覽白字減輕 100：600 → 500；不動尺寸、位置、背景 */
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-weight:500 !important;
 }
 </style>
 
