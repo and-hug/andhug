@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="card-align-and-drag-shrink-v90">
+<meta name="andhug-build" content="price-stock-align-v93">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -11971,7 +11971,7 @@ function setSkuSubcatDropVisual(btn,on){
   const code=btn.dataset.skuSubcatDrop||'';
   const active=(typeof activeSubcat!=='undefined'&&activeSubcat===code);
   btn.classList.toggle('drag-over',!!on);
-  btn.style.background=on?'var(--peach-light)':(active?'var(--brown)':'var(--surface)');
+  btn.style.background=on?'var(--cream2)':(active?'var(--brown)':'var(--surface)');
   btn.style.borderColor=on?'var(--brown)':(active?'var(--brown)':'var(--cream3)');
 }
 function getProductSubcatDropTarget(target){
@@ -26130,6 +26130,67 @@ body .drag-sidebar-thumb .drag-sidebar-thumb-image img{
   height:100% !important;
   object-fit:cover !important;
   display:block !important;
+}
+</style>
+
+
+<style id="sidebar-all-colors-swap-v91">
+/* 只交換「全部」與「全商品」的底色 */
+#page-products .cat-status-parent{
+  background:var(--sidebar-active-bg) !important;
+}
+#page-products .cat-status-child:first-of-type{
+  background:var(--surface) !important;
+}
+
+/* hover 也維持交換後的顏色 */
+#page-products .cat-status-parent:hover{
+  background:var(--sidebar-active-bg) !important;
+}
+#page-products .cat-status-child:first-of-type:hover{
+  background:var(--surface) !important;
+}
+</style>
+
+
+<style id="drag-hover-no-pink-v92">
+/* 拖商品到分類 / 子分類時，不要粉紅色 hover */
+#page-products .cat-sidebar-item.drag-over,
+#page-products .cat-sidebar-item.cat-expanded.drag-over{
+  background:var(--cream2) !important;
+  color:var(--brown) !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 上方 SKU 子分類按鈕拖曳 hover 也不要粉紅 */
+#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
+#page-products #subcat-filters [data-product-drop-subcat].drag-over{
+  background:var(--cream2) !important;
+  border-color:var(--brown) !important;
+  color:var(--brown) !important;
+}
+</style>
+
+
+<style id="price-stock-align-v93">
+/* 商品卡最底排：1件 與 $2.00 垂直置中對齊 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  align-items:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  align-self:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  display:flex !important;
+  align-items:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  display:block !important;
+  line-height:18px !important;
+}
+body #page-products #product-grid.view-grid .product-card .stock-badge{
+  line-height:18px !important;
 }
 </style>
 
