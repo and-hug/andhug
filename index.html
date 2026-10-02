@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="unlock-button-compact-v73">
+<meta name="andhug-build" content="drag-big-category-sku-only-v76">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -6436,6 +6436,137 @@ body .ui-editable{
 }
 #page-orders .order-accordion.order-batch-selected .order-accordion-head{
   background:rgba(243,237,227,.72)!important;
+}
+</style>
+
+
+<style id="order-edit-footer-match-import-v74">
+/* v74: 編輯採購單底部排版完全對齊表格式匯入：
+   上排按鈕在分隔線上方、下排四顆在分隔線下方靠右，四周留白一致 */
+#modal-order .modal{
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+#modal-order .modal-body{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  padding-bottom:0 !important;
+}
+#modal-order #order-edit-action-footer{
+  flex:0 0 auto !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  margin:0 !important;
+  padding:16px 28px 18px !important;
+  background:var(--cream) !important;
+  border-top:0 !important;
+  overflow:visible !important;
+  z-index:40 !important;
+}
+#modal-order .order-footer-add-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+  flex-wrap:wrap !important;
+  margin:0 !important;
+  padding:0 0 16px 0 !important;
+  border:0 !important;
+}
+#modal-order .order-footer-main-row{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:12px !important;
+  flex-wrap:wrap !important;
+  margin:0 !important;
+  padding:16px 0 0 0 !important;
+}
+#modal-order .order-footer-main-row::before{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  height:1px !important;
+  background:var(--cream3) !important;
+  pointer-events:none !important;
+}
+#modal-order #order-back-btn{ order:1 !important; }
+#modal-order .order-cancel-btn{ order:2 !important; }
+#modal-order #order-draft-row{
+  order:3 !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+#modal-order #order-save-btn{ order:4 !important; }
+#modal-order .order-add-item-btn,
+#modal-order #order-group-toggle-btn,
+#modal-order #order-back-btn,
+#modal-order .order-cancel-btn,
+#modal-order #order-save-draft-btn,
+#modal-order #order-save-btn{
+  height:31px !important;
+  min-height:31px !important;
+  max-height:31px !important;
+  box-sizing:border-box !important;
+}
+#modal-order .section-title{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+#modal-order #order-unlock-btn{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  height:29px !important;
+  min-height:29px !important;
+  padding:0 10px !important;
+  font-size:11.5px !important;
+  line-height:1 !important;
+  font-weight:600 !important;
+}
+#modal-order #order-unlock-btn svg{
+  margin-right:0 !important;
+  vertical-align:middle !important;
+  flex:0 0 auto !important;
+}
+</style>
+
+
+<style id="order-selection-stronger-v75">
+/* Shift 多選：選到的採購單背景要一眼看得出來 */
+#page-orders .order-accordion.order-batch-selected{
+  background:#f1e7d8 !important;
+  border-color:var(--brown) !important;
+  box-shadow:0 0 0 2px rgba(139,111,71,.20) !important;
+}
+#page-orders .order-accordion.order-batch-selected .order-accordion-head{
+  background:#f1e7d8 !important;
+}
+#page-orders .order-accordion.order-batch-selected .order-accordion-head::before{
+  content:"" !important;
+  width:4px !important;
+  align-self:stretch !important;
+  border-radius:999px !important;
+  background:var(--brown) !important;
+  flex:0 0 4px !important;
+  margin-right:2px !important;
+}
+#page-orders .order-accordion.order-batch-selected:hover,
+#page-orders .order-accordion.order-batch-selected .order-accordion-head:hover{
+  background:#ede0cf !important;
 }
 </style>
 
@@ -8830,7 +8961,7 @@ function renderOverview(){
     }).join('');
   }
 }
-function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['✓ 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
+function statusBadge(s){const m={ok:['⭐ 正常','status-ok'],pending:['⏳ 待入庫','status-pending'],defect:['⚠️ 瑕疵','status-defect'],display:['🧸 展示','status-display'],received:['🚀 已到貨','status-received'],ordered:['<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="2" fill="currentColor"/><circle cx="17.3" cy="20.6" r="2" fill="currentColor"/></g></svg> 已下單','status-pending']};const[l,c]=m[s]||['未知',''];return `<span class="status ${c}">${l}</span>`;}
 const CAT_LABELS={PA:'布貼',PB:'毛布貼',RB:'織帶',PO:'袋子',BG:'包包',SK:'襪子',CL:'服飾',ZZ:'組合'};
 function getAllCategoryTypes(){
   const skuRows=(DB.skuTypes&&DB.skuTypes.length?DB.skuTypes:DEFAULT_SKU_TYPES)||[];
@@ -12129,21 +12260,43 @@ async function dropToCat(event,newType){
   if(newType==='all')return;
   const ids=getDragIds(event).filter(id=>{const p=DB.products.find(x=>x.id===id);return p&&p.type!==newType;});
   if(!ids.length)return;
-  const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,type:p.type,sku:p.sku}:null;}).filter(Boolean);
+
+  /* 拖到「大分類」時只指定大分類 SKU 前綴。
+     不再沿用舊 SKU 後面的子分類 / 細項 / 顏色 / 流水號，
+     也不自動猜子分類或顏色；這些欄位留給之後手動補。 */
+  const snapshot=ids.map(id=>{
+    const p=DB.products.find(x=>x.id===id);
+    return p?{
+      id,
+      type:p.type,
+      sku:p.sku,
+      typeSubcat:p.typeSubcat,
+      ribbonSubtype:p.ribbonSubtype
+    }:null;
+  }).filter(Boolean);
 
   const apply=()=>ids.forEach(id=>{
     const p=DB.products.find(x=>x.id===id);
     if(!p)return;
-    if(p.sku&&p.sku.length>=2)p.sku=newType+p.sku.slice(2);
-    else if(!p.sku)p.sku=newType;
-    p.type=newType;p.updatedAt=Date.now();
+    p.type=newType;
+    p.sku=String(newType||'').toUpperCase();
+    delete p.typeSubcat;
+    delete p.ribbonSubtype;
+    p.updatedAt=Date.now();
   });
   apply();
 
   _pushProductDragUndoFast({
     label:`移動 ${ids.length} 件`,
     undo:()=>{
-      snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x){x.type=s.type;x.sku=s.sku;}});
+      snapshot.forEach(s=>{
+        const x=DB.products.find(q=>q.id===s.id);
+        if(!x)return;
+        x.type=s.type;
+        x.sku=s.sku;
+        if(s.typeSubcat===undefined)delete x.typeSubcat;else x.typeSubcat=s.typeSubcat;
+        if(s.ribbonSubtype===undefined)delete x.ribbonSubtype;else x.ribbonSubtype=s.ribbonSubtype;
+      });
       saveDB({skipUndo:true});renderCatSidebar();renderSizeFilters();renderProducts();
     },
     redo:()=>{apply();saveDB({skipUndo:true});renderCatSidebar();renderSizeFilters();renderProducts();}
@@ -12151,7 +12304,7 @@ async function dropToCat(event,newType){
 
   scheduleProductDragDropRefresh({products:true,cats:true,sizes:true});
   scheduleProductDragDropPersistence();
-  toast(`已移動 ${ids.length} 件到 ${getTypeLabel(newType)}（⌘Z 撤銷）`,'success');
+  toast(`已移動 ${ids.length} 件到 ${getTypeLabel(newType)}；SKU 只填大分類，其餘留空（⌘Z 撤銷）`,'success');
 }
 
 let priceCompareSelectedIds=[];
