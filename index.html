@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="sidebar-allproducts-weight-fix-v87">
+<meta name="andhug-build" content="drag-small-on-category-v89">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -13474,7 +13474,7 @@ function renderProducts(options={}){
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
         </div>
         <div class="product-sku">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        ${/^[A-Za-z]{2}\d{2}-[A-Za-z0-9]+-\d+$/.test(String(p.sku||''))?'<div class="product-sku-pending-subcat">待選子分類</div>':''}
+        ${/^[A-Za-z]{2}\d{2}-[A-Za-z0-9]+-\d+$/.test(String(p.sku||''))?'<div class="product-sku-pending-subcat">待選子分類</div>':'<div class="product-sku-pending-subcat is-empty" aria-hidden="true">待選子分類</div>'}
 
         <div class="pc-flow">
           ${typeSubcat?`<div class="pc-subcat-code${p.type==='RB'?' rb-subcat-highlight':''}">${typeSubcat}/${p.type||''}</div>`:''}
@@ -13756,8 +13756,9 @@ function applyGhostSmallStyle(ghost,cardEl){
 }
 function maybeShrinkGhostForSidebar(){
   if(ptrDragIsBatch||!ptrGhostEl||!ptrDragCardEl)return;
-  // 單張商品拖到分類區時仍維持原本商品卡，不切小卡、不重建 DOM。
   ptrGhostSidebarLocked=true;
+  if(ptrGhostMode==='small')return;
+  applyGhostSmallStyle(ptrGhostEl,ptrDragCardEl);
 }
 function maybeRestoreGhostForGrid(){
   if(ptrGhostSidebarLocked)return;
@@ -25870,6 +25871,123 @@ setTimeout(function(){
   }
 },8000);
 </script>
+
+
+<style id="product-card-compact-align-v88">
+/* 只整理商品卡資訊區：
+   提示/分類/庫存之間縮緊；所有卡片的分類、進貨價、庫存、售價固定對齊。 */
+
+#product-grid.view-grid .product-card .product-info{
+  padding:8px 10px 9px !important;
+}
+
+/* 商品名 / SKU 維持目前樣式，只控制下面節奏 */
+#product-grid.view-grid .product-card .product-sku{
+  margin-bottom:0 !important;
+}
+
+/* 提示列：有提示顯示紅字，沒有提示只保留同樣 11px 高度，不會造成卡片一高一低 */
+#product-grid.view-grid .product-card .product-sku-pending-subcat{
+  display:block !important;
+  height:11px !important;
+  min-height:11px !important;
+  max-height:11px !important;
+  margin:2px 0 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--red) !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:11px !important;
+  white-space:nowrap !important;
+}
+#product-grid.view-grid .product-card .product-sku-pending-subcat.is-empty{
+  visibility:hidden !important;
+}
+
+/* 分類 / 進貨價：同一排、同一基線 */
+#product-grid.view-grid .product-card .pc-flow{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:baseline !important;
+  column-gap:8px !important;
+  row-gap:0 !important;
+  margin:1px 0 0 !important;
+  padding:0 !important;
+  line-height:1 !important;
+}
+#product-grid.view-grid .product-card .pc-subcat-code,
+#product-grid.view-grid .product-card .pc-catcode{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  align-self:baseline !important;
+  margin:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+}
+#product-grid.view-grid .product-card .pc-missing-cost-row{
+  display:contents !important;
+}
+#product-grid.view-grid .product-card .pc-cost{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  align-self:baseline !important;
+  justify-self:end !important;
+  margin:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+  white-space:nowrap !important;
+}
+#product-grid.view-grid .product-card .pc-cost-label{
+  font-weight:500 !important;
+}
+
+/* 缺：圖片等提示若存在，放在提示區，不額外撐分類列 */
+#product-grid.view-grid .product-card .pc-missing{
+  grid-column:1 / -1 !important;
+  grid-row:2 !important;
+  margin:1px 0 0 !important;
+  font-size:9px !important;
+  line-height:11px !important;
+}
+
+/* 庫存 / 售價：緊接分類列，左右同一底線 */
+#product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:end !important;
+  column-gap:8px !important;
+  margin-top:3px !important;
+  padding:0 !important;
+}
+#product-grid.view-grid .product-card .stock-badge{
+  justify-self:start !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#product-grid.view-grid .product-card .more-price-stack{
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:flex-end !important;
+  justify-self:end !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#product-grid.view-grid .product-card .more-cost{
+  display:none !important;
+}
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  margin:0 !important;
+  font-size:11px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  color:var(--text3) !important;
+}
+</style>
 
 </body>
 </html>
