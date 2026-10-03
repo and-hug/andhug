@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="consolidated-fixes-verified-v121">
+<meta name="andhug-build" content="product-list-missing-sku-align-v122">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -8355,7 +8355,7 @@ if(clearSeedImagesInMemory()){
   try{lsSet('patchDB_v3',JSON.stringify(DB));}catch(e){}
 }
 
-if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(removedLegacySales||migratedSockType||migratedClothingType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
+if(!DB.customers)DB.customers=[];if(!DB.samples)DB.samples=[];if(!DB.retiredSkuColors)DB.retiredSkuColors=[];if(!DB.settings)DB.settings={};if(DB.settings.lowStockAlertEnabled===undefined)DB.settings.lowStockAlertEnabled=true;if(DB.settings.outOfStockAlertEnabled===undefined)DB.settings.outOfStockAlertEnabled=true;if(DB.settings.cloudSyncFailAlertEnabled===undefined)DB.settings.cloudSyncFailAlertEnabled=true;if(DB.settings.uiEditMode===undefined)DB.settings.uiEditMode=false;if(!DB.settings.theme)DB.settings.theme='cream';if(!DB.uiOverrides)DB.uiOverrides={};if(DB.skuColors&&DB.skuColors.length){const toAdd=[];if(!DB.skuColors.some(r=>r.code==='15'))toAdd.push({code:'15',label:'金',hex:'#d4af37'});if(!DB.skuColors.some(r=>r.code==='16'))toAdd.push({code:'16',label:'銀',hex:'#c0c0c0'});if(!DB.skuColors.some(r=>r.code==='17'))toAdd.push({code:'17',label:'螢光綠',hex:'#C6FF00'});if(toAdd.length){const idx99=DB.skuColors.findIndex(r=>r.code==='99');if(idx99===-1)DB.skuColors.push(...toAdd);else DB.skuColors.splice(idx99,0,...toAdd);}}const t=todayStr();if(!DB.todaySales[t])DB.todaySales[t]={revenue:0,cost:0,records:[]};if(removedLegacySales||migratedSockType||migratedClothingType||migratedTheme)lsSet('patchDB_v3',JSON.stringify(DB));}
 let _autoSyncTimer=null;
 function backfillMissingSortOrders(){
   let maxSort=-10;
@@ -9406,6 +9406,9 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
   const serialEl=document.getElementById(prefix+'-sku-serialpart');
   const hidden=document.getElementById(prefix+'-sku');
   if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl&&hidden))return;
+  // p-* 編輯視窗的 inline handler 沒有帶 productId；編輯既有商品時自動使用 editingId。
+  // 這樣子分類/分類規則變動造成 SKU 欄位暫時不完整時，仍能保留原本 SKU，不會被清成「無 SKU」。
+  const effectiveProductId=productId||(prefix==='p'&&typeof editingId!=='undefined'?editingId:'');
   const type=sanitizeSkuPartValue(typeEl,'type');
   const cat=sanitizeSkuPartValue(catEl,'cat');
   const detail=sanitizeSkuPartValue(detailEl,'detail');
@@ -9423,30 +9426,31 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
     // 編輯既有商品時，只要前段 SKU 組合改了，就依「新的組合」重新排流水號。
     // 例：PA0599-9900-017 → 把 05 改成 06；
     // 若 PA0699-9900 尚無商品，就會自動變成 PA0699-9900-001。
-    const existingProduct=productId?(DB.products||[]).find(p=>String(p.id)===String(productId)):null;
+    const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
     const existingSku=existingProduct?String(existingProduct.sku||'').toUpperCase():'';
     const existingBaseMatch=existingSku.match(/^([A-Z]{2}\d{4}-[A-Z0-9]{4}-)/);
     const existingBase=existingBaseMatch?existingBaseMatch[1]:'';
     const baseChanged=!!(existingProduct&&existingBase&&existingBase!==base);
 
     const conflict=serial&&(DB.products||[]).some(
-      p=>String(p.id)!==String(productId||'')&&String(p.sku||'').toUpperCase()===base+serial
+      p=>String(p.id)!==String(effectiveProductId||'')&&String(p.sku||'').toUpperCase()===base+serial
     );
 
     if(baseChanged){
-      serial=getNextSkuSerial(type,cat,detail,color,productId);
+      serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
       serialEl.value=serial;
     }else if(!serial||conflict){
-      serial=getNextSkuSerial(type,cat,detail,color,productId);
+      serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
       serialEl.value=serial;
     }
 
     hidden.value=base+serial;
   }else{
-    // 輸入兩位分類碼途中可能短暫只有 1 碼；先保留畫面上的流水號，
-    // 等新的 SKU 前段完整後，再依新組合自動重新編號。
+    // 新增商品時 SKU 尚未完整可以維持空白；但編輯既有商品時，絕對不要因為
+    // 子分類被拿掉、規則改動或欄位短暫不完整，就把已存在的 SKU 覆寫成空白。
     if(!serial)serialEl.value='';
-    hidden.value='';
+    const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
+    hidden.value=existingProduct&&existingProduct.sku?String(existingProduct.sku).trim().toUpperCase():'';
   }
 }
 function autoSkuFromProductName(prefix,name,typeFieldId,productId){
@@ -11272,6 +11276,10 @@ function getSkuTypes(){
 }
 function getSkuCats(){return DB.skuCats&&DB.skuCats.length?DB.skuCats:DEFAULT_SKU_CATS;}
 function getSkuColors(){return DB.skuColors&&DB.skuColors.length?DB.skuColors:DEFAULT_SKU_COLORS;}
+function getRetiredSkuColor(code){
+  const c=String(code||'').trim().toUpperCase();
+  return (DB.retiredSkuColors||[]).find(r=>String(r.code||'').trim().toUpperCase()===c)||null;
+}
 function getSkuDraftSnapshot(){
   return JSON.parse(JSON.stringify({types:skuTypesDraft||[],sizes:skuSizesDraft||[],cats:skuCatsDraft||[],colors:skuColorsDraft||[],typeSubcats:skuTypeSubcatsDraft||{},typeDetails:skuTypeDetailsDraft||{}}));
 }
@@ -11791,7 +11799,27 @@ async function saveSkuEdits(options){
   DB.skuTypes=newSkuTypes.map(({code,label})=>({code,label}));
   DB.skuSizes=skuSizesDraft.filter(r=>r.code&&r.label);
   DB.skuCats=skuCatsDraft.filter(r=>r.code&&r.label);
-  DB.skuColors=skuColorsDraft.filter(r=>r.code&&r.label);
+
+  // 顏色規則採「退役」而不是改寫商品資料：
+  // 從規則頁刪除的顏色不再出現在可選清單，但既有商品 SKU 裡的舊顏色碼永久保留。
+  const oldActiveColors=(DB.skuColors&&DB.skuColors.length?DB.skuColors:DEFAULT_SKU_COLORS).map(r=>({
+    code:String(r.code||'').trim().toUpperCase(),label:String(r.label||'').trim(),hex:r.hex||''
+  })).filter(r=>r.code);
+  const nextActiveColors=(skuColorsDraft||[]).map(r=>({
+    code:String(r.code||'').trim().toUpperCase(),label:String(r.label||'').trim(),hex:r.hex||''
+  })).filter(r=>r.code&&r.label);
+  const nextColorCodes=new Set(nextActiveColors.map(r=>r.code));
+  if(!Array.isArray(DB.retiredSkuColors))DB.retiredSkuColors=[];
+  oldActiveColors.forEach(r=>{
+    if(nextColorCodes.has(r.code))return;
+    const idx=DB.retiredSkuColors.findIndex(x=>String(x.code||'').trim().toUpperCase()===r.code);
+    const retired={...r,retiredAt:Date.now()};
+    if(idx===-1)DB.retiredSkuColors.push(retired);
+    else DB.retiredSkuColors[idx]={...DB.retiredSkuColors[idx],...retired};
+  });
+  // 如果之後把同一顏色碼加回規則，從退役清單移除，恢復成正常規則。
+  DB.retiredSkuColors=DB.retiredSkuColors.filter(r=>!nextColorCodes.has(String(r.code||'').trim().toUpperCase()));
+  DB.skuColors=nextActiveColors;
 
   if(!DB.customTypes)DB.customTypes=[];
   const builtinCodes=new Set(DEFAULT_SKU_TYPES.map(r=>r.code));
@@ -14497,9 +14525,10 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
-  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const p={...existingBase,id,name,sku:document.getElementById('p-sku').value.trim().toUpperCase(),type:document.getElementById('p-type').value,size:document.getElementById('p-type').value==='RB'?'0':document.getElementById('p-size').value,ribbonLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:document.getElementById('p-type').value==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:document.getElementById('p-type').value==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
+  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const enteredSku=document.getElementById('p-sku').value.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
   if(DB.stockLedgerSyncV1&&!(p.variants&&p.variants.length))setManualStockTarget(p,Math.max(0,parseInt(document.getElementById('p-stock').value,10)||0));
-  delete p.color;delete p.style;syncEditedProductEverywhere(p,beforeSnapshot);
+  // 不再刪除舊 color/style 欄位；既有資料先保留，避免 SKU 異常時連顏色資訊一起失去。
+  syncEditedProductEverywhere(p,beforeSnapshot);
   const wasEditing=!!editingId;
   await saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
   if(!wasEditing){
@@ -15130,7 +15159,9 @@ async function saveFromStock(id){
   window._stockSnapshot=JSON.stringify(p); // save new snapshot
   const before=JSON.parse(JSON.stringify(p));
   p.name=document.getElementById('edit-name').value.trim()||p.name;
-  p.sku=document.getElementById('edit-sku').value.trim().toUpperCase();
+  const enteredSku=document.getElementById('edit-sku').value.trim().toUpperCase();
+  // 編輯既有商品時，畫面 SKU 若因子分類/規則變動暫時變空，保留原本 SKU。
+  p.sku=enteredSku||String(before.sku||'').trim().toUpperCase();
   p.type=document.getElementById('edit-type').value||p.type;
   p.typeSubcat=document.getElementById('edit-type-subcat')?.value||undefined;
   if(p.type==='RB')delete p.ribbonSubtype;
@@ -15178,7 +15209,7 @@ async function saveFromStock(id){
     p.img='';
   }
   window.pendingStockImgRemoved=false;
-  delete p.color;delete p.style;
+  // 保留既有 color/style；不要因單次編輯把舊顏色/樣式資料刪掉。
   p.updatedAt=Date.now();
   const after=JSON.parse(JSON.stringify(p));
   if(before.name&&after.name&&before.name!==after.name){
@@ -26328,7 +26359,7 @@ body #page-products #product-grid.view-grid .product-card .price-tag{
 <style id="overview-stats-restore-v97">
 /* 只把總覽統計卡恢復成舊版：內容置中、標題/數值字重與大小恢復 */
 #page-overview .stat-card{
-  text-align:center !important;
+  text-align:left !important;
 }
 #page-overview .stat-emoji{
   font-size:22px !important;
@@ -26340,7 +26371,7 @@ body #page-products #product-grid.view-grid .product-card .price-tag{
   line-height:1.25 !important;
   letter-spacing:.5px !important;
   margin-bottom:4px !important;
-  text-align:center !important;
+  text-align:left !important;
 }
 #page-overview .stat-value{
   font-family:'Nunito',sans-serif !important;
@@ -26989,5 +27020,58 @@ body nav .nav-link.active .ui-editable{
 }
 </style>
 
+
+<style id="product-list-missing-sku-align-v122">
+/* 商品庫 > 列表：紅色「缺：SKU」跟商品名稱左緣對齊 */
+body #page-products #product-grid.view-list .product-card .pc-missing-inline-list{
+  left:0 !important;
+  margin-left:0 !important;
+}
+</style>
+
+
+<style id="sales-size-text-match-stock-v116">
+/* 開單：M / S / L 等尺寸字母，文字顏色與「1件」低庫存膠囊一致 */
+body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
+body #page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
+  color:#8a6a1a !important;
+}
+</style>
+
+<style id="product-grid-missing-sku-overlay-cost-up-v123">
+/* 商品庫 > 格狀：
+   - 「缺：SKU」浮在 06/DR（分類碼）正上方，不新增一整行、不撐高卡片。
+   - 進貨價往上 2px。 */
+body #page-products #product-grid.view-grid .product-card .pc-flow{
+  position:relative !important;
+}
+
+/* 不再使用原本會佔 grid row 的缺資料列。 */
+body #page-products #product-grid.view-grid .product-card .pc-missing{
+  display:none !important;
+}
+
+/* 使用同一份缺資料提示，但改成浮動，不參與 layout。 */
+body #page-products #product-grid.view-grid .product-card .pc-missing-inline-list{
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  bottom:100% !important;
+  margin:0 0 1px 0 !important;
+  padding:0 !important;
+  color:var(--red) !important;
+  font-family:inherit !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:10px !important;
+  white-space:nowrap !important;
+  pointer-events:none !important;
+}
+
+/* 原本 v120 是 top:9px，這裡往上 2px。 */
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  top:7px !important;
+}
+</style>
 </body>
 </html>
