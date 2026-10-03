@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="price-stock-align-v93">
+<meta name="andhug-build" content="sales-list-size-badge-v103">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -26191,6 +26191,403 @@ body #page-products #product-grid.view-grid .product-card .price-tag{
 }
 body #page-products #product-grid.view-grid .product-card .stock-badge{
   line-height:18px !important;
+}
+</style>
+
+
+<style id="price-stock-row-fixed-v94">
+/* 商品卡最底排固定 24px：1件 與 $2.00 共用同一列 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  margin-top:3px !important;
+  padding:0 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .stock-badge{
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-self:center !important;
+  margin:0 !important;
+  line-height:1 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  align-self:center !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  display:inline-flex !important;
+  align-items:center !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  margin:0 !important;
+  padding:0 !important;
+  line-height:24px !important;
+  font-weight:700 !important;
+  transform:translateY(-1px) !important;
+}
+</style>
+
+
+<style id="sidebar-parent-dark-child-light-v95">
+/* 商品庫左側分類：主要分類用深米色，下面選到的小分類用淺米色。
+   只改這個側欄的底色，不動字體、排版、商品卡。 */
+
+/* 主要分類：全部 / 布貼 / 毛布貼 ... 展開時固定較深底 */
+#page-products #cat-sidebar .cat-status-parent.cat-expanded,
+#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded{
+  background:#e9e2d8 !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 下面的小分類：全商品 / 待完善 / 已完善 / 已完成 / 尺寸 / 子分類
+   被點選時只用淺米色 */
+#page-products #cat-sidebar .cat-status-child.active,
+#page-products #cat-sidebar .cat-filter-row.active{
+  background:#f3ede3 !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 沒選中的小分類維持白底 */
+#page-products #cat-sidebar .cat-status-child:not(.active),
+#page-products #cat-sidebar .cat-filter-row:not(.active){
+  background:var(--surface) !important;
+}
+
+/* 主分類 hover 不變粉紅，仍是深米色 */
+#page-products #cat-sidebar .cat-status-parent.cat-expanded:hover,
+#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded:hover{
+  background:#e9e2d8 !important;
+}
+
+/* 小分類 hover 不用粉紅；選中維持淺米色，未選中則淡米白 */
+#page-products #cat-sidebar .cat-status-child.active:hover,
+#page-products #cat-sidebar .cat-filter-row.active:hover{
+  background:#f3ede3 !important;
+}
+#page-products #cat-sidebar .cat-status-child:not(.active):hover,
+#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
+  background:#faf7f2 !important;
+}
+
+/* 拖商品放到分類 / 小分類時不要粉紅色 */
+#page-products #cat-sidebar .cat-sidebar-item.drag-over,
+#page-products #cat-sidebar .cat-sidebar-item.cat-expanded.drag-over,
+#page-products #cat-sidebar .cat-filter-row.drag-over{
+  background:#f3ede3 !important;
+  color:var(--brown) !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 上方 01/AN、06/DR 這種子分類拖曳 hover 也不要粉紅 */
+#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
+#page-products #subcat-filters [data-product-drop-subcat].drag-over{
+  background:#f3ede3 !important;
+  border-color:var(--brown) !important;
+  color:var(--brown) !important;
+}
+</style>
+
+
+<style id="sidebar-child-hover-swap-v96">
+/* 只交換小分類的「選中底色」與「hover 底色」 */
+#page-products #cat-sidebar .cat-status-child.active,
+#page-products #cat-sidebar .cat-filter-row.active{
+  background:#FAF7F2 !important;
+}
+#page-products #cat-sidebar .cat-status-child.active:hover,
+#page-products #cat-sidebar .cat-filter-row.active:hover{
+  background:#FAF7F2 !important;
+}
+#page-products #cat-sidebar .cat-status-child:not(.active):hover,
+#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
+  background:#F3EDE3 !important;
+}
+</style>
+
+
+<style id="overview-stats-restore-v97">
+/* 只把總覽統計卡恢復成舊版：內容置中、標題/數值字重與大小恢復 */
+#page-overview .stat-card{
+  text-align:center !important;
+}
+#page-overview .stat-emoji{
+  font-size:22px !important;
+  margin-bottom:8px !important;
+}
+#page-overview .stat-label{
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  letter-spacing:.5px !important;
+  margin-bottom:4px !important;
+  text-align:center !important;
+}
+#page-overview .stat-value{
+  font-family:'Nunito',sans-serif !important;
+  font-size:24px !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+}
+</style>
+
+
+<style id="sales-category-font-match-v98">
+/* 開單左側分類字體 = 商品庫左側分類字體，只改字體層級，不改底色/間距/功能 */
+#page-sales #sale-cat-sidebar .cat-sidebar-item{
+  font-size:11px !important;
+  font-weight:600 !important;
+  line-height:1.25 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item .ui-editable{
+  font-size:inherit !important;
+  font-weight:600 !important;
+  line-height:inherit !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item > span[style*="margin-left:auto"]{
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-header{
+  font-size:9px !important;
+  font-weight:800 !important;
+  letter-spacing:.8px !important;
+}
+/* 開單展開後的小分類文字也跟商品庫一致，不吃 inline 12px / 11.5px */
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"]{
+  font-size:11px !important;
+  font-weight:600 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] > span:first-child,
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] .cat-subcat-label-wrap > span:first-child{
+  font-weight:600 !important;
+}
+</style>
+
+
+<style id="sales-card-position-restore-v99">
+/* 只恢復「開單 > 格狀商品卡」的位置排版成舊版：
+   商品名在上，尺寸 + 庫存在左下，售價在右下；全部同一基線。 */
+#page-sales #sale-product-grid.view-grid .product-card .product-info{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  padding:6px 12px 12px !important;
+  background:var(--surface) !important;
+  box-sizing:border-box !important;
+}
+
+#page-sales #sale-product-grid.view-grid .product-card .product-name{
+  margin:0 0 3px !important;
+  padding:0 !important;
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+}
+
+#page-sales #sale-product-grid.view-grid .product-card .product-meta{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  width:100% !important;
+  margin-top:auto !important;
+  padding:0 !important;
+  position:static !important;
+  inset:auto !important;
+  transform:none !important;
+  white-space:nowrap !important;
+}
+
+/* 左邊：尺寸 + 庫存 */
+#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:6px !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+/* 把之前後來加的 top / 負 margin 全部拿掉，回到舊版同一水平線 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
+  position:static !important;
+  top:auto !important;
+  left:auto !important;
+  margin:0 !important;
+  align-self:center !important;
+}
+
+#page-sales #sale-product-grid.view-grid .product-card .price-tag{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  margin:0 !important;
+  align-self:center !important;
+}
+</style>
+
+
+<style id="sales-card-font-restore-v100">
+/* 只把「開單 > 格狀商品卡」字體恢復成舊版第二張的樣子；
+   不動 v99 已修好的位置與對齊。 */
+
+#page-sales #sale-product-grid.view-grid .product-card .product-name{
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  color:var(--text) !important;
+}
+
+/* 尺寸 S / M：小、淡 */
+#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > span:first-child{
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  color:var(--text3) !important;
+}
+
+/* 庫存膠囊：回到舊版小字 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  padding:3px 8px !important;
+}
+
+/* 售價：回到舊版比較小、比較柔和，不要 13px 粗大字 */
+#page-sales #sale-product-grid.view-grid .product-card .price-tag{
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  color:var(--text3) !important;
+}
+</style>
+
+
+<style id="product-more-right-align-v101">
+#page-products #product-grid.view-large .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:end !important;
+  column-gap:6px !important;
+  margin-top:auto !important;
+  padding:0 !important;
+}
+#page-products #product-grid.view-large .product-card .stock-badge{
+  justify-self:start !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#page-products #product-grid.view-large .product-card .stock-default-text{
+  display:none !important;
+}
+#page-products #product-grid.view-large .product-card .stock-more-number{
+  display:inline !important;
+}
+#page-products #product-grid.view-large .product-card .more-price-stack{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  justify-content:flex-end !important;
+  justify-self:end !important;
+  width:max-content !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:right !important;
+}
+#page-products #product-grid.view-large .product-card .more-cost,
+#page-products #product-grid.view-large .product-card .price-tag{
+  display:block !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+}
+#page-products #product-grid.view-large .product-card .more-cost{
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:1.1 !important;
+  color:var(--text3) !important;
+}
+#page-products #product-grid.view-large .product-card .price-tag{
+  margin-top:2px !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1.05 !important;
+  color:var(--text3) !important;
+}
+</style>
+
+
+<style id="product-pending-red-v102">
+/* 商品庫橫向 more 卡：待選子分類改成紅色純文字，跟格狀卡一致 */
+body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat{
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:3px 0 6px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--red) !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+}
+body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat.is-empty{
+  display:none !important;
+}
+</style>
+
+
+<style id="sales-list-size-badge-v103">
+/* 開單 > 列表：尺寸 M / S / XS 保持原本位置，只改成跟庫存一樣的圓角黃底小膠囊 */
+#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child > span:first-child{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:24px !important;
+  height:24px !important;
+  padding:0 8px !important;
+  box-sizing:border-box !important;
+  border-radius:999px !important;
+  background:var(--yellow-light) !important;
+  color:#8a6a1a !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  margin:0 !important;
 }
 </style>
 
