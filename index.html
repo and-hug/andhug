@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="nav-font-match-categories-v119">
+<meta name="andhug-build" content="consolidated-fixes-verified-v121">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -26905,6 +26905,84 @@ body #page-sales #sale-product-grid.view-grid .product-card .stock-badge{
 body .nav-item,
 body .top-nav .nav-item,
 body nav .nav-item{
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+}
+</style>
+
+
+<style id="consolidated-fixes-v120">
+/* =========================================================
+   重新落實 v115 之後使用者要求的幾項修改。
+   這一層使用實際 DOM class，並在瀏覽器 render 後驗證。
+   ========================================================= */
+
+/* 1) 商品庫：格狀 / 更多 / 列表 的庫存膠囊都往左一點 */
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-large .product-card .stock-badge,
+body #page-products #product-grid.view-list .product-card .stock-badge{
+  position:relative !important;
+  left:-2px !important;
+}
+
+/* 2) 商品庫列表：商品名稱 + SKU 往上，名稱上緣對齊右上垃圾桶；
+      SKU 與右側進貨價不要粗體。 */
+body #page-products #product-grid.view-list .product-card .product-info{
+  justify-content:flex-start !important;
+  padding-top:8px !important;
+}
+body #page-products #product-grid.view-list .product-card .product-name,
+body #page-products #product-grid.view-list .product-card .product-sku{
+  top:0 !important;
+}
+body #page-products #product-grid.view-list .product-card .product-sku{
+  font-weight:400 !important;
+}
+body #page-products #product-grid.view-list .product-card .more-cost{
+  font-weight:400 !important;
+}
+
+/* 3) 商品庫格狀：右側進貨價貼近下面售價。
+      不移動底排售價/庫存，因此仍維持 1件 與 $ 同一水平線。 */
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  position:relative !important;
+  top:9px !important;
+}
+
+/* 4) 開單格狀：整組「1件 + M/S/XS」往左一點，
+      並把兩顆膠囊之間的視覺間距縮緊。 */
+body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
+  position:relative !important;
+  left:-2px !important;
+  gap:2px !important;
+}
+body #page-sales #sale-product-grid.view-grid .product-card .stock-badge,
+body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
+  left:0 !important;
+}
+
+/* 5) 主導覽列：真的套到實際使用的 .nav-link，
+      跟商品庫分類一樣 11px / 600 / inherit。 */
+body nav .nav-link,
+body nav .nav-link .ui-editable{
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+}
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-weight:600 !important;
+}
+</style>
+
+
+<style id="nav-font-final-v121">
+/* v121：舊的 active nav 規則 specificity 較高，這裡明確覆蓋 active / inactive。 */
+body nav .nav-link,
+body nav .nav-link .ui-editable,
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
   font-family:inherit !important;
   font-size:11px !important;
   font-weight:600 !important;
