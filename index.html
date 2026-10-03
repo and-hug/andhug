@@ -4554,7 +4554,7 @@ label.form-label:has(.label-info-badge){
 }
 </style>
 
-<meta name="andhug-build" content="sales-grid-bottom-padding-v114">
+<meta name="andhug-build" content="nav-font-match-categories-v119">
 
 <style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
@@ -26836,6 +26836,78 @@ body #page-sales #sale-product-grid.view-grid .product-card .price-tag{
 /* 開單 > 格狀：只把文字區底部留白縮小 2px，上方不動 */
 body #page-sales #sale-product-grid.view-grid .product-card .product-info{
   padding-bottom:10px !important;
+}
+</style>
+
+
+<style id="product-stock-badge-left-v115">
+/* 商品庫：格狀 / 更多 / 列表 的「1件」統一往左微移 1px，其他不動 */
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-large .product-card .stock-badge,
+body #page-products #product-grid.view-list .product-card .stock-badge{
+  position:relative !important;
+  left:-1px !important;
+}
+</style>
+
+
+<style id="product-list-top-align-text-v116">
+/* 商品庫 > 列表：
+   商品名稱 + SKU 往上，跟右上垃圾桶的水平位置更一致；
+   SKU 與進貨價改回較細字重。 */
+
+body #page-products #product-grid.view-list .product-card .product-info{
+  justify-content:flex-start !important;
+  padding-top:8px !important;
+}
+
+/* 名稱直接從上方開始，不再因舊規則置中 */
+body #page-products #product-grid.view-list .product-card .product-name{
+  margin-top:0 !important;
+}
+
+/* SKU 不要粗體 */
+body #page-products #product-grid.view-list .product-card .product-sku{
+  font-weight:500 !important;
+}
+
+/* 列表右側的進貨價不粗體 */
+body #page-products #product-grid.view-list .product-card .more-cost{
+  font-weight:500 !important;
+}
+</style>
+
+
+<style id="product-grid-cost-price-tight-v117">
+/* 商品庫 > 格狀：進貨價貼近下面售價，不留額外空白 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  margin-top:0 !important;
+}
+</style>
+
+
+<style id="sales-grid-stock-left-gap-tight-v118">
+/* 開單 > 格狀：
+   1件 再往左 1px；M / S / XS 與 1件 的間距再縮小。 */
+body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
+  gap:3px !important;
+}
+
+body #page-sales #sale-product-grid.view-grid .product-card .stock-badge{
+  position:relative !important;
+  left:-1px !important;
+}
+</style>
+
+
+<style id="nav-font-match-categories-v119">
+/* 主導覽列字體比照商品庫分類文字 */
+body .nav-item,
+body .top-nav .nav-item,
+body nav .nav-item{
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
 }
 </style>
 
