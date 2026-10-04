@@ -5,8 +5,343 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>🧸 布貼庫存系統</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="andhug-build" content="product-list-missing-sku-align-v122">
+
+
+<script>
+(function(){
+  const killRescueUI=()=>{
+    document.querySelectorAll(
+      '#patchdb-rescue-overlay,[id^="patchdb-rescue"],[class*="patchdb-rescue"]'
+    ).forEach(el=>el.remove());
+  };
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',killRescueUI,{once:true});
+  }else{
+    killRescueUI();
+  }
+  const observer=new MutationObserver(killRescueUI);
+  const start=()=>{ if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true}); };
+  if(document.documentElement) start(); else document.addEventListener('DOMContentLoaded',start,{once:true});
+  window.__PATCHDB_RESCUE_DISABLED__=true;
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
 :root {
   --cream:#faf7f2;--cream2:#f3ede3;--cream3:#ebe3d5;--cream4:#ddd3c0;
   --brown:#8b6f47;--brown-light:#b89a72;
@@ -2315,19 +2650,6 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   background: var(--cream2) !important;
 }
 
-</style>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-
-
-
-
-
-
-<style id="sales-history-custom-dropdown-style">
 #page-sales-history .sales-history-dd{position:relative;min-width:132px}
 #page-sales-history .sales-history-dd-btn{
   width:100%;height:36px;box-sizing:border-box;
@@ -2369,12 +2691,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 #page-sales-history .sales-history-dd-option:not(.active)::before{
   content:'';display:inline-block;width:16px
 }
-</style>
 
-
-
-
-<style id="andhug-final-product-card-colors">
 /* 截圖原本配色：商品庫＋開單，上方奶油米色、下方白色 */
 #product-grid .product-card,
 #sale-product-grid .product-card{
@@ -2388,10 +2705,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 #sale-product-grid .product-card .product-info{
   background:var(--surface)!important;
 }
-</style>
 
-
-<style id="andhug-more-white-divider-confirmed">
 /* 更多（商品庫＋開單）都改成：
    1) 圖片外圍全白
    2) 文字區全白
@@ -2416,13 +2730,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   border-top:1px solid var(--cream3) !important;
   box-sizing:border-box !important;
 }
-</style>
 
-
-
-
-
-<style id="andhug-grid-cat-remove-only-two-long-lines-final">
 /* 格狀拖曳：
    只移除旋轉後凸出方格的兩條長線。
    貓咪本體保持完整可見；不使用 overflow 裁整隻貓。 */
@@ -2436,10 +2744,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   -webkit-mask-image:none !important;
   mask-image:none !important;
 }
-</style>
 
-
-<style id="recent-fixes-reconciled">
 /* Supplier profile category row: small tag-like buttons, no checkbox/checkmark */
 #supplier-profile-category-options{
   display:flex !important;
@@ -2572,10 +2877,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   font-size:14px !important;
   line-height:1 !important;
 }
-</style>
 
-
-<style id="sales-toolbar-height-fix">
 #page-sales .sale-search-toolbar > .search-wrap,
 #page-sales .sale-search-toolbar > .search-wrap .search-input{
   height:34px !important;
@@ -2610,10 +2912,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   max-height:34px !important;
   box-sizing:border-box !important;
 }
-</style>
 
-
-<style id="supplier-delete-ui-fix-v2">
 #supplier-profile-category-options{
   position:relative !important;
   top:2px !important;
@@ -2653,10 +2952,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   height:7px !important;
   flex:0 0 7px !important;
 }
-</style>
 
-
-<style id="supplier-delete-ui-refine-v3">
 /* Smaller delete X */
 #supplier-profile-category-options .supplier-category-custom-remove{
   width:12px !important;
@@ -2678,10 +2974,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 #supplier-profile-category-options .supplier-category-delete-toggle{
   transform:translateY(-1px) !important;
 }
-</style>
 
-
-<style id="order-search-summary-thumbnails">
 .order-search-summary-row{
   grid-template-columns:minmax(0,1fr) auto !important;
   min-height:42px;
@@ -2717,10 +3010,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   gap:7px;
   flex-wrap:wrap;
 }
-</style>
 
-
-<style id="supplier-categories-tags-34">
 /* 供應類別整排統一 34px */
 #supplier-profile-category-options .supplier-category-choice,
 #supplier-profile-category-options .supplier-category-add,
@@ -2749,27 +3039,18 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   padding-top:0 !important;
   padding-bottom:0 !important;
 }
-</style>
 
-
-<style id="order-summary-chip-text-up-1">
 .order-search-summary-chip-text{
   display:inline-block;
   transform:translateY(-1px);
 }
-</style>
 
-
-<style id="supplier-card-tag-text-up-1">
 .orders-supplier-mini-cat,
 .supplier-meta-chip.category{
   position:relative;
   top:-1px;
 }
-</style>
 
-
-<style id="global-box-text-centering">
 /* 統一「框框裡的文字」視覺中心：框本身不動，只把文字往上 1px */
 .ui-box-text{
   display:inline-block !important;
@@ -2803,17 +3084,11 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   justify-content:center !important;
   line-height:1 !important;
 }
-</style>
 
-
-<style id="global-box-text-centering-fix-v2">
 #supplier-profile-category-options .supplier-category-choice > .ui-box-text{
   transform:translateY(-1px) !important;
 }
-</style>
 
-
-<style id="remove-native-search-cancel">
 /* 採購單搜尋框：移除瀏覽器原生藍色清除 ×，只保留網站自己的咖啡色 × */
 #order-search-input::-webkit-search-cancel-button,
 #order-search-input::-webkit-search-decoration{
@@ -2827,19 +3102,13 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   width:0;
   height:0;
 }
-</style>
 
-
-<style id="supplier-top-filters-text-down-1">
 /* 右側供應商上方六個分類：只把文字往下 1px。
    下方供應商卡片的小標籤位置維持不動。 */
 #orders-supplier-category-filters .orders-supplier-filter > .ui-box-text{
   transform:translateY(0) !important;
 }
-</style>
 
-
-<style id="supplier-profile-compact-32">
 /* 供應商編輯視窗：分類與標籤統一 32px，整體收緊 */
 #supplier-profile-category-options{
   gap:5px !important;
@@ -2887,10 +3156,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 #supplier-profile-category-options + .form-group{
   margin-top:10px !important;
 }
-</style>
 
-
-<style id="records-search-match-order-search">
 /* 記錄頁搜尋框：改成和採購單搜尋同樣的字感與顏色 */
 .sales-history-input{
   color:var(--text1) !important;
@@ -2900,10 +3166,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   color:var(--text3) !important;
   font-weight:500 !important;
 }
-</style>
 
-
-<style id="global-search-match-order-style">
 /* 讓所有搜尋框的文字、placeholder、icon 都跟採購單搜尋同一個風格 */
 .search-input,
 .sales-history-input,
@@ -2947,10 +3210,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   padding-top:0 !important;
   padding-bottom:0 !important;
 }
-</style>
 
-
-<style id="global-search-icons-complete">
 /* 紀錄頁搜尋：和採購單同款放大鏡 */
 .sales-history-search-wrap{
   position:relative;
@@ -2991,10 +3251,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   width:100% !important;
   padding-left:32px !important;
 }
-</style>
 
-
-<style id="supplier-profile-match-outside-v1">
 /* 供應商編輯視窗：分類框框恢復成外面供應商篩選同一套樣式 */
 #supplier-profile-category-options{
   gap:6px !important;
@@ -3073,10 +3330,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   color:var(--text3) !important;
   font-weight:500 !important;
 }
-</style>
 
-
-<style id="supplier-profile-align-and-infoicon">
 /* 讓上面的分類列左邊起點跟下面客製化輸入框對齊 */
 #supplier-profile-category-options{
   padding:4px 0 5px 0 !important;
@@ -3102,10 +3356,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   user-select:none;
   transform:translateY(-0.5px);
 }
-</style>
 
-
-<style id="product-modal-paw-title-v1">
 /* 商品打開後：標題前面加貓掌，名稱往右退一點 */
 #stock-modal-title{
   min-height:24px;
@@ -3136,27 +3387,18 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
   display:inline-block;
   margin-left:2px;
 }
-</style>
 
-
-<style id="product-modal-paw-title-v2">
 #stock-modal-title .stock-modal-title-row{gap:4px !important;}
 #stock-modal-title .stock-modal-paw{border:0 !important;padding:0 !important;margin:0 !important;background:transparent !important;cursor:pointer !important;appearance:none !important;-webkit-appearance:none !important;border-radius:6px !important;transition:transform .12s ease, opacity .12s ease !important;}
 #stock-modal-title .stock-modal-paw:hover{transform:translateY(-0.5px) scale(1.06) !important;}
 #stock-modal-title .stock-modal-paw:active{transform:translateY(-0.5px) scale(.96) !important;}
 #stock-modal-title .stock-modal-title-text{margin-left:0 !important;}
-</style>
 
-
-<style id="supplier-category-row-text-down-1">
 /* 供應類別這整排字往下 1px（相對於現在的位置） */
 #supplier-profile-category-options .ui-box-text{
   transform:translateY(0px) !important;
 }
-</style>
 
-
-<style id="supplier-category-row-text-down-1-v2">
 /* 更高優先級：供應類別這整排字往下 1px */
 #supplier-profile-category-options .supplier-category-choice > .ui-box-text,
 #supplier-profile-category-options .supplier-category-add > .ui-box-text,
@@ -3164,10 +3406,7 @@ body > .product-card .price-tag{font-family:inherit!important;font-size:13px!imp
 #supplier-profile-category-options .supplier-category-add-confirm > .ui-box-text{
   transform:translateY(0px) !important;
 }
-</style>
 
-
-<style id="supplier-label-infoicon-small-aligned">
 /* 標籤旁邊的 i：縮小，並和「標籤」文字對齊 */
 label.form-label:has(.label-info-badge){
   align-items:center !important;
@@ -3187,10 +3426,7 @@ label.form-label:has(.label-info-badge){
   margin-left:1px !important;
   flex:0 0 12px !important;
 }
-</style>
 
-
-<style id="supplier-categories-wrap-next-line">
 /* 供應類別太多時自動換到下一行，不再一直往右撐 */
 #supplier-profile-category-options{
   flex-wrap:wrap !important;
@@ -3203,19 +3439,13 @@ label.form-label:has(.label-info-badge){
 #supplier-profile-category-options .supplier-category-add-editor{
   flex-wrap:nowrap !important;
 }
-</style>
 
-
-<style id="supplier-card-show-all-categories">
 /* 供應商卡片顯示所有已選供應類別，不只前兩個 */
 .orders-supplier-card .orders-supplier-mini-cats,
 .orders-supplier-card .orders-supplier-meta{
   flex-wrap:wrap !important;
 }
-</style>
 
-
-<style id="supplier-four-groups-v1">
 #supplier-profile-capabilities-options,
 #supplier-profile-advantages-options,
 #supplier-profile-sources-options{
@@ -3320,10 +3550,7 @@ label.form-label:has(.label-info-badge){
   font-family:inherit !important;
 }
 #supplier-profile-notes::placeholder{color:var(--text3) !important;}
-</style>
 
-
-<style id="supplier-meta-manage-v1">
 #supplier-profile-capabilities-options .supplier-meta-manage-btn,
 #supplier-profile-advantages-options .supplier-meta-manage-btn,
 #supplier-profile-sources-options .supplier-meta-manage-btn{
@@ -3378,10 +3605,7 @@ label.form-label:has(.label-info-badge){
   background:#fffafa !important;
   justify-content:center !important;
 }
-</style>
 
-
-<style id="supplier-sidebar-web-tabs-v1">
 .orders-supplier-tabs{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -3467,10 +3691,7 @@ label.form-label:has(.label-info-badge){
   color:var(--text3);
   font-size:10.5px;
 }
-</style>
 
-
-<style id="supplier-profile-fixed-footer-edit-v1">
 #modal-supplier-profile .supplier-profile-modal{
   display:flex !important;
   flex-direction:column !important;
@@ -3527,10 +3748,7 @@ label.form-label:has(.label-info-badge){
   justify-content:center;
   line-height:1;
 }
-</style>
 
-
-<style id="supplier-tags-click-drag-basic-buttons-v1">
 /* 供應商視窗與管理標籤視窗：統一使用網站基本 btn-sm 尺寸 */
 #modal-supplier-profile .supplier-profile-footer .btn{
   min-height:0 !important;
@@ -3591,30 +3809,21 @@ label.form-label:has(.label-info-badge){
   border-radius:12px !important;
   box-shadow:inset 0 0 0 1.5px var(--brown-light) !important;
 }
-</style>
 
-
-<style id="supplier-sidebar-three-filter-tabs-v1">
 .orders-supplier-tabs{
   grid-template-columns:repeat(3,minmax(0,1fr)) !important;
 }
 .orders-supplier-tab{
   font-size:10px !important;
 }
-</style>
 
-
-<style id="supplier-footer-line-only-v1">
 /* 供應商視窗底部：不要白底，只留上方分隔線 */
 #modal-supplier-profile .supplier-profile-footer{
   background:transparent !important;
   box-shadow:none !important;
   border-top:1px solid var(--cream3) !important;
 }
-</style>
 
-
-<style id="supplier-manager-compact-height-v1">
 /* 管理標籤視窗：收緊整體高度，維持網站原本尺寸感 */
 #modal-supplier-meta-manager .modal{
   max-width:430px !important;
@@ -3645,19 +3854,13 @@ label.form-label:has(.label-info-badge){
   width:34px !important;
   height:34px !important;
 }
-</style>
 
-
-<style id="supplier-sidebar-filter-tags-taller-v1">
 /* 外側供應商快速篩選標籤：稍微加高，增加上下留白 */
 .orders-supplier-meta-chip{
   min-height:30px !important;
   padding:6px 9px !important;
 }
-</style>
 
-
-<style id="supplier-card-count-next-line-v1">
 /* 供應商卡片：採購次數／日期固定另起一行 */
 .orders-supplier-item-meta .orders-supplier-mini-text{
   flex:0 0 100% !important;
@@ -3665,10 +3868,7 @@ label.form-label:has(.label-info-badge){
   display:block !important;
   margin-top:1px !important;
 }
-</style>
 
-
-<style id="supplier-manager-compact-v3">
 #modal-supplier-meta-manager .modal{
   width:min(390px,calc(100vw - 28px)) !important;
   max-width:390px !important;
@@ -3732,10 +3932,7 @@ label.form-label:has(.label-info-badge){
   font-size:12px !important;
   border-radius:20px !important;
 }
-</style>
 
-
-<style id="supplier-card-compact-header-meta-v1">
 .orders-supplier-item{
   padding:13px 14px !important;
 }
@@ -3780,10 +3977,7 @@ label.form-label:has(.label-info-badge){
   min-height:20px !important;
   padding:2px 7px !important;
 }
-</style>
 
-
-<style id="supplier-card-tighter-padding-edit-icon-v1">
 /* 供應商卡片：縮小上下左右留白 */
 .orders-supplier-item{
   padding:10px 11px !important;
@@ -3829,10 +4023,7 @@ label.form-label:has(.label-info-badge){
   height:14px !important;
   display:block !important;
 }
-</style>
 
-
-<style id="supplier-card-padding-edit-v2">
 /* 這次直接明顯縮小卡片留白 */
 #orders-supplier-list .orders-supplier-item{
   padding:7px 9px !important;
@@ -3888,10 +4079,7 @@ label.form-label:has(.label-info-badge){
 #orders-supplier-list .orders-supplier-edit svg{
   display:none !important;
 }
-</style>
 
-
-<style id="supplier-card-spacing-contrast-v3">
 /* 供應商卡片：名稱往上、編輯靠右、標籤對比更清楚 */
 #orders-supplier-list .orders-supplier-item{
   padding:8px 8px 8px 9px !important;
@@ -3927,10 +4115,7 @@ label.form-label:has(.label-info-badge){
 #orders-supplier-list .orders-supplier-categories-row{
   margin-top:-1px !important;
 }
-</style>
 
-
-<style id="supplier-sidebar-filter-tags-compact-v2">
 /* 外側快速篩選標籤：固定為實際 28px 高，不讓 padding 把框撐高 */
 .orders-supplier-meta-chip{
   height:28px !important;
@@ -3947,10 +4132,7 @@ label.form-label:has(.label-info-badge){
   padding-bottom:7px !important;
   row-gap:5px !important;
 }
-</style>
 
-
-<style id="supplier-category-filters-compact-v1">
 /* 上方供應類別：和下面快速篩選一致，固定 28px 高 */
 #orders-supplier-category-filters{
   padding-top:7px !important;
@@ -3968,10 +4150,7 @@ label.form-label:has(.label-info-badge){
   justify-content:center !important;
   line-height:1 !important;
 }
-</style>
 
-
-<style id="supplier-card-tags-continuous-row-v1">
 /* 供應類別 + 目前篩選標籤連續排列；空間不夠才自然換行 */
 #orders-supplier-list .orders-supplier-categories-row{
   display:flex !important;
@@ -3983,10 +4162,7 @@ label.form-label:has(.label-info-badge){
 #orders-supplier-list .orders-supplier-selected-meta-row{
   display:none !important;
 }
-</style>
 
-
-<style id="supplier-three-separate-filters-v1">
 .orders-supplier-tabs{
   display:grid !important;
   grid-template-columns:repeat(3,minmax(0,1fr)) !important;
@@ -4044,10 +4220,7 @@ label.form-label:has(.label-info-badge){
   border-bottom:1px solid var(--cream2) !important;
   padding:7px 10px !important;
 }
-</style>
 
-
-<style id="supplier-card-edit-icon-restore-v4">
 /* 供應商卡片右上角：恢復原本的小鉛筆 icon，不使用文字按鈕 */
 #orders-supplier-list .orders-supplier-edit{
   width:22px !important;
@@ -4075,10 +4248,7 @@ label.form-label:has(.label-info-badge){
   width:14px !important;
   height:14px !important;
 }
-</style>
 
-
-<style id="supplier-vertical-accordion-filters-v1">
 /* 右側供應商篩選：三組直排、各自獨立展開/收合 */
 .orders-supplier-tabs{
   display:block !important;
@@ -4196,10 +4366,7 @@ label.form-label:has(.label-info-badge){
 #orders-supplier-meta-filters{
   display:none !important;
 }
-</style>
 
-
-<style id="supplier-vertical-accordion-compact-v2">
 /* 箭頭真正垂直置中 */
 .orders-supplier-accordion-arrow{
   transform:none !important;
@@ -4224,10 +4391,7 @@ label.form-label:has(.label-info-badge){
   justify-content:center !important;
   line-height:1 !important;
 }
-</style>
 
-
-<style id="supplier-accordion-filled-bg-v3">
 /* 下拉標籤恢復有底色 */
 .orders-supplier-accordion .orders-supplier-meta-chip{
   background:var(--cream2) !important;
@@ -4244,9 +4408,7 @@ label.form-label:has(.label-info-badge){
   border-color:var(--brown) !important;
   color:var(--brown) !important;
 }
-</style>
 
-<style id="supplier-profile-info-icons-v2">
 /* 大標題後的小字改為小圓圈 i */
 .supplier-profile-section-label{
   display:flex !important;
@@ -4312,10 +4474,7 @@ label.form-label:has(.label-info-badge){
   border-color:var(--brown-light) !important;
   background:var(--surface) !important;
 }
-</style>
 
-
-<style id="supplier-profile-info-icons-v3">
 /* 小圓圈 i：縮小並和標題真正垂直置中 */
 .supplier-profile-section-label{
   display:inline-flex !important;
@@ -4337,10 +4496,7 @@ label.form-label:has(.label-info-badge){
   transform:none !important;
   align-self:center !important;
 }
-</style>
 
-
-<style id="supplier-arrow-svg-centered-v1">
 /* 改用 SVG chevron，避免字型符號本身上下偏移 */
 .orders-supplier-accordion-arrow{
   width:16px !important;
@@ -4366,10 +4522,7 @@ label.form-label:has(.label-info-badge){
 .orders-supplier-accordion.open .orders-supplier-accordion-arrow svg{
   transform:rotate(180deg) !important;
 }
-</style>
 
-
-<style id="supplier-filter-clear-button-v1">
 .orders-supplier-sidebar-actions{
   display:inline-flex !important;
   align-items:center !important;
@@ -4401,10 +4554,7 @@ label.form-label:has(.label-info-badge){
   cursor:default !important;
   background:transparent !important;
 }
-</style>
 
-
-<style id="supplier-clear-arrow-fix-v2">
 /* 箭頭：以整條標題列為基準做絕對垂直置中，避免字型/行高造成視覺偏移 */
 .orders-supplier-accordion-head{
   position:relative !important;
@@ -4481,10 +4631,7 @@ label.form-label:has(.label-info-badge){
   opacity:.55 !important;
   cursor:default !important;
 }
-</style>
 
-
-<style id="supplier-clear-border-count-center-v1">
 /* 清除篩選：加回清楚可見的邊框，停用時也保留輪廓 */
 .orders-supplier-filter-tools .orders-supplier-clear{
   border:1.5px solid var(--cream4) !important;
@@ -4557,11 +4704,7 @@ label.form-label:has(.label-info-badge){
   font-weight:900 !important;
   color:var(--brown) !important;
 }
-</style>
 
-<meta name="andhug-build" content="product-list-missing-sku-align-v122">
-
-<style id="andhug-disable-rescue-ui">
 #patchdb-rescue-overlay,
 [id^="patchdb-rescue"],
 [class*="patchdb-rescue"]{
@@ -4569,28 +4712,7 @@ label.form-label:has(.label-info-badge){
   visibility:hidden!important;
   pointer-events:none!important;
 }
-</style>
-<script>
-(function(){
-  const killRescueUI=()=>{
-    document.querySelectorAll(
-      '#patchdb-rescue-overlay,[id^="patchdb-rescue"],[class*="patchdb-rescue"]'
-    ).forEach(el=>el.remove());
-  };
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',killRescueUI,{once:true});
-  }else{
-    killRescueUI();
-  }
-  const observer=new MutationObserver(killRescueUI);
-  const start=()=>{ if(document.documentElement) observer.observe(document.documentElement,{childList:true,subtree:true}); };
-  if(document.documentElement) start(); else document.addEventListener('DOMContentLoaded',start,{once:true});
-  window.__PATCHDB_RESCUE_DISABLED__=true;
-})();
-</script>
 
-
-<style id="safe-cloud-status-style">
 #safe-cloud-status{
  border:1px solid var(--cream3);font-family:inherit;cursor:pointer;
  position:fixed;right:18px;bottom:18px;z-index:9500;
@@ -4604,10 +4726,7 @@ label.form-label:has(.label-info-badge){
 #safe-cloud-status[data-state="saving"] .dot{background:#d6a85d}
 #safe-cloud-status[data-state="error"] .dot{background:#c45f7a}
 #safe-cloud-status[data-state="offline"] .dot{background:#c9c0b3}
-</style>
 
-
-<style id="supplier-clear-top-match-count-v3">
 /* 右上角清楚：字體、大小比照前面的「家」 */
 .orders-supplier-sidebar-actions{
   display:inline-flex !important;
@@ -4665,9 +4784,7 @@ label.form-label:has(.label-info-badge){
   transform:none !important;
   color:var(--brown) !important;
 }
-</style>
 
-<style id="settings-clean-data-layout-v1">
 .settings-clean-card{border:1.5px solid var(--cream3);border-radius:14px;background:var(--surface);padding:13px;margin-bottom:14px}
 .settings-clean-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:11px}
 .settings-clean-title{font-size:12px;font-weight:900;color:var(--text);line-height:1.2}
@@ -4682,9 +4799,7 @@ label.form-label:has(.label-info-badge){
 .settings-tools-details{margin-top:13px;padding:9px 11px;border:1px solid var(--cream3);border-radius:11px;background:var(--surface)}.settings-tools-details summary{cursor:pointer;list-style:none;font-size:10.5px;font-weight:900;color:var(--text2);user-select:none}.settings-tools-details summary::-webkit-details-marker{display:none}.settings-tools-details summary::after{content:'⌄';float:right;color:var(--text3);font-size:13px;line-height:1}.settings-tools-details[open] summary::after{transform:rotate(180deg)}
 #settings-storage-card,#settings-autobackup-status{display:none!important}
 @media(max-width:620px){.settings-action-grid-3,.settings-action-grid-2{grid-template-columns:1fr}}
-</style>
 
-<style id="safe-cloud-status-position-v2">
 #safe-cloud-status{
   right:14px !important;
   bottom:12px !important;
@@ -4702,10 +4817,7 @@ label.form-label:has(.label-info-badge){
     font-size:9px !important;
   }
 }
-</style>
 
-
-<style id="supplier-selected-count-size-v4">
 .orders-supplier-accordion .orders-supplier-tab-count{
   min-width:20px !important;
   height:20px !important;
@@ -4718,16 +4830,11 @@ label.form-label:has(.label-info-badge){
   font-weight:900 !important;
   line-height:1 !important;
 }
-</style>
 
-<style id="settings-hide-floating-sync-v4">
 body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
   display:none !important;
 }
-</style>
 
-
-<style id="smart-import-info-icon-fix-v1">
 #modal-smart-import .supplier-info-icon,
 #smart-import-modal .supplier-info-icon,
 .smart-import-modal .supplier-info-icon{
@@ -4746,11 +4853,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
   vertical-align:middle !important;
   transform:translateY(-0.5px) !important;
 }
-</style>
 
-
-
-<style id="toolbar-dropdown-typography-unified-v1">
 /* 頂部各頁下拉：字體、字重、字級、控制高度全部比照報表的「本月」 */
 #page-products #sort-mode-btn,
 #page-orders #order-sort-btn,
@@ -4800,10 +4903,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
   font-weight:700 !important;
   line-height:1.25 !important;
 }
-</style>
 
-
-<style id="orders-records-search-round-unified-v1">
 /* 採購單 + 紀錄搜尋框：圓角統一成商品庫/其他搜尋框的膠囊感 */
 #page-orders .order-search-input,
 #page-sales-history .sales-history-input{
@@ -4828,8 +4928,7 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
 #page-sales-history .sales-history-input:focus{
   border-color:var(--brown) !important;
 }
-</style>
-<style id="all-action-controls-31px-v1">
+
 :root{--app-control-h:31px;}
 
 /* 全站一般操作按鈕統一：跟「清除篩選」同一套 */
@@ -4908,10 +5007,7 @@ button.btn-icon.toolbar-icon-round,
 }
 
 /* 搜尋框維持原本 34px，不跟按鈕一起壓縮 */
-</style>
 
-
-<style id="top-page-controls-exact-31px-v2">
 :root{--top-control-h:31px;}
 
 /* 全站「頁面第一排工具列」文字按鈕：全部跟紀錄頁清除篩選同高 */
@@ -5001,8 +5097,7 @@ button.btn-icon.toolbar-icon-round,
 }
 
 /* 搜尋框仍維持 34px，不列入按鈕高度 */
-</style>
-<style id="nav-normal-arrow-newcolor-v13">
+
 /* 上方主導覽列恢復原本字重，不再整排粗體 */
 nav .nav-link,
 nav .nav-link.active,
@@ -5015,9 +5110,6 @@ nav .nav-link.active .ui-editable{
   letter-spacing:0 !important;
 }
 
-</style>
-
-<style id="records-toolbar-final-v16">
 /* 紀錄頁第一排唯一正式規則：不再疊舊版 override */
 #page-sales-history .sales-history-toolbar{
   display:flex !important;
@@ -5153,9 +5245,7 @@ nav .nav-link.active .ui-editable{
   justify-content:center !important;
   transform:none !important;
 }
-</style>
 
-<style id="history-controls-exact-match-v18">
 #page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn,
 #page-sales-history button.btn.btn-secondary.btn-sm[onclick*="resetSalesHistoryFilters"]{
   height:28px !important;
@@ -5193,18 +5283,13 @@ nav .nav-link.active .ui-editable{
   border-right:3px solid transparent !important;
   border-top:4px solid #9f897b !important;
 }
-</style>
 
-
-<style id="history-arrow-slightly-bigger-v19">
 #page-sales-history .sales-history-dd-caret{
   border-left-width:4px !important;
   border-right-width:4px !important;
   border-top-width:5px !important;
 }
-</style>
 
-<style id="top-buttons-unified-v20">
 /* =========================================================
    全站主要頁面第一排工具按鈕唯一規格
    以紀錄頁目前按鈕為標準：28px / inherit / 12px / 700
@@ -5341,10 +5426,7 @@ nav .nav-link.active .ui-editable{
 #page-customers .section-header button:hover{
   transform:none !important;
 }
-</style>
 
-
-<style id="top-buttons-unified-v21-fixed">
 /* 最終高優先級：第一排所有按鈕真的固定 28px */
 
 /* 商品庫文字按鈕 */
@@ -5475,10 +5557,7 @@ nav .nav-link.active .ui-editable{
   padding:0 !important;
   border-radius:50% !important;
 }
-</style>
 
-
-<style id="top-searches-unified-v22">
 /* 商品庫 / 採購單 / 開單 / 顧客：搜尋框也跟第一排按鈕一樣高 28px */
 #page-products .product-search-toolbar .search-wrap,
 #page-products .product-search-toolbar .search-input,
@@ -5544,10 +5623,7 @@ nav .nav-link.active .ui-editable{
   top:50% !important;
   transform:translateY(-50%) !important;
 }
-</style>
 
-
-<style id="top-searches-unified-v23-fixed">
 /* 開單搜尋框：壓掉舊 sales-toolbar-height-fix 的 34px */
 #page-sales .section-header .sale-search-toolbar > .search-wrap,
 #page-sales .section-header .sale-search-toolbar > .search-wrap > input.search-input{
@@ -5569,10 +5645,7 @@ nav .nav-link.active .ui-editable{
   padding-left:34px !important;
   padding-right:12px !important;
 }
-</style>
 
-
-<style id="top-controls-29px-v24">
 :root{ --top-action-h:29px !important; }
 
 /* 紀錄頁第一排 */
@@ -5634,10 +5707,7 @@ nav .nav-link.active .ui-editable{
   max-height:29px !important;
   box-sizing:border-box !important;
 }
-</style>
 
-
-<style id="top-controls-29px-v25-fixed">
 /* 最終高優先級：把上一版 28px 規則全部確實覆蓋成 29px */
 
 /* 商品庫 */
@@ -5746,10 +5816,7 @@ nav .nav-link.active .ui-editable{
   max-width:29px !important;
   flex:0 0 29px !important;
 }
-</style>
 
-
-<style id="top-controls-bold-v26">
 /* 所有第一排操作按鈕 / 下拉按鈕：文字一律粗體 */
 #page-products .section-header .product-search-toolbar button,
 #page-orders .section-header button,
@@ -5771,9 +5838,7 @@ nav .nav-link.active .ui-editable{
   font-size:12px !important;
   font-weight:700 !important;
 }
-</style>
 
-<style id="history-dropdown-padding-fixed-v28">
 /* 紀錄頁三個下拉：回到單純 flex，不再塞透明占位 */
 #page-sales-history button.btn.btn-secondary.btn-sm.sales-history-dd-btn{
   height:29px !important;
@@ -5802,10 +5867,7 @@ nav .nav-link.active .ui-editable{
   margin:1px 0 0 0 !important;
   flex:0 0 auto !important;
 }
-</style>
 
-
-<style id="top-dropdown-arrows-unified-v29">
 /* 上方工具列的下拉箭頭：統一成和「全部月份」同款實心小三角 */
 .unified-top-dd-caret{
   display:inline-block !important;
@@ -5826,10 +5888,7 @@ nav .nav-link.active .ui-editable{
 #sort-mode-btn, #order-sort-btn, #report-month-btn{
   gap:6px !important;
 }
-</style>
 
-
-<style id="view-buttons-record-color-v32">
 /* 商品庫＋開單的格狀 / 大圖 / 列表：
    顏色統一成「銷售紀錄」那種白底＋棕字，不再用棕色實心選中狀態 */
 #page-products .section-header .product-search-toolbar .view-btn,
@@ -5862,17 +5921,12 @@ nav .nav-link.active .ui-editable{
   color:var(--text2) !important;
   border-color:var(--brown-light) !important;
 }
-</style>
 
-
-<style id="nav-active-normal-weight-v33">
 nav .nav-link.active,
 nav .nav-link.active .ui-editable{
   font-weight:650 !important;
 }
-</style>
 
-<style id="products-view-icons-centered-v38">
 /* 只改商品庫：三個檢視 icon，完全照開單目前的置中方式 */
 #page-products .section-header .product-search-toolbar #vbtn-grid,
 #page-products .section-header .product-search-toolbar #vbtn-large,
@@ -5904,10 +5958,7 @@ nav .nav-link.active .ui-editable{
   transform:translateY(-1px) !important;
   pointer-events:none !important;
 }
-</style>
 
-
-<style id="records-dropdown-flower-icon-v40">
 /* 只改「紀錄」頁的三個下拉選單；商品庫 / 採購單完全不動 */
 #page-sales-history .sales-history-dd-menu{
   left:0 !important;
@@ -5991,10 +6042,7 @@ nav .nav-link.active .ui-editable{
   font-size:12px !important;
   line-height:1 !important;
 }
-</style>
 
-
-<style id="deal-editor-ui-refine-v42">
 /* Deal 編輯器：小圓 i，放在「適用分類」與「可複選」中間 */
 #sale-deal-editor-overlay .sale-deal-info-icon{
   width:11px !important;
@@ -6039,10 +6087,7 @@ nav .nav-link.active .ui-editable{
 #sale-deal-editor-overlay #sale-deal-kind-label{
   color:var(--text) !important;
 }
-</style>
 
-
-<style id="deal-info-icon-centered-v44">
 /* 只修 Deal 編輯器的小圓 i：
    1) i 真正置中
    2) 滑鼠移過去不要變成問號游標 */
@@ -6071,10 +6116,7 @@ nav .nav-link.active .ui-editable{
   transform:none !important;
   cursor:default !important;
 }
-</style>
 
-
-<style id="deal-info-tooltip-v45">
 /* 小圓 i：滑鼠移過去要真的出現說明，不用瀏覽器原生 title */
 #sale-deal-editor-overlay .sale-deal-info-icon{
   position:relative !important;
@@ -6114,8 +6156,7 @@ nav .nav-link.active .ui-editable{
   visibility:visible;
   transform:translateX(-50%) translateY(0);
 }
-</style>
-<style id="sidebar-completed-paw-aligned-v47">
+
 /* 商品庫左側「已完成」：
    保留原本自製 SVG 貓腳，不換 Apple emoji。
    icon 欄寬改成和其他分類 emoji 相同的視覺寬度，讓文字完全對齊。 */
@@ -6142,8 +6183,7 @@ nav .nav-link.active .ui-editable{
   transform:none !important;
   overflow:visible !important;
 }
-</style>
-<style id="order-footer-edges-v56">
+
 /* 只修左右位置與最底部多餘空白，不改兩排按鈕的上下位置 */
 #modal-order .modal{
   display:flex !important;
@@ -6260,10 +6300,7 @@ nav .nav-link.active .ui-editable{
 #modal-order.order-edit-footer-fixed #order-draft-row{
   display:flex !important;
 }
-</style>
 
-
-<style id="sidebar-all-click-expand-v58">
 /* 「全部」跟其他大分類一樣：點整列展開/收起；沒有獨立箭頭按鈕 */
 #page-products .cat-status-parent{
   position:relative !important;
@@ -6272,8 +6309,7 @@ nav .nav-link.active .ui-editable{
   padding-left:28px !important;
   font-size:12px !important;
 }
-</style>
-<style id="combo-price-arrow-match-v61">
+
 /* 組合價展開/收起箭頭：改成和其他下拉選單一樣的小實心三角形 */
 #cart-deal-toggle-icon.cart-deal-toggle-triangle{
   width:0 !important;
@@ -6291,10 +6327,7 @@ nav .nav-link.active .ui-editable{
 #cart-deal-toggle-icon.cart-deal-toggle-triangle.is-open{
   transform:rotate(180deg) !important;
 }
-</style>
 
-
-<style id="typography-exact-v62">
 /* 最終字重規則：使用網站真正的 class 名稱，放在所有舊規則後面。
    只改 font-weight，不動 font-size / padding / spacing / dimensions。 */
 
@@ -6370,10 +6403,7 @@ body .amount{
 body .ui-editable{
   font-weight:inherit !important;
 }
-</style>
 
-
-<style id="overview-stock-alert-align-v64">
 /* 總覽三欄標題列高度一致：
    庫存警示沒有「查看全部」按鈕，原本標題列只有 19px，
    所以第一張警示卡會比左右兩欄高 12px。只補齊標題列高度，不改卡片本身。 */
@@ -6381,10 +6411,7 @@ body .ui-editable{
   min-height:31px !important;
   box-sizing:border-box !important;
 }
-</style>
 
-
-<style id="order-accordion-arrow-match-v68">
 /* 採購單展開箭頭：改成跟「最新採購在前」預設排序一樣的小實心三角形 */
 #page-orders .accordion-arrow.unified-order-caret{
   width:0 !important;
@@ -6406,10 +6433,7 @@ body .ui-editable{
 #page-orders .accordion-arrow.unified-order-caret.is-open{
   transform:rotate(180deg) !important;
 }
-</style>
 
-
-<style id="orders-shift-multiselect-v69">
 #page-orders .order-batch-bar{
   display:flex;
   align-items:center;
@@ -6442,10 +6466,7 @@ body .ui-editable{
 #page-orders .order-accordion.order-batch-selected .order-accordion-head{
   background:rgba(243,237,227,.72)!important;
 }
-</style>
 
-
-<style id="order-edit-footer-match-import-v74">
 /* v74: 編輯採購單底部排版完全對齊表格式匯入：
    上排按鈕在分隔線上方、下排四顆在分隔線下方靠右，四周留白一致 */
 #modal-order .modal{
@@ -6547,10 +6568,7 @@ body .ui-editable{
   vertical-align:middle !important;
   flex:0 0 auto !important;
 }
-</style>
 
-
-<style id="order-selection-stronger-v75">
 /* Shift 多選：選到的採購單背景要一眼看得出來 */
 #page-orders .order-accordion.order-batch-selected{
   background:#f1e7d8 !important;
@@ -6573,10 +6591,7 @@ body .ui-editable{
 #page-orders .order-accordion.order-batch-selected .order-accordion-head:hover{
   background:#ede0cf !important;
 }
-</style>
 
-
-<style id="cloud-boot-no-flash-v79">
 body.cloud-boot-pending .page{
   visibility:hidden !important;
 }
@@ -6607,10 +6622,7 @@ body.cloud-boot-pending #cloud-boot-shield{
   border-radius:999px;
   background:var(--surface);
 }
-</style>
 
-
-<style id="pending-subcat-label-v81">
 #page-products .product-sku-pending-subcat{
   display:inline-flex;
   align-items:center;
@@ -6626,10 +6638,7 @@ body.cloud-boot-pending #cloud-boot-shield{
   font-weight:600;
   line-height:1.1;
 }
-</style>
 
-
-<style id="product-card-restore-v82">
 /* 商品庫「格狀」文字排版：恢復舊版較小、較細、較有空氣感的層級。
    只改卡片內容文字/間距；不改照片尺寸、卡片外框或拖曳/SKU 功能。 */
 #product-grid.view-grid .product-card .product-info{
@@ -6791,10 +6800,7 @@ body.cloud-boot-pending #cloud-boot-shield{
 #product-grid.view-grid .product-card:hover .product-sku{
   font-size:inherit;
 }
-</style>
 
-
-<style id="product-card-old-border-pending-red-v83">
 /* 待選子分類：跟「缺：圖片」同一種小紅字，不再使用膠囊 */
 #product-grid.view-grid .product-card .product-sku-pending-subcat{
   display:block !important;
@@ -6826,10 +6832,7 @@ body.cloud-boot-pending #cloud-boot-shield{
   border:2px solid var(--brown) !important;
   box-shadow:0 0 0 3px rgba(139,111,71,.10) !important;
 }
-</style>
 
-
-<style id="sidebar-typography-restore-v85">
 /* 只恢復商品庫左側「分類」側欄的舊版字體層級；其他地方完全不動 */
 #page-products .cat-sidebar-item{
   font-size:11px !important;
@@ -6855,10 +6858,7 @@ body.cloud-boot-pending #cloud-boot-shield{
   font-weight:800 !important;
   letter-spacing:.8px !important;
 }
-</style>
 
-
-<style id="sidebar-bg-swap-v86">
 /* 只交換「全部」與展開後「全商品」的底色，其他側欄項目不動 */
 
 /* 上層「全部」：改成原本「全商品」的白底 */
@@ -6878,9 +6878,7 @@ body.cloud-boot-pending #cloud-boot-shield{
 #page-products .cat-status-child:first-of-type:hover{
   background:var(--sidebar-active-bg) !important;
 }
-</style>
 
-<style id="final-nav-and-grid-cost-tweak-v1">
 /* 2026-10-03：主導覽文字 +3px；商品庫格狀進貨價再往上 2px */
 body nav .nav-link,
 body nav .nav-link.active,
@@ -6891,6 +6889,2115 @@ body nav .nav-link.active .ui-editable{
 #product-grid.view-grid .product-card .pc-cost{
   top:-5px !important;
 }
+
+/* 強制最終配色：商品庫＋開單，圖片區奶油米色、資訊區白色 */
+#product-grid:not(.view-list) .product-card,
+#sale-product-grid:not(.view-list) .product-card{
+  background:#fff !important;
+}
+
+#product-grid:not(.view-list) .product-card .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  background:var(--cream2) !important;
+}
+
+#product-grid:not(.view-list) .product-card .product-info,
+#sale-product-grid:not(.view-list) .product-card .product-info{
+  background:#fff !important;
+}
+
+/* 子分類：白底、奶油邊框、咖啡字；active 保持咖啡底 */
+#subcat-filters button:not(.active),
+#sale-subcat-filters button:not(.active){
+  background:#fff !important;
+  border-color:var(--cream3) !important;
+  color:var(--text2) !important;
+}
+
+/* 子分類整個背景區塊：固定使用淡粉奶油色 */
+#page-products .products-right-col > .sticky-bar,
+#page-sales .sale-cat-layout > div:last-child > .sticky-bar{
+  background:#F9F3F0 !important;
+}
+
+/* 商品卡下方輔助資訊改回一般字重；商品名稱與庫存 badge 維持原本 */
+#product-grid:not(.view-list) .product-card .product-sku,
+#product-grid:not(.view-list) .product-card .pc-subcat-code,
+#product-grid:not(.view-list) .product-card .pc-catcode,
+#product-grid:not(.view-list) .product-card .pc-sold,
+#product-grid:not(.view-list) .product-card .pc-defect,
+#product-grid:not(.view-list) .product-card .pc-stale,
+#product-grid:not(.view-list) .product-card .pc-transit,
+#product-grid:not(.view-list) .product-card .pc-pending,
+#product-grid:not(.view-list) .product-card .pc-missing,
+#product-grid:not(.view-list) .product-card .pc-cost,
+#product-grid:not(.view-list) .product-card .price-tag,
+#sale-product-grid:not(.view-list) .product-card .product-sku,
+#sale-product-grid:not(.view-list) .product-card .pc-subcat-code,
+#sale-product-grid:not(.view-list) .product-card .pc-catcode,
+#sale-product-grid:not(.view-list) .product-card .pc-sold,
+#sale-product-grid:not(.view-list) .product-card .pc-defect,
+#sale-product-grid:not(.view-list) .product-card .pc-stale,
+#sale-product-grid:not(.view-list) .product-card .pc-transit,
+#sale-product-grid:not(.view-list) .product-card .pc-pending,
+#sale-product-grid:not(.view-list) .product-card .pc-missing,
+#sale-product-grid:not(.view-list) .product-card .pc-cost,
+#sale-product-grid:not(.view-list) .product-card .price-tag{
+  font-weight:400 !important;
+}
+
+/* 只有「進貨」兩字跟 05/FD 一樣大；金額維持原尺寸 */
+#product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label,
+#sale-product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label{
+  font-size:9px !important;
+  font-weight:400 !important;
+  line-height:1.18 !important;
+}
+
+/* 只把併入商品款式右上角的叉叉圖形往上 1px，外框不動 */
+#modal-product-variant-merge .modal-close::before,
+#modal-product-variant-merge .modal-close::after{
+  top:50% !important;
+}
+
+/* 商品庫＋開單：三種商品顯示模式統一為淡奶油外層＋白色照片。
+   僅作用於商品網格本身，不碰開單「更多」區。 */
+
+/* 格狀 */
+#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img,
+#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img{
+  padding:12px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img img,
+#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:12px !important;
+  object-fit:cover !important;
+}
+
+/* 列表 */
+#product-grid.view-list .product-card .product-img,
+#sale-product-grid.view-list .product-card .product-img{
+  padding:6px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:7px !important;
+  object-fit:cover !important;
+}
+
+/* 大圖 */
+#product-grid.view-large .product-card .product-img,
+#sale-product-grid.view-large .product-card .product-img{
+  padding:12px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-large .product-card .product-img img,
+#sale-product-grid.view-large .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-radius:10px !important;
+  object-fit:cover !important;
+}
+
+/* 列表模式：左側圖片區填滿整列高度 */
+#product-grid.view-list .product-card,
+#sale-product-grid.view-list .product-card{
+  align-items:stretch !important;
+  overflow:hidden !important;
+}
+
+#product-grid.view-list .product-card .product-img,
+#sale-product-grid.view-list .product-card .product-img{
+  width:96px !important;
+  min-width:96px !important;
+  height:auto !important;
+  min-height:84px !important;
+  aspect-ratio:unset !important;
+  flex:0 0 96px !important;
+  align-self:stretch !important;
+  margin:0 !important;
+  padding:8px !important;
+  border-radius:0 !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  min-height:68px !important;
+  padding:0 !important;
+  border-radius:9px !important;
+  background:#fff !important;
+  object-fit:cover !important;
+}
+
+/* 列表模式：只有白色商品圖片右上與右下改成直角；左上左下維持圓角 */
+#product-grid.view-list .product-card .product-img img,
+#sale-product-grid.view-list .product-card .product-img img{
+  border-top-left-radius:10px !important;
+  border-bottom-left-radius:10px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+
+/* 商品庫＋開單：白色照片 padding 10px；上圓下方。開單「更多」不受影響。 */
+#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img,
+#sale-product-grid:not(.view-list) .product-card .product-img{
+  padding:10px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img img,
+#sale-product-grid:not(.view-list) .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  border-top-left-radius:12px !important;
+  border-top-right-radius:12px !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+  object-fit:cover !important;
+}
+
+/* ONLY 商品庫格狀模式：上/右/左 6px，下 8px。列表、大圖、開單完全不動。 */
+#product-grid.view-grid .product-card:not(.merged-archive-card-grid) .product-img{
+  padding:6px 6px 8px 6px !important;
+}
+
+/* 只改 商品庫「更多」：
+   1) 外框圓角統一 16px
+   2) 內圖和外框間距：上/左/右 2px、下 3px
+   3) 內圖上方圓角 10px
+   4) 內圖下方維持方角
+   不碰格狀、列表、開單，也不動其他 CSS。 */
+#product-grid.view-large .product-card{
+  --more-frame-radius:16px;
+  --more-photo-gap-x:5px;
+  --more-photo-gap-top:5px;
+  --more-photo-gap-bottom:6px;
+  --more-inner-top-radius:10px;
+  border-radius:var(--more-frame-radius) !important;
+}
+#product-grid.view-large .product-card .product-img{
+  padding:var(--more-photo-gap-top) var(--more-photo-gap-x) var(--more-photo-gap-bottom) var(--more-photo-gap-x) !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+  border-top-left-radius:var(--more-frame-radius) !important;
+  border-top-right-radius:var(--more-frame-radius) !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+#product-grid.view-large .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-top-left-radius:var(--more-inner-top-radius) !important;
+  border-top-right-radius:var(--more-inner-top-radius) !important;
+  border-bottom-left-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+
+/* ONLY 商品庫「列表」：
+   - 圖片區 padding 4px
+   - 外框列表本身維持 12px
+   - 內圖左上/左下 8px，對齊外框弧度
+   - 內圖右上/右下方角
+   不碰格狀、更多、開單。 */
+#product-grid.view-list .product-card .product-img{
+  padding:5px 6px 5px 5px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+
+#product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-top-left-radius:8px !important;
+  border-bottom-left-radius:8px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+}
+
+/* FINAL 商品庫「列表」 only
+   1) 圖片區 padding：上2 / 右3 / 下2 / 左2
+   2) 內圖圓角：上左圓 / 上右方 / 下左圓 / 下右方
+   不碰：格狀、更多、開單
+*/
+#product-grid.view-list .product-card .product-img{
+  padding:4px 5px 4px 4px !important;
+  background:var(--cream2) !important;
+  box-sizing:border-box !important;
+}
+#product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-top-left-radius:8px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-left-radius:8px !important;
+  border-bottom-right-radius:0 !important;
+}
+
+/* FINAL 開單商品卡 only
+   格狀：上6 / 右6 / 下7 / 左6；內圖上圓下方
+   更多：0 / 0 / 0 / 0；內圖四角圓
+   列表：圖片滿版；文字區淡奶油底；圖片左圓右方
+   切模式會重新 render。 */
+
+/* 格狀 */
+#sale-product-grid.view-grid .product-card{
+  border-radius:16px !important;
+}
+#sale-product-grid.view-grid .product-card .product-img{
+  border-radius:16px 16px 0 0 !important;
+}
+
+/* 更多 */
+#sale-product-grid.view-large .product-card{
+  border-radius:10px !important;
+}
+#sale-product-grid.view-large .product-card .product-img{
+  border-radius:10px !important;
+}
+
+/* 列表 */
+#sale-product-grid.view-list .product-card{
+  border-radius:12px !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+  background:var(--cream2) !important;
+}
+#sale-product-grid.view-list .product-card .product-img{
+  width:96px !important;
+  min-width:96px !important;
+  height:auto !important;
+  min-height:84px !important;
+  aspect-ratio:unset !important;
+  flex:0 0 96px !important;
+  align-self:stretch !important;
+  margin:0 !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  background:#fff !important;
+}
+#sale-product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  margin:0 !important;
+  object-fit:cover !important;
+  border-radius:12px 0 0 12px !important;
+}
+#sale-product-grid.view-list .product-card .product-info{
+  background:var(--cream2) !important;
+}
+
+/* FINAL 開單 → 列表文字排版 only
+   - 名稱與價錢固定在卡片垂直 50% 中線、同一水平線
+   - 件數獨立放在價錢下方，不推動價錢位置
+   - 保留左側滿版圖片與淡奶油文字底
+*/
+#sale-product-grid.view-list .product-card .product-info{
+  position:relative !important;
+  display:block !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  padding:12px 16px !important;
+  background:var(--cream2) !important;
+}
+
+#sale-product-grid.view-list .product-card .product-name{
+  position:absolute !important;
+  left:16px !important;
+  right:92px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  display:block !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:left !important;
+  font-size:14px !important;
+  line-height:1.3 !important;
+}
+
+#sale-product-grid.view-list .product-card .product-meta{
+  position:static !important;
+  display:block !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:none !important;
+  white-space:nowrap !important;
+}
+
+#sale-product-grid.view-list .product-card .product-meta .price-tag{
+  position:absolute !important;
+  right:16px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  margin:0 !important;
+  line-height:1 !important;
+  text-align:right !important;
+}
+
+#sale-product-grid.view-list .product-card .product-meta > span:first-child{
+  position:absolute !important;
+  right:14px !important;
+  top:calc(50% + 18px) !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+}
+
+#sale-product-grid.view-list .product-card .stock-badge{
+  margin:0 !important;
+}
+
+/* ONLY 開單區 → 列表 → 名稱那整塊區域
+   從文字區左緣到價錢區之前，整個高度使用 #F7F2EC。
+   價錢 / 幾件區域維持原本背景與位置。 */
+#sale-product-grid.view-list .product-card .product-name{
+  left:0 !important;
+  right:92px !important;
+  top:0 !important;
+  bottom:0 !important;
+  transform:none !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 0 0 16px !important;
+  background:#F7F2EC !important;
+  box-sizing:border-box !important;
+}
+
+/* ONLY 商品庫 → 列表
+   1) 左側圖片滿版，不留 padding
+   2) 右側整個文字區底色 #F7F2EC
+   3) 不改任何文字排版/位置/大小/資訊欄位
+*/
+#product-grid.view-list .product-card .product-img{
+  padding:0 !important;
+  background:#fff !important;
+  overflow:hidden !important;
+}
+
+#product-grid.view-list .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  margin:0 !important;
+  object-fit:cover !important;
+  border-top-left-radius:12px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-left-radius:12px !important;
+  border-bottom-right-radius:0 !important;
+}
+
+#product-grid.view-list .product-card .product-info{
+  background:#F7F2EC !important;
+}
+
+/* ONLY 開單區 → 列表
+   1) 右側文字區背景改成白色
+   2) 圖片與文字區之間加細分隔線
+   其他位置與樣式不動
+*/
+#sale-product-grid.view-list .product-card .product-info{
+  background:#FFFFFF !important;
+  border-left:1px solid var(--cream3) !important;
+}
+#sale-product-grid.view-list .product-card .product-name{
+  background:#FFFFFF !important;
+}
+
+/* ONLY 商品庫 → 列表
+   1) 右側文字區白底
+   2) 圖片與文字間 1px 分隔線
+   3) 不改任何文字內容/位置/大小/間距
+*/
+#product-grid.view-list .product-card .product-info{
+  background:#FFFFFF !important;
+  border-left:1px solid var(--cream3) !important;
+}
+
+/* ONLY 商品庫 → 列表：🔥 已售出 整行往下 2px */
+#product-grid.view-list .product-card .pc-sold{
+  position:relative !important;
+  top:2px !important;
+}
+
+/* ONLY 商品庫 → 列表
+   1) 🔥 已售出 再往下，跟右側「進貨價」視覺對齊
+   2) 已售出文字顏色改成和進貨價同色系
+   3) 用高優先權固定，避免上傳後被前面舊規則蓋掉 */
+#product-grid.view-list .product-card .pc-sold{
+  display:block !important;
+  position:relative !important;
+  left:1px !important;
+  top:8px !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:9px !important;
+  line-height:1.18 !important;
+  font-weight:700 !important;
+  color:var(--text3) !important;
+}
+
+#product-grid.view-list .product-card .more-cost{
+  color:var(--text3) !important;
+}
+
+/* FINAL ONLY 商品庫 → 更多
+   - 拿掉整張商品卡外圍咖啡/奶茶邊框
+   - 只保留圖片與文字資訊交界的 1px 細分隔線
+   - 不動圖片、圓角、文字、價錢、庫存、間距
+*/
+#product-grid.view-large .product-card{
+  border:none !important;
+  outline:none !important;
+  box-shadow:var(--shadow) !important;
+}
+#product-grid.view-large .product-card:hover{
+  border:none !important;
+}
+#product-grid.view-large .product-card .product-info{
+  border-top:1px solid var(--cream3) !important;
+}
+
+/* FINAL 商品庫 → 更多：照片滿版 → 1px 分隔線 → 文字區 */
+#product-grid.view-large .product-card{
+  border:0 !important;
+  outline:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+#product-grid.view-large .product-card .product-img{
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
+  border:0 !important;
+  border-bottom:1px solid var(--cream3) !important;
+  border-radius:16px 16px 0 0 !important;
+  overflow:hidden !important;
+}
+#product-grid.view-large .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:block !important;
+  object-fit:cover !important;
+  background:#fff !important;
+  border:0 !important;
+  border-radius:16px 16px 0 0 !important;
+}
+#product-grid.view-large .product-card .product-info{
+  width:100% !important;
+  margin:0 !important;
+  border:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
+}
+
+/* FINAL 商品庫＋開單 → 格狀
+   1) 咖啡色圖片框 / padding 拿掉
+   2) 照片直接貼滿上半部
+   3) 圖片與文字中間只留 1px 細線
+   4) 文字、價格、庫存位置不動 */
+#product-grid.view-grid .product-card .product-img,
+#sale-product-grid.view-grid .product-card .product-img{
+  padding:0 !important;
+  background:#fff !important;
+  box-sizing:border-box !important;
+  border-radius:16px 16px 0 0 !important;
+  overflow:hidden !important;
+  border-bottom:1px solid var(--cream3) !important;
+}
+
+#product-grid.view-grid .product-card .product-img img,
+#sale-product-grid.view-grid .product-card .product-img img{
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:block !important;
+  background:#fff !important;
+  object-fit:cover !important;
+  border-radius:16px 16px 0 0 !important;
+}
+
+/* 商品卡原生 drop：字母卡拖到可併入母商品時，只顯示一個清楚提示。 */
+#product-grid .product-card.drag-merge-target::after{
+  content:'放開併入' !important;
+}
+
+/* 已併入款式：跟隨商品庫目前的 格狀 / 更多 / 列表 顯示模式 */
+#product-grid .merged-archive-meta{
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  font-size:9px;color:var(--text3);line-height:1.25;
+}
+#product-grid .merged-archive-variant{
+  display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;
+  background:var(--cream2);color:var(--brown);font-weight:800;white-space:nowrap;
+}
+#product-grid .merged-archive-actions{margin-top:auto;padding-top:8px;}
+#product-grid .merged-archive-actions .btn{font-size:9.5px!important;padding:5px 9px!important;min-height:26px!important;}
+#product-grid .merged-archive-actions-list{display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0;margin:0;}
+
+/* 格狀：完全維持商品庫格狀的照片滿版＋中間分隔線結構 */
+#product-grid.view-grid .merged-archive-card-grid{
+  overflow:hidden!important;
+  background:#fff!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
+  width:100%!important;
+  aspect-ratio:1!important;
+  padding:0!important;
+  margin:0!important;
+  background:#fff!important;
+  box-sizing:border-box!important;
+  border-radius:16px 16px 0 0!important;
+  overflow:hidden!important;
+  border-bottom:1px solid var(--cream3)!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  object-fit:cover!important;
+  border-radius:16px 16px 0 0!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .product-info{
+  background:#fff!important;
+  padding:8px 10px 10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
+  width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;
+  background:#fff!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important;
+  border-radius:16px 16px 0 0!important;box-sizing:border-box!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
+  width:100%!important;height:100%!important;display:block!important;margin:0!important;padding:0!important;
+  object-fit:cover!important;background:#fff!important;border-radius:16px 16px 0 0!important;
+}
+#product-grid.view-grid .merged-archive-card-grid .product-name{font-size:12px!important;margin:0 0 2px!important;}
+#product-grid.view-grid .merged-archive-card-grid .product-sku{font-size:9px!important;margin:0 0 5px!important;}
+#product-grid.view-grid .merged-archive-target{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+
+/* 更多：維持更多模式，不顯示下方文字，只留小款式標記與恢復按鈕 */
+#product-grid.view-large .merged-archive-card-large{position:relative!important;overflow:hidden!important;}
+#product-grid.view-large .merged-archive-card-large .product-img{padding:0!important;background:#fff!important;border-radius:16px!important;overflow:hidden!important;}
+#product-grid.view-large .merged-archive-card-large .product-img img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;border-radius:16px!important;}
+#product-grid.view-large .merged-archive-large-overlay{position:absolute;left:5px;right:5px;bottom:5px;display:flex;align-items:center;justify-content:space-between;gap:4px;pointer-events:none;}
+#product-grid.view-large .merged-archive-large-overlay span{background:rgba(255,255,255,.9);border:1px solid var(--cream3);border-radius:999px;padding:2px 6px;font-size:8px;font-weight:800;color:var(--brown);}
+#product-grid.view-large .merged-archive-large-overlay button{pointer-events:auto;width:22px;height:22px;border-radius:8px;border:1px solid var(--cream3);background:rgba(255,255,255,.92);color:var(--brown);cursor:pointer;padding:0;font-size:11px;}
+
+#subcat-filters.product-drag-active button[data-sku-subcat-drop]{
+  /* 拖曳開始時不再改 padding / font-size / height，避免整排重新排版造成卡頓 */
+  transition:background .06s,border-color .06s,color .06s,box-shadow .06s!important;
+}
+#subcat-filters.product-drag-active button[data-sku-subcat-drop].drag-over{
+  /* 只填色，不改按鈕尺寸 */
+  background:var(--brown)!important;
+  color:#fff!important;
+  border-color:var(--brown)!important;
+  border-width:1.5px!important;
+  box-shadow:none!important;
+  transform:none!important;
+  transition:none!important;
+}
+
+
+/* ===== Smart Import modal width — wider desktop frame only ===== */
+#modal-smart-import .modal,
+#modal-order .modal{
+  width:min(94vw,700px)!important;
+  max-width:700px!important;
+}
+
+/* 兩個匯入視窗：讓每一列跟著外框收窄並完整吃滿可用寬度 */
+#modal-smart-import .smart-import-review-row,
+#modal-order .order-form-review-row,
+#modal-order .order-items-header{
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import .smart-import-review-name,
+#modal-order .order-form-review-name{
+  min-width:0!important;
+  width:100%!important;
+}
+
+
+
+
+#modal-smart-import .smart-import-review-row{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import .smart-import-review-name{
+  min-width:0!important;
+}
+
+
+
+/* Import modal hard width + shrink guards */
+#modal-smart-import .modal,
+#modal-order .modal{
+  box-sizing:border-box!important;
+  min-width:0!important;
+}
+#modal-smart-import .modal-body,
+#modal-order .modal-body,
+#modal-smart-import #smart-import-step-review,
+#modal-smart-import #smart-import-list{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import .smart-import-review-row,
+#modal-order .order-item-row{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#modal-smart-import input,
+#modal-order input{
+  min-width:0;
+}
+
+
+
+/* ===== Import modal compact width — final authoritative rule ===== */
+#modal-smart-import .modal,
+#modal-order .modal{
+  width:min(94vw,700px)!important;
+  max-width:700px!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+/* 智慧匯入：真正限制中間商品名稱欄，避免 1fr 把整排拉成大片白色 */
+#modal-smart-import .smart-import-review-row{
+  grid-template-columns:32px 32px minmax(260px,1fr) 76px 60px 30px!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+/* 表格式匯入也用相同緊湊邏輯 */
+#modal-order .order-form-review-row{
+  grid-template-columns:40px 40px minmax(240px,1fr) 86px 60px 36px!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+#modal-smart-import .smart-import-review-name,
+#modal-order .order-form-review-name{
+  min-width:0!important;
+  width:auto!important;
+}
+
+
+
+/* ===== 採購單明細：上下固定，中間商品清單獨立滾動 ===== */
+#modal-order-detail .modal{
+  display:flex!important;
+  flex-direction:column!important;
+  max-height:calc(100vh - 36px)!important;
+  overflow:hidden!important;
+}
+#modal-order-detail .modal-header{
+  flex:0 0 auto!important;
+  background:var(--cream)!important;
+  position:relative;
+  z-index:5;
+}
+#modal-order-detail #order-detail-body{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#modal-order-detail .order-detail-fixed-top{
+  flex:0 0 auto!important;
+  background:var(--cream)!important;
+  position:relative;
+  z-index:4;
+}
+#modal-order-detail .order-detail-products-scroll{
+  flex:1 1 auto!important;
+  min-height:120px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  padding-right:3px;
+}
+#modal-order-detail .order-detail-products-scroll .order-table{
+  margin-bottom:0!important;
+}
+#modal-order-detail .order-detail-products-scroll .order-table thead th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:var(--cream)!important;
+  box-shadow:0 1px 0 var(--cream3);
+}
+#modal-order-detail .order-detail-fixed-bottom{
+  flex:0 0 auto!important;
+  background:var(--cream)!important;
+  position:relative;
+  z-index:4;
+  padding-top:12px;
+  border-top:1px solid var(--cream3);
+}
+
+
+
+
+
+
+
+/* 已到貨採購單未解鎖時：組合結構控制也必須一起鎖住 */
+#modal-order .order-row-group-icon:disabled,
+#modal-order .order-group-target-icon:disabled{
+  cursor:default!important;
+  opacity:.38!important;
+  pointer-events:none!important;
+}
+
+
+
+/* ===== 編輯採購單捲動穩定：避免 backdrop blur 與 scroll layer 重繪閃爍 ===== */
+#modal-order.order-edit-footer-fixed{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+body.theme-glass #modal-order.order-edit-footer-fixed .modal{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#modal-order.order-edit-footer-fixed .modal{
+  isolation:isolate;
+}
+#modal-order.order-edit-footer-fixed .modal-body{
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable;
+  contain:paint;
+  -webkit-overflow-scrolling:touch;
+}
+#modal-order.order-edit-footer-fixed #order-edit-action-footer{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+
+
+/* ===== 商品詳情：上一個 / 下一個商品 ===== */
+#modal-stock .stock-modal-nav-shell{
+  position:relative;
+  width:min(1100px,calc(100vw - 120px));
+  max-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#modal-stock .stock-modal-nav-shell>.modal{
+  width:100%;
+  max-width:1100px!important;
+}
+#modal-stock .stock-product-nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:8;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:1.5px solid var(--cream3);
+  border-radius:15px;
+  background:rgba(250,247,242,.96);
+  color:var(--brown);
+  box-shadow:0 5px 16px rgba(61,47,31,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+#modal-stock .stock-product-nav-prev{left:-58px;}
+#modal-stock .stock-product-nav-next{right:-58px;}
+#modal-stock .stock-product-nav:hover{
+  background:var(--cream2);
+  border-color:var(--brown-light);
+  box-shadow:0 7px 18px rgba(61,47,31,.16);
+}
+#modal-stock .stock-product-nav:active{
+  transform:translateY(-50%) scale(.94);
+}
+#modal-stock .stock-product-nav svg{display:block;}
+@media (max-width:1240px){
+  #modal-stock .stock-modal-nav-shell{
+    width:min(1100px,calc(100vw - 32px));
+  }
+  #modal-stock .stock-product-nav{
+    width:38px;
+    height:38px;
+    border-radius:13px;
+    background:rgba(250,247,242,.98);
+  }
+  #modal-stock .stock-product-nav-prev{left:8px;}
+  #modal-stock .stock-product-nav-next{right:8px;}
+}
+@media (max-width:768px){
+  #modal-stock .stock-modal-nav-shell{
+    width:100%;
+    max-height:92vh;
+  }
+  #modal-stock .stock-product-nav{
+    top:56px;
+    width:34px;
+    height:34px;
+    border-radius:11px;
+  }
+  #modal-stock .stock-product-nav-prev{left:12px;}
+  #modal-stock .stock-product-nav-next{right:58px;}
+}
+
+
+
+#modal-stock .stock-product-nav:disabled{
+  opacity:.32;
+  cursor:default;
+  box-shadow:none;
+}
+
+
+
+/* ===== 商品庫：⌘ / Ctrl 多選 + 整批拖移 ===== */
+#product-grid .product-card.batch-selected{
+  border:2px solid var(--brown)!important;
+  background:#fffaf4!important;
+  box-shadow:0 0 0 3px rgba(139,111,71,.10)!important;
+}
+#product-grid .product-card.batch-dragging{
+  opacity:.42!important;
+}
+.drag-sidebar-thumb .batch-drag-count{
+  position:absolute;
+  right:-10px;
+  top:-10px;
+  min-width:28px;
+  height:28px;
+  padding:0 7px;
+  border-radius:999px;
+  background:var(--brown);
+  color:#fff;
+  border:2px solid var(--surface);
+  box-shadow:0 3px 9px rgba(61,47,31,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  font-family:'Nunito',sans-serif;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+
+
+/* ===== 左側分類：展開狀態與實際篩選狀態分色 ===== */
+#cat-sidebar .cat-sidebar-item.cat-expanded{
+  /* 展開背景 = SKU 規則頁後方的米白底 */
+  background:var(--cream)!important;
+  color:var(--text2)!important;
+  /* 左側窄條改回網站原本棕色 */
+  border-left-color:var(--brown)!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-expanded:hover{
+  background:var(--cream)!important;
+  color:var(--brown)!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-filter-row.active{
+  background:var(--sidebar-active-bg)!important;
+  color:var(--brown)!important;
+  border-left-color:var(--brown)!important;
+}
+#cat-sidebar .cat-sidebar-item.cat-filter-row:not(.active){
+  background:var(--surface);
+}
+
+#cat-sidebar .cat-sidebar-item.cat-filter-row.active:hover{
+  background:var(--sidebar-active-bg-hover)!important;
+  color:var(--brown)!important;
+}
+
+
+
+
+#cat-sidebar .cat-sidebar-item.cat-expanded.drag-over{
+  background:var(--peach-light)!important;
+  color:var(--brown)!important;
+  border-left-color:var(--brown)!important;
+  box-shadow:inset 0 0 0 1px rgba(139,111,71,.14);
+}
+
+
+
+/* ===== SKU 規則：刪除叉叉改為跟其他按鈕一致的正方形 ===== */
+#page-sku .remove-btn{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  border-radius:8px!important;
+  align-self:center;
+  justify-self:center;
+}
+
+
+
+/* ===== 商品卡：織帶 / 布條子分類醒目標示 ===== */
+#product-grid .product-card .pc-subcat-code.rb-subcat-highlight{
+  display:inline-flex!important;
+  align-items:center!important;
+  align-self:flex-start!important;
+  width:max-content!important;
+  max-width:100%!important;
+  padding:2px 6px!important;
+  margin:1px 0 2px!important;
+  border:1px solid var(--cream4)!important;
+  border-radius:7px!important;
+  background:var(--cream3)!important;
+  color:var(--brown)!important;
+  font-family:monospace!important;
+  font-size:9px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
+#product-grid.view-list .product-card .pc-subcat-code.rb-subcat-highlight{
+  display:inline-flex!important;
+  vertical-align:middle!important;
+  margin:0 4px 0 0!important;
+}
+#product-grid.view-large .product-card .pc-subcat-code.rb-subcat-highlight{
+  display:inline-flex!important;
+  margin:0 0 2px!important;
+}
+
+
+
+/* ===== 商品庫拖曳：禁止瀏覽器原生圖片拖出／Split View ===== */
+#product-grid .product-card .product-img img,
+#sale-product-grid .product-card .product-img img{
+  -webkit-user-drag:none!important;
+  user-drag:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  pointer-events:none!important;
+}
+
+#page-reports #report-current-month-btn,
+#page-reports #report-month-btn{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 14px !important;
+  border-radius:17px !important;
+  line-height:1 !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  vertical-align:middle !important;
+}
+#page-reports #report-current-month-btn{
+  gap:6px !important;
+}
+#page-reports #report-current-month-btn .report-flower-icon{
+  display:inline-block !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#page-reports #report-month-btn{
+  gap:6px !important;
+}
+
+/* 編輯採購單底部固定成與表格式匯入相同的兩排版型 */
+#modal-order.order-edit-footer-fixed #order-edit-action-footer{
+  flex:0 0 auto !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:0 !important;
+  margin:0 !important;
+  padding:0 20px 4px !important;
+  background:var(--cream) !important;
+  border-top:0 !important;
+  z-index:50 !important;
+}
+
+#modal-order.order-edit-footer-fixed .order-footer-add-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:8px !important;
+  padding:10px 0 !important;
+  margin-left:-20px !important;
+  margin-right:-20px !important;
+  border:0 !important;
+  flex-wrap:wrap !important;
+}
+
+#modal-order.order-edit-footer-fixed .order-footer-main-row{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  padding-top:10px !important;
+  margin-left:-20px !important;
+  margin-right:-20px !important;
+  border:0 !important;
+  flex-wrap:wrap !important;
+}
+
+#modal-order.order-edit-footer-fixed .order-footer-main-row::before{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  height:1px !important;
+  background:var(--cream3) !important;
+  pointer-events:none !important;
+}
+
+#modal-order.order-edit-footer-fixed #order-back-btn{order:1 !important;}
+#modal-order.order-edit-footer-fixed .order-cancel-btn{order:2 !important;}
+#modal-order.order-edit-footer-fixed #order-draft-row{
+  order:3 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+#modal-order.order-edit-footer-fixed #order-save-draft-btn{
+  display:inline-flex !important;
+}
+#modal-order.order-edit-footer-fixed #order-save-btn{order:4 !important;}
+
+/* 商品清單的「解鎖編輯」：縮小一點、減少左側空白，內容整體置中 */
+#modal-order #order-unlock-btn{
+  height:27px !important;
+  min-height:27px !important;
+  max-height:27px !important;
+  padding:0 9px !important;
+  gap:3px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  border-radius:999px !important;
+  font-size:11.5px !important;
+  line-height:1 !important;
+  font-weight:500 !important;
+  vertical-align:middle !important;
+}
+#modal-order #order-unlock-btn svg{
+  width:12px !important;
+  height:12px !important;
+  margin:0 !important;
+  display:block !important;
+  flex:0 0 12px !important;
+  transform:none !important;
+}
+
+/* 選中的主導覽白字減輕 100：600 → 500；不動尺寸、位置、背景 */
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-weight:500 !important;
+}
+
+/* 只整理商品卡資訊區：
+   提示/分類/庫存之間縮緊；所有卡片的分類、進貨價、庫存、售價固定對齊。 */
+
+#product-grid.view-grid .product-card .product-info{
+  padding:8px 10px 9px !important;
+}
+
+/* 商品名 / SKU 維持目前樣式，只控制下面節奏 */
+#product-grid.view-grid .product-card .product-sku{
+  margin-bottom:0 !important;
+}
+
+/* 提示列：有提示顯示紅字，沒有提示只保留同樣 11px 高度，不會造成卡片一高一低 */
+#product-grid.view-grid .product-card .product-sku-pending-subcat{
+  display:block !important;
+  height:11px !important;
+  min-height:11px !important;
+  max-height:11px !important;
+  margin:2px 0 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--red) !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:11px !important;
+  white-space:nowrap !important;
+}
+#product-grid.view-grid .product-card .product-sku-pending-subcat.is-empty{
+  visibility:hidden !important;
+}
+
+/* 分類 / 進貨價：同一排、同一基線 */
+#product-grid.view-grid .product-card .pc-flow{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:baseline !important;
+  column-gap:8px !important;
+  row-gap:0 !important;
+  margin:1px 0 0 !important;
+  padding:0 !important;
+  line-height:1 !important;
+}
+#product-grid.view-grid .product-card .pc-subcat-code,
+#product-grid.view-grid .product-card .pc-catcode{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  align-self:baseline !important;
+  margin:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+}
+#product-grid.view-grid .product-card .pc-missing-cost-row{
+  display:contents !important;
+}
+#product-grid.view-grid .product-card .pc-cost{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  align-self:baseline !important;
+  justify-self:end !important;
+  margin:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+  white-space:nowrap !important;
+}
+#product-grid.view-grid .product-card .pc-cost-label{
+  font-weight:500 !important;
+}
+
+/* 缺：圖片等提示若存在，放在提示區，不額外撐分類列 */
+#product-grid.view-grid .product-card .pc-missing{
+  grid-column:1 / -1 !important;
+  grid-row:2 !important;
+  margin:1px 0 0 !important;
+  font-size:9px !important;
+  line-height:11px !important;
+}
+
+/* 庫存 / 售價：緊接分類列，左右同一底線 */
+#product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:end !important;
+  column-gap:8px !important;
+  margin-top:3px !important;
+  padding:0 !important;
+}
+#product-grid.view-grid .product-card .stock-badge{
+  justify-self:start !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#product-grid.view-grid .product-card .more-price-stack{
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:flex-end !important;
+  justify-self:end !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#product-grid.view-grid .product-card .more-cost{
+  display:none !important;
+}
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  margin:0 !important;
+  font-size:11px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  color:var(--text3) !important;
+}
+
+/* v90 最終覆蓋：只管商品格卡片資訊的垂直節奏與對齊 */
+body #page-products #product-grid.view-grid .product-card .product-info{
+  padding:8px 10px 9px !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+body #page-products #product-grid.view-grid .product-card .product-name{
+  margin:0 0 1px !important;
+}
+body #page-products #product-grid.view-grid .product-card .product-sku{
+  margin:0 !important;
+}
+
+/* 固定一條 10px 提示列：有待選就紅字，沒有就透明佔位 */
+body #page-products #product-grid.view-grid .product-card .product-sku-pending-subcat{
+  display:block !important;
+  box-sizing:border-box !important;
+  height:10px !important;
+  min-height:10px !important;
+  max-height:10px !important;
+  margin:1px 0 0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--red) !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:10px !important;
+}
+body #page-products #product-grid.view-grid .product-card .product-sku-pending-subcat.is-empty{
+  visibility:hidden !important;
+}
+
+/* 06/DR 左；進貨價右。永遠同一 row / baseline */
+body #page-products #product-grid.view-grid .product-card .pc-flow{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  grid-template-rows:auto !important;
+  align-items:baseline !important;
+  column-gap:8px !important;
+  row-gap:0 !important;
+  margin:1px 0 0 !important;
+  padding:0 !important;
+  min-height:12px !important;
+}
+body #page-products #product-grid.view-grid .product-card .pc-subcat-code,
+body #page-products #product-grid.view-grid .product-card .pc-catcode{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  align-self:baseline !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+}
+body #page-products #product-grid.view-grid .product-card .pc-missing-cost-row{
+  display:contents !important;
+}
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  justify-self:end !important;
+  align-self:baseline !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:12px !important;
+  white-space:nowrap !important;
+}
+
+/* 1件 左；$2.00 右。只留 3px 距離 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:end !important;
+  column-gap:8px !important;
+  margin:3px 0 0 !important;
+  padding:0 !important;
+}
+body #page-products #product-grid.view-grid .product-card .stock-badge{
+  justify-self:start !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  display:flex !important;
+  justify-self:end !important;
+  align-self:end !important;
+  align-items:flex-end !important;
+  margin:0 !important;
+}
+body #page-products #product-grid.view-grid .product-card .more-cost{
+  display:none !important;
+}
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  margin:0 !important;
+  font-size:11px !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  color:var(--text3) !important;
+}
+
+/* 拖進分類/子分類時的小圖一定保持 56x56 */
+body .drag-sidebar-thumb{
+  width:56px !important;
+  height:56px !important;
+  min-width:56px !important;
+  min-height:56px !important;
+  max-width:56px !important;
+  max-height:56px !important;
+  border-radius:14px !important;
+  overflow:visible !important;
+  pointer-events:none !important;
+  z-index:99999 !important;
+}
+body .drag-sidebar-thumb .drag-sidebar-thumb-image{
+  width:56px !important;
+  height:56px !important;
+  border-radius:14px !important;
+  overflow:hidden !important;
+  background:#fff !important;
+}
+body .drag-sidebar-thumb .drag-sidebar-thumb-image img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  display:block !important;
+}
+
+/* 只交換「全部」與「全商品」的底色 */
+#page-products .cat-status-parent{
+  background:var(--sidebar-active-bg) !important;
+}
+#page-products .cat-status-child:first-of-type{
+  background:var(--surface) !important;
+}
+
+/* hover 也維持交換後的顏色 */
+#page-products .cat-status-parent:hover{
+  background:var(--sidebar-active-bg) !important;
+}
+#page-products .cat-status-child:first-of-type:hover{
+  background:var(--surface) !important;
+}
+
+/* 拖商品到分類 / 子分類時，不要粉紅色 hover */
+#page-products .cat-sidebar-item.drag-over,
+#page-products .cat-sidebar-item.cat-expanded.drag-over{
+  background:var(--cream2) !important;
+  color:var(--brown) !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 上方 SKU 子分類按鈕拖曳 hover 也不要粉紅 */
+#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
+#page-products #subcat-filters [data-product-drop-subcat].drag-over{
+  background:var(--cream2) !important;
+  border-color:var(--brown) !important;
+  color:var(--brown) !important;
+}
+
+/* 商品卡最底排：1件 與 $2.00 垂直置中對齊 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  align-items:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  align-self:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  display:flex !important;
+  align-items:center !important;
+}
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  display:block !important;
+  line-height:18px !important;
+}
+body #page-products #product-grid.view-grid .product-card .stock-badge{
+  line-height:18px !important;
+}
+
+/* 商品卡最底排固定 24px：1件 與 $2.00 共用同一列 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  margin-top:3px !important;
+  padding:0 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .stock-badge{
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-self:center !important;
+  margin:0 !important;
+  line-height:1 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .more-price-stack{
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  align-self:center !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  display:inline-flex !important;
+  align-items:center !important;
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  margin:0 !important;
+  padding:0 !important;
+  line-height:24px !important;
+  font-weight:700 !important;
+  transform:translateY(-1px) !important;
+}
+
+/* 商品庫左側分類：主要分類用深米色，下面選到的小分類用淺米色。
+   只改這個側欄的底色，不動字體、排版、商品卡。 */
+
+/* 主要分類：全部 / 布貼 / 毛布貼 ... 展開時固定較深底 */
+#page-products #cat-sidebar .cat-status-parent.cat-expanded,
+#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded{
+  background:#e9e2d8 !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 下面的小分類：全商品 / 待完善 / 已完善 / 已完成 / 尺寸 / 子分類
+   被點選時只用淺米色 */
+#page-products #cat-sidebar .cat-status-child.active,
+#page-products #cat-sidebar .cat-filter-row.active{
+  background:#f3ede3 !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 沒選中的小分類維持白底 */
+#page-products #cat-sidebar .cat-status-child:not(.active),
+#page-products #cat-sidebar .cat-filter-row:not(.active){
+  background:var(--surface) !important;
+}
+
+/* 主分類 hover 不變粉紅，仍是深米色 */
+#page-products #cat-sidebar .cat-status-parent.cat-expanded:hover,
+#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded:hover{
+  background:#e9e2d8 !important;
+}
+
+/* 小分類 hover 不用粉紅；選中維持淺米色，未選中則淡米白 */
+#page-products #cat-sidebar .cat-status-child.active:hover,
+#page-products #cat-sidebar .cat-filter-row.active:hover{
+  background:#f3ede3 !important;
+}
+#page-products #cat-sidebar .cat-status-child:not(.active):hover,
+#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
+  background:#faf7f2 !important;
+}
+
+/* 拖商品放到分類 / 小分類時不要粉紅色 */
+#page-products #cat-sidebar .cat-sidebar-item.drag-over,
+#page-products #cat-sidebar .cat-sidebar-item.cat-expanded.drag-over,
+#page-products #cat-sidebar .cat-filter-row.drag-over{
+  background:#f3ede3 !important;
+  color:var(--brown) !important;
+  border-left-color:var(--brown) !important;
+}
+
+/* 上方 01/AN、06/DR 這種子分類拖曳 hover 也不要粉紅 */
+#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
+#page-products #subcat-filters [data-product-drop-subcat].drag-over{
+  background:#f3ede3 !important;
+  border-color:var(--brown) !important;
+  color:var(--brown) !important;
+}
+
+/* 只交換小分類的「選中底色」與「hover 底色」 */
+#page-products #cat-sidebar .cat-status-child.active,
+#page-products #cat-sidebar .cat-filter-row.active{
+  background:#FAF7F2 !important;
+}
+#page-products #cat-sidebar .cat-status-child.active:hover,
+#page-products #cat-sidebar .cat-filter-row.active:hover{
+  background:#FAF7F2 !important;
+}
+#page-products #cat-sidebar .cat-status-child:not(.active):hover,
+#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
+  background:#F3EDE3 !important;
+}
+
+/* 只把總覽統計卡恢復成舊版：內容置中、標題/數值字重與大小恢復 */
+#page-overview .stat-card{
+  text-align:left !important;
+}
+#page-overview .stat-emoji{
+  font-size:22px !important;
+  margin-bottom:8px !important;
+}
+#page-overview .stat-label{
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1.25 !important;
+  letter-spacing:.5px !important;
+  margin-bottom:4px !important;
+  text-align:left !important;
+}
+#page-overview .stat-value{
+  font-family:'Nunito',sans-serif !important;
+  font-size:24px !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  text-align:left !important;
+}
+
+/* 開單左側分類字體 = 商品庫左側分類字體，只改字體層級，不改底色/間距/功能 */
+#page-sales #sale-cat-sidebar .cat-sidebar-item{
+  font-size:11px !important;
+  font-weight:600 !important;
+  line-height:1.25 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item .ui-editable{
+  font-size:inherit !important;
+  font-weight:600 !important;
+  line-height:inherit !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item > span[style*="margin-left:auto"]{
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-header{
+  font-size:9px !important;
+  font-weight:800 !important;
+  letter-spacing:.8px !important;
+}
+/* 開單展開後的小分類文字也跟商品庫一致，不吃 inline 12px / 11.5px */
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"]{
+  font-size:11px !important;
+  font-weight:600 !important;
+}
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] > span:first-child,
+#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] .cat-subcat-label-wrap > span:first-child{
+  font-weight:600 !important;
+}
+
+#page-products #product-grid.view-large .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:end !important;
+  column-gap:6px !important;
+  margin-top:auto !important;
+  padding:0 !important;
+}
+#page-products #product-grid.view-large .product-card .stock-badge{
+  justify-self:start !important;
+  align-self:end !important;
+  margin:0 !important;
+}
+#page-products #product-grid.view-large .product-card .stock-default-text{
+  display:none !important;
+}
+#page-products #product-grid.view-large .product-card .stock-more-number{
+  display:inline !important;
+}
+#page-products #product-grid.view-large .product-card .more-price-stack{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  justify-content:flex-end !important;
+  justify-self:end !important;
+  width:max-content !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:right !important;
+}
+#page-products #product-grid.view-large .product-card .more-cost,
+#page-products #product-grid.view-large .product-card .price-tag{
+  display:block !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+}
+#page-products #product-grid.view-large .product-card .more-cost{
+  font-size:9.5px !important;
+  font-weight:500 !important;
+  line-height:1.1 !important;
+  color:var(--text3) !important;
+}
+#page-products #product-grid.view-large .product-card .price-tag{
+  margin-top:2px !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1.05 !important;
+  color:var(--text3) !important;
+}
+
+/* 商品庫橫向 more 卡：待選子分類改成紅色純文字，跟格狀卡一致 */
+body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat{
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:3px 0 6px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--red) !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:1.2 !important;
+}
+body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat.is-empty{
+  display:none !important;
+}
+
+/* 只改商品庫「格狀」售價字體大小 */
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  font-size:13px !important;
+}
+
+/* 只改商品庫「列表」：
+   1) 待選子分類 = 紅色純文字
+   2) 商品名稱上方留白加大
+   3) 庫存 1件 下方留白縮小 */
+
+body #page-products #product-grid.view-list .product-card .product-info{
+  padding:12px 14px 6px 10px !important;
+}
+
+/* 列表的待選子分類跟缺圖提示一樣：紅字、無框、無底 */
+body #page-products #product-grid.view-list .product-card .product-sku-pending-subcat{
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:2px 0 2px 1px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--red) !important;
+  font-family:inherit !important;
+  font-size:9px !important;
+  font-weight:700 !important;
+  line-height:1.18 !important;
+}
+body #page-products #product-grid.view-list .product-card .product-sku-pending-subcat.is-empty{
+  display:none !important;
+}
+
+/* 底排貼近卡片底部一點，不改左右位置 */
+body #page-products #product-grid.view-list .product-card .product-meta{
+  margin-top:auto !important;
+  margin-bottom:0 !important;
+}
+
+/* 只改商品庫「格狀」售價字體大小 */
+body #page-products #product-grid.view-grid .product-card .price-tag{
+  font-size:14px !important;
+}
+
+/* 照目前「更多」小卡：只把右下售價往上 2px，進貨價與其他位置不動 */
+body #page-products #product-grid.view-large .product-card .more-price-stack .price-tag{
+  position:relative !important;
+  top:-2px !important;
+}
+
+/* 商品庫 > 列表：上下留白改成一致；普通卡片外框回到列表的淡色細框。 */
+body #page-products #product-grid.view-list .product-card .product-info{
+  padding-top:10px !important;
+  padding-bottom:10px !important;
+}
+
+/* 普通列表卡不再出現深咖啡外框；批次選取仍保留選取提示。 */
+body #page-products #product-grid.view-list .product-card:not(.batch-selected){
+  border:1.5px solid var(--cream3) !important;
+}
+body #page-products #product-grid.view-list .product-card:not(.batch-selected):hover{
+  border-color:var(--cream3) !important;
+}
+
+/* 商品庫：格狀 / 更多 / 列表 的「1件」統一往左微移 1px，其他不動 */
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-large .product-card .stock-badge,
+body #page-products #product-grid.view-list .product-card .stock-badge{
+  position:relative !important;
+  left:-1px !important;
+}
+
+/* 商品庫 > 列表：
+   商品名稱 + SKU 往上，跟右上垃圾桶的水平位置更一致；
+   SKU 與進貨價改回較細字重。 */
+
+body #page-products #product-grid.view-list .product-card .product-info{
+  justify-content:flex-start !important;
+  padding-top:8px !important;
+}
+
+/* 名稱直接從上方開始，不再因舊規則置中 */
+body #page-products #product-grid.view-list .product-card .product-name{
+  margin-top:0 !important;
+}
+
+/* SKU 不要粗體 */
+body #page-products #product-grid.view-list .product-card .product-sku{
+  font-weight:500 !important;
+}
+
+/* 列表右側的進貨價不粗體 */
+body #page-products #product-grid.view-list .product-card .more-cost{
+  font-weight:500 !important;
+}
+
+/* 商品庫 > 格狀：進貨價貼近下面售價，不留額外空白 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  margin-top:0 !important;
+}
+
+/* 主導覽列字體比照商品庫分類文字 */
+body .nav-item,
+body .top-nav .nav-item,
+body nav .nav-item{
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:600 !important;
+}
+
+/* =========================================================
+   重新落實 v115 之後使用者要求的幾項修改。
+   這一層使用實際 DOM class，並在瀏覽器 render 後驗證。
+   ========================================================= */
+
+/* 1) 商品庫：格狀 / 更多 / 列表 的庫存膠囊都往左一點 */
+body #page-products #product-grid.view-grid .product-card .stock-badge,
+body #page-products #product-grid.view-large .product-card .stock-badge,
+body #page-products #product-grid.view-list .product-card .stock-badge{
+  position:relative !important;
+  left:-2px !important;
+}
+
+/* 2) 商品庫列表：商品名稱 + SKU 往上，名稱上緣對齊右上垃圾桶；
+      SKU 與右側進貨價不要粗體。 */
+body #page-products #product-grid.view-list .product-card .product-info{
+  justify-content:flex-start !important;
+  padding-top:8px !important;
+}
+body #page-products #product-grid.view-list .product-card .product-name,
+body #page-products #product-grid.view-list .product-card .product-sku{
+  top:0 !important;
+}
+body #page-products #product-grid.view-list .product-card .product-sku{
+  font-weight:400 !important;
+}
+body #page-products #product-grid.view-list .product-card .more-cost{
+  font-weight:400 !important;
+}
+
+/* 3) 商品庫格狀：右側進貨價貼近下面售價。
+      不移動底排售價/庫存，因此仍維持 1件 與 $ 同一水平線。 */
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  position:relative !important;
+  top:9px !important;
+}
+
+/* 5) 主導覽列：真的套到實際使用的 .nav-link，
+      跟商品庫分類一樣 11px / 600 / inherit。 */
+body nav .nav-link,
+body nav .nav-link .ui-editable{
+  font-family:inherit !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+}
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-weight:600 !important;
+}
+
+/* v121：舊的 active nav 規則 specificity 較高，這裡明確覆蓋 active / inactive。 */
+body nav .nav-link,
+body nav .nav-link .ui-editable,
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-family:inherit !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+}
+
+/* 商品庫 > 列表：紅色「缺：SKU」跟商品名稱左緣對齊 */
+body #page-products #product-grid.view-list .product-card .pc-missing-inline-list{
+  left:0 !important;
+  margin-left:0 !important;
+}
+
+/* 商品庫 > 格狀：
+   - 「缺：SKU」浮在 06/DR（分類碼）正上方，不新增一整行、不撐高卡片。
+   - 進貨價往上 2px。 */
+body #page-products #product-grid.view-grid .product-card .pc-flow{
+  position:relative !important;
+}
+
+/* 不再使用原本會佔 grid row 的缺資料列。 */
+body #page-products #product-grid.view-grid .product-card .pc-missing{
+  display:none !important;
+}
+
+/* 使用同一份缺資料提示，但改成浮動，不參與 layout。 */
+body #page-products #product-grid.view-grid .product-card .pc-missing-inline-list{
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  bottom:100% !important;
+  margin:0 0 1px 0 !important;
+  padding:0 !important;
+  color:var(--red) !important;
+  font-family:inherit !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+  line-height:10px !important;
+  white-space:nowrap !important;
+  pointer-events:none !important;
+}
+
+/* 原本 v120 是 top:9px，這裡往上 2px。 */
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  top:7px !important;
+}
+
+/* SKU 重整後的最終 UI 覆蓋：只調整使用者最後指定的兩個視覺細節。 */
+body nav .nav-link,
+body nav .nav-link .ui-editable,
+body nav .nav-link.active,
+body nav .nav-link.active .ui-editable{
+  font-family:inherit !important;
+  font-size:13px !important;
+  font-weight:600 !important;
+}
+
+/* 商品庫格狀：進貨價再往上一點。 */
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  position:relative !important;
+  top:0 !important;
+  transform:translateY(-1px) !important;
+}
+
+/* 商品庫 > 格狀：進貨價與售價只留小細縫；進貨價再往下 1px。 */
+body #page-products #product-grid.view-grid .product-card .product-meta{
+  margin-top:0 !important;
+}
+body #page-products #product-grid.view-grid .product-card .pc-cost{
+  top:0 !important;
+  transform:translateY(2px) !important;
+}
+
+/* 購物車：價錢與數量只微微往上 0.5px，視覺置中，不會太靠上；不動外框。 */
+#page-sales .cart-price-input{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+  transform:translateY(-.5px) !important;
+}
+#page-sales .cart-qty-spinner input{
+  transform:translateY(-.5px) !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+}
+
+/* ===== 開單商品卡：唯一正式規則 =====
+   舊版多層覆蓋已移除。之後開單卡只維護這裡。 */
+
+/* 格狀卡：名稱在上；底排為 1件 + 尺寸，售價在右。 */
+#page-sales #sale-product-grid.view-grid .product-card .product-info{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  box-sizing:border-box !important;
+  padding:8px 12px 8px !important;
+  background:var(--surface) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-name{
+  margin:0 0 3px !important;
+  padding:0 !important;
+  position:static !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  color:var(--text) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-meta{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  column-gap:4px !important;
+  width:100% !important;
+  margin-top:auto !important;
+  padding:0 1px 0 0 !important;
+  box-sizing:border-box !important;
+  position:static !important;
+  inset:auto !important;
+  transform:none !important;
+  white-space:nowrap !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:1px !important;
+  margin:0 !important;
+  padding:0 !important;
+  position:relative !important;
+  left:-3px !important;
+}
+
+/* 1件 在前，尺寸在後。 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge{order:1 !important;}
+#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{order:2 !important;}
+
+/* 尺寸 M/S/L：固定和 1件 的黃色系一致，不再吃 inline 灰色。 */
+#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
+#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  height:22px !important;
+  min-height:22px !important;
+  min-width:22px !important;
+  padding:0 6px !important;
+  margin:0 !important;
+  position:static !important;
+  left:auto !important;
+  border-radius:999px !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  opacity:1 !important;
+}
+
+/* 庫存膠囊基本尺寸。 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge,
+#page-sales #sale-product-grid.view-list .product-card .stock-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  height:24px !important;
+  min-height:24px !important;
+  padding:3px 8px !important;
+  margin:0 !important;
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  border-radius:10px !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  opacity:1 !important;
+}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-ok{background:var(--mint-light) !important;color:#3d8a58 !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-low{background:var(--yellow-light) !important;color:#8a6a1a !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-out{background:var(--red-light) !important;color:var(--red) !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
+
+#page-sales #sale-product-grid.view-grid .product-card .price-tag{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  margin:0 !important;
+  flex:0 0 auto !important;
+  align-self:center !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  color:var(--text3) !important;
+}
+
+/* 開單商品卡：M / S / L 尺寸膠囊的底色與字色，永遠跟旁邊「1件」的庫存膠囊一致。 */
+#page-sales #sale-product-grid .product-card .sale-size-badge.stock-ok{
+  background:var(--mint-light) !important;
+  color:#3d8a58 !important;
+}
+#page-sales #sale-product-grid .product-card .sale-size-badge.stock-low{
+  background:var(--yellow-light) !important;
+  color:#8a6a1a !important;
+}
+#page-sales #sale-product-grid .product-card .sale-size-badge.stock-out{
+  background:var(--red-light) !important;
+  color:var(--red) !important;
+}
+#page-sales #sale-product-grid .product-card .sale-size-badge.stock-pending{
+  background:var(--lavender-light) !important;
+  color:#6b5aad !important;
+}
+
 </style>
 </head>
 <body class="cloud-boot-pending">
@@ -20840,7 +22947,7 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
-}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta" style="display:flex!important;align-items:center!important;justify-content:space-between!important;gap:2px!important;width:100%!important;padding:0!important"><span style="display:inline-flex!important;align-items:center!important;gap:1px!important;min-width:0!important;flex:0 1 auto!important"><span class="stock-badge ${sc}" style="order:1!important;height:21px!important;min-height:21px!important;padding:0 7px!important;font-size:9.5px!important;line-height:1!important;border-radius:10px!important;margin:0!important">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}" style="order:2!important;height:21px!important;min-height:21px!important;min-width:21px!important;padding:0 5px!important;font-size:9.5px!important;line-height:1!important;border-radius:999px!important;margin:0!important">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag" style="margin-left:auto!important;flex:0 0 auto!important;align-self:center!important;line-height:1!important;font-size:12px!important;transform:translateY(-1px)!important;white-space:nowrap!important">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta" style="display:flex!important;align-items:center!important;justify-content:space-between!important;gap:2px!important;width:100%!important;padding:0!important"><span style="display:inline-flex!important;align-items:center!important;gap:1px!important;min-width:0!important;flex:0 1 auto!important"><span class="stock-badge ${sc}" style="order:1!important;height:24px!important;min-height:24px!important;padding:3px 8px!important;font-size:10px!important;line-height:1!important;border-radius:10px!important;margin:0!important">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}" style="order:2!important;height:22px!important;min-height:22px!important;min-width:22px!important;padding:0 6px!important;font-size:10px!important;line-height:1!important;border-radius:999px!important;margin:0!important">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag" style="margin-left:auto!important;flex:0 0 auto!important;align-self:center!important;line-height:1!important;font-size:12px!important;transform:translateY(-1px)!important;white-space:nowrap!important">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
@@ -24747,323 +26854,49 @@ document.addEventListener('change',function(e){
 </div>
 
 
-<style id="andhug-force-original-card-colors">
-/* 強制最終配色：商品庫＋開單，圖片區奶油米色、資訊區白色 */
-#product-grid:not(.view-list) .product-card,
-#sale-product-grid:not(.view-list) .product-card{
-  background:#fff !important;
-}
-
-#product-grid:not(.view-list) .product-card .product-img,
-#sale-product-grid:not(.view-list) .product-card .product-img{
-  background:var(--cream2) !important;
-}
-
-#product-grid:not(.view-list) .product-card .product-info,
-#sale-product-grid:not(.view-list) .product-card .product-info{
-  background:#fff !important;
-}
-
-/* 子分類：白底、奶油邊框、咖啡字；active 保持咖啡底 */
-#subcat-filters button:not(.active),
-#sale-subcat-filters button:not(.active){
-  background:#fff !important;
-  border-color:var(--cream3) !important;
-  color:var(--text2) !important;
-}
-</style>
-
-
-<style id="andhug-subcat-panel-bg-fix">
-/* 子分類整個背景區塊：固定使用淡粉奶油色 */
-#page-products .products-right-col > .sticky-bar,
-#page-sales .sale-cat-layout > div:last-child > .sticky-bar{
-  background:#F9F3F0 !important;
-}
-</style>
-
-
-<style id="andhug-product-info-normal-weight">
-/* 商品卡下方輔助資訊改回一般字重；商品名稱與庫存 badge 維持原本 */
-#product-grid:not(.view-list) .product-card .product-sku,
-#product-grid:not(.view-list) .product-card .pc-subcat-code,
-#product-grid:not(.view-list) .product-card .pc-catcode,
-#product-grid:not(.view-list) .product-card .pc-sold,
-#product-grid:not(.view-list) .product-card .pc-defect,
-#product-grid:not(.view-list) .product-card .pc-stale,
-#product-grid:not(.view-list) .product-card .pc-transit,
-#product-grid:not(.view-list) .product-card .pc-pending,
-#product-grid:not(.view-list) .product-card .pc-missing,
-#product-grid:not(.view-list) .product-card .pc-cost,
-#product-grid:not(.view-list) .product-card .price-tag,
-#sale-product-grid:not(.view-list) .product-card .product-sku,
-#sale-product-grid:not(.view-list) .product-card .pc-subcat-code,
-#sale-product-grid:not(.view-list) .product-card .pc-catcode,
-#sale-product-grid:not(.view-list) .product-card .pc-sold,
-#sale-product-grid:not(.view-list) .product-card .pc-defect,
-#sale-product-grid:not(.view-list) .product-card .pc-stale,
-#sale-product-grid:not(.view-list) .product-card .pc-transit,
-#sale-product-grid:not(.view-list) .product-card .pc-pending,
-#sale-product-grid:not(.view-list) .product-card .pc-missing,
-#sale-product-grid:not(.view-list) .product-card .pc-cost,
-#sale-product-grid:not(.view-list) .product-card .price-tag{
-  font-weight:400 !important;
-}
-</style>
 
 
 
-<style id="andhug-cost-label-only-size">
-/* 只有「進貨」兩字跟 05/FD 一樣大；金額維持原尺寸 */
-#product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label,
-#sale-product-grid:not(.view-list) .product-card .pc-cost .pc-cost-label{
-  font-size:9px !important;
-  font-weight:400 !important;
-  line-height:1.18 !important;
-}
-</style>
-
-
-<style id="andhug-merge-close-x-up1">
-/* 只把併入商品款式右上角的叉叉圖形往上 1px，外框不動 */
-#modal-product-variant-merge .modal-close::before,
-#modal-product-variant-merge .modal-close::after{
-  top:50% !important;
-}
-</style>
 
 
 
-<style id="andhug-product-photo-unified-all-views">
-/* 商品庫＋開單：三種商品顯示模式統一為淡奶油外層＋白色照片。
-   僅作用於商品網格本身，不碰開單「更多」區。 */
-
-/* 格狀 */
-#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img,
-#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img{
-  padding:12px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-#product-grid:not(.view-list):not(.view-large) .product-card:not(.merged-archive-card-grid) .product-img img,
-#sale-product-grid:not(.view-list):not(.view-large) .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  border-radius:12px !important;
-  object-fit:cover !important;
-}
-
-/* 列表 */
-#product-grid.view-list .product-card .product-img,
-#sale-product-grid.view-list .product-card .product-img{
-  padding:6px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-#product-grid.view-list .product-card .product-img img,
-#sale-product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  border-radius:7px !important;
-  object-fit:cover !important;
-}
-
-/* 大圖 */
-#product-grid.view-large .product-card .product-img,
-#sale-product-grid.view-large .product-card .product-img{
-  padding:12px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-#product-grid.view-large .product-card .product-img img,
-#sale-product-grid.view-large .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  border-radius:10px !important;
-  object-fit:cover !important;
-}
-</style>
 
 
-<style id="andhug-list-photo-fill">
-/* 列表模式：左側圖片區填滿整列高度 */
-#product-grid.view-list .product-card,
-#sale-product-grid.view-list .product-card{
-  align-items:stretch !important;
-  overflow:hidden !important;
-}
-
-#product-grid.view-list .product-card .product-img,
-#sale-product-grid.view-list .product-card .product-img{
-  width:96px !important;
-  min-width:96px !important;
-  height:auto !important;
-  min-height:84px !important;
-  aspect-ratio:unset !important;
-  flex:0 0 96px !important;
-  align-self:stretch !important;
-  margin:0 !important;
-  padding:8px !important;
-  border-radius:0 !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-
-#product-grid.view-list .product-card .product-img img,
-#sale-product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  min-height:68px !important;
-  padding:0 !important;
-  border-radius:9px !important;
-  background:#fff !important;
-  object-fit:cover !important;
-}
-</style>
 
 
-<style id="andhug-list-photo-right-corners-square">
-/* 列表模式：只有白色商品圖片右上與右下改成直角；左上左下維持圓角 */
-#product-grid.view-list .product-card .product-img img,
-#sale-product-grid.view-list .product-card .product-img img{
-  border-top-left-radius:10px !important;
-  border-bottom-left-radius:10px !important;
-  border-top-right-radius:0 !important;
-  border-bottom-right-radius:0 !important;
-}
-</style>
 
-<style id="andhug-grid-photo-10-bottom-square">
-/* 商品庫＋開單：白色照片 padding 10px；上圓下方。開單「更多」不受影響。 */
-#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img,
-#sale-product-grid:not(.view-list) .product-card .product-img{
-  padding:10px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
 
-#product-grid:not(.view-list) .product-card:not(.merged-archive-card-grid) .product-img img,
-#sale-product-grid:not(.view-list) .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  border-top-left-radius:12px !important;
-  border-top-right-radius:12px !important;
-  border-bottom-left-radius:0 !important;
-  border-bottom-right-radius:0 !important;
-  object-fit:cover !important;
-}
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <!-- andhug hard fix: product image style is now embedded in renderProducts/renderSaleProducts
      so upload/re-render cannot fall back to the older card image CSS. -->
 
 
-<style id="andhug-only-product-grid-photo-6-6-8-6">
-/* ONLY 商品庫格狀模式：上/右/左 6px，下 8px。列表、大圖、開單完全不動。 */
-#product-grid.view-grid .product-card:not(.merged-archive-card-grid) .product-img{
-  padding:6px 6px 8px 6px !important;
-}
-</style>
-
-
-<style id="andhug-product-more-radius-match">
-/* 只改 商品庫「更多」：
-   1) 外框圓角統一 16px
-   2) 內圖和外框間距：上/左/右 2px、下 3px
-   3) 內圖上方圓角 10px
-   4) 內圖下方維持方角
-   不碰格狀、列表、開單，也不動其他 CSS。 */
-#product-grid.view-large .product-card{
-  --more-frame-radius:16px;
-  --more-photo-gap-x:5px;
-  --more-photo-gap-top:5px;
-  --more-photo-gap-bottom:6px;
-  --more-inner-top-radius:10px;
-  border-radius:var(--more-frame-radius) !important;
-}
-#product-grid.view-large .product-card .product-img{
-  padding:var(--more-photo-gap-top) var(--more-photo-gap-x) var(--more-photo-gap-bottom) var(--more-photo-gap-x) !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-  border-top-left-radius:var(--more-frame-radius) !important;
-  border-top-right-radius:var(--more-frame-radius) !important;
-  border-bottom-left-radius:0 !important;
-  border-bottom-right-radius:0 !important;
-}
-#product-grid.view-large .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  object-fit:cover !important;
-  border-top-left-radius:var(--more-inner-top-radius) !important;
-  border-top-right-radius:var(--more-inner-top-radius) !important;
-  border-bottom-left-radius:0 !important;
-  border-bottom-right-radius:0 !important;
-}
-</style>
-
-
-<style id="andhug-product-list-photo-4-match">
-/* ONLY 商品庫「列表」：
-   - 圖片區 padding 4px
-   - 外框列表本身維持 12px
-   - 內圖左上/左下 8px，對齊外框弧度
-   - 內圖右上/右下方角
-   不碰格狀、更多、開單。 */
-#product-grid.view-list .product-card .product-img{
-  padding:5px 6px 5px 5px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-
-#product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  object-fit:cover !important;
-  border-top-left-radius:8px !important;
-  border-bottom-left-radius:8px !important;
-  border-top-right-radius:0 !important;
-  border-bottom-right-radius:0 !important;
-}
-</style>
 
 
 
-<style id="andhug-product-list-final-pad2322-left-round-right-square">
-/* FINAL 商品庫「列表」 only
-   1) 圖片區 padding：上2 / 右3 / 下2 / 左2
-   2) 內圖圓角：上左圓 / 上右方 / 下左圓 / 下右方
-   不碰：格狀、更多、開單
-*/
-#product-grid.view-list .product-card .product-img{
-  padding:4px 5px 4px 4px !important;
-  background:var(--cream2) !important;
-  box-sizing:border-box !important;
-}
-#product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  background:#fff !important;
-  object-fit:cover !important;
-  border-top-left-radius:8px !important;
-  border-top-right-radius:0 !important;
-  border-bottom-left-radius:8px !important;
-  border-bottom-right-radius:0 !important;
-}
-</style>
+
+
+
+
+
+
+
+
 
 
 <!-- andhug product view render hard-fix:
@@ -25071,405 +26904,44 @@ document.addEventListener('change',function(e){
      This is embedded in renderProducts so image upload/re-render keeps the approved geometry. -->
 
 
-<style id="andhug-sale-view-final-stable">
-/* FINAL 開單商品卡 only
-   格狀：上6 / 右6 / 下7 / 左6；內圖上圓下方
-   更多：0 / 0 / 0 / 0；內圖四角圓
-   列表：圖片滿版；文字區淡奶油底；圖片左圓右方
-   切模式會重新 render。 */
-
-/* 格狀 */
-#sale-product-grid.view-grid .product-card{
-  border-radius:16px !important;
-}
-#sale-product-grid.view-grid .product-card .product-img{
-  border-radius:16px 16px 0 0 !important;
-}
-
-/* 更多 */
-#sale-product-grid.view-large .product-card{
-  border-radius:10px !important;
-}
-#sale-product-grid.view-large .product-card .product-img{
-  border-radius:10px !important;
-}
-
-/* 列表 */
-#sale-product-grid.view-list .product-card{
-  border-radius:12px !important;
-  align-items:stretch !important;
-  overflow:hidden !important;
-  background:var(--cream2) !important;
-}
-#sale-product-grid.view-list .product-card .product-img{
-  width:96px !important;
-  min-width:96px !important;
-  height:auto !important;
-  min-height:84px !important;
-  aspect-ratio:unset !important;
-  flex:0 0 96px !important;
-  align-self:stretch !important;
-  margin:0 !important;
-  padding:0 !important;
-  border-radius:0 !important;
-  background:#fff !important;
-}
-#sale-product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  margin:0 !important;
-  object-fit:cover !important;
-  border-radius:12px 0 0 12px !important;
-}
-#sale-product-grid.view-list .product-card .product-info{
-  background:var(--cream2) !important;
-}
-</style>
-
-
-
-
-<style id="andhug-sale-list-center-layout-final">
-/* FINAL 開單 → 列表文字排版 only
-   - 名稱與價錢固定在卡片垂直 50% 中線、同一水平線
-   - 件數獨立放在價錢下方，不推動價錢位置
-   - 保留左側滿版圖片與淡奶油文字底
-*/
-#sale-product-grid.view-list .product-card .product-info{
-  position:relative !important;
-  display:block !important;
-  flex:1 1 auto !important;
-  min-width:0 !important;
-  padding:12px 16px !important;
-  background:var(--cream2) !important;
-}
-
-#sale-product-grid.view-list .product-card .product-name{
-  position:absolute !important;
-  left:16px !important;
-  right:92px !important;
-  top:50% !important;
-  transform:translateY(-50%) !important;
-  display:block !important;
-  min-width:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  text-align:left !important;
-  font-size:14px !important;
-  line-height:1.3 !important;
-}
-
-#sale-product-grid.view-list .product-card .product-meta{
-  position:static !important;
-  display:block !important;
-  margin:0 !important;
-  padding:0 !important;
-  transform:none !important;
-  white-space:nowrap !important;
-}
-
-#sale-product-grid.view-list .product-card .product-meta .price-tag{
-  position:absolute !important;
-  right:16px !important;
-  top:50% !important;
-  transform:translateY(-50%) !important;
-  margin:0 !important;
-  line-height:1 !important;
-  text-align:right !important;
-}
-
-#sale-product-grid.view-list .product-card .product-meta > span:first-child{
-  position:absolute !important;
-  right:14px !important;
-  top:calc(50% + 18px) !important;
-  margin:0 !important;
-  padding:0 !important;
-  display:flex !important;
-  justify-content:flex-end !important;
-}
-
-#sale-product-grid.view-list .product-card .stock-badge{
-  margin:0 !important;
-}
-</style>
 
 
 
 
 
-<style id="andhug-sale-list-name-area-bg-final">
-/* ONLY 開單區 → 列表 → 名稱那整塊區域
-   從文字區左緣到價錢區之前，整個高度使用 #F7F2EC。
-   價錢 / 幾件區域維持原本背景與位置。 */
-#sale-product-grid.view-list .product-card .product-name{
-  left:0 !important;
-  right:92px !important;
-  top:0 !important;
-  bottom:0 !important;
-  transform:none !important;
-  display:flex !important;
-  align-items:center !important;
-  padding:0 0 0 16px !important;
-  background:#F7F2EC !important;
-  box-sizing:border-box !important;
-}
-</style>
-
-
-<style id="andhug-product-list-fullimg-f7f2ec">
-/* ONLY 商品庫 → 列表
-   1) 左側圖片滿版，不留 padding
-   2) 右側整個文字區底色 #F7F2EC
-   3) 不改任何文字排版/位置/大小/資訊欄位
-*/
-#product-grid.view-list .product-card .product-img{
-  padding:0 !important;
-  background:#fff !important;
-  overflow:hidden !important;
-}
-
-#product-grid.view-list .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  padding:0 !important;
-  margin:0 !important;
-  object-fit:cover !important;
-  border-top-left-radius:12px !important;
-  border-top-right-radius:0 !important;
-  border-bottom-left-radius:12px !important;
-  border-bottom-right-radius:0 !important;
-}
-
-#product-grid.view-list .product-card .product-info{
-  background:#F7F2EC !important;
-}
-</style>
 
 
 
-<style id="andhug-sale-list-full-right-bg-white-final">
-/* ONLY 開單區 → 列表
-   1) 右側文字區背景改成白色
-   2) 圖片與文字區之間加細分隔線
-   其他位置與樣式不動
-*/
-#sale-product-grid.view-list .product-card .product-info{
-  background:#FFFFFF !important;
-  border-left:1px solid var(--cream3) !important;
-}
-#sale-product-grid.view-list .product-card .product-name{
-  background:#FFFFFF !important;
-}
-</style>
 
 
 
-<style id="andhug-product-list-white-divider-final">
-/* ONLY 商品庫 → 列表
-   1) 右側文字區白底
-   2) 圖片與文字間 1px 分隔線
-   3) 不改任何文字內容/位置/大小/間距
-*/
-#product-grid.view-list .product-card .product-info{
-  background:#FFFFFF !important;
-  border-left:1px solid var(--cream3) !important;
-}
-</style>
 
 
-<style id="andhug-product-list-sold-down-2px-final">
-/* ONLY 商品庫 → 列表：🔥 已售出 整行往下 2px */
-#product-grid.view-list .product-card .pc-sold{
-  position:relative !important;
-  top:2px !important;
-}
-</style>
 
 
-<style id="andhug-product-list-sold-align-color-final-v2">
-/* ONLY 商品庫 → 列表
-   1) 🔥 已售出 再往下，跟右側「進貨價」視覺對齊
-   2) 已售出文字顏色改成和進貨價同色系
-   3) 用高優先權固定，避免上傳後被前面舊規則蓋掉 */
-#product-grid.view-list .product-card .pc-sold{
-  display:block !important;
-  position:relative !important;
-  left:1px !important;
-  top:8px !important;
-  margin:0 !important;
-  padding:0 !important;
-  font-size:9px !important;
-  line-height:1.18 !important;
-  font-weight:700 !important;
-  color:var(--text3) !important;
-}
 
-#product-grid.view-list .product-card .more-cost{
-  color:var(--text3) !important;
-}
-</style>
 
-<style id="andhug-product-more-divider-no-outer-border-final">
-/* FINAL ONLY 商品庫 → 更多
-   - 拿掉整張商品卡外圍咖啡/奶茶邊框
-   - 只保留圖片與文字資訊交界的 1px 細分隔線
-   - 不動圖片、圓角、文字、價錢、庫存、間距
-*/
-#product-grid.view-large .product-card{
-  border:none !important;
-  outline:none !important;
-  box-shadow:var(--shadow) !important;
-}
-#product-grid.view-large .product-card:hover{
-  border:none !important;
-}
-#product-grid.view-large .product-card .product-info{
-  border-top:1px solid var(--cream3) !important;
-}
-</style>
-<style id="andhug-product-more-photo-full-divider-text-final-v3">
-/* FINAL 商品庫 → 更多：照片滿版 → 1px 分隔線 → 文字區 */
-#product-grid.view-large .product-card{
-  border:0 !important;
-  outline:0 !important;
-  overflow:hidden !important;
-  display:flex !important;
-  flex-direction:column !important;
-}
-#product-grid.view-large .product-card .product-img{
-  width:100% !important;
-  margin:0 !important;
-  padding:0 !important;
-  background:#fff !important;
-  box-sizing:border-box !important;
-  border:0 !important;
-  border-bottom:1px solid var(--cream3) !important;
-  border-radius:16px 16px 0 0 !important;
-  overflow:hidden !important;
-}
-#product-grid.view-large .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  margin:0 !important;
-  padding:0 !important;
-  display:block !important;
-  object-fit:cover !important;
-  background:#fff !important;
-  border:0 !important;
-  border-radius:16px 16px 0 0 !important;
-}
-#product-grid.view-large .product-card .product-info{
-  width:100% !important;
-  margin:0 !important;
-  border:0 !important;
-  background:#fff !important;
-  box-sizing:border-box !important;
-}
-</style>
 
-<style id="andhug-grid-photo-fill-divider-final">
-/* FINAL 商品庫＋開單 → 格狀
-   1) 咖啡色圖片框 / padding 拿掉
-   2) 照片直接貼滿上半部
-   3) 圖片與文字中間只留 1px 細線
-   4) 文字、價格、庫存位置不動 */
-#product-grid.view-grid .product-card .product-img,
-#sale-product-grid.view-grid .product-card .product-img{
-  padding:0 !important;
-  background:#fff !important;
-  box-sizing:border-box !important;
-  border-radius:16px 16px 0 0 !important;
-  overflow:hidden !important;
-  border-bottom:1px solid var(--cream3) !important;
-}
 
-#product-grid.view-grid .product-card .product-img img,
-#sale-product-grid.view-grid .product-card .product-img img{
-  width:100% !important;
-  height:100% !important;
-  margin:0 !important;
-  padding:0 !important;
-  display:block !important;
-  background:#fff !important;
-  object-fit:cover !important;
-  border-radius:16px 16px 0 0 !important;
-}
-</style>
 
-<style id="andhug-native-card-merge-clean-final">
-/* 商品卡原生 drop：字母卡拖到可併入母商品時，只顯示一個清楚提示。 */
-#product-grid .product-card.drag-merge-target::after{
-  content:'放開併入' !important;
-}
-</style>
 
-<style id="andhug-merged-archive-follow-view-final">
-/* 已併入款式：跟隨商品庫目前的 格狀 / 更多 / 列表 顯示模式 */
-#product-grid .merged-archive-meta{
-  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
-  font-size:9px;color:var(--text3);line-height:1.25;
-}
-#product-grid .merged-archive-variant{
-  display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;
-  background:var(--cream2);color:var(--brown);font-weight:800;white-space:nowrap;
-}
-#product-grid .merged-archive-actions{margin-top:auto;padding-top:8px;}
-#product-grid .merged-archive-actions .btn{font-size:9.5px!important;padding:5px 9px!important;min-height:26px!important;}
-#product-grid .merged-archive-actions-list{display:flex;align-items:center;padding:0 12px 0 6px;background:#fff;flex-shrink:0;margin:0;}
 
-/* 格狀：完全維持商品庫格狀的照片滿版＋中間分隔線結構 */
-#product-grid.view-grid .merged-archive-card-grid{
-  overflow:hidden!important;
-  background:#fff!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
-  width:100%!important;
-  aspect-ratio:1!important;
-  padding:0!important;
-  margin:0!important;
-  background:#fff!important;
-  box-sizing:border-box!important;
-  border-radius:16px 16px 0 0!important;
-  overflow:hidden!important;
-  border-bottom:1px solid var(--cream3)!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
-  width:100%!important;
-  height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  display:block!important;
-  object-fit:cover!important;
-  border-radius:16px 16px 0 0!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .product-info{
-  background:#fff!important;
-  padding:8px 10px 10px!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo{
-  width:100%!important;aspect-ratio:1!important;padding:0!important;margin:0!important;
-  background:#fff!important;overflow:hidden!important;border-bottom:1px solid var(--cream3)!important;
-  border-radius:16px 16px 0 0!important;box-sizing:border-box!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .merged-archive-photo img{
-  width:100%!important;height:100%!important;display:block!important;margin:0!important;padding:0!important;
-  object-fit:cover!important;background:#fff!important;border-radius:16px 16px 0 0!important;
-}
-#product-grid.view-grid .merged-archive-card-grid .product-name{font-size:12px!important;margin:0 0 2px!important;}
-#product-grid.view-grid .merged-archive-card-grid .product-sku{font-size:9px!important;margin:0 0 5px!important;}
-#product-grid.view-grid .merged-archive-target{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
 
-/* 更多：維持更多模式，不顯示下方文字，只留小款式標記與恢復按鈕 */
-#product-grid.view-large .merged-archive-card-large{position:relative!important;overflow:hidden!important;}
-#product-grid.view-large .merged-archive-card-large .product-img{padding:0!important;background:#fff!important;border-radius:16px!important;overflow:hidden!important;}
-#product-grid.view-large .merged-archive-card-large .product-img img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;border-radius:16px!important;}
-#product-grid.view-large .merged-archive-large-overlay{position:absolute;left:5px;right:5px;bottom:5px;display:flex;align-items:center;justify-content:space-between;gap:4px;pointer-events:none;}
-#product-grid.view-large .merged-archive-large-overlay span{background:rgba(255,255,255,.9);border:1px solid var(--cream3);border-radius:999px;padding:2px 6px;font-size:8px;font-weight:800;color:var(--brown);}
-#product-grid.view-large .merged-archive-large-overlay button{pointer-events:auto;width:22px;height:22px;border-radius:8px;border:1px solid var(--cream3);background:rgba(255,255,255,.92);color:var(--brown);cursor:pointer;padding:0;font-size:11px;}
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -25481,452 +26953,9 @@ window.__ANDHUG_GLOBAL_UNDO_V3__=true;
 
 <script id="andhug-undo-refresh-v4-marker">window.__ANDHUG_UNDO_REFRESH_V4__=true;</script>
 
-<style id="andhug-real-subcat-drop-v1">
-#subcat-filters.product-drag-active button[data-sku-subcat-drop]{
-  /* 拖曳開始時不再改 padding / font-size / height，避免整排重新排版造成卡頓 */
-  transition:background .06s,border-color .06s,color .06s,box-shadow .06s!important;
-}
-#subcat-filters.product-drag-active button[data-sku-subcat-drop].drag-over{
-  /* 只填色，不改按鈕尺寸 */
-  background:var(--brown)!important;
-  color:#fff!important;
-  border-color:var(--brown)!important;
-  border-width:1.5px!important;
-  box-shadow:none!important;
-  transform:none!important;
-  transition:none!important;
-}
-
-
-/* ===== Smart Import modal width — wider desktop frame only ===== */
-#modal-smart-import .modal,
-#modal-order .modal{
-  width:min(94vw,700px)!important;
-  max-width:700px!important;
-}
-
-/* 兩個匯入視窗：讓每一列跟著外框收窄並完整吃滿可用寬度 */
-#modal-smart-import .smart-import-review-row,
-#modal-order .order-form-review-row,
-#modal-order .order-items-header{
-  width:100%!important;
-  box-sizing:border-box!important;
-}
-#modal-smart-import .smart-import-review-name,
-#modal-order .order-form-review-name{
-  min-width:0!important;
-  width:100%!important;
-}
 
 
 
-
-#modal-smart-import .smart-import-review-row{
-  width:100%!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-#modal-smart-import .smart-import-review-name{
-  min-width:0!important;
-}
-
-
-
-/* Import modal hard width + shrink guards */
-#modal-smart-import .modal,
-#modal-order .modal{
-  box-sizing:border-box!important;
-  min-width:0!important;
-}
-#modal-smart-import .modal-body,
-#modal-order .modal-body,
-#modal-smart-import #smart-import-step-review,
-#modal-smart-import #smart-import-list{
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-#modal-smart-import .smart-import-review-row,
-#modal-order .order-item-row{
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-#modal-smart-import input,
-#modal-order input{
-  min-width:0;
-}
-
-
-
-/* ===== Import modal compact width — final authoritative rule ===== */
-#modal-smart-import .modal,
-#modal-order .modal{
-  width:min(94vw,700px)!important;
-  max-width:700px!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-
-/* 智慧匯入：真正限制中間商品名稱欄，避免 1fr 把整排拉成大片白色 */
-#modal-smart-import .smart-import-review-row{
-  grid-template-columns:32px 32px minmax(260px,1fr) 76px 60px 30px!important;
-  gap:8px!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-
-/* 表格式匯入也用相同緊湊邏輯 */
-#modal-order .order-form-review-row{
-  grid-template-columns:40px 40px minmax(240px,1fr) 86px 60px 36px!important;
-  gap:8px!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-
-#modal-smart-import .smart-import-review-name,
-#modal-order .order-form-review-name{
-  min-width:0!important;
-  width:auto!important;
-}
-
-
-
-/* ===== 採購單明細：上下固定，中間商品清單獨立滾動 ===== */
-#modal-order-detail .modal{
-  display:flex!important;
-  flex-direction:column!important;
-  max-height:calc(100vh - 36px)!important;
-  overflow:hidden!important;
-}
-#modal-order-detail .modal-header{
-  flex:0 0 auto!important;
-  background:var(--cream)!important;
-  position:relative;
-  z-index:5;
-}
-#modal-order-detail #order-detail-body{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow:hidden!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-#modal-order-detail .order-detail-fixed-top{
-  flex:0 0 auto!important;
-  background:var(--cream)!important;
-  position:relative;
-  z-index:4;
-}
-#modal-order-detail .order-detail-products-scroll{
-  flex:1 1 auto!important;
-  min-height:120px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior:contain;
-  padding-right:3px;
-}
-#modal-order-detail .order-detail-products-scroll .order-table{
-  margin-bottom:0!important;
-}
-#modal-order-detail .order-detail-products-scroll .order-table thead th{
-  position:sticky;
-  top:0;
-  z-index:3;
-  background:var(--cream)!important;
-  box-shadow:0 1px 0 var(--cream3);
-}
-#modal-order-detail .order-detail-fixed-bottom{
-  flex:0 0 auto!important;
-  background:var(--cream)!important;
-  position:relative;
-  z-index:4;
-  padding-top:12px;
-  border-top:1px solid var(--cream3);
-}
-
-
-
-
-
-
-
-/* 已到貨採購單未解鎖時：組合結構控制也必須一起鎖住 */
-#modal-order .order-row-group-icon:disabled,
-#modal-order .order-group-target-icon:disabled{
-  cursor:default!important;
-  opacity:.38!important;
-  pointer-events:none!important;
-}
-
-
-
-/* ===== 編輯採購單捲動穩定：避免 backdrop blur 與 scroll layer 重繪閃爍 ===== */
-#modal-order.order-edit-footer-fixed{
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-body.theme-glass #modal-order.order-edit-footer-fixed .modal{
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-#modal-order.order-edit-footer-fixed .modal{
-  isolation:isolate;
-}
-#modal-order.order-edit-footer-fixed .modal-body{
-  overscroll-behavior:contain!important;
-  scrollbar-gutter:stable;
-  contain:paint;
-  -webkit-overflow-scrolling:touch;
-}
-#modal-order.order-edit-footer-fixed #order-edit-action-footer{
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-}
-
-
-
-/* ===== 商品詳情：上一個 / 下一個商品 ===== */
-#modal-stock .stock-modal-nav-shell{
-  position:relative;
-  width:min(1100px,calc(100vw - 120px));
-  max-height:90vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-#modal-stock .stock-modal-nav-shell>.modal{
-  width:100%;
-  max-width:1100px!important;
-}
-#modal-stock .stock-product-nav{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:8;
-  width:44px;
-  height:44px;
-  padding:0;
-  border:1.5px solid var(--cream3);
-  border-radius:15px;
-  background:rgba(250,247,242,.96);
-  color:var(--brown);
-  box-shadow:0 5px 16px rgba(61,47,31,.12);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease;
-}
-#modal-stock .stock-product-nav-prev{left:-58px;}
-#modal-stock .stock-product-nav-next{right:-58px;}
-#modal-stock .stock-product-nav:hover{
-  background:var(--cream2);
-  border-color:var(--brown-light);
-  box-shadow:0 7px 18px rgba(61,47,31,.16);
-}
-#modal-stock .stock-product-nav:active{
-  transform:translateY(-50%) scale(.94);
-}
-#modal-stock .stock-product-nav svg{display:block;}
-@media (max-width:1240px){
-  #modal-stock .stock-modal-nav-shell{
-    width:min(1100px,calc(100vw - 32px));
-  }
-  #modal-stock .stock-product-nav{
-    width:38px;
-    height:38px;
-    border-radius:13px;
-    background:rgba(250,247,242,.98);
-  }
-  #modal-stock .stock-product-nav-prev{left:8px;}
-  #modal-stock .stock-product-nav-next{right:8px;}
-}
-@media (max-width:768px){
-  #modal-stock .stock-modal-nav-shell{
-    width:100%;
-    max-height:92vh;
-  }
-  #modal-stock .stock-product-nav{
-    top:56px;
-    width:34px;
-    height:34px;
-    border-radius:11px;
-  }
-  #modal-stock .stock-product-nav-prev{left:12px;}
-  #modal-stock .stock-product-nav-next{right:58px;}
-}
-
-
-
-#modal-stock .stock-product-nav:disabled{
-  opacity:.32;
-  cursor:default;
-  box-shadow:none;
-}
-
-
-
-/* ===== 商品庫：⌘ / Ctrl 多選 + 整批拖移 ===== */
-#product-grid .product-card.batch-selected{
-  border:2px solid var(--brown)!important;
-  background:#fffaf4!important;
-  box-shadow:0 0 0 3px rgba(139,111,71,.10)!important;
-}
-#product-grid .product-card.batch-dragging{
-  opacity:.42!important;
-}
-.drag-sidebar-thumb .batch-drag-count{
-  position:absolute;
-  right:-10px;
-  top:-10px;
-  min-width:28px;
-  height:28px;
-  padding:0 7px;
-  border-radius:999px;
-  background:var(--brown);
-  color:#fff;
-  border:2px solid var(--surface);
-  box-shadow:0 3px 9px rgba(61,47,31,.18);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-sizing:border-box;
-  font-family:'Nunito',sans-serif;
-  font-size:11px;
-  font-weight:900;
-  white-space:nowrap;
-}
-
-
-
-/* ===== 左側分類：展開狀態與實際篩選狀態分色 ===== */
-#cat-sidebar .cat-sidebar-item.cat-expanded{
-  /* 展開背景 = SKU 規則頁後方的米白底 */
-  background:var(--cream)!important;
-  color:var(--text2)!important;
-  /* 左側窄條改回網站原本棕色 */
-  border-left-color:var(--brown)!important;
-}
-#cat-sidebar .cat-sidebar-item.cat-expanded:hover{
-  background:var(--cream)!important;
-  color:var(--brown)!important;
-}
-#cat-sidebar .cat-sidebar-item.cat-filter-row.active{
-  background:var(--sidebar-active-bg)!important;
-  color:var(--brown)!important;
-  border-left-color:var(--brown)!important;
-}
-#cat-sidebar .cat-sidebar-item.cat-filter-row:not(.active){
-  background:var(--surface);
-}
-
-#cat-sidebar .cat-sidebar-item.cat-filter-row.active:hover{
-  background:var(--sidebar-active-bg-hover)!important;
-  color:var(--brown)!important;
-}
-
-
-
-
-#cat-sidebar .cat-sidebar-item.cat-expanded.drag-over{
-  background:var(--peach-light)!important;
-  color:var(--brown)!important;
-  border-left-color:var(--brown)!important;
-  box-shadow:inset 0 0 0 1px rgba(139,111,71,.14);
-}
-
-
-
-/* ===== SKU 規則：刪除叉叉改為跟其他按鈕一致的正方形 ===== */
-#page-sku .remove-btn{
-  width:34px!important;
-  height:34px!important;
-  min-width:34px!important;
-  min-height:34px!important;
-  border-radius:8px!important;
-  align-self:center;
-  justify-self:center;
-}
-
-
-
-/* ===== 商品卡：織帶 / 布條子分類醒目標示 ===== */
-#product-grid .product-card .pc-subcat-code.rb-subcat-highlight{
-  display:inline-flex!important;
-  align-items:center!important;
-  align-self:flex-start!important;
-  width:max-content!important;
-  max-width:100%!important;
-  padding:2px 6px!important;
-  margin:1px 0 2px!important;
-  border:1px solid var(--cream4)!important;
-  border-radius:7px!important;
-  background:var(--cream3)!important;
-  color:var(--brown)!important;
-  font-family:monospace!important;
-  font-size:9px!important;
-  font-weight:800!important;
-  line-height:1.2!important;
-  white-space:nowrap!important;
-}
-#product-grid.view-list .product-card .pc-subcat-code.rb-subcat-highlight{
-  display:inline-flex!important;
-  vertical-align:middle!important;
-  margin:0 4px 0 0!important;
-}
-#product-grid.view-large .product-card .pc-subcat-code.rb-subcat-highlight{
-  display:inline-flex!important;
-  margin:0 0 2px!important;
-}
-
-
-
-/* ===== 商品庫拖曳：禁止瀏覽器原生圖片拖出／Split View ===== */
-#product-grid .product-card .product-img img,
-#sale-product-grid .product-card .product-img img{
-  -webkit-user-drag:none!important;
-  user-drag:none!important;
-  -webkit-user-select:none!important;
-  user-select:none!important;
-  pointer-events:none!important;
-}
-
-</style>
-
-<style id="report-month-control-fix">
-#page-reports #report-current-month-btn,
-#page-reports #report-month-btn{
-  height:34px !important;
-  min-height:34px !important;
-  max-height:34px !important;
-  box-sizing:border-box !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  padding:0 14px !important;
-  border-radius:17px !important;
-  line-height:1 !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  vertical-align:middle !important;
-}
-#page-reports #report-current-month-btn{
-  gap:6px !important;
-}
-#page-reports #report-current-month-btn .report-flower-icon{
-  display:inline-block !important;
-  font-size:14px !important;
-  line-height:1 !important;
-}
-#page-reports #report-month-btn{
-  gap:6px !important;
-}
-</style>
 
 <button type="button" id="safe-cloud-status" data-state="offline" onclick="safeCloudRetry()" title="點一下重新同步"><span class="dot"></span><span class="label">尚未同步</span></button>
 
@@ -25941,111 +26970,13 @@ window.addEventListener('beforeunload',function(e){
 });
 </script>
 
-<style id="edit-order-footer-match-v72">
-/* 編輯採購單底部固定成與表格式匯入相同的兩排版型 */
-#modal-order.order-edit-footer-fixed #order-edit-action-footer{
-  flex:0 0 auto !important;
-  width:100% !important;
-  box-sizing:border-box !important;
-  display:flex !important;
-  flex-direction:column !important;
-  gap:0 !important;
-  margin:0 !important;
-  padding:0 20px 4px !important;
-  background:var(--cream) !important;
-  border-top:0 !important;
-  z-index:50 !important;
-}
-
-#modal-order.order-edit-footer-fixed .order-footer-add-row{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:8px !important;
-  padding:10px 0 !important;
-  margin-left:-20px !important;
-  margin-right:-20px !important;
-  border:0 !important;
-  flex-wrap:wrap !important;
-}
-
-#modal-order.order-edit-footer-fixed .order-footer-main-row{
-  position:relative !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-end !important;
-  gap:8px !important;
-  padding-top:10px !important;
-  margin-left:-20px !important;
-  margin-right:-20px !important;
-  border:0 !important;
-  flex-wrap:wrap !important;
-}
-
-#modal-order.order-edit-footer-fixed .order-footer-main-row::before{
-  content:"" !important;
-  position:absolute !important;
-  left:0 !important;
-  right:0 !important;
-  top:0 !important;
-  height:1px !important;
-  background:var(--cream3) !important;
-  pointer-events:none !important;
-}
-
-#modal-order.order-edit-footer-fixed #order-back-btn{order:1 !important;}
-#modal-order.order-edit-footer-fixed .order-cancel-btn{order:2 !important;}
-#modal-order.order-edit-footer-fixed #order-draft-row{
-  order:3 !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-#modal-order.order-edit-footer-fixed #order-save-draft-btn{
-  display:inline-flex !important;
-}
-#modal-order.order-edit-footer-fixed #order-save-btn{order:4 !important;}
-</style>
 
 
-<style id="unlock-button-compact-v73">
-/* 商品清單的「解鎖編輯」：縮小一點、減少左側空白，內容整體置中 */
-#modal-order #order-unlock-btn{
-  height:27px !important;
-  min-height:27px !important;
-  max-height:27px !important;
-  padding:0 9px !important;
-  gap:3px !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  border-radius:999px !important;
-  font-size:11.5px !important;
-  line-height:1 !important;
-  font-weight:500 !important;
-  vertical-align:middle !important;
-}
-#modal-order #order-unlock-btn svg{
-  width:12px !important;
-  height:12px !important;
-  margin:0 !important;
-  display:block !important;
-  flex:0 0 12px !important;
-  transform:none !important;
-}
-</style>
 
 
-<style id="nav-active-lighter-v77">
-/* 選中的主導覽白字減輕 100：600 → 500；不動尺寸、位置、背景 */
-body nav .nav-link.active,
-body nav .nav-link.active .ui-editable{
-  font-weight:500 !important;
-}
-</style>
+
+
+
 
 
 <script id="cloud-boot-failsafe-v79">
@@ -26059,1091 +26990,111 @@ setTimeout(function(){
 </script>
 
 
-<style id="product-card-compact-align-v88">
-/* 只整理商品卡資訊區：
-   提示/分類/庫存之間縮緊；所有卡片的分類、進貨價、庫存、售價固定對齊。 */
-
-#product-grid.view-grid .product-card .product-info{
-  padding:8px 10px 9px !important;
-}
-
-/* 商品名 / SKU 維持目前樣式，只控制下面節奏 */
-#product-grid.view-grid .product-card .product-sku{
-  margin-bottom:0 !important;
-}
-
-/* 提示列：有提示顯示紅字，沒有提示只保留同樣 11px 高度，不會造成卡片一高一低 */
-#product-grid.view-grid .product-card .product-sku-pending-subcat{
-  display:block !important;
-  height:11px !important;
-  min-height:11px !important;
-  max-height:11px !important;
-  margin:2px 0 0 !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  color:var(--red) !important;
-  font-size:9px !important;
-  font-weight:600 !important;
-  line-height:11px !important;
-  white-space:nowrap !important;
-}
-#product-grid.view-grid .product-card .product-sku-pending-subcat.is-empty{
-  visibility:hidden !important;
-}
-
-/* 分類 / 進貨價：同一排、同一基線 */
-#product-grid.view-grid .product-card .pc-flow{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:baseline !important;
-  column-gap:8px !important;
-  row-gap:0 !important;
-  margin:1px 0 0 !important;
-  padding:0 !important;
-  line-height:1 !important;
-}
-#product-grid.view-grid .product-card .pc-subcat-code,
-#product-grid.view-grid .product-card .pc-catcode{
-  grid-column:1 !important;
-  grid-row:1 !important;
-  align-self:baseline !important;
-  margin:0 !important;
-  font-size:9.5px !important;
-  font-weight:500 !important;
-  line-height:12px !important;
-}
-#product-grid.view-grid .product-card .pc-missing-cost-row{
-  display:contents !important;
-}
-#product-grid.view-grid .product-card .pc-cost{
-  grid-column:2 !important;
-  grid-row:1 !important;
-  align-self:baseline !important;
-  justify-self:end !important;
-  margin:0 !important;
-  font-size:9.5px !important;
-  font-weight:500 !important;
-  line-height:12px !important;
-  white-space:nowrap !important;
-}
-#product-grid.view-grid .product-card .pc-cost-label{
-  font-weight:500 !important;
-}
-
-/* 缺：圖片等提示若存在，放在提示區，不額外撐分類列 */
-#product-grid.view-grid .product-card .pc-missing{
-  grid-column:1 / -1 !important;
-  grid-row:2 !important;
-  margin:1px 0 0 !important;
-  font-size:9px !important;
-  line-height:11px !important;
-}
-
-/* 庫存 / 售價：緊接分類列，左右同一底線 */
-#product-grid.view-grid .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:end !important;
-  column-gap:8px !important;
-  margin-top:3px !important;
-  padding:0 !important;
-}
-#product-grid.view-grid .product-card .stock-badge{
-  justify-self:start !important;
-  align-self:end !important;
-  margin:0 !important;
-}
-#product-grid.view-grid .product-card .more-price-stack{
-  display:flex !important;
-  align-items:flex-end !important;
-  justify-content:flex-end !important;
-  justify-self:end !important;
-  align-self:end !important;
-  margin:0 !important;
-}
-#product-grid.view-grid .product-card .more-cost{
-  display:none !important;
-}
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  margin:0 !important;
-  font-size:11px !important;
-  line-height:1 !important;
-  font-weight:700 !important;
-  color:var(--text3) !important;
-}
-</style>
-
-
-<style id="card-align-and-drag-shrink-v90">
-/* v90 最終覆蓋：只管商品格卡片資訊的垂直節奏與對齊 */
-body #page-products #product-grid.view-grid .product-card .product-info{
-  padding:8px 10px 9px !important;
-  display:flex !important;
-  flex-direction:column !important;
-}
-body #page-products #product-grid.view-grid .product-card .product-name{
-  margin:0 0 1px !important;
-}
-body #page-products #product-grid.view-grid .product-card .product-sku{
-  margin:0 !important;
-}
-
-/* 固定一條 10px 提示列：有待選就紅字，沒有就透明佔位 */
-body #page-products #product-grid.view-grid .product-card .product-sku-pending-subcat{
-  display:block !important;
-  box-sizing:border-box !important;
-  height:10px !important;
-  min-height:10px !important;
-  max-height:10px !important;
-  margin:1px 0 0 !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  color:var(--red) !important;
-  font-size:9px !important;
-  font-weight:600 !important;
-  line-height:10px !important;
-}
-body #page-products #product-grid.view-grid .product-card .product-sku-pending-subcat.is-empty{
-  visibility:hidden !important;
-}
-
-/* 06/DR 左；進貨價右。永遠同一 row / baseline */
-body #page-products #product-grid.view-grid .product-card .pc-flow{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  grid-template-rows:auto !important;
-  align-items:baseline !important;
-  column-gap:8px !important;
-  row-gap:0 !important;
-  margin:1px 0 0 !important;
-  padding:0 !important;
-  min-height:12px !important;
-}
-body #page-products #product-grid.view-grid .product-card .pc-subcat-code,
-body #page-products #product-grid.view-grid .product-card .pc-catcode{
-  grid-column:1 !important;
-  grid-row:1 !important;
-  align-self:baseline !important;
-  margin:0 !important;
-  padding:0 !important;
-  font-size:9.5px !important;
-  font-weight:500 !important;
-  line-height:12px !important;
-}
-body #page-products #product-grid.view-grid .product-card .pc-missing-cost-row{
-  display:contents !important;
-}
-body #page-products #product-grid.view-grid .product-card .pc-cost{
-  grid-column:2 !important;
-  grid-row:1 !important;
-  justify-self:end !important;
-  align-self:baseline !important;
-  margin:0 !important;
-  padding:0 !important;
-  font-size:9.5px !important;
-  font-weight:500 !important;
-  line-height:12px !important;
-  white-space:nowrap !important;
-}
-
-/* 1件 左；$2.00 右。只留 3px 距離 */
-body #page-products #product-grid.view-grid .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:end !important;
-  column-gap:8px !important;
-  margin:3px 0 0 !important;
-  padding:0 !important;
-}
-body #page-products #product-grid.view-grid .product-card .stock-badge{
-  justify-self:start !important;
-  align-self:end !important;
-  margin:0 !important;
-}
-body #page-products #product-grid.view-grid .product-card .more-price-stack{
-  display:flex !important;
-  justify-self:end !important;
-  align-self:end !important;
-  align-items:flex-end !important;
-  margin:0 !important;
-}
-body #page-products #product-grid.view-grid .product-card .more-cost{
-  display:none !important;
-}
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  margin:0 !important;
-  font-size:11px !important;
-  line-height:1 !important;
-  font-weight:700 !important;
-  color:var(--text3) !important;
-}
-
-/* 拖進分類/子分類時的小圖一定保持 56x56 */
-body .drag-sidebar-thumb{
-  width:56px !important;
-  height:56px !important;
-  min-width:56px !important;
-  min-height:56px !important;
-  max-width:56px !important;
-  max-height:56px !important;
-  border-radius:14px !important;
-  overflow:visible !important;
-  pointer-events:none !important;
-  z-index:99999 !important;
-}
-body .drag-sidebar-thumb .drag-sidebar-thumb-image{
-  width:56px !important;
-  height:56px !important;
-  border-radius:14px !important;
-  overflow:hidden !important;
-  background:#fff !important;
-}
-body .drag-sidebar-thumb .drag-sidebar-thumb-image img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:cover !important;
-  display:block !important;
-}
-</style>
-
-
-<style id="sidebar-all-colors-swap-v91">
-/* 只交換「全部」與「全商品」的底色 */
-#page-products .cat-status-parent{
-  background:var(--sidebar-active-bg) !important;
-}
-#page-products .cat-status-child:first-of-type{
-  background:var(--surface) !important;
-}
-
-/* hover 也維持交換後的顏色 */
-#page-products .cat-status-parent:hover{
-  background:var(--sidebar-active-bg) !important;
-}
-#page-products .cat-status-child:first-of-type:hover{
-  background:var(--surface) !important;
-}
-</style>
-
-
-<style id="drag-hover-no-pink-v92">
-/* 拖商品到分類 / 子分類時，不要粉紅色 hover */
-#page-products .cat-sidebar-item.drag-over,
-#page-products .cat-sidebar-item.cat-expanded.drag-over{
-  background:var(--cream2) !important;
-  color:var(--brown) !important;
-  border-left-color:var(--brown) !important;
-}
-
-/* 上方 SKU 子分類按鈕拖曳 hover 也不要粉紅 */
-#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
-#page-products #subcat-filters [data-product-drop-subcat].drag-over{
-  background:var(--cream2) !important;
-  border-color:var(--brown) !important;
-  color:var(--brown) !important;
-}
-</style>
-
-
-<style id="price-stock-align-v93">
-/* 商品卡最底排：1件 與 $2.00 垂直置中對齊 */
-body #page-products #product-grid.view-grid .product-card .product-meta{
-  align-items:center !important;
-}
-body #page-products #product-grid.view-grid .product-card .stock-badge,
-body #page-products #product-grid.view-grid .product-card .more-price-stack{
-  align-self:center !important;
-}
-body #page-products #product-grid.view-grid .product-card .more-price-stack{
-  display:flex !important;
-  align-items:center !important;
-}
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  display:block !important;
-  line-height:18px !important;
-}
-body #page-products #product-grid.view-grid .product-card .stock-badge{
-  line-height:18px !important;
-}
-</style>
-
-
-<style id="price-stock-row-fixed-v94">
-/* 商品卡最底排固定 24px：1件 與 $2.00 共用同一列 */
-body #page-products #product-grid.view-grid .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:center !important;
-  height:24px !important;
-  min-height:24px !important;
-  max-height:24px !important;
-  margin-top:3px !important;
-  padding:0 !important;
-}
-
-body #page-products #product-grid.view-grid .product-card .stock-badge{
-  height:24px !important;
-  min-height:24px !important;
-  max-height:24px !important;
-  box-sizing:border-box !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  align-self:center !important;
-  margin:0 !important;
-  line-height:1 !important;
-}
-
-body #page-products #product-grid.view-grid .product-card .more-price-stack{
-  height:24px !important;
-  min-height:24px !important;
-  max-height:24px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-end !important;
-  align-self:center !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  display:inline-flex !important;
-  align-items:center !important;
-  height:24px !important;
-  min-height:24px !important;
-  max-height:24px !important;
-  margin:0 !important;
-  padding:0 !important;
-  line-height:24px !important;
-  font-weight:700 !important;
-  transform:translateY(-1px) !important;
-}
-</style>
-
-
-<style id="sidebar-parent-dark-child-light-v95">
-/* 商品庫左側分類：主要分類用深米色，下面選到的小分類用淺米色。
-   只改這個側欄的底色，不動字體、排版、商品卡。 */
-
-/* 主要分類：全部 / 布貼 / 毛布貼 ... 展開時固定較深底 */
-#page-products #cat-sidebar .cat-status-parent.cat-expanded,
-#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded{
-  background:#e9e2d8 !important;
-  border-left-color:var(--brown) !important;
-}
-
-/* 下面的小分類：全商品 / 待完善 / 已完善 / 已完成 / 尺寸 / 子分類
-   被點選時只用淺米色 */
-#page-products #cat-sidebar .cat-status-child.active,
-#page-products #cat-sidebar .cat-filter-row.active{
-  background:#f3ede3 !important;
-  border-left-color:var(--brown) !important;
-}
-
-/* 沒選中的小分類維持白底 */
-#page-products #cat-sidebar .cat-status-child:not(.active),
-#page-products #cat-sidebar .cat-filter-row:not(.active){
-  background:var(--surface) !important;
-}
-
-/* 主分類 hover 不變粉紅，仍是深米色 */
-#page-products #cat-sidebar .cat-status-parent.cat-expanded:hover,
-#page-products #cat-sidebar .cat-sidebar-item[data-cat-type].cat-expanded:hover{
-  background:#e9e2d8 !important;
-}
-
-/* 小分類 hover 不用粉紅；選中維持淺米色，未選中則淡米白 */
-#page-products #cat-sidebar .cat-status-child.active:hover,
-#page-products #cat-sidebar .cat-filter-row.active:hover{
-  background:#f3ede3 !important;
-}
-#page-products #cat-sidebar .cat-status-child:not(.active):hover,
-#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
-  background:#faf7f2 !important;
-}
-
-/* 拖商品放到分類 / 小分類時不要粉紅色 */
-#page-products #cat-sidebar .cat-sidebar-item.drag-over,
-#page-products #cat-sidebar .cat-sidebar-item.cat-expanded.drag-over,
-#page-products #cat-sidebar .cat-filter-row.drag-over{
-  background:#f3ede3 !important;
-  color:var(--brown) !important;
-  border-left-color:var(--brown) !important;
-}
-
-/* 上方 01/AN、06/DR 這種子分類拖曳 hover 也不要粉紅 */
-#page-products #subcat-filters [data-sku-subcat-drop].drag-over,
-#page-products #subcat-filters [data-product-drop-subcat].drag-over{
-  background:#f3ede3 !important;
-  border-color:var(--brown) !important;
-  color:var(--brown) !important;
-}
-</style>
-
-
-<style id="sidebar-child-hover-swap-v96">
-/* 只交換小分類的「選中底色」與「hover 底色」 */
-#page-products #cat-sidebar .cat-status-child.active,
-#page-products #cat-sidebar .cat-filter-row.active{
-  background:#FAF7F2 !important;
-}
-#page-products #cat-sidebar .cat-status-child.active:hover,
-#page-products #cat-sidebar .cat-filter-row.active:hover{
-  background:#FAF7F2 !important;
-}
-#page-products #cat-sidebar .cat-status-child:not(.active):hover,
-#page-products #cat-sidebar .cat-filter-row:not(.active):hover{
-  background:#F3EDE3 !important;
-}
-</style>
-
-
-<style id="overview-stats-restore-v97">
-/* 只把總覽統計卡恢復成舊版：內容置中、標題/數值字重與大小恢復 */
-#page-overview .stat-card{
-  text-align:left !important;
-}
-#page-overview .stat-emoji{
-  font-size:22px !important;
-  margin-bottom:8px !important;
-}
-#page-overview .stat-label{
-  font-size:11px !important;
-  font-weight:700 !important;
-  line-height:1.25 !important;
-  letter-spacing:.5px !important;
-  margin-bottom:4px !important;
-  text-align:left !important;
-}
-#page-overview .stat-value{
-  font-family:'Nunito',sans-serif !important;
-  font-size:24px !important;
-  font-weight:800 !important;
-  line-height:1.15 !important;
-  text-align:left !important;
-}
-</style>
-
-
-<style id="sales-category-font-match-v98">
-/* 開單左側分類字體 = 商品庫左側分類字體，只改字體層級，不改底色/間距/功能 */
-#page-sales #sale-cat-sidebar .cat-sidebar-item{
-  font-size:11px !important;
-  font-weight:600 !important;
-  line-height:1.25 !important;
-}
-#page-sales #sale-cat-sidebar .cat-sidebar-item .ui-editable{
-  font-size:inherit !important;
-  font-weight:600 !important;
-  line-height:inherit !important;
-}
-#page-sales #sale-cat-sidebar .cat-sidebar-item > span[style*="margin-left:auto"]{
-  font-size:10px !important;
-  font-weight:700 !important;
-}
-#page-sales #sale-cat-sidebar .cat-sidebar-header{
-  font-size:9px !important;
-  font-weight:800 !important;
-  letter-spacing:.8px !important;
-}
-/* 開單展開後的小分類文字也跟商品庫一致，不吃 inline 12px / 11.5px */
-#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"]{
-  font-size:11px !important;
-  font-weight:600 !important;
-}
-#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] > span:first-child,
-#page-sales #sale-cat-sidebar .cat-sidebar-item[style*="padding-left"] .cat-subcat-label-wrap > span:first-child{
-  font-weight:600 !important;
-}
-</style>
-
-
-
-
-
-
-<style id="product-more-right-align-v101">
-#page-products #product-grid.view-large .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:end !important;
-  column-gap:6px !important;
-  margin-top:auto !important;
-  padding:0 !important;
-}
-#page-products #product-grid.view-large .product-card .stock-badge{
-  justify-self:start !important;
-  align-self:end !important;
-  margin:0 !important;
-}
-#page-products #product-grid.view-large .product-card .stock-default-text{
-  display:none !important;
-}
-#page-products #product-grid.view-large .product-card .stock-more-number{
-  display:inline !important;
-}
-#page-products #product-grid.view-large .product-card .more-price-stack{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:flex-end !important;
-  justify-content:flex-end !important;
-  justify-self:end !important;
-  width:max-content !important;
-  margin:0 !important;
-  padding:0 !important;
-  text-align:right !important;
-}
-#page-products #product-grid.view-large .product-card .more-cost,
-#page-products #product-grid.view-large .product-card .price-tag{
-  display:block !important;
-  width:100% !important;
-  margin:0 !important;
-  padding:0 !important;
-  text-align:right !important;
-  white-space:nowrap !important;
-}
-#page-products #product-grid.view-large .product-card .more-cost{
-  font-size:9.5px !important;
-  font-weight:500 !important;
-  line-height:1.1 !important;
-  color:var(--text3) !important;
-}
-#page-products #product-grid.view-large .product-card .price-tag{
-  margin-top:2px !important;
-  font-size:11px !important;
-  font-weight:700 !important;
-  line-height:1.05 !important;
-  color:var(--text3) !important;
-}
-</style>
-
-
-<style id="product-pending-red-v102">
-/* 商品庫橫向 more 卡：待選子分類改成紅色純文字，跟格狀卡一致 */
-body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat{
-  display:block !important;
-  width:auto !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  margin:3px 0 6px !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-  color:var(--red) !important;
-  font-size:9px !important;
-  font-weight:600 !important;
-  line-height:1.2 !important;
-}
-body #page-products #product-grid.view-large .product-card .product-sku-pending-subcat.is-empty{
-  display:none !important;
-}
-</style>
-
-
-
-
-<style id="product-grid-price-13px-v104">
-/* 只改商品庫「格狀」售價字體大小 */
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  font-size:13px !important;
-}
-</style>
-
-
-<style id="product-list-pending-padding-v105">
-/* 只改商品庫「列表」：
-   1) 待選子分類 = 紅色純文字
-   2) 商品名稱上方留白加大
-   3) 庫存 1件 下方留白縮小 */
-
-body #page-products #product-grid.view-list .product-card .product-info{
-  padding:12px 14px 6px 10px !important;
-}
-
-/* 列表的待選子分類跟缺圖提示一樣：紅字、無框、無底 */
-body #page-products #product-grid.view-list .product-card .product-sku-pending-subcat{
-  display:block !important;
-  width:auto !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  margin:2px 0 2px 1px !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-  color:var(--red) !important;
-  font-family:inherit !important;
-  font-size:9px !important;
-  font-weight:700 !important;
-  line-height:1.18 !important;
-}
-body #page-products #product-grid.view-list .product-card .product-sku-pending-subcat.is-empty{
-  display:none !important;
-}
-
-/* 底排貼近卡片底部一點，不改左右位置 */
-body #page-products #product-grid.view-list .product-card .product-meta{
-  margin-top:auto !important;
-  margin-bottom:0 !important;
-}
-</style>
-
-
-
-
-
-
-<style id="product-grid-price-14px-v108">
-/* 只改商品庫「格狀」售價字體大小 */
-body #page-products #product-grid.view-grid .product-card .price-tag{
-  font-size:14px !important;
-}
-</style>
-
-
-<style id="more-price-up-v109">
-/* 照目前「更多」小卡：只把右下售價往上 2px，進貨價與其他位置不動 */
-body #page-products #product-grid.view-large .product-card .more-price-stack .price-tag{
-  position:relative !important;
-  top:-2px !important;
-}
-</style>
-
-
-<style id="product-list-padding-border-v110">
-/* 商品庫 > 列表：上下留白改成一致；普通卡片外框回到列表的淡色細框。 */
-body #page-products #product-grid.view-list .product-card .product-info{
-  padding-top:10px !important;
-  padding-bottom:10px !important;
-}
-
-/* 普通列表卡不再出現深咖啡外框；批次選取仍保留選取提示。 */
-body #page-products #product-grid.view-list .product-card:not(.batch-selected){
-  border:1.5px solid var(--cream3) !important;
-}
-body #page-products #product-grid.view-list .product-card:not(.batch-selected):hover{
-  border-color:var(--cream3) !important;
-}
-</style>
-
-
-
-
-
-
-
-
-
-
-<style id="product-stock-badge-left-v115">
-/* 商品庫：格狀 / 更多 / 列表 的「1件」統一往左微移 1px，其他不動 */
-body #page-products #product-grid.view-grid .product-card .stock-badge,
-body #page-products #product-grid.view-large .product-card .stock-badge,
-body #page-products #product-grid.view-list .product-card .stock-badge{
-  position:relative !important;
-  left:-1px !important;
-}
-</style>
-
-
-<style id="product-list-top-align-text-v116">
-/* 商品庫 > 列表：
-   商品名稱 + SKU 往上，跟右上垃圾桶的水平位置更一致；
-   SKU 與進貨價改回較細字重。 */
-
-body #page-products #product-grid.view-list .product-card .product-info{
-  justify-content:flex-start !important;
-  padding-top:8px !important;
-}
-
-/* 名稱直接從上方開始，不再因舊規則置中 */
-body #page-products #product-grid.view-list .product-card .product-name{
-  margin-top:0 !important;
-}
-
-/* SKU 不要粗體 */
-body #page-products #product-grid.view-list .product-card .product-sku{
-  font-weight:500 !important;
-}
-
-/* 列表右側的進貨價不粗體 */
-body #page-products #product-grid.view-list .product-card .more-cost{
-  font-weight:500 !important;
-}
-</style>
-
-
-<style id="product-grid-cost-price-tight-v117">
-/* 商品庫 > 格狀：進貨價貼近下面售價，不留額外空白 */
-body #page-products #product-grid.view-grid .product-card .product-meta{
-  margin-top:0 !important;
-}
-</style>
-
-
-
-
-<style id="nav-font-match-categories-v119">
-/* 主導覽列字體比照商品庫分類文字 */
-body .nav-item,
-body .top-nav .nav-item,
-body nav .nav-item{
-  font-family:inherit !important;
-  font-size:11px !important;
-  font-weight:600 !important;
-}
-</style>
-
-
-<style id="consolidated-fixes-v120">
-/* =========================================================
-   重新落實 v115 之後使用者要求的幾項修改。
-   這一層使用實際 DOM class，並在瀏覽器 render 後驗證。
-   ========================================================= */
-
-/* 1) 商品庫：格狀 / 更多 / 列表 的庫存膠囊都往左一點 */
-body #page-products #product-grid.view-grid .product-card .stock-badge,
-body #page-products #product-grid.view-large .product-card .stock-badge,
-body #page-products #product-grid.view-list .product-card .stock-badge{
-  position:relative !important;
-  left:-2px !important;
-}
-
-/* 2) 商品庫列表：商品名稱 + SKU 往上，名稱上緣對齊右上垃圾桶；
-      SKU 與右側進貨價不要粗體。 */
-body #page-products #product-grid.view-list .product-card .product-info{
-  justify-content:flex-start !important;
-  padding-top:8px !important;
-}
-body #page-products #product-grid.view-list .product-card .product-name,
-body #page-products #product-grid.view-list .product-card .product-sku{
-  top:0 !important;
-}
-body #page-products #product-grid.view-list .product-card .product-sku{
-  font-weight:400 !important;
-}
-body #page-products #product-grid.view-list .product-card .more-cost{
-  font-weight:400 !important;
-}
-
-/* 3) 商品庫格狀：右側進貨價貼近下面售價。
-      不移動底排售價/庫存，因此仍維持 1件 與 $ 同一水平線。 */
-body #page-products #product-grid.view-grid .product-card .pc-cost{
-  position:relative !important;
-  top:9px !important;
-}
-
-/* 5) 主導覽列：真的套到實際使用的 .nav-link，
-      跟商品庫分類一樣 11px / 600 / inherit。 */
-body nav .nav-link,
-body nav .nav-link .ui-editable{
-  font-family:inherit !important;
-  font-size:13px !important;
-  font-weight:600 !important;
-}
-body nav .nav-link.active,
-body nav .nav-link.active .ui-editable{
-  font-weight:600 !important;
-}
-</style>
-
-
-<style id="nav-font-final-v121">
-/* v121：舊的 active nav 規則 specificity 較高，這裡明確覆蓋 active / inactive。 */
-body nav .nav-link,
-body nav .nav-link .ui-editable,
-body nav .nav-link.active,
-body nav .nav-link.active .ui-editable{
-  font-family:inherit !important;
-  font-size:13px !important;
-  font-weight:600 !important;
-}
-</style>
-
-
-<style id="product-list-missing-sku-align-v122">
-/* 商品庫 > 列表：紅色「缺：SKU」跟商品名稱左緣對齊 */
-body #page-products #product-grid.view-list .product-card .pc-missing-inline-list{
-  left:0 !important;
-  margin-left:0 !important;
-}
-</style>
-
-
-
-<style id="product-grid-missing-sku-overlay-cost-up-v123">
-/* 商品庫 > 格狀：
-   - 「缺：SKU」浮在 06/DR（分類碼）正上方，不新增一整行、不撐高卡片。
-   - 進貨價往上 2px。 */
-body #page-products #product-grid.view-grid .product-card .pc-flow{
-  position:relative !important;
-}
-
-/* 不再使用原本會佔 grid row 的缺資料列。 */
-body #page-products #product-grid.view-grid .product-card .pc-missing{
-  display:none !important;
-}
-
-/* 使用同一份缺資料提示，但改成浮動，不參與 layout。 */
-body #page-products #product-grid.view-grid .product-card .pc-missing-inline-list{
-  display:block !important;
-  position:absolute !important;
-  left:0 !important;
-  bottom:100% !important;
-  margin:0 0 1px 0 !important;
-  padding:0 !important;
-  color:var(--red) !important;
-  font-family:inherit !important;
-  font-size:9px !important;
-  font-weight:600 !important;
-  line-height:10px !important;
-  white-space:nowrap !important;
-  pointer-events:none !important;
-}
-
-/* 原本 v120 是 top:9px，這裡往上 2px。 */
-body #page-products #product-grid.view-grid .product-card .pc-cost{
-  top:7px !important;
-}
-</style>
-
-<style id="final-ui-after-sku-v124">
-/* SKU 重整後的最終 UI 覆蓋：只調整使用者最後指定的兩個視覺細節。 */
-body nav .nav-link,
-body nav .nav-link .ui-editable,
-body nav .nav-link.active,
-body nav .nav-link.active .ui-editable{
-  font-family:inherit !important;
-  font-size:13px !important;
-  font-weight:600 !important;
-}
-
-/* 商品庫格狀：進貨價再往上一點。 */
-body #page-products #product-grid.view-grid .product-card .pc-cost{
-  position:relative !important;
-  top:0 !important;
-  transform:translateY(-1px) !important;
-}
-</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>window.__INVENTORY_BUILD__="20261004-manual-sku-sync-v126";</script>
 
-<style id="product-grid-price-gap-final-v128">
-/* 商品庫 > 格狀：進貨價與售價只留小細縫；進貨價再往下 1px。 */
-body #page-products #product-grid.view-grid .product-card .product-meta{
-  margin-top:0 !important;
-}
-body #page-products #product-grid.view-grid .product-card .pc-cost{
-  top:0 !important;
-  transform:translateY(2px) !important;
-}
-</style>
 
-<style id="cart-number-vertical-align-v129">
-/* 購物車：價錢與數量只微微往上 0.5px，視覺置中，不會太靠上；不動外框。 */
-#page-sales .cart-price-input{
-  padding-top:0 !important;
-  padding-bottom:0 !important;
-  line-height:1 !important;
-  transform:translateY(-.5px) !important;
-}
-#page-sales .cart-qty-spinner input{
-  transform:translateY(-.5px) !important;
-  padding-top:0 !important;
-  padding-bottom:0 !important;
-  line-height:1 !important;
-}
-</style>
 
-<style id="sale-product-card-canonical-v130">
-/* ===== 開單商品卡：唯一正式規則 =====
-   舊版多層覆蓋已移除。之後開單卡只維護這裡。 */
 
-/* 格狀卡：名稱在上；底排為 1件 + 尺寸，售價在右。 */
-#page-sales #sale-product-grid.view-grid .product-card .product-info{
-  display:flex !important;
-  flex-direction:column !important;
-  flex:1 1 auto !important;
-  box-sizing:border-box !important;
-  padding:6px 12px 10px !important;
-  background:var(--surface) !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-name{
-  margin:0 0 3px !important;
-  padding:0 !important;
-  position:static !important;
-  font-family:inherit !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  line-height:1.35 !important;
-  color:var(--text) !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-meta{
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  gap:8px !important;
-  width:100% !important;
-  margin-top:auto !important;
-  padding:0 4px 0 0 !important;
-  box-sizing:border-box !important;
-  position:static !important;
-  inset:auto !important;
-  transform:none !important;
-  white-space:nowrap !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:2px !important;
-  margin:0 !important;
-  padding:0 !important;
-  position:relative !important;
-  left:-2px !important;
-}
 
-/* 1件 在前，尺寸在後。 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{order:1 !important;}
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{order:2 !important;}
 
-/* 尺寸 M/S/L：固定和 1件 的黃色系一致，不再吃 inline 灰色。 */
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
-#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:22px !important;
-  min-height:22px !important;
-  min-width:22px !important;
-  padding:0 6px !important;
-  margin:0 !important;
-  position:static !important;
-  left:auto !important;
-  border-radius:999px !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  opacity:1 !important;
-}
 
-/* 庫存膠囊基本尺寸。 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge,
-#page-sales #sale-product-grid.view-list .product-card .stock-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:24px !important;
-  min-height:24px !important;
-  padding:3px 8px !important;
-  margin:0 !important;
-  position:static !important;
-  left:auto !important;
-  top:auto !important;
-  border-radius:10px !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  opacity:1 !important;
-}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-ok{background:var(--mint-light) !important;color:#3d8a58 !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-low{background:var(--yellow-light) !important;color:#8a6a1a !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-out{background:var(--red-light) !important;color:var(--red) !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
 
-#page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:static !important;
-  top:auto !important;
-  right:auto !important;
-  margin:0 !important;
-  flex:0 0 auto !important;
-  align-self:center !important;
-  font-family:inherit !important;
-  font-size:12px !important;
-  font-weight:600 !important;
-  line-height:1 !important;
-  color:var(--text3) !important;
-}
-</style>
 
-<style id="sale-size-badge-match-stock-final-v131">
-/* 開單商品卡：M / S / L 尺寸膠囊的底色與字色，永遠跟旁邊「1件」的庫存膠囊一致。 */
-#page-sales #sale-product-grid .product-card .sale-size-badge.stock-ok{
-  background:var(--mint-light) !important;
-  color:#3d8a58 !important;
-}
-#page-sales #sale-product-grid .product-card .sale-size-badge.stock-low{
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-}
-#page-sales #sale-product-grid .product-card .sale-size-badge.stock-out{
-  background:var(--red-light) !important;
-  color:var(--red) !important;
-}
-#page-sales #sale-product-grid .product-card .sale-size-badge.stock-pending{
-  background:var(--lavender-light) !important;
-  color:#6b5aad !important;
-}
-</style>
-<style id="sale-card-bottom-row-final-v132">
-/* 開單格狀卡最底排：1件 / M / 價錢 再縮小並重新對齊。 */
-#page-sales #sale-product-grid.view-grid .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:center !important;
-  column-gap:4px !important;
-  width:100% !important;
-  padding:0 1px 0 0 !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:1px !important;
-  margin:0 !important;
-  padding:0 !important;
-  position:relative !important;
-  left:-1px !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
-  height:21px !important;
-  min-height:21px !important;
-  padding:0 7px !important;
-  border-radius:10px !important;
-  font-size:9.5px !important;
-  line-height:1 !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
-  height:21px !important;
-  min-height:21px !important;
-  min-width:21px !important;
-  padding:0 5px !important;
-  border-radius:999px !important;
-  font-size:9.5px !important;
-  line-height:1 !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  margin:0 !important;
-  position:static !important;
-  align-self:center !important;
-  justify-self:end !important;
-  font-size:12px !important;
-  line-height:1 !important;
-  transform:translateY(-1px) !important;
-}
-</style>
 </body>
 </html>
