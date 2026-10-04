@@ -2711,6 +2711,26 @@ body:has(#modal-settings:not(.hidden)) #safe-cloud-status{
   transform:translateY(-0.5px) !important;
 }
 
+/* ===== 紀錄頁正式基礎樣式 ===== */
+.sales-history-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.sales-history-input{height:36px;box-sizing:border-box;border:1.5px solid var(--cream3);border-radius:11px;background:var(--surface);color:var(--text2);font:700 12px/1.2 inherit;padding:0 11px;outline:none}
+.sales-history-input{min-width:220px;flex:1}
+
+.sales-history-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.sales-history-stat{background:var(--surface);border:1.5px solid var(--cream3);border-radius:15px;padding:13px 14px}
+.sales-history-stat-label{font-size:10.5px;color:var(--text3);font-weight:800;margin-bottom:4px}
+.sales-history-stat-value{font-family:'Nunito',sans-serif;font-size:20px;color:var(--brown);font-weight:900}
+.sales-history-list{display:flex;flex-direction:column;gap:8px}
+.sales-history-card{background:var(--surface);border:1.5px solid var(--cream3);border-radius:15px;overflow:hidden}
+.sales-history-card-head{display:grid;grid-template-columns:105px 95px minmax(300px,1fr) 95px 95px 34px;gap:10px;align-items:center;padding:12px 14px;cursor:pointer}
+.sales-history-card-head:hover{background:var(--cream2)}
+.sales-history-muted{font-size:10.5px;color:var(--text3);font-weight:700}
+.sales-history-main{font-size:12px;color:var(--text);font-weight:800}
+.sales-history-detail{border-top:1.5px solid var(--cream2);padding:12px 14px 14px;background:rgba(250,247,242,.45)}
+.sales-history-tag{display:inline-flex;align-items:center;border:1px solid var(--cream3);border-radius:999px;padding:2px 7px;font-size:9.5px;font-weight:800;color:var(--brown);background:var(--surface);margin-right:4px;margin-top:3px}
+.sales-history-empty{background:var(--surface);border:1.5px dashed var(--cream3);border-radius:16px;padding:42px 20px;text-align:center;color:var(--text3);font-size:13px;font-weight:700}
+@media(max-width:900px){.sales-history-summary{grid-template-columns:repeat(2,1fr)}.sales-history-card-head{grid-template-columns:92px 1fr 80px 30px}.sales-history-card-head .hist-items-col,.sales-history-card-head .hist-profit-col{display:none}}
+
 /* 頂部各頁下拉：字體、字重、字級、控制高度全部比照報表的「本月」 */
 #page-products #sort-mode-btn,
 #page-orders #order-sort-btn,
@@ -13448,16 +13468,12 @@ function renderProducts(options={}){
     const typeSubcat=getProductTypeSubcat(p);
     const storedSkuParts=getStoredProductSkuParts(p);
     const displaySku=(()=>{
-      if(storedSkuParts.type&&storedSkuParts.cat&&!storedSkuParts.detail&&storedSkuParts.color){
-        return `${storedSkuParts.type}${storedSkuParts.cat}-${storedSkuParts.color}${storedSkuParts.serial?'-'+storedSkuParts.serial:''}`;
-      }
-      if(storedSkuParts.type&&storedSkuParts.cat&&storedSkuParts.detail&&!storedSkuParts.color){
-        return `${storedSkuParts.type}${storedSkuParts.cat}${storedSkuParts.detail}`;
-      }
-      if(storedSkuParts.type&&storedSkuParts.cat&&!storedSkuParts.color){
-        return `${storedSkuParts.type}${storedSkuParts.cat}`;
-      }
-      return String(p.sku||'');
+      const type=storedSkuParts.type||'--';
+      const cat=storedSkuParts.cat||'--';
+      const detail=storedSkuParts.detail||'00';
+      const color=storedSkuParts.color||'0000';
+      const serial=storedSkuParts.serial||'000';
+      return `${type}${cat}${detail}-${color}-${serial}`;
     })();
     const transit=inTransitMap.get(String(p.id))||null;
     const sc=p.status!=='ok'?'stock-pending':productStock<=0?'stock-out':productStock<=(p.minStock||5)?'stock-low':'stock-ok';
@@ -13491,11 +13507,11 @@ function renderProducts(options={}){
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
         </div>
         <div class="product-sku">${displaySku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
+        <div class="product-sku-pending-subcat${missing.length?'':' is-empty'}">${missing.length?`缺：${missing.join('·')}`:'&nbsp;'}</div>
 
         <div class="pc-flow">
           ${typeSubcat?`<div class="pc-subcat-code${p.type==='RB'?' rb-subcat-highlight':''}">${typeSubcat}/${p.type||''}</div>`:''}
           ${(()=>{const catLabel=p.sku?getCatLabel(p.sku,p.type):'';return (!typeSubcat&&catLabel)?`<div class="pc-catcode">${catLabel}</div>`:'';})()}
-          ${missing.length>0?`<span class="pc-missing-inline-list">缺：${missing.join('·')}</span>`:''}
           ${soldCount>0?`<div class="pc-sold">🔥 已售出 ${soldCount} 件</div>`:''}
           ${p.defectStock>0?`<div class="pc-defect">⚠️ 瑕疵庫存 ${p.defectStock} 件</div>`:''}
           ${p.tags&&p.tags.length?`<div class="pc-tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>`:''}
