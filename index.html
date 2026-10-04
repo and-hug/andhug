@@ -4759,7 +4759,11 @@ label.form-label:has(.label-info-badge){
 .orders-supplier-clear-top:disabled{
   opacity:.6 !important;
   color:var(--text3) !important;
+  position:relative !important;
+  left:0 !important;
+  transform:translateY(-1px) !important;
 }
+
 /* 已選數量圓：數字再大一點 */
 .orders-supplier-accordion .orders-supplier-tab-count{
   min-width:22px !important;
@@ -7252,7 +7256,7 @@ body nav .nav-link.active .ui-editable{
   display:block !important;
   margin:0 !important;
   padding:0 !important;
-  transform:none !important;
+  transform:translateY(-1px) !important;
   white-space:nowrap !important;
 }
 
@@ -7268,7 +7272,7 @@ body nav .nav-link.active .ui-editable{
 
 #sale-product-grid.view-list .product-card .product-meta > span:first-child{
   position:absolute !important;
-  right:14px !important;
+  right:10px !important;
   top:calc(50% + 18px) !important;
   margin:0 !important;
   padding:0 !important;
@@ -8861,7 +8865,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   transform:translateY(-.5px) !important;
 }
 #page-sales .cart-qty-spinner input{
-  transform:translateY(-.5px) !important;
+  transform:translateY(.75px) !important;
   padding-top:0 !important;
   padding-bottom:0 !important;
   line-height:1 !important;
@@ -8900,7 +8904,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   box-sizing:border-box !important;
   position:static !important;
   inset:auto !important;
-  transform:none !important;
+  transform:translateY(-1px) !important;
   white-space:nowrap !important;
 }
 #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
@@ -8911,7 +8915,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   margin:0 !important;
   padding:0 !important;
   position:relative !important;
-  left:-3px !important;
+  left:-1px !important;
 }
 
 /* 1件 在前，尺寸在後。 */
@@ -8947,9 +8951,9 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   align-items:center !important;
   justify-content:center !important;
   box-sizing:border-box !important;
-  height:24px !important;
-  min-height:24px !important;
-  padding:3px 8px !important;
+  height:22px !important;
+  min-height:22px !important;
+  padding:0 8px !important;
   margin:0 !important;
   position:static !important;
   left:auto !important;
@@ -8967,7 +8971,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 #page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
 
 #page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:static !important;
+  position:relative !important;
   top:auto !important;
   right:auto !important;
   margin:0 !important;
@@ -8978,6 +8982,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   font-weight:600 !important;
   line-height:1 !important;
   color:var(--text3) !important;
+  transform:translateY(-1px) !important;
 }
 
 /* 開單商品卡：M / S / L 尺寸膠囊的底色與字色，永遠跟旁邊「1件」的庫存膠囊一致。 */
@@ -22947,7 +22952,7 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
-}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta" style="display:flex!important;align-items:center!important;justify-content:space-between!important;gap:2px!important;width:100%!important;padding:0!important"><span style="display:inline-flex!important;align-items:center!important;gap:1px!important;min-width:0!important;flex:0 1 auto!important"><span class="stock-badge ${sc}" style="order:1!important;height:24px!important;min-height:24px!important;padding:3px 8px!important;font-size:10px!important;line-height:1!important;border-radius:10px!important;margin:0!important">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}" style="order:2!important;height:22px!important;min-height:22px!important;min-width:22px!important;padding:0 6px!important;font-size:10px!important;line-height:1!important;border-radius:999px!important;margin:0!important">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag" style="margin-left:auto!important;flex:0 0 auto!important;align-self:center!important;line-height:1!important;font-size:12px!important;transform:translateY(-1px)!important;white-space:nowrap!important">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
