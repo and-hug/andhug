@@ -21641,7 +21641,7 @@ function submitConfirmReceive(){
   toast(shortages.length?`⭐ 已確認到貨（短少：${shortages.join('、')}）`:'⭐ 已確認到貨，庫存與成本已更新','success');
 }
 
-function toggleOverviewOrderReceived(id){
+async function toggleOverviewOrderReceived(id){
   const o=DB.orders.find(x=>String(x.id)===String(id));
   if(!o)return;
 
@@ -21657,12 +21657,30 @@ function toggleOverviewOrderReceived(id){
     o.status='ordered';
     delete o.receivedAt;
     o.updatedAt=Date.now();
-    saveDB();
+
+    // 這個網站目前同時存在兩套雲端資料來源：app_state 與舊 orders table。
+    // 取消到貨時必須兩邊一起更新，否則舊 orders table 的 received 狀態會再被拉回來，
+    // 看起來就像勾勾完全按不掉。
+    try{
+      await saveDB({skipCloudSync:true,undoLabel:'取消到貨'});
+    }catch(err){
+      console.error('取消到貨：本機儲存失敗',err);
+    }
 
     renderOverview();
     try{ renderOrders(); }catch(err){ console.error('renderOrders failed after undo receive',err); }
     try{ if(typeof renderProducts==='function')renderProducts(); }catch(err){ console.error('renderProducts failed after undo receive',err); }
 
+    // 先立即把舊 orders table 同步掉，再同步目前正式 app_state。
+    try{
+      if(typeof window.syncToSupabase==='function') await window.syncToSupabase(true);
+    }catch(err){ console.error('取消到貨：舊 orders 雲端同步失敗',err); }
+    try{
+      if(typeof window.safeCloudSave==='function') await window.safeCloudSave(true,'overview-undo-receive');
+    }catch(err){ console.error('取消到貨：app_state 雲端同步失敗',err); }
+
+    // 雲端同步完成後再重畫一次，確保畫面維持未到貨。
+    renderOverview();
     toast('↩️ 已取消到貨，庫存與成本已還原','success');
     return;
   }
