@@ -7824,7 +7824,7 @@ body nav .nav-link.active .ui-editable{
   position:relative;
   z-index:4;
   padding-top:12px;
-  border-top:1px solid var(--cream3);
+  border-top:none;
 }
 
 
@@ -11462,7 +11462,7 @@ function renderOverview(){
   if(!recent.length){
     ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';
   }else{
-    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="event.stopPropagation();${o.status==='received'?`undoReceive('${o.id}')`:`quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
+    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><button type="button" class="overview-order-toggle" data-order-id="${o.id}" onclick="event.preventDefault();event.stopPropagation();toggleOverviewOrderReceived('${o.id}');return false;" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer;padding:0">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</button><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
   }
   const ls=document.getElementById('low-stock-list');
   if(!low.length){
@@ -21503,7 +21503,7 @@ function renderOrderDetailRowsGrouped(items,cnyToUsdRatio){
   return html;
 }
 
-function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?((o.totalUsd-(o.feeUsd||0))/o.total):(o.rateUsed||DB.rate);document.getElementById('order-detail-body').innerHTML=`<div class="order-detail-fixed-top"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${o.status==='received'&&o.receivedAt?(()=>{const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');return `<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📦 到貨日期：${rds}</div>`;})():''}${o.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📝 ${o.note}</div>`:''}</div><div class="order-detail-products-scroll"><table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${renderOrderDetailRowsGrouped(o.items||[],cnyToUsdRatio)}</tbody></table></div><div class="order-detail-fixed-bottom">${(()=>{
+function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?((o.totalUsd-(o.feeUsd||0))/o.total):(o.rateUsed||DB.rate);document.getElementById('order-detail-body').innerHTML=`<div class="order-detail-fixed-top"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div style="font-size:12px;color:var(--text2);font-weight:600">${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div style="font-size:12px;color:var(--text2);font-weight:600">¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${(()=>{const meta=[];if(o.status==='received'&&o.receivedAt){const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');meta.push(`📦 到貨日期：${rds}`);}if(o.note)meta.push(`📝 ${o.note}`);return meta.length?`<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">${meta.map(x=>`<span>${x}</span>`).join('')}</div>`:'';})()}</div><div class="order-detail-products-scroll"><table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${renderOrderDetailRowsGrouped(o.items||[],cnyToUsdRatio)}</tbody></table></div><div class="order-detail-fixed-bottom">${(()=>{
   const netCny=(o.items||[]).reduce((s,i)=>s+(i.cost||0)*(i.qty||1),0);
   const shippingCny=o.shipping||0;
   const totalCny=o.total||(netCny+shippingCny);
@@ -21517,9 +21517,8 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
         <span style="font-size:10px;color:var(--text3);margin-left:4px">¥${totalCny.toFixed(2)}</span>
       </span>
     </div>
-    ${o.totalPaidUsdActual?'<div style="font-size:10px;color:var(--text3);text-align:right;margin-top:-2px">（照淘寶實際扣款金額，不是用匯率換算的）</div>':''}
   </div>`;
-})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div></div>`;openModal('modal-order-detail');
+})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto;position:relative;left:-2px" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div></div>`;openModal('modal-order-detail');
   requestAnimationFrame(()=>{
     const firstTd=document.querySelector('#order-detail-body table td');
     const actionsRow=document.getElementById('order-detail-actions');
@@ -21641,6 +21640,36 @@ function submitConfirmReceive(){
   saveDB();closeModal('modal-confirm-receive');renderOrders();renderOverview();if(typeof renderProducts==='function')renderProducts();openOrderDetail(id);
   toast(shortages.length?`⭐ 已確認到貨（短少：${shortages.join('、')}）`:'⭐ 已確認到貨，庫存與成本已更新','success');
 }
+
+function toggleOverviewOrderReceived(id){
+  const o=DB.orders.find(x=>String(x.id)===String(id));
+  if(!o)return;
+
+  if(o.status==='received'){
+    try{
+      applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
+    }catch(err){
+      console.error('取消到貨：庫存還原失敗',err);
+      toast('取消到貨失敗，請再試一次','error');
+      return;
+    }
+
+    o.status='ordered';
+    delete o.receivedAt;
+    o.updatedAt=Date.now();
+    saveDB();
+
+    renderOverview();
+    try{ renderOrders(); }catch(err){ console.error('renderOrders failed after undo receive',err); }
+    try{ if(typeof renderProducts==='function')renderProducts(); }catch(err){ console.error('renderProducts failed after undo receive',err); }
+
+    toast('↩️ 已取消到貨，庫存與成本已還原','success');
+    return;
+  }
+
+  quickConfirmReceived(id);
+}
+
 function quickConfirmReceived(id){
   const o=DB.orders.find(x=>x.id===id);if(!o||o.status==='received')return;
   o.status='received';
@@ -27183,6 +27212,8 @@ setTimeout(function(){
 
 
 <script>window.__INVENTORY_BUILD__="20261004-manual-sku-sync-v126";</script>
+
+
 
 
 
