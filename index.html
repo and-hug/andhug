@@ -7400,7 +7400,7 @@ body nav .nav-link.active .ui-editable{
   position:static !important;
   inset:auto !important;
   transform:none !important;
-  margin:0 !important;
+  margin:0 0 0 auto !important;
   flex:0 0 auto !important;
   font-size:12px !important;
   line-height:1 !important;
@@ -7430,10 +7430,46 @@ body nav .nav-link.active .ui-editable{
   font-size:9px !important;
   line-height:1 !important;
 }
+#page-sales #sale-product-grid.view-list .product-card .sale-list-badges .sale-size-badge{order:1 !important;}
+#page-sales #sale-product-grid.view-list .product-card .sale-list-badges .stock-badge:not(.sale-size-badge){order:2 !important;}
 #page-sales #sale-product-grid.view-list .product-card .sale-list-badges .sale-size-badge{
   min-width:20px !important;
   padding:0 4px !important;
 }
+/* 列表相容規則：舊 product-meta 結構也強制和新版相同，避免畫面吃到舊 DOM 時看起來沒變。 */
+#page-sales #sale-product-grid.view-list .product-card .product-meta .price-tag{
+  position:absolute !important;
+  right:16px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  margin:0 !important;
+  font-size:12px !important;
+}
+#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child{
+  position:absolute !important;
+  right:14px !important;
+  bottom:12px !important;
+  top:auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:2px !important;
+  transform:none !important;
+}
+#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child .stock-badge{
+  height:20px !important;
+  min-height:20px !important;
+  padding:0 5px !important;
+  font-size:9px !important;
+  line-height:1 !important;
+}
+#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child .sale-size-badge{
+  order:1 !important;
+  min-width:20px !important;
+  padding:0 4px !important;
+}
+#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child .stock-badge:not(.sale-size-badge){order:2 !important;}
+
 
 /* ONLY 商品庫 → 列表
    1) 右側文字區白底
