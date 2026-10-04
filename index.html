@@ -48,7 +48,7 @@ button,input,select,textarea{font-family:inherit;}
 body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .cart-items-box,body.theme-glass .checkout-box,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:2px solid var(--cream3);display:flex;align-items:center;padding:0 24px;height:60px;gap:4px;}
 .nav-brand{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--brown);margin-right:20px;white-space:nowrap;}
-.nav-link{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
+.nav-link{padding:7px 16px;border-radius:20px;font-size:16px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
 .nav-link:hover{color:var(--brown);background:var(--cream2);}
 .nav-link.active{color:#fff;background:var(--brown);}
 .page{display:none;padding:80px 24px 48px;max-width:1200px;margin:0 auto;}
@@ -14596,7 +14596,10 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn&&saveBtn.dataset.saving==='1')return;
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
-  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const enteredSku=document.getElementById('p-sku').value.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
+  const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};
+  // 新增/編輯商品也在儲存前重新組 SKU，確保手動輸入一定會真正寫入。
+  updateProductSkuFromParts('p','p-type',editingId||'');
+  const enteredSku=document.getElementById('p-sku').value.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
   if(DB.stockLedgerSyncV1&&!(p.variants&&p.variants.length))setManualStockTarget(p,Math.max(0,parseInt(document.getElementById('p-stock').value,10)||0));
   // 不再刪除舊 color/style 欄位；既有資料先保留，避免 SKU 異常時連顏色資訊一起失去。
   if(beforeSnapshot&&beforeSnapshot.sku)rememberSkuSerialUsage(beforeSnapshot.sku);
@@ -15233,6 +15236,8 @@ async function saveFromStock(id){
   window._stockSnapshot=JSON.stringify(p); // save new snapshot
   const before=JSON.parse(JSON.stringify(p));
   p.name=document.getElementById('edit-name').value.trim()||p.name;
+  // 儲存前強制把畫面上手動輸入的 SKU 五段重新組一次，避免只改「06 / 子分類 / 顏色」後 hidden SKU 還停在舊值。
+  updateProductSkuFromParts('edit','edit-type',id);
   const enteredSku=document.getElementById('edit-sku').value.trim().toUpperCase();
   // 編輯既有商品時，畫面 SKU 若因子分類/規則變動暫時變空，保留原本 SKU。
   p.sku=enteredSku||String(before.sku||'').trim().toUpperCase();
@@ -27075,7 +27080,7 @@ body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
 body nav .nav-link,
 body nav .nav-link .ui-editable{
   font-family:inherit !important;
-  font-size:11px !important;
+  font-size:16px !important;
   font-weight:600 !important;
 }
 body nav .nav-link.active,
@@ -27092,7 +27097,7 @@ body nav .nav-link .ui-editable,
 body nav .nav-link.active,
 body nav .nav-link.active .ui-editable{
   font-family:inherit !important;
-  font-size:11px !important;
+  font-size:16px !important;
   font-weight:600 !important;
 }
 </style>
@@ -27165,8 +27170,10 @@ body nav .nav-link.active .ui-editable{
 /* 商品庫格狀：進貨價再往上一點。 */
 body #page-products #product-grid.view-grid .product-card .pc-cost{
   position:relative !important;
-  top:5px !important;
+  top:0 !important;
+  transform:translateY(-3px) !important;
 }
 </style>
+<script>window.__INVENTORY_BUILD__="20261004-manual-sku-sync-v126";</script>
 </body>
 </html>
