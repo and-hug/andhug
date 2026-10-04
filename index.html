@@ -9380,6 +9380,9 @@ function parseProductSkuParts(sku,fallbackType){
   // 分類已指定、子分類尚未指定：PA06-1205-003
   m=raw.match(/^([A-Z]{2})(\d{2})-([A-Z0-9]{4})-(\d{3})$/);
   if(m)return {type:m[1],cat:m[2],detail:'',color:m[3],serial:m[4]};
+  // 分類已指定、子分類尚未指定，但已先填顏色：PA06-0401
+  m=raw.match(/^([A-Z]{2})(\d{2})-([A-Z0-9]{4})$/);
+  if(m)return {type:m[1],cat:m[2],detail:'',color:m[3],serial:''};
   // 只先指定類型 / 分類時也要能重新打開繼續編輯。
   m=raw.match(/^([A-Z]{2})(\d{2})$/);
   if(m)return {type:m[1],cat:m[2],detail:'',color:'',serial:''};
@@ -9518,9 +9521,9 @@ function composeProductSkuFromVisibleParts(prefix,typeFieldId,productId,forSave=
     return serial?`${type}${cat}${detail}-${color}-${serial}`:`${type}${cat}${detail}-${color}`;
   }
 
-  // 分類已選但子分類清空：保留顏色與流水號，供拖拉分類後重新選子分類。
-  if(type.length===2&&cat.length===2&&!detail&&color.length===4&&serial.length===3){
-    return `${type}${cat}-${color}-${serial}`;
+  // 分類已選但子分類清空：顏色可以先獨立存在；有流水號就一起保留。
+  if(type.length===2&&cat.length===2&&!detail&&color.length===4){
+    return serial.length===3?`${type}${cat}-${color}-${serial}`:`${type}${cat}-${color}`;
   }
 
   // 允許分段建立 SKU；不強迫一次填完。
@@ -13560,6 +13563,14 @@ function renderProducts(options={}){
   g.innerHTML=ps.map(p=>{
     const productStock=productStockMap.get(String(p.id))||0;
     const typeSubcat=getProductTypeSubcat(p);
+    const storedSkuParts=getStoredProductSkuParts(p);
+    const displaySku=(()=>{
+      if(storedSkuParts.type&&storedSkuParts.cat&&!storedSkuParts.detail&&storedSkuParts.color){
+        return `${storedSkuParts.type}${storedSkuParts.cat}-${storedSkuParts.color}${storedSkuParts.serial?'-'+storedSkuParts.serial:''}`;
+      }
+      return String(p.sku||'');
+    })();
+    const skuNeedsDetail=!!(storedSkuParts.cat&&!storedSkuParts.detail);
     const transit=inTransitMap.get(String(p.id))||null;
     const sc=p.status!=='ok'?'stock-pending':productStock<=0?'stock-out':productStock<=(p.minStock||5)?'stock-low':'stock-ok';
     const missing=[];
@@ -13591,8 +13602,8 @@ function renderProducts(options={}){
         <div class="product-name">
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
         </div>
-        <div class="product-sku">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        ${/^[A-Za-z]{2}\d{2}-[A-Za-z0-9]+-\d+$/.test(String(p.sku||''))?'<div class="product-sku-pending-subcat">待選子分類</div>':'<div class="product-sku-pending-subcat is-empty" aria-hidden="true">待選子分類</div>'}
+        <div class="product-sku">${displaySku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
+        ${skuNeedsDetail?'<div class="product-sku-pending-subcat">待選子分類</div>':'<div class="product-sku-pending-subcat is-empty" aria-hidden="true">待選子分類</div>'}
 
         <div class="pc-flow">
           ${typeSubcat?`<div class="pc-subcat-code${p.type==='RB'?' rb-subcat-highlight':''}">${typeSubcat}/${p.type||''}</div>`:''}
@@ -27202,14 +27213,14 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 </style>
 <script>window.__INVENTORY_BUILD__="20261004-manual-sku-sync-v126";</script>
 
-<style id="product-grid-price-gap-final-v127">
-/* 商品庫 > 格狀：進貨價與售價像「更多」模式一樣只留小細縫。 */
+<style id="product-grid-price-gap-final-v128">
+/* 商品庫 > 格狀：進貨價與售價只留小細縫；進貨價再往下 1px。 */
 body #page-products #product-grid.view-grid .product-card .product-meta{
   margin-top:0 !important;
 }
 body #page-products #product-grid.view-grid .product-card .pc-cost{
   top:0 !important;
-  transform:translateY(1px) !important;
+  transform:translateY(2px) !important;
 }
 </style>
 </body>
