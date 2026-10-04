@@ -8872,7 +8872,70 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 }
 
 /* ===== 開單商品卡：唯一正式規則 =====
-   舊版多層覆蓋已移除。之後開單卡只維護這裡。 */
+   格狀模式使用獨立結構：名稱/價錢同排，庫存/尺寸在下一排。 */
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-info{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  padding:8px 12px !important;
+  background:var(--surface) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-top{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  column-gap:8px !important;
+  width:100% !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-top .product-name{
+  margin:0 !important;
+  padding:0 !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  color:var(--text) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-price{
+  align-self:center !important;
+  justify-self:end !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+  line-height:1.35 !important;
+  color:var(--text3) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-badges{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:2px !important;
+  margin-top:5px !important;
+  padding-right:4px !important;
+  transform:translateY(-1px) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-badges .stock-badge{
+  height:21px !important;
+  min-height:21px !important;
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 6px !important;
+  margin:0 !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .sale-grid-badges .sale-size-badge{
+  min-width:21px !important;
+  padding:0 5px !important;
+}
+
+/* 非格狀模式沿用原本 product-meta 結構。 */
 
 /* 格狀卡：名稱在上；底排為 1件 + 尺寸，售價在右。 */
 #page-sales #sale-product-grid.view-grid .product-card .product-info{
@@ -22952,7 +23015,9 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
-}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+}>`:'<div class="no-img">📦</div>'}</div>${currentSaleView==='grid'
+  ? `<div class="product-info sale-grid-info"><div class="sale-grid-top"><div class="product-name">${p.name}</div><span class="sale-grid-price">$${(p.price||0).toFixed(2)}</span></div><div class="sale-grid-badges"><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</div></div>`
+  : `<div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div>`}</div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
