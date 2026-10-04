@@ -771,6 +771,15 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-clear-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
 .sku-clear-btn:hover{border-color:#e7b3b3;color:#c86b6b;background:#fff7f7}
 .sku-clear-btn:focus-visible{outline:2px solid #e7b3b3;outline-offset:2px}
+
+/* 商品詳情：只調整「商品名稱 + SKU」這一排，不影響其他頁面 */
+#modal-stock .stock-edit-name-sku-row{grid-template-columns:minmax(0,.88fr) minmax(350px,1.12fr)!important;}
+#modal-stock .stock-edit-name-sku-row .sku-builder{grid-template-columns:44px 44px 44px 72px 50px 36px 36px;}
+#modal-stock .stock-edit-name-sku-row .sku-clear-btn{color:var(--text2);}
+#modal-stock .stock-edit-name-sku-row .sku-clear-btn:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2);}
+#modal-stock .stock-edit-name-sku-row .sku-clear-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px;}
+#modal-stock .stock-edit-name-sku-row .sku-clear-btn svg{width:17px;height:17px;}
+
 .stock-searchlike-muted{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
 .stock-searchlike-placeholder::placeholder{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
 @media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn,.sku-clear-btn{width:100%}}
@@ -17218,7 +17227,7 @@ function openStockModal(id){
       </div>
       <div style="flex:1;min-width:0">
         <div style="font-family:monospace;font-size:10px;color:var(--text3);margin-bottom:8px">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        <div class="form-row" style="gap:8px;margin-bottom:8px">
+        <div class="form-row stock-edit-name-sku-row" style="gap:8px;margin-bottom:8px">
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品名稱</div>
             <input type="text" id="edit-name" value="${p.name||''}" class="form-input" style="font-size:13px" oninput="autoSkuFromProductName('edit',this.value,'edit-type','${id}')">
