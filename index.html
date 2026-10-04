@@ -26900,6 +26900,15 @@ setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),250);
   if(typeof originalOpenOrderDetail==='function'){
     window.openOrderDetail=function(){
       const result=originalOpenOrderDetail.apply(this,arguments);
+      // Purchase-order detail only: keep the modal title as supplier name only.
+      try{
+        const id=arguments[0];
+        const order=(window.DB&&Array.isArray(DB.orders))?DB.orders.find(x=>x.id===id):null;
+        const title=document.getElementById('order-detail-title');
+        if(order&&title){
+          title.innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${order.supplier||''}</span>`;
+        }
+      }catch(_e){}
       traditionalizeVisibleText(document.getElementById('order-detail-body'));
       return result;
     };
