@@ -7185,8 +7185,8 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
         <div class="form-group"><label class="form-label">商品名稱 ✦</label><input type="text" class="form-input" id="p-name" placeholder="白色小貓布貼" oninput="autoSkuFromProductName('p',this.value,'p-type','')"></div>
         <div class="form-group"><label class="form-label">SKU</label><input type="hidden" id="p-sku" value=""><div class="sku-builder">
           <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="p-sku-typepart" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
-          <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="p-sku-catpart" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('p','p-type','')"></div>
-          <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="p-sku-detailpart" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
+          <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="p-sku-catpart" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('p','p-type','')"></div>
+          <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="p-sku-detailpart" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="p-sku-colorpart" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <button type="button" class="sku-copy-btn" onclick="copyProductSku('p')" title="複製完整 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
@@ -9703,7 +9703,15 @@ let activeCat='all', activeSize='all', dragProductId=null, sortMode='default', c
 let expandedProductCats=new Set();
 let productStatusGroupExpanded=true;
 let categoryDragSuppressClickUntil=0;
-function isProductIncomplete(p){return !p.cost||p.cost===0||!p.sku||!p.img;}
+function getProductSkuMissingLabels(p){
+  const parts=getStoredProductSkuParts(p);
+  const missing=[];
+  if(!parts.cat)missing.push('分類');
+  else if(!parts.detail)missing.push('子分類');
+  if(!parts.color)missing.push('顏色');
+  return missing;
+}
+function isProductIncomplete(p){return !p.cost||p.cost===0||getProductSkuMissingLabels(p).length>0||!p.img;}
 function isProductComplete(p){return !isProductIncomplete(p);}
 function getProductPawSignature(p){
   if(!p)return '';
@@ -12429,39 +12437,45 @@ async function dropToSubcat(event,newSubcat){
   if(!ids.length)return;
   dragProductId=null;
   nativeProductDragId=null;
-  const snapshot=ids.map(id=>{const p=DB.products.find(x=>x.id===id);return p?{id,sku:p.sku,type:p.type,typeSubcat:p.typeSubcat,ribbonSubtype:p.ribbonSubtype}:null;}).filter(Boolean);
+  const snapshot=ids.map(id=>{
+    const p=DB.products.find(x=>x.id===id);
+    return p?{
+      id,sku:p.sku,type:p.type,
+      skuParts:p.skuParts&&typeof p.skuParts==='object'?JSON.parse(JSON.stringify(p.skuParts)):undefined,
+      typeSubcat:p.typeSubcat,ribbonSubtype:p.ribbonSubtype
+    }:null;
+  }).filter(Boolean);
   const applyOne=(p)=>{
     if(!p)return false;
     /* 拖到 01/AN、06/DR 這類分類時：
        - 新分類碼要換掉
        - 舊分類底下的第二層子分類不能沿用
        - 使用者自己整理好的「顏色 + 流水號」要保留
-       - 系統絕對不要再自動補 99 / 9900 / 001
-
-       例：
-       PA0603-1205-001  從 06/DR 拖到 03/CH
-       -> PA03-1205-001
-       舊的第二層 03 被清掉；1205 與 001 保留。 */
+       - p.sku 與 p.skuParts 必須使用同一份資料，避免商品卡仍顯示舊 SKU
+       - 系統絕對不要再自動補 99 / 9900 / 001 */
     let type=String(p.type||activeCat||'PA').toUpperCase();
     if(!type)type='PA';
     const nextClass=String(newSubcat||'').toUpperCase();
     const oldSku=String(p.sku||'').trim();
     if(oldSku)rememberSkuSerialUsage(oldSku);
 
+    const currentParts=getStoredProductSkuParts(p);
+    const nextParts={
+      type,
+      cat:nextClass,
+      detail:'',
+      color:String(currentParts.color||'').toUpperCase(),
+      serial:String(currentParts.serial||'')
+    };
+
     let nextSku=`${type}${nextClass}`;
-
-    // 完整 SKU：AA + 分類2碼 + 子分類2碼 - 顏色 - 流水號
-    const full=oldSku.match(/^([A-Za-z]{2})(\d{2})(\d{2})-([A-Za-z0-9]+)-(\d+)$/);
-    // 已經換過分類、等待重選子分類的 SKU：AA + 分類2碼 - 顏色 - 流水號
-    const pending=oldSku.match(/^([A-Za-z]{2})(\d{2})-([A-Za-z0-9]+)-(\d+)$/);
-
-    if(full){
-      nextSku=`${type}${nextClass}-${full[4]}-${full[5]}`;
-    }else if(pending){
-      nextSku=`${type}${nextClass}-${pending[3]}-${pending[4]}`;
+    if(nextParts.color){
+      nextSku+=`-${nextParts.color}`;
+      if(nextParts.serial)nextSku+=`-${nextParts.serial}`;
     }
 
     p.type=type;
+    p.skuParts=nextParts;
     p.sku=nextSku;
     if(nextSku)rememberSkuSerialUsage(nextSku);
 
@@ -12479,7 +12493,7 @@ async function dropToSubcat(event,newSubcat){
   _pushProductDragUndoFast({
     label:`移動 ${count} 件子類`,
     undo:()=>{
-      snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x){x.sku=s.sku;x.type=s.type;if(s.typeSubcat===undefined)delete x.typeSubcat;else x.typeSubcat=s.typeSubcat;if(s.ribbonSubtype===undefined)delete x.ribbonSubtype;else x.ribbonSubtype=s.ribbonSubtype;}});
+      snapshot.forEach(s=>{const x=DB.products.find(q=>q.id===s.id);if(x){x.sku=s.sku;x.type=s.type;if(s.skuParts===undefined)delete x.skuParts;else x.skuParts=JSON.parse(JSON.stringify(s.skuParts));if(s.typeSubcat===undefined)delete x.typeSubcat;else x.typeSubcat=s.typeSubcat;if(s.ribbonSubtype===undefined)delete x.ribbonSubtype;else x.ribbonSubtype=s.ribbonSubtype;}});
       saveDB({skipUndo:true});renderProducts();renderSubcatFilters();if(document.getElementById('cat-sidebar'))renderCatSidebar();
     },
     redo:()=>{
@@ -13445,13 +13459,11 @@ function renderProducts(options={}){
       }
       return String(p.sku||'');
     })();
-    const skuNeedsDetail=!!(storedSkuParts.cat&&!storedSkuParts.detail);
     const transit=inTransitMap.get(String(p.id))||null;
     const sc=p.status!=='ok'?'stock-pending':productStock<=0?'stock-out':productStock<=(p.minStock||5)?'stock-low':'stock-ok';
     const missing=[];
     if(!p.cost||p.cost===0)missing.push('進貨價');
-    if(!p.sku)missing.push('SKU');
-    if(!storedSkuParts.cat)missing.push('分類');
+    missing.push(...getProductSkuMissingLabels(p));
     if(!p.img)missing.push('圖片');
     const imgSrc=p.img||'';
     const soldCount=salesMap[p.id]||0;
@@ -13479,7 +13491,6 @@ function renderProducts(options={}){
           ${p.name}${p.variants&&p.variants.length>0?` <span class="variant-tag" style="position:relative;top:-1px">${p.variants.length}款</span>`:''}
         </div>
         <div class="product-sku">${displaySku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        ${skuNeedsDetail?'<div class="product-sku-pending-subcat">待選子分類</div>':'<div class="product-sku-pending-subcat is-empty" aria-hidden="true">待選子分類</div>'}
 
         <div class="pc-flow">
           ${typeSubcat?`<div class="pc-subcat-code${p.type==='RB'?' rb-subcat-highlight':''}">${typeSubcat}/${p.type||''}</div>`:''}
@@ -14901,8 +14912,8 @@ function openStockModal(id){
             <input type="hidden" id="edit-sku" value="${p.sku||''}">
             <div class="sku-builder">
               <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="edit-sku-typepart" value="${skuParts.type||''}" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
+              <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
+              <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
