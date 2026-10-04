@@ -433,7 +433,12 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-copy-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
 .sku-copy-btn:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2)}
 .sku-copy-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px}
-@media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn{width:100%}}
+.sku-clear-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
+.sku-clear-btn:hover{border-color:#e7b3b3;color:#c86b6b;background:#fff7f7}
+.sku-clear-btn:focus-visible{outline:2px solid #e7b3b3;outline-offset:2px}
+.stock-searchlike-muted{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
+.stock-searchlike-placeholder::placeholder{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
+@media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn,.sku-clear-btn{width:100%}}
 .order-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--cream3);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
 .order-search-wrap{position:relative;width:230px;min-width:190px;height:34px;display:flex;align-items:center;}
 .order-search-wrap .order-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);pointer-events:none;}
@@ -7348,6 +7353,7 @@ body nav .nav-link.active .ui-editable{
           <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="p-sku-colorpart" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <button type="button" class="sku-copy-btn" onclick="copyProductSku('p')" title="複製完整 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <button type="button" class="sku-clear-btn" onclick="clearProductSku('p','p-type','')" title="一鍵清除 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div></div>
       </div>
       <div class="form-row product-type-row">
@@ -9594,6 +9600,26 @@ function copyProductSku(prefix){
   const ok=()=>toast('📋 SKU 已複製','success');
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(ok).catch(()=>copyTextFallback(value,ok));}
   else copyTextFallback(value,ok);
+}
+function clearProductSku(prefix,typeFieldId,productId){
+  const typeInput=document.getElementById(typeFieldId);
+  const typeEl=document.getElementById(prefix+'-sku-typepart');
+  const catEl=document.getElementById(prefix+'-sku-catpart');
+  const detailEl=document.getElementById(prefix+'-sku-detailpart');
+  const colorEl=document.getElementById(prefix+'-sku-colorpart');
+  const serialEl=document.getElementById(prefix+'-sku-serialpart');
+  const hidden=document.getElementById(prefix+'-sku');
+  if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl&&hidden))return;
+  typeEl.value=String(typeInput?.value||'').toUpperCase().slice(0,2);
+  catEl.value='';
+  detailEl.value='';
+  colorEl.value='';
+  serialEl.value='';
+  hidden.value='';
+  updateProductSkuFromParts(prefix,typeFieldId,productId);
+  const focusTarget=catEl||detailEl||colorEl||serialEl;
+  if(focusTarget)requestAnimationFrame(()=>focusTarget.focus());
+  toast('🧹 SKU 已清除','success');
 }
 function copyTextFallback(value,onOk){
   const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
@@ -15010,6 +15036,7 @@ function openStockModal(id){
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
           </div>
         </div>
@@ -15106,7 +15133,7 @@ function openStockModal(id){
     </div>
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">備註</div>
-      <input type="text" id="edit-note" value="${p.note||''}" class="form-input stock-note-input" style="font-size:13px" placeholder="其他備註...">
+      <input type="text" id="edit-note" value="${p.note||''}" class="form-input stock-note-input stock-searchlike-placeholder" style="font-size:13px" placeholder="其他備註...">
     </div>
     <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（標籤、瑕疵庫存、商品連結...）<span id="stock-advanced-arrow-${id}">▾</span></div>
     <div class="stock-advanced-section" id="stock-advanced-${id}">
@@ -15130,7 +15157,7 @@ function openStockModal(id){
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">標籤</div>
         <div id="edit-tags-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span class="tag-chip" data-tag="${t.replace(/"/g,'&quot;')}" style="display:inline-flex;align-items:center;gap:4px;background:var(--cream2);color:var(--text2);border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${t}<span onclick="removeEditTag(this)" style="cursor:pointer;color:var(--text3);font-weight:700">×</span></span>`).join('')}</div>
         <div class="stock-detail-inline-row stock-tag-row" style="display:flex;gap:6px">
-          <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
+          <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input stock-searchlike-placeholder" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
           <button type="button" class="btn btn-secondary btn-sm stock-detail-tag-btn" onclick="addEditTag()">+</button>
         </div>
       </div>
@@ -15139,10 +15166,10 @@ function openStockModal(id){
         <div style="display:flex;flex-wrap:wrap;gap:5px">
           ${(p.sourceAliases&&p.sourceAliases.length)
             ?p.sourceAliases.map(a=>`<span class="tag-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--lavender-light);color:#6b5aad;border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${a.replace(/</g,'&lt;')}<span onclick="removeProductAlias('${p.id}','${a.replace(/'/g,"\'").replace(/"/g,'&quot;')}')" style="cursor:pointer;color:#6b5aad;font-weight:700">×</span></span>`).join('')
-            :'<span style="font-size:11px;color:var(--text3)">目前沒有匯入別名</span>'}
+            :'<span class="stock-searchlike-muted" style="font-size:11px">目前沒有匯入別名</span>'}
         </div>
         <div class="manual-alias-add-row stock-detail-inline-row" style="display:flex;gap:6px;margin-top:7px">
-          <input id="manual-alias-input-${p.id}" class="form-input manual-alias-input" type="text"
+          <input id="manual-alias-input-${p.id}" class="form-input manual-alias-input stock-searchlike-placeholder" type="text"
             placeholder="輸入淘寶商品名稱..."
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addManualProductAlias('${p.id}');}">
@@ -15152,7 +15179,7 @@ function openStockModal(id){
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
         <div class="stock-detail-inline-row stock-link-row" style="display:flex;gap:6px">
-          <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" oninput="updateEditLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
+          <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input stock-searchlike-placeholder" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" oninput="updateEditLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
           <button type="button" id="edit-link-open-btn" onclick="openEditProductLink()" class="btn btn-sm stock-detail-side-btn stock-detail-icon-btn" aria-label="開啟商品連結" title="開啟商品連結" style="white-space:nowrap;flex-shrink:0;border:1.5px solid ${p.link?'var(--brown)':'var(--cream3)'};background:${p.link?'var(--brown)':'var(--cream2)'};color:${p.link?'#fff':'var(--text3)'};cursor:${p.link?'pointer':'default'}">🔗</button>
         </div>
       </div>
