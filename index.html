@@ -6717,7 +6717,8 @@ body.cloud-boot-pending #cloud-boot-shield{
 #product-grid.view-grid .product-card .pc-cost{
   grid-column:2 !important;
   grid-row:2 !important;
-  position:static !important;
+  position:relative !important;
+  top:-3px !important;
   margin:0 !important;
   font-family:inherit !important;
   font-size:9.5px !important;
@@ -6874,6 +6875,18 @@ body.cloud-boot-pending #cloud-boot-shield{
 }
 </style>
 
+<style id="final-nav-and-grid-cost-tweak-v1">
+/* 2026-10-03：主導覽文字 +3px；商品庫格狀進貨價再往上 2px */
+body nav .nav-link,
+body nav .nav-link.active,
+body nav .nav-link .ui-editable,
+body nav .nav-link.active .ui-editable{
+  font-size:16px !important;
+}
+#product-grid.view-grid .product-card .pc-cost{
+  top:-5px !important;
+}
+</style>
 </head>
 <body class="cloud-boot-pending">
 <div id="cloud-boot-shield"><div>☁️ 載入資料中…</div></div>
@@ -7333,7 +7346,7 @@ body.cloud-boot-pending #cloud-boot-shield{
           <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="p-sku-catpart" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="p-sku-detailpart" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="p-sku-colorpart" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
-          <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" readonly tabindex="-1"></div>
+          <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <button type="button" class="sku-copy-btn" onclick="copyProductSku('p')" title="複製完整 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
         </div></div>
       </div>
@@ -9361,8 +9374,17 @@ function inferSkuDetailFromName(catCode,name){
 }
 function parseProductSkuParts(sku,fallbackType){
   const raw=String(sku||'').trim().toUpperCase();
-  const m=raw.match(/^([A-Z]{2})(\d{2})(\d{2})[A-Z0-9]*-([A-Z0-9]{4})-(\d{3})$/);
+  // 完整 SKU：PA0602-1205-003
+  let m=raw.match(/^([A-Z]{2})(\d{2})(\d{2})[A-Z0-9]*-([A-Z0-9]{4})-(\d{3})$/);
   if(m)return {type:m[1],cat:m[2],detail:m[3],color:m[4],serial:m[5]};
+  // 分類已指定、子分類尚未指定：PA06-1205-003
+  m=raw.match(/^([A-Z]{2})(\d{2})-([A-Z0-9]{4})-(\d{3})$/);
+  if(m)return {type:m[1],cat:m[2],detail:'',color:m[3],serial:m[4]};
+  // 只先指定類型 / 分類時也要能重新打開繼續編輯。
+  m=raw.match(/^([A-Z]{2})(\d{2})$/);
+  if(m)return {type:m[1],cat:m[2],detail:'',color:'',serial:''};
+  m=raw.match(/^([A-Z]{2})$/);
+  if(m)return {type:m[1],cat:'',detail:'',color:'',serial:''};
   return {type:(raw.slice(0,2)||fallbackType||'').toUpperCase(),cat:/^\d{2}$/.test(raw.slice(2,4))?raw.slice(2,4):'',detail:/^\d{2}$/.test(raw.slice(4,6))?raw.slice(4,6):'',color:'',serial:''};
 }
 function sanitizeSkuPartValue(input,kind){
@@ -9378,18 +9400,45 @@ function sanitizeSkuPartValue(input,kind){
   if(raw!==v)input.value=v;
   return v;
 }
+function getSkuSerialBaseKey(type,cat,detail,color){
+  if(!(type&&cat&&detail&&color))return '';
+  return `${String(type).toUpperCase()}${cat}${detail}-${String(color).toUpperCase()}`;
+}
+function rememberSkuSerialUsage(sku){
+  const raw=String(sku||'').trim().toUpperCase();
+  const m=raw.match(/^([A-Z]{2})(\d{2})(\d{2})-([A-Z0-9]{4})-(\d{3})$/);
+  if(!m)return;
+  if(!DB.skuSerialMax||typeof DB.skuSerialMax!=='object')DB.skuSerialMax={};
+  const key=getSkuSerialBaseKey(m[1],m[2],m[3],m[4]);
+  const n=parseInt(m[5],10)||0;
+  DB.skuSerialMax[key]=Math.max(Number(DB.skuSerialMax[key])||0,n);
+}
 function getNextSkuSerial(type,cat,detail,color,excludeProductId){
   if(!(type&&cat&&detail&&color))return '';
-  const base=`${type}${cat}${detail}-${color}-`;
-  let max=0;
+  if(!DB.skuSerialMax||typeof DB.skuSerialMax!=='object')DB.skuSerialMax={};
+  const key=getSkuSerialBaseKey(type,cat,detail,color);
+  let max=Number(DB.skuSerialMax[key])||0;
+  const base=`${String(type).toUpperCase()}${cat}${detail}-${String(color).toUpperCase()}-`;
   (DB.products||[]).forEach(p=>{
-    if(excludeProductId&&p.id===excludeProductId)return;
+    if(excludeProductId&&String(p.id)===String(excludeProductId))return;
     const sku=String(p.sku||'').toUpperCase();
     if(!sku.startsWith(base))return;
     const m=sku.match(/-(\d{3})$/);
     if(m)max=Math.max(max,parseInt(m[1],10)||0);
   });
+  DB.skuSerialMax[key]=max;
   return String(max+1).padStart(3,'0');
+}
+function getDuplicateSkuProduct(sku,excludeProductId){
+  const target=String(sku||'').trim().toUpperCase();
+  if(!target)return null;
+  return (DB.products||[]).find(p=>String(p.id)!==String(excludeProductId||'')&&String(p.sku||'').trim().toUpperCase()===target)||null;
+}
+function warnDuplicateSkuIfNeeded(sku,excludeProductId){
+  const dup=getDuplicateSkuProduct(sku,excludeProductId);
+  if(!dup)return false;
+  toast(`⚠️ SKU ${String(sku).toUpperCase()} 已被「${dup.name||'其他商品'}」使用；仍已照你的輸入儲存`,'error');
+  return true;
 }
 function syncSkuTypePartFromType(prefix,typeFieldId,productId){
   const typeInput=document.getElementById(typeFieldId);
@@ -9406,53 +9455,69 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
   const serialEl=document.getElementById(prefix+'-sku-serialpart');
   const hidden=document.getElementById(prefix+'-sku');
   if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl&&hidden))return;
-  // p-* 編輯視窗的 inline handler 沒有帶 productId；編輯既有商品時自動使用 editingId。
-  // 這樣子分類/分類規則變動造成 SKU 欄位暫時不完整時，仍能保留原本 SKU，不會被清成「無 SKU」。
   const effectiveProductId=productId||(prefix==='p'&&typeof editingId!=='undefined'?editingId:'');
+  const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
+  const existingSku=existingProduct?String(existingProduct.sku||'').trim().toUpperCase():'';
+
+  const rawType=String(typeEl.value||'').trim();
+  const rawCat=String(catEl.value||'').trim();
+  const rawDetail=String(detailEl.value||'').trim();
+  const rawColor=String(colorEl.value||'').trim();
+  const rawSerial=String(serialEl.value||'').trim();
   const type=sanitizeSkuPartValue(typeEl,'type');
   const cat=sanitizeSkuPartValue(catEl,'cat');
   const detail=sanitizeSkuPartValue(detailEl,'detail');
   const color=sanitizeSkuPartValue(colorEl,'color');
   let serial=sanitizeSkuPartValue(serialEl,'serial');
+
   const typeInput=document.getElementById(typeFieldId);
   if(typeInput&&type.length===2&&getAllCategoryTypes().includes(type)&&typeInput.value!==type){
     typeInput.value=type;
     syncCustomSelectLabel(typeFieldId);
-    typeInput.dispatchEvent(new Event('change',{bubbles:true}));
+    // 只同步「商品類型」本身；不要藉此重算顏色 / 子分類 / 流水號。
   }
+
+  // 使用者正在輸入第 1 碼時，先不要用半成品蓋掉原 SKU。
+  const typingPartial=(rawType&&type.length<2)||(rawCat&&cat.length<2)||(rawDetail&&detail.length<2)||(rawColor&&color.length<4)||(rawSerial&&serial.length<3);
+  if(typingPartial){
+    if(existingSku)hidden.value=existingSku;
+    return;
+  }
+
+  // 完整前四段時：新增商品才自動給「歷史最高號 + 1」。
+  // 編輯既有商品則永遠保留原流水號，除非使用者自己改；撞號也不強制改掉。
   if(type.length===2&&cat.length===2&&detail.length===2&&color.length===4){
-    const base=`${type}${cat}${detail}-${color}-`;
-
-    // 編輯既有商品時，只要前段 SKU 組合改了，就依「新的組合」重新排流水號。
-    // 例：PA0599-9900-017 → 把 05 改成 06；
-    // 若 PA0699-9900 尚無商品，就會自動變成 PA0699-9900-001。
-    const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
-    const existingSku=existingProduct?String(existingProduct.sku||'').toUpperCase():'';
-    const existingBaseMatch=existingSku.match(/^([A-Z]{2}\d{4}-[A-Z0-9]{4}-)/);
-    const existingBase=existingBaseMatch?existingBaseMatch[1]:'';
-    const baseChanged=!!(existingProduct&&existingBase&&existingBase!==base);
-
-    const conflict=serial&&(DB.products||[]).some(
-      p=>String(p.id)!==String(effectiveProductId||'')&&String(p.sku||'').toUpperCase()===base+serial
-    );
-
-    if(baseChanged){
-      serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
-      serialEl.value=serial;
-    }else if(!serial||conflict){
-      serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
+    if(!serial){
+      const oldParts=parseProductSkuParts(existingSku,type);
+      if(existingProduct&&oldParts.serial)serial=oldParts.serial;
+      else serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
       serialEl.value=serial;
     }
-
-    hidden.value=base+serial;
-  }else{
-    // 新增商品時 SKU 尚未完整可以維持空白；但編輯既有商品時，絕對不要因為
-    // 子分類被拿掉、規則改動或欄位短暫不完整，就把已存在的 SKU 覆寫成空白。
-    if(!serial)serialEl.value='';
-    const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
-    hidden.value=existingProduct&&existingProduct.sku?String(existingProduct.sku).trim().toUpperCase():'';
+    hidden.value=serial?`${type}${cat}${detail}-${color}-${serial}`:`${type}${cat}${detail}-${color}`;
+    return;
   }
+
+  // 子分類被清掉時，仍保留分類 + 顏色 + 流水號：PA06-1205-003。
+  // 這正是拖離舊分類後的安全中間狀態。
+  if(type.length===2&&cat.length===2&&!detail&&color.length===4&&serial.length===3){
+    hidden.value=`${type}${cat}-${color}-${serial}`;
+    return;
+  }
+
+  // 允許先只填分類，之後再慢慢補 SKU；不要逼使用者一次填完。
+  if(type.length===2&&cat.length===2&&!detail&&!color&&!serial){
+    hidden.value=`${type}${cat}`;
+    return;
+  }
+  if(type.length===2&&!cat&&!detail&&!color&&!serial){
+    hidden.value=type;
+    return;
+  }
+
+  // 其他不完整組合不主動破壞既有 SKU。
+  hidden.value=existingSku||hidden.value||'';
 }
+
 function autoSkuFromProductName(prefix,name,typeFieldId,productId){
   const text=String(name||'').trim();
   if(!text)return;
@@ -12490,6 +12555,7 @@ async function dropToSubcat(event,newSubcat){
     if(!type)type='PA';
     const nextClass=String(newSubcat||'').toUpperCase();
     const oldSku=String(p.sku||'').trim();
+    if(oldSku)rememberSkuSerialUsage(oldSku);
 
     let nextSku=`${type}${nextClass}`;
 
@@ -12506,6 +12572,7 @@ async function dropToSubcat(event,newSubcat){
 
     p.type=type;
     p.sku=nextSku;
+    if(nextSku)rememberSkuSerialUsage(nextSku);
 
     // 每個分類底下的第二層定義不同，移動後必須重新選。
     if(p.typeSubcat!==undefined)p.typeSubcat='';
@@ -12546,8 +12613,10 @@ async function dropToTypeSubcat(event,newType,newSubtype){
   const apply=()=>ids.forEach(id=>{
     const p=DB.products.find(x=>x.id===id);if(!p)return;
     if(p.type!==newType){
+      if(p.sku)rememberSkuSerialUsage(p.sku);
       if(p.sku&&p.sku.length>=2)p.sku=newType+p.sku.slice(2);
       else if(!p.sku)p.sku=newType;
+      if(p.sku)rememberSkuSerialUsage(p.sku);
       p.type=newType;
     }
     if(newSubtype==='all')delete p.typeSubcat;else p.typeSubcat=newSubtype;
@@ -12618,9 +12687,8 @@ async function dropToCat(event,newType){
   const ids=getDragIds(event).filter(id=>{const p=DB.products.find(x=>x.id===id);return p&&p.type!==newType;});
   if(!ids.length)return;
 
-  /* 拖到「大分類」時只指定大分類 SKU 前綴。
-     不再沿用舊 SKU 後面的子分類 / 細項 / 顏色 / 流水號，
-     也不自動猜子分類或顏色；這些欄位留給之後手動補。 */
+  /* 拖到另一個商品類型時：只換前兩碼類型。
+     分類 / 顏色 / 流水號全部保留；舊商品子分類清掉，避免帶到不相容的類型。 */
   const snapshot=ids.map(id=>{
     const p=DB.products.find(x=>x.id===id);
     return p?{
@@ -12635,8 +12703,11 @@ async function dropToCat(event,newType){
   const apply=()=>ids.forEach(id=>{
     const p=DB.products.find(x=>x.id===id);
     if(!p)return;
+    const oldSku=String(p.sku||'').trim().toUpperCase();
+    if(oldSku)rememberSkuSerialUsage(oldSku);
     p.type=newType;
-    p.sku=String(newType||'').toUpperCase();
+    p.sku=oldSku&&oldSku.length>=2?String(newType||'').toUpperCase()+oldSku.slice(2):String(newType||'').toUpperCase();
+    if(p.sku)rememberSkuSerialUsage(p.sku);
     delete p.typeSubcat;
     delete p.ribbonSubtype;
     p.updatedAt=Date.now();
@@ -12661,7 +12732,7 @@ async function dropToCat(event,newType){
 
   scheduleProductDragDropRefresh({products:true,cats:true,sizes:true});
   scheduleProductDragDropPersistence();
-  toast(`已移動 ${ids.length} 件到 ${getTypeLabel(newType)}；SKU 只填大分類，其餘留空（⌘Z 撤銷）`,'success');
+  toast(`已移動 ${ids.length} 件到 ${getTypeLabel(newType)}；只換類型，其他 SKU 內容保留（⌘Z 撤銷）`,'success');
 }
 
 let priceCompareSelectedIds=[];
@@ -14528,6 +14599,9 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};const enteredSku=document.getElementById('p-sku').value.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
   if(DB.stockLedgerSyncV1&&!(p.variants&&p.variants.length))setManualStockTarget(p,Math.max(0,parseInt(document.getElementById('p-stock').value,10)||0));
   // 不再刪除舊 color/style 欄位；既有資料先保留，避免 SKU 異常時連顏色資訊一起失去。
+  if(beforeSnapshot&&beforeSnapshot.sku)rememberSkuSerialUsage(beforeSnapshot.sku);
+  if(p.sku)rememberSkuSerialUsage(p.sku);
+  const hasDuplicateSku=warnDuplicateSkuIfNeeded(p.sku,p.id);
   syncEditedProductEverywhere(p,beforeSnapshot);
   const wasEditing=!!editingId;
   await saveDB();renderProducts();if(document.getElementById('cat-sidebar'))renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
@@ -14537,7 +14611,7 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
     if(saveBtn)saveBtn.textContent='💾 儲存修改';
   }
   openModal('modal-product');
-  toast(wasEditing?'商品已更新 ✨，可繼續編輯':'商品已新增 🎉，可繼續編輯；按 × 或 Esc 才離開','success');
+  if(!hasDuplicateSku)toast(wasEditing?'商品已更新 ✨，可繼續編輯':'商品已新增 🎉，可繼續編輯；按 × 或 Esc 才離開','success');
   }finally{
     if(saveBtn){saveBtn.dataset.saving='';saveBtn.style.pointerEvents='';saveBtn.style.opacity='';}
   }
@@ -14897,7 +14971,7 @@ function openStockModal(id){
               <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" readonly tabindex="-1"></div>
+              <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
             </div>
           </div>
@@ -15210,6 +15284,9 @@ async function saveFromStock(id){
   }
   window.pendingStockImgRemoved=false;
   // 保留既有 color/style；不要因單次編輯把舊顏色/樣式資料刪掉。
+  if(before.sku)rememberSkuSerialUsage(before.sku);
+  if(p.sku)rememberSkuSerialUsage(p.sku);
+  const hasDuplicateSku=warnDuplicateSkuIfNeeded(p.sku,p.id);
   p.updatedAt=Date.now();
   const after=JSON.parse(JSON.stringify(p));
   if(before.name&&after.name&&before.name!==after.name){
@@ -15222,7 +15299,7 @@ async function saveFromStock(id){
   syncEditedProductEverywhere(p,before);
   pushUndo({label:'編輯商品「'+(after.name||before.name)+'」',undo:()=>{Object.assign(p,before);syncEditedProductEverywhere(p,after);},redo:()=>{Object.assign(p,after);syncEditedProductEverywhere(p,before);}});
   await saveDB();renderProducts();renderCatSidebar();if(document.getElementById('subcat-filters'))renderSubcatFilters();if(document.getElementById('size-filters'))renderSizeFilters();
-  toast('✅ 已儲存！確認後按「完成」離開（⌘Z 撤銷）','success');
+  if(!hasDuplicateSku)toast('✅ 已儲存！確認後按「完成」離開（⌘Z 撤銷）','success');
 }
 function setStockDirect(id,val){
   const p=DB.products.find(x=>x.id===id);if(!p)return;
@@ -26378,7 +26455,7 @@ body #page-products #product-grid.view-grid .product-card .price-tag{
   font-size:24px !important;
   font-weight:800 !important;
   line-height:1.15 !important;
-  text-align:center !important;
+  text-align:left !important;
 }
 </style>
 
