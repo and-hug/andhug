@@ -7372,8 +7372,10 @@ body nav .nav-link.active .ui-editable{
   transform:translateY(-50%) !important;
   display:flex !important;
   align-items:center !important;
-  justify-content:flex-start !important;
+  justify-content:space-between !important;
   gap:12px !important;
+  width:auto !important;
+  max-width:none !important;
   min-width:0 !important;
   white-space:nowrap !important;
 }
@@ -7402,18 +7404,19 @@ body nav .nav-link.active .ui-editable{
   flex:0 0 auto !important;
   font-size:12px !important;
   line-height:1 !important;
-  text-align:left !important;
+  text-align:right !important;
 }
 #page-sales #sale-product-grid.view-list .product-card .sale-list-badges{
   position:absolute !important;
   right:14px !important;
   bottom:12px !important;
-  display:flex !important;
+  display:inline-flex !important;
   align-items:center !important;
   justify-content:flex-end !important;
   gap:2px !important;
   margin:0 !important;
   padding:0 !important;
+  transform:none !important;
 }
 #page-sales #sale-product-grid.view-list .product-card .sale-list-badges .stock-badge{
   height:20px !important;
@@ -7424,7 +7427,7 @@ body nav .nav-link.active .ui-editable{
   justify-content:center !important;
   padding:0 5px !important;
   margin:0 !important;
-  font-size:10px !important;
+  font-size:9px !important;
   line-height:1 !important;
 }
 #page-sales #sale-product-grid.view-list .product-card .sale-list-badges .sale-size-badge{
@@ -8964,20 +8967,20 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 }
 
 /* ===== 開單商品卡：唯一正式規則 =====
-   格狀模式：名稱獨立一排；庫存/尺寸與售價在下一排。 */
+   格狀模式只維護這一套：名稱一排；1件 + 尺寸在左下；售價在右下。 */
 #page-sales #sale-product-grid.view-grid .product-card .sale-grid-info{
   display:flex !important;
   flex-direction:column !important;
   justify-content:flex-end !important;
   box-sizing:border-box !important;
-  padding:8px 12px !important;
+  padding:6px 10px 8px !important;
   background:var(--surface) !important;
 }
 #page-sales #sale-product-grid.view-grid .product-card .sale-grid-info > .product-name{
-  margin:0 0 5px !important;
+  margin:0 0 4px !important;
   padding:0 !important;
   font-family:inherit !important;
-  font-size:12px !important;
+  font-size:11px !important;
   font-weight:700 !important;
   line-height:1.35 !important;
   color:var(--text) !important;
@@ -8989,7 +8992,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   display:flex !important;
   align-items:center !important;
   justify-content:space-between !important;
-  gap:6px !important;
+  gap:4px !important;
   width:100% !important;
   min-width:0 !important;
 }
@@ -8997,151 +9000,40 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   display:inline-flex !important;
   align-items:center !important;
   justify-content:flex-start !important;
-  gap:2px !important;
+  gap:1px !important;
   margin:0 !important;
   padding:0 !important;
   transform:none !important;
   flex:0 1 auto !important;
 }
 #page-sales #sale-product-grid.view-grid .product-card .sale-grid-badges .stock-badge{
-  height:22px !important;
-  min-height:22px !important;
+  height:20px !important;
+  min-height:20px !important;
   box-sizing:border-box !important;
   display:inline-flex !important;
   align-items:center !important;
   justify-content:center !important;
-  padding:0 7px !important;
+  padding:0 6px !important;
   margin:0 !important;
-  font-size:10px !important;
+  border-radius:999px !important;
+  font-family:inherit !important;
+  font-size:9.5px !important;
   font-weight:700 !important;
   line-height:1 !important;
 }
 #page-sales #sale-product-grid.view-grid .product-card .sale-grid-badges .sale-size-badge{
-  min-width:22px !important;
-  padding:0 6px !important;
+  min-width:20px !important;
+  padding:0 5px !important;
 }
 #page-sales #sale-product-grid.view-grid .product-card .sale-grid-price{
   flex:0 0 auto !important;
   margin:0 !important;
   padding:0 !important;
   font-family:inherit !important;
-  font-size:12px !important;
+  font-size:11px !important;
   font-weight:600 !important;
   line-height:1 !important;
   color:var(--text3) !important;
-}
-
-/* 非格狀模式沿用原本 product-meta 結構。 */
-
-/* 格狀卡：名稱在上；底排為 1件 + 尺寸，售價在右。 */
-#page-sales #sale-product-grid.view-grid .product-card .product-info{
-  display:flex !important;
-  flex-direction:column !important;
-  flex:1 1 auto !important;
-  box-sizing:border-box !important;
-  padding:8px 12px 8px !important;
-  background:var(--surface) !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-name{
-  margin:0 0 3px !important;
-  padding:0 !important;
-  position:static !important;
-  font-family:inherit !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  line-height:1.35 !important;
-  color:var(--text) !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-meta{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto !important;
-  align-items:center !important;
-  column-gap:4px !important;
-  width:100% !important;
-  margin-top:auto !important;
-  padding:0 1px 0 0 !important;
-  box-sizing:border-box !important;
-  position:static !important;
-  inset:auto !important;
-  transform:translateY(-1px) !important;
-  white-space:nowrap !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:1px !important;
-  margin:0 !important;
-  padding:0 !important;
-  position:relative !important;
-  left:-1px !important;
-}
-
-/* 1件 在前，尺寸在後。 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{order:1 !important;}
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{order:2 !important;}
-
-/* 尺寸 M/S/L：固定和 1件 的黃色系一致，不再吃 inline 灰色。 */
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
-#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:22px !important;
-  min-height:22px !important;
-  min-width:22px !important;
-  padding:0 6px !important;
-  margin:0 !important;
-  position:static !important;
-  left:auto !important;
-  border-radius:999px !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  opacity:1 !important;
-}
-
-/* 庫存膠囊基本尺寸。 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge,
-#page-sales #sale-product-grid.view-list .product-card .stock-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:22px !important;
-  min-height:22px !important;
-  padding:0 8px !important;
-  margin:0 !important;
-  position:static !important;
-  left:auto !important;
-  top:auto !important;
-  border-radius:10px !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  opacity:1 !important;
-}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-ok{background:var(--mint-light) !important;color:#3d8a58 !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-low{background:var(--yellow-light) !important;color:#8a6a1a !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-out{background:var(--red-light) !important;color:var(--red) !important;}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
-
-#page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:relative !important;
-  top:auto !important;
-  right:auto !important;
-  margin:0 !important;
-  flex:0 0 auto !important;
-  align-self:center !important;
-  font-family:inherit !important;
-  font-size:12px !important;
-  font-weight:600 !important;
-  line-height:1 !important;
-  color:var(--text3) !important;
-  transform:translateY(-1px) !important;
 }
 
 /* 開單商品卡：M / S / L 尺寸膠囊的底色與字色，永遠跟旁邊「1件」的庫存膠囊一致。 */
@@ -23114,7 +23006,7 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
 }>`:'<div class="no-img">📦</div>'}</div>${currentSaleView==='grid'
   ? `<div class="product-info sale-grid-info"><div class="product-name">${p.name}</div><div class="sale-grid-bottom"><div class="sale-grid-badges"><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</div><span class="sale-grid-price">$${(p.price||0).toFixed(2)}</span></div></div>`
   : currentSaleView==='list'
-    ? `<div class="product-info sale-list-info"><div class="sale-list-mainrow"><div class="product-name">${p.name}</div><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div><div class="sale-list-badges"><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</div></div>`
+    ? `<div class="product-info sale-list-info"><div class="sale-list-mainrow"><div class="product-name">${p.name}</div><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div><div class="sale-list-badges">${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></div></div>`
     : `<div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span><span class="stock-badge ${sc}">${stk}件</span>${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}</span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div>`}</div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
