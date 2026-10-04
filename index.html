@@ -194,7 +194,7 @@
 
 
 
-<meta name="andhug-build" content="stock-detail-sku-row-v123">
+<meta name="andhug-build" content="product-list-missing-sku-align-v122">
 
 
 <script>
@@ -771,15 +771,6 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-clear-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
 .sku-clear-btn:hover{border-color:#e7b3b3;color:#c86b6b;background:#fff7f7}
 .sku-clear-btn:focus-visible{outline:2px solid #e7b3b3;outline-offset:2px}
-
-/* 商品詳情：只調整「商品名稱 + SKU」這一排，不影響其他頁面 */
-#modal-stock .stock-edit-name-sku-row{grid-template-columns:minmax(0,.88fr) minmax(350px,1.12fr)!important;}
-#modal-stock .stock-edit-name-sku-row .sku-builder{grid-template-columns:44px 44px 44px 72px 50px 36px 36px;}
-#modal-stock .stock-edit-name-sku-row .sku-clear-btn{color:var(--text2);}
-#modal-stock .stock-edit-name-sku-row .sku-clear-btn:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2);}
-#modal-stock .stock-edit-name-sku-row .sku-clear-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px;}
-#modal-stock .stock-edit-name-sku-row .sku-clear-btn svg{width:17px;height:17px;}
-
 .stock-searchlike-muted{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
 .stock-searchlike-placeholder::placeholder{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
 @media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn,.sku-clear-btn{width:100%}}
@@ -11471,7 +11462,7 @@ function renderOverview(){
   if(!recent.length){
     ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';
   }else{
-    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="event.stopPropagation();${o.status==='received'?`undoReceive('${o.id}')`:`quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
+    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="event.stopPropagation();${o.status==='received'?`undoReceive('${o.id}',true)`:`quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
   }
   const ls=document.getElementById('low-stock-list');
   if(!low.length){
@@ -17227,7 +17218,7 @@ function openStockModal(id){
       </div>
       <div style="flex:1;min-width:0">
         <div style="font-family:monospace;font-size:10px;color:var(--text3);margin-bottom:8px">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        <div class="form-row stock-edit-name-sku-row" style="gap:8px;margin-bottom:8px;grid-template-columns:minmax(0,.82fr) minmax(390px,1.18fr)">
+        <div class="form-row" style="gap:8px;margin-bottom:8px">
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品名稱</div>
             <input type="text" id="edit-name" value="${p.name||''}" class="form-input" style="font-size:13px" oninput="autoSkuFromProductName('edit',this.value,'edit-type','${id}')">
@@ -17237,14 +17228,14 @@ function openStockModal(id){
               <div style="font-size:11px;color:var(--text2);font-weight:700">SKU</div>
             </div>
             <input type="hidden" id="edit-sku" value="${p.sku||''}">
-            <div class="sku-builder" style="grid-template-columns:44px 44px 44px 72px 50px 36px 36px">
+            <div class="sku-builder">
               <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="edit-sku-typepart" value="${skuParts.type||''}" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="17" height="17"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
-              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn" style="color:var(--text2)"><svg viewBox="0 0 24 24" width="17" height="17"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
           </div>
         </div>
@@ -20571,27 +20562,20 @@ function getShippingPerUnit(o,goodItems){
   if(!totalQty||!o.shipping)return 0;
   return o.shipping/totalQty;
 }
-function undoReceive(id){
+function undoReceive(id,stayOnCurrentView=false){
   const o=DB.orders.find(x=>x.id===id);
   if(!o||o.status!=='received')return;
-  customConfirm('取消到貨會把這張單的庫存減回去、成本反向還原。\n如果期間已經賣出商品,可能造成負庫存。\n\n確定要取消到貨?',async()=>{
-    // 先把已到貨實際套用過的庫存 / 成本反向還原，再明確切回「已下單」。
-    applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
-    o.status='ordered';
-    delete o.receivedAt;
-    o.updatedAt=Date.now();
-
-    // 等本機資料真正寫完再重繪，避免詳情頁 / 首頁仍顯示舊的已到貨狀態。
-    try{ await saveDB({undoLabel:'取消到貨'}); }catch(e){ console.warn('取消到貨儲存失敗:',e); }
-
-    if(typeof renderOrders==='function')renderOrders();
-    if(typeof renderOverview==='function')renderOverview();
-    if(typeof renderProducts==='function')renderProducts();
-
-    // 詳情視窗若仍開著，直接用同一筆最新資料重建，讓「已到貨」立即變回「確認到貨」。
-    const detail=document.getElementById('modal-order-detail');
-    if(detail&&!detail.classList.contains('hidden'))openOrderDetail(id);
-    toast('↩️ 已取消到貨，勾勾已取消，庫存與成本已還原','success');
+  customConfirm('取消到貨會把這張單的庫存減回去、成本反向還原。\n如果期間已經賣出商品,可能造成負庫存。\n\n確定要取消到貨?',()=>{
+  applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
+  o.status='ordered';
+  delete o.receivedAt;
+  o.updatedAt=Date.now();
+  saveDB();
+  renderOrders();
+  renderOverview();
+  if(typeof renderProducts==='function')renderProducts();
+  if(!stayOnCurrentView)openOrderDetail(id);
+  toast('↩️ 已取消到貨,庫存與成本已還原','success');
   });
 }
 let currentOrderFormRate=null;
@@ -21519,7 +21503,7 @@ function renderOrderDetailRowsGrouped(items,cnyToUsdRatio){
   return html;
 }
 
-function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?((o.totalUsd-(o.feeUsd||0))/o.total):(o.rateUsed||DB.rate);document.getElementById('order-detail-body').innerHTML=`<div class="order-detail-fixed-top"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${(o.status==='received'&&o.receivedAt)||o.note?`<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">${o.status==='received'&&o.receivedAt?(()=>{const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');return `<span>📦 到貨日期：${rds}</span>`;})():''}${o.note?`<span>📝 ${o.note}</span>`:''}</div>`:''}</div><div class="order-detail-products-scroll"><table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${renderOrderDetailRowsGrouped(o.items||[],cnyToUsdRatio)}</tbody></table></div><div class="order-detail-fixed-bottom">${(()=>{
+function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;document.getElementById('order-detail-title').innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${o.supplier} · ${o.date}</span>`;const cnyToUsdRatio=(o.totalUsd&&o.total)?((o.totalUsd-(o.feeUsd||0))/o.total):(o.rateUsed||DB.rate);document.getElementById('order-detail-body').innerHTML=`<div class="order-detail-fixed-top"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;background:var(--cream2);border-radius:12px;padding:14px"><div><div style="font-size:11px;color:var(--text3);font-weight:700">店家</div><div style="font-weight:700">${o.supplier}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">日期</div><div>${o.date}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">運費</div><div>¥${(o.shipping||0).toFixed(2)}</div></div><div><div style="font-size:11px;color:var(--text3);font-weight:700">總金額</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;color:var(--brown)">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12px;color:var(--text3);margin-top:2px">¥${(o.total||0).toFixed(2)}</div></div></div>${o.status==='received'&&o.receivedAt?(()=>{const rd=new Date(o.receivedAt);const rds=rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0');return `<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📦 到貨日期：${rds}</div>`;})():''}${o.note?`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:600">📝 ${o.note}</div>`:''}</div><div class="order-detail-products-scroll"><table class="order-table" style="margin-bottom:16px"><thead><tr><th>商品</th><th>單價</th><th>數量</th><th>小計</th></tr></thead><tbody>${renderOrderDetailRowsGrouped(o.items||[],cnyToUsdRatio)}</tbody></table></div><div class="order-detail-fixed-bottom">${(()=>{
   const netCny=(o.items||[]).reduce((s,i)=>s+(i.cost||0)*(i.qty||1),0);
   const shippingCny=o.shipping||0;
   const totalCny=o.total||(netCny+shippingCny);
@@ -21533,8 +21517,9 @@ function openOrderDetail(id){const o=DB.orders.find(x=>x.id===id);if(!o)return;d
         <span style="font-size:10px;color:var(--text3);margin-left:4px">¥${totalCny.toFixed(2)}</span>
       </span>
     </div>
+    ${o.totalPaidUsdActual?'<div style="font-size:10px;color:var(--text3);text-align:right;margin-top:-2px">（照淘寶實際扣款金額，不是用匯率換算的）</div>':''}
   </div>`;
-})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto;transform:translateX(-1px)" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div></div>`;openModal('modal-order-detail');
+})()}<div id="order-detail-actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${o.status!=='received'?`<button class="btn btn-primary btn-sm" id="order-detail-first-action" onclick="confirmReceived('${o.id}')">⭐ 確認到貨</button>`:`<span class="btn btn-sm" style="background:var(--surface);border:1.5px solid var(--cream3);color:var(--brown);cursor:default" id="order-detail-first-action">🚀 已到貨</span><button class="btn btn-secondary btn-sm" onclick="undoReceive('${o.id}')"><svg viewBox="0 0 24 24" width="13" height="13" style="display:inline-block;vertical-align:-2px;margin-right:3px"><path d="M9,4 L5,8 L9,12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5,8 L14,8 a5,5 0 0 1 5,5 a5,5 0 0 1 -5,5 h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>取消到貨</button>`}<button class="btn btn-secondary btn-sm" onclick="openEditOrder('${o.id}')">✏️ 編輯</button><button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteOrder('${o.id}')">🗑 刪除</button></div></div>`;openModal('modal-order-detail');
   requestAnimationFrame(()=>{
     const firstTd=document.querySelector('#order-detail-body table td');
     const actionsRow=document.getElementById('order-detail-actions');
@@ -26900,15 +26885,6 @@ setTimeout(()=>window.safeCloudBootstrap&&window.safeCloudBootstrap(),250);
   if(typeof originalOpenOrderDetail==='function'){
     window.openOrderDetail=function(){
       const result=originalOpenOrderDetail.apply(this,arguments);
-      // Purchase-order detail only: keep the modal title as supplier name only.
-      try{
-        const id=arguments[0];
-        const order=(window.DB&&Array.isArray(DB.orders))?DB.orders.find(x=>x.id===id):null;
-        const title=document.getElementById('order-detail-title');
-        if(order&&title){
-          title.innerHTML=`<span style="display:inline-flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="16" height="16" style="display:block;flex-shrink:0"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg>${order.supplier||''}</span>`;
-        }
-      }catch(_e){}
       traditionalizeVisibleText(document.getElementById('order-detail-body'));
       return result;
     };
@@ -27218,22 +27194,3 @@ setTimeout(function(){
 
 </body>
 </html>
-
-<style id="order-edit-footer-alignment-v20261004">
-/* 只調整「編輯採購單」底部按鈕列的位置；不影響其他頁面或其他 modal */
-#modal-order.order-edit-footer-fixed #order-edit-action-footer{
-  padding:0 44px 12px !important;
-}
-#modal-order.order-edit-footer-fixed .order-footer-add-row{
-  margin-left:0 !important;
-  margin-right:0 !important;
-  padding:10px 0 !important;
-  justify-content:flex-start !important;
-}
-#modal-order.order-edit-footer-fixed .order-footer-main-row{
-  margin-left:0 !important;
-  margin-right:0 !important;
-  padding:10px 0 0 !important;
-  justify-content:flex-end !important;
-}
-</style>
