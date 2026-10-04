@@ -27198,7 +27198,7 @@ setTimeout(function(){
   window.__overviewReceivedDirectToggleInstalled=true;
 
   window.quickUndoReceivedFromOverview=function(id){
-    const o=(window.DB&&Array.isArray(DB.orders))?DB.orders.find(x=>String(x.id)===String(id)):null;
+    const o=(typeof DB!=='undefined'&&Array.isArray(DB.orders))?DB.orders.find(x=>String(x.id)===String(id)):null;
     if(!o||o.status!=='received')return;
     applyOrderItemsWAC(getAppliedWACItems(o),reverseWAC);
     o.status='ordered';
@@ -27219,7 +27219,7 @@ setTimeout(function(){
     if(e.stopImmediatePropagation)e.stopImmediatePropagation();
 
     const id=btn.getAttribute('data-order-id');
-    const o=(window.DB&&Array.isArray(DB.orders))?DB.orders.find(x=>String(x.id)===String(id)):null;
+    const o=(typeof DB!=='undefined'&&Array.isArray(DB.orders))?DB.orders.find(x=>String(x.id)===String(id)):null;
     if(!o)return;
 
     if(o.status==='received'){
