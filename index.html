@@ -11462,7 +11462,7 @@ function renderOverview(){
   if(!recent.length){
     ro.innerHTML='<div class="empty" style="padding:30px"><div class="empty-icon"><svg viewBox="0 0 24 24" width="32" height="32" style="display:inline-block"><g transform="translate(-1.65,-0.525)"><path d="M3 4h2.3l2.7 12.3a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.6L21 8.6H6.3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20.6" r="1.5" fill="currentColor"/><circle cx="17.3" cy="20.6" r="1.5" fill="currentColor"/></g></svg></div><div class="empty-text">還沒有採購單</div></div>';
   }else{
-    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="event.stopPropagation();${o.status==='received'?`undoReceive('${o.id}',false)`:`quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
+    ro.innerHTML=recent.map(o=>`<div class="order-card" onclick="openOrderDetail('${o.id}')" style="cursor:pointer"><div onclick="event.stopPropagation();${o.status==='received'?`undoReceive('${o.id}')`:`quickConfirmReceived('${o.id}')`}" title="${o.status==='received'?'點擊取消到貨':'點擊確認到貨'}" style="width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;border:1.5px solid ${o.status==='received'?'var(--brown)':'var(--cream3)'};background:${o.status==='received'?'var(--brown)':'#fff'};color:#fff;cursor:pointer">${o.status==='received'?'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M5,13 L10,18 L19,7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div style="flex:1"><div style="font-weight:700;font-size:13px">${o.supplier}</div><div style="font-size:11px;color:var(--text3)">${o.date}</div></div><div style="text-align:right"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px">$${(o.totalPaidUsdActual||o.totalUsd||((o.total||0)*DB.rate)).toFixed(2)}</div><div style="font-size:10px;color:var(--text3);font-weight:600">¥${(o.total||0).toFixed(0)} · ${(o.items||[]).reduce((sum,it)=>sum+(Number(it.qty)||0),0)}件</div></div></div>`).join('');
   }
   const ls=document.getElementById('low-stock-list');
   if(!low.length){
@@ -17653,7 +17653,6 @@ function adjStock(id,type,d){
   });
 }
 let orderSortMode='newest';
-let orderSearchQuery='';
 const ORDER_SORT_OPTIONS=[
   {value:'newest',label:'🆕 最新採購在前'},
   {value:'oldest',label:'📅 最早採購在前'},
@@ -20563,7 +20562,7 @@ function getShippingPerUnit(o,goodItems){
   if(!totalQty||!o.shipping)return 0;
   return o.shipping/totalQty;
 }
-function undoReceive(id,reopenDetail=true){
+function undoReceive(id){
   const o=DB.orders.find(x=>x.id===id);
   if(!o||o.status!=='received')return;
   customConfirm('取消到貨會把這張單的庫存減回去、成本反向還原。\n如果期間已經賣出商品,可能造成負庫存。\n\n確定要取消到貨?',()=>{
@@ -20575,7 +20574,7 @@ function undoReceive(id,reopenDetail=true){
   renderOrders();
   renderOverview();
   if(typeof renderProducts==='function')renderProducts();
-  if(reopenDetail)openOrderDetail(id);
+  openOrderDetail(id);
   toast('↩️ 已取消到貨,庫存與成本已還原','success');
   });
 }
