@@ -7203,7 +7203,7 @@ body nav .nav-link.active .ui-editable{
       <button id="report-current-month-btn" class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月"><span class="report-flower-icon">🌸</span><span>本月</span></button>
       <div style="position:relative">
         <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span class="unified-top-dd-caret" aria-hidden="true"></span></button>
-        <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:280px;overflow-y:auto"></div>
+        <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:220px;overflow-y:auto;overscroll-behavior:contain"></div>
       </div>
     </div>
   </div>
@@ -7327,9 +7327,9 @@ body nav .nav-link.active .ui-editable{
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
             <div style="display:flex;align-items:center;gap:6px">
-              <button onclick="shiftSaleHistoryDate(-1)" title="前一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">◀</button>
+              <button onclick="shiftSaleHistoryDate(-1)" title="前一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">◀</button>
               <span id="sale-history-date-label" style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap"></span>
-              <button id="sale-history-next-btn" onclick="shiftSaleHistoryDate(1)" title="後一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">▶</button>
+              <button id="sale-history-next-btn" onclick="shiftSaleHistoryDate(1)" title="後一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">▶</button>
             </div>
             <button onclick="openTrash()" title="已刪紀錄" style="font-size:12px;font-weight:700;color:var(--text3);background:none;border:1px solid var(--cream3);border-radius:8px;padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0">🗑 已刪紀錄</button>
           </div>
@@ -10486,9 +10486,9 @@ function renderSaleHistoryCalendar(){
   for(let i=usedCells;i<42;i++)cells+='<div style="width:32px;height:32px"></div>';
   cal.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative">
-      <button onclick="shiftSaleCalMonth(-1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">◀</button>
+      <button onclick="shiftSaleCalMonth(-1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:9px">◀</button>
       <button type="button" onclick="event.stopPropagation();toggleSaleCalJumpPicker()" style="border:0;outline:0;box-shadow:none;background:transparent;padding:3px 6px;border-radius:8px;font-size:13px;font-weight:700;color:var(--brown);letter-spacing:.2px;cursor:pointer;font-family:inherit">${y}年 ${monthNames[m]} <span style="display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--text3);margin-left:4px;vertical-align:2px"></span></button>
-      <button onclick="shiftSaleCalMonth(1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">▶</button>
+      <button onclick="shiftSaleCalMonth(1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:9px">▶</button>
       <div id="sale-cal-jump-picker" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:34px;left:50%;transform:translateX(-50%);z-index:90;width:216px;background:#fffdf9;border:1px solid #eadfce;border-radius:16px;box-shadow:0 10px 24px rgba(99,76,50,.08);padding:8px;overflow:hidden">
         <div style="display:grid;grid-template-columns:64px 1fr;column-gap:8px;align-items:start;transform:translateX(3px)">
           <div id="sale-cal-year-list" style="background:#f7f0e7;border-radius:11px;padding:6px 5px 3px;display:flex;flex-direction:column;gap:2px;height:146px;overflow-y:auto;scrollbar-width:thin;box-sizing:border-box;transform:translateY(2px)">
@@ -21270,12 +21270,12 @@ function renderCartSaleDatePicker(){
   for(let i=first+days;i<42;i++)cells+='<div style="width:28px;height:28px"></div>';
   picker.innerHTML=`<div style="position:relative">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-    <button type="button" onclick="shiftCartSaleDateMonth(-1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer">◀</button>
+    <button type="button" onclick="shiftCartSaleDateMonth(-1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer;font-size:9px">◀</button>
     <button type="button" onclick="toggleCartSaleDateJumpPicker()" style="border:0;background:transparent;padding:0;display:inline-flex;align-items:center;justify-content:center;color:var(--brown);font-size:13px;font-weight:700;font-family:inherit;line-height:1;letter-spacing:.2px;cursor:pointer">
       ${y}年 ${m+1}月
       <span style="display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--text3);margin-left:4px;vertical-align:2px"></span>
     </button>
-    <button type="button" onclick="shiftCartSaleDateMonth(1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer">▶</button>
+    <button type="button" onclick="shiftCartSaleDateMonth(1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer;font-size:9px">▶</button>
   </div>
   ${cartSaleDateJumpOpen?`<div id="cart-sale-date-jump-picker" onclick="event.stopPropagation()" style="position:absolute;top:34px;left:50%;transform:translateX(-50%);z-index:95;width:216px;background:#fffdf9;border:1px solid #eadfce;border-radius:16px;box-shadow:0 10px 24px rgba(99,76,50,.08);padding:8px;overflow:hidden">
     <div style="display:grid;grid-template-columns:64px 1fr;column-gap:8px;align-items:start;transform:translateX(3px)">
@@ -27248,6 +27248,21 @@ body #page-products #product-grid.view-grid .product-card .product-meta{
 body #page-products #product-grid.view-grid .product-card .pc-cost{
   top:0 !important;
   transform:translateY(2px) !important;
+}
+</style>
+
+<style id="cart-number-vertical-align-v129">
+/* 購物車：價錢與數量的數字視覺垂直置中，只調文字基線，不動外框。 */
+#page-sales .cart-price-input{
+  padding-top:0 !important;
+  padding-bottom:2px !important;
+  line-height:1 !important;
+}
+#page-sales .cart-qty-spinner input{
+  transform:none !important;
+  padding-top:0 !important;
+  padding-bottom:1px !important;
+  line-height:1 !important;
 }
 </style>
 </body>
