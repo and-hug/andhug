@@ -26948,16 +26948,17 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 </style>
 
 <style id="cart-number-vertical-align-v129">
-/* 購物車：價錢與數量的數字視覺垂直置中，只調文字基線，不動外框。 */
+/* 購物車：價錢與數量微微往下 0.5px，維持視覺垂直置中；不動外框。 */
 #page-sales .cart-price-input{
   padding-top:0 !important;
-  padding-bottom:2px !important;
+  padding-bottom:1px !important;
   line-height:1 !important;
+  transform:translateY(.5px) !important;
 }
 #page-sales .cart-qty-spinner input{
-  transform:none !important;
+  transform:translateY(.5px) !important;
   padding-top:0 !important;
-  padding-bottom:1px !important;
+  padding-bottom:0 !important;
   line-height:1 !important;
 }
 </style>
@@ -26993,7 +26994,8 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   gap:8px !important;
   width:100% !important;
   margin-top:auto !important;
-  padding:0 !important;
+  padding:0 4px 0 0 !important;
+  box-sizing:border-box !important;
   position:static !important;
   inset:auto !important;
   transform:none !important;
@@ -27063,10 +27065,11 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 #page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
 
 #page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:relative !important;
+  position:static !important;
   top:auto !important;
-  right:4px !important;
+  right:auto !important;
   margin:0 !important;
+  flex:0 0 auto !important;
   align-self:center !important;
   font-family:inherit !important;
   font-size:12px !important;
