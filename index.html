@@ -48,7 +48,7 @@ button,input,select,textarea{font-family:inherit;}
 body.theme-glass .modal,body.theme-glass .product-card,body.theme-glass nav,body.theme-glass .cat-sidebar,body.theme-glass .cart-panel,body.theme-glass .cart-items-box,body.theme-glass .checkout-box,body.theme-glass .btn-primary,body.theme-glass .discount-btn,body.theme-glass .stat-card,body.theme-glass .order-card{backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:2px solid var(--cream3);display:flex;align-items:center;padding:0 24px;height:60px;gap:4px;}
 .nav-brand{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--brown);margin-right:20px;white-space:nowrap;}
-.nav-link{padding:7px 16px;border-radius:20px;font-size:16px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
+.nav-link{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;border:none;background:none;font-family:inherit;white-space:nowrap;}
 .nav-link:hover{color:var(--brown);background:var(--cream2);}
 .nav-link.active{color:#fff;background:var(--brown);}
 .page{display:none;padding:80px 24px 48px;max-width:1200px;margin:0 auto;}
@@ -256,7 +256,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--brown-light);out
 .stock-row.ok-row{background:var(--cream2);border-left:4px solid var(--cream3);}
 .stock-icon{font-size:18px;width:24px;text-align:center;}
 .stock-label{font-size:12px;font-weight:700;color:var(--text2);}
-.stock-count{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:36px;text-align:center;}
+.stock-count{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;width:36px;text-align:center;}
 input.stock-count::-webkit-inner-spin-button,input.stock-count::-webkit-outer-spin-button,.smart-import-price-cell input::-webkit-inner-spin-button,.smart-import-price-cell input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input.stock-count,.smart-import-price-cell input{-moz-appearance:textfield;appearance:textfield;}
 input.confirm-recv-qty::-webkit-inner-spin-button,input.confirm-recv-qty::-webkit-outer-spin-button,input.confirm-recv-defect::-webkit-inner-spin-button,input.confirm-recv-defect::-webkit-outer-spin-button,input.sibp-qty-input::-webkit-inner-spin-button,input.sibp-qty-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
@@ -888,17 +888,17 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .section-header .view-btn{color:var(--text2);}
   .section-header .view-btn.active{color:#fff;}
 .cart-qty-spinner{width:62px;height:26px;}
-  .cart-remove-btn{width:36px;height:36px;font-size:16px;}
-  .adj-btn{width:32px;height:32px;font-size:16px;}
+  .cart-remove-btn{width:36px;height:36px;font-size:13px;}
+  .adj-btn{width:32px;height:32px;font-size:13px;}
   .modal-close{width:36px;height:36px;}
 .discount-btn{padding:7px 12px;font-size:12px;}
   .view-btn{width:36px;height:36px;}
 
   #subcat-filters:empty,#sale-subcat-filters:empty{display:none!important;padding:0;}
 
-  .form-input,.form-select,.search-input{font-size:16px!important;}
+  .form-input,.form-select,.search-input{font-size:13px!important;}
 
-  #stock-range-min,#stock-range-max,#cart-discount-input,#sale-customer-select,#batch-val,.cart-price-input,.cart-qty-spinner input{font-size:16px!important;}
+  #stock-range-min,#stock-range-max,#cart-discount-input,#sale-customer-select,#batch-val,.cart-price-input,.cart-qty-spinner input{font-size:13px!important;}
   .cart-qty-spinner input{line-height:26px!important;font-weight:700!important;}
 
   .form-row{grid-template-columns:1fr!important;}
@@ -1472,7 +1472,7 @@ body.theme-glass #modal-smart-import .modal{
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
-  font-size:16px!important;
+  font-size:13px!important;
   line-height:1!important;
   flex:0 0 40px!important;
 }
@@ -6881,7 +6881,7 @@ body nav .nav-link,
 body nav .nav-link.active,
 body nav .nav-link .ui-editable,
 body nav .nav-link.active .ui-editable{
-  font-size:16px !important;
+  font-size:13px !important;
 }
 #product-grid.view-grid .product-card .pc-cost{
   top:-5px !important;
@@ -9447,14 +9447,14 @@ function syncSkuTypePartFromType(prefix,typeFieldId,productId){
   part.value=String(typeInput.value||'').toUpperCase().slice(0,2);
   updateProductSkuFromParts(prefix,typeFieldId,productId);
 }
-function updateProductSkuFromParts(prefix,typeFieldId,productId){
+function composeProductSkuFromVisibleParts(prefix,typeFieldId,productId,forSave=false){
   const typeEl=document.getElementById(prefix+'-sku-typepart');
   const catEl=document.getElementById(prefix+'-sku-catpart');
   const detailEl=document.getElementById(prefix+'-sku-detailpart');
   const colorEl=document.getElementById(prefix+'-sku-colorpart');
   const serialEl=document.getElementById(prefix+'-sku-serialpart');
-  const hidden=document.getElementById(prefix+'-sku');
-  if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl&&hidden))return;
+  if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl))return '';
+
   const effectiveProductId=productId||(prefix==='p'&&typeof editingId!=='undefined'?editingId:'');
   const existingProduct=effectiveProductId?(DB.products||[]).find(p=>String(p.id)===String(effectiveProductId)):null;
   const existingSku=existingProduct?String(existingProduct.sku||'').trim().toUpperCase():'';
@@ -9464,28 +9464,25 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
   const rawDetail=String(detailEl.value||'').trim();
   const rawColor=String(colorEl.value||'').trim();
   const rawSerial=String(serialEl.value||'').trim();
+
   const type=sanitizeSkuPartValue(typeEl,'type');
   const cat=sanitizeSkuPartValue(catEl,'cat');
   const detail=sanitizeSkuPartValue(detailEl,'detail');
   const color=sanitizeSkuPartValue(colorEl,'color');
   let serial=sanitizeSkuPartValue(serialEl,'serial');
 
+  // 最新唯一規則：改哪一段就只改那一段；同步商品類型時不重算其他 SKU 欄位。
   const typeInput=document.getElementById(typeFieldId);
   if(typeInput&&type.length===2&&getAllCategoryTypes().includes(type)&&typeInput.value!==type){
     typeInput.value=type;
     syncCustomSelectLabel(typeFieldId);
-    // 只同步「商品類型」本身；不要藉此重算顏色 / 子分類 / 流水號。
   }
 
-  // 使用者正在輸入第 1 碼時，先不要用半成品蓋掉原 SKU。
+  // 正在輸入半碼時，不拿半成品覆蓋既有 SKU；儲存也維持原值。
   const typingPartial=(rawType&&type.length<2)||(rawCat&&cat.length<2)||(rawDetail&&detail.length<2)||(rawColor&&color.length<4)||(rawSerial&&serial.length<3);
-  if(typingPartial){
-    if(existingSku)hidden.value=existingSku;
-    return;
-  }
+  if(typingPartial)return existingSku;
 
-  // 完整前四段時：新增商品才自動給「歷史最高號 + 1」。
-  // 編輯既有商品則永遠保留原流水號，除非使用者自己改；撞號也不強制改掉。
+  // 完整 SKU：編輯既有商品保留流水號；只有新增商品缺流水號才自動用「歷史最高 + 1」。
   if(type.length===2&&cat.length===2&&detail.length===2&&color.length===4){
     if(!serial){
       const oldParts=parseProductSkuParts(existingSku,type);
@@ -9493,29 +9490,26 @@ function updateProductSkuFromParts(prefix,typeFieldId,productId){
       else serial=getNextSkuSerial(type,cat,detail,color,effectiveProductId);
       serialEl.value=serial;
     }
-    hidden.value=serial?`${type}${cat}${detail}-${color}-${serial}`:`${type}${cat}${detail}-${color}`;
-    return;
+    return serial?`${type}${cat}${detail}-${color}-${serial}`:`${type}${cat}${detail}-${color}`;
   }
 
-  // 子分類被清掉時，仍保留分類 + 顏色 + 流水號：PA06-1205-003。
-  // 這正是拖離舊分類後的安全中間狀態。
+  // 分類已選但子分類清空：保留顏色與流水號，供拖拉分類後重新選子分類。
   if(type.length===2&&cat.length===2&&!detail&&color.length===4&&serial.length===3){
-    hidden.value=`${type}${cat}-${color}-${serial}`;
-    return;
+    return `${type}${cat}-${color}-${serial}`;
   }
 
-  // 允許先只填分類，之後再慢慢補 SKU；不要逼使用者一次填完。
-  if(type.length===2&&cat.length===2&&!detail&&!color&&!serial){
-    hidden.value=`${type}${cat}`;
-    return;
-  }
-  if(type.length===2&&!cat&&!detail&&!color&&!serial){
-    hidden.value=type;
-    return;
-  }
+  // 允許分段建立 SKU；不強迫一次填完。
+  if(type.length===2&&cat.length===2&&!detail&&!color&&!serial)return `${type}${cat}`;
+  if(type.length===2&&!cat&&!detail&&!color&&!serial)return type;
 
-  // 其他不完整組合不主動破壞既有 SKU。
-  hidden.value=existingSku||hidden.value||'';
+  return existingSku;
+}
+
+function updateProductSkuFromParts(prefix,typeFieldId,productId){
+  const hidden=document.getElementById(prefix+'-sku');
+  if(!hidden)return;
+  const sku=composeProductSkuFromVisibleParts(prefix,typeFieldId,productId,false);
+  if(sku||!productId)hidden.value=sku||hidden.value||'';
 }
 
 function autoSkuFromProductName(prefix,name,typeFieldId,productId){
@@ -10803,8 +10797,8 @@ function renderReports(){
     const sampleCostUsd=monthSamples.reduce((s,x)=>s+(x.cost||0),0)*DB.rate;
     samplesEl.innerHTML=`
       <div style="display:flex;gap:8px;margin-bottom:14px">
-        <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">送出次數</div><div style="font-size:16px;font-weight:800;font-family:'Nunito',sans-serif">${monthSamples.length}</div></div>
-        <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">推廣成本</div><div style="font-size:16px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--brown)">$${sampleCostUsd.toFixed(2)}</div></div>
+        <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">送出次數</div><div style="font-size:13px;font-weight:800;font-family:'Nunito',sans-serif">${monthSamples.length}</div></div>
+        <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">推廣成本</div><div style="font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--brown)">$${sampleCostUsd.toFixed(2)}</div></div>
       </div>
       ${monthSamples.slice().reverse().map(s=>{
         const cust=s.customerId?(DB.customers||[]).find(c=>c.id===s.customerId):null;
@@ -10825,8 +10819,8 @@ function renderReports(){
       const defectRevUsd=monthDefects.reduce((s,x)=>s+(x.rawItems||[]).reduce((s2,it)=>s2+(it.price||0)*(it.qty||0),0),0);
       defectsEl.innerHTML=`
         <div style="display:flex;gap:8px;margin-bottom:14px">
-          <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">賣出件數</div><div style="font-size:16px;font-weight:800;font-family:'Nunito',sans-serif">${defectQty}</div></div>
-          <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">瑕疵品收入</div><div style="font-size:16px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--brown)">$${defectRevUsd.toFixed(2)}</div></div>
+          <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">賣出件數</div><div style="font-size:13px;font-weight:800;font-family:'Nunito',sans-serif">${defectQty}</div></div>
+          <div style="flex:1;background:var(--cream2);border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--text3);font-weight:700">瑕疵品收入</div><div style="font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--brown)">$${defectRevUsd.toFixed(2)}</div></div>
         </div>
         ${monthDefects.slice().reverse().map(d=>{
           const cust=d.customerId?(DB.customers||[]).find(c=>c.id===d.customerId):null;
@@ -11032,11 +11026,11 @@ function openCustomerDetail(id){
     <div style="display:flex;gap:8px;margin-bottom:16px">
       <div style="flex:1;background:var(--cream2);border-radius:12px;padding:12px;text-align:center">
         <div style="font-size:11px;color:var(--text3);font-weight:700">累積消費</div>
-        <div style="font-size:16px;font-weight:800;color:var(--brown);font-family:'Nunito',sans-serif">$${stats.total.toFixed(2)}</div>
+        <div style="font-size:13px;font-weight:800;color:var(--brown);font-family:'Nunito',sans-serif">$${stats.total.toFixed(2)}</div>
       </div>
       <div style="flex:1;background:var(--cream2);border-radius:12px;padding:12px;text-align:center">
         <div style="font-size:11px;color:var(--text3);font-weight:700">購買次數</div>
-        <div style="font-size:16px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif">${stats.count}</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text);font-family:'Nunito',sans-serif">${stats.count}</div>
       </div>
     </div>
     ${c.phone?`<div style="font-size:13px;color:var(--text2);margin-bottom:6px">📞 ${c.phone}</div>`:''}
@@ -11232,7 +11226,7 @@ function renderCatSidebar(){
     <div style="display:flex;gap:5px;margin-bottom:6px;position:relative">
       <input type="text" id="sidebar-newcat-icon" class="form-input" placeholder="📦" maxlength="4" readonly onclick="toggleIconPicker()" style="width:44px;flex-shrink:0;text-align:center;font-size:13px;padding:6px 4px;cursor:pointer">
       <div id="sidebar-icon-picker" class="hidden" style="position:fixed;z-index:9999;background:var(--surface);border:1.5px solid var(--cream3);border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.18);padding:8px;width:172px;max-height:190px;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px">
-        ${['📦','🪡','✂️','🧵','🧶','🧷','🎀','🧸','👜','👝','🧦','👕','👗','👒','📌','🪢','🌟','⭐','❤️','🎁','🐻','🐰','🐱','🐶','🐼','🐨','🦋','🦄','🌸','💐','🍭','🍰','☕','🎄','🎃','✨'].map(e=>`<span onclick="pickSidebarIcon('${e}')" style="cursor:pointer;font-size:16px;text-align:center;padding:3px;border-radius:6px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${e}</span>`).join('')}
+        ${['📦','🪡','✂️','🧵','🧶','🧷','🎀','🧸','👜','👝','🧦','👕','👗','👒','📌','🪢','🌟','⭐','❤️','🎁','🐻','🐰','🐱','🐶','🐼','🐨','🦋','🦄','🌸','💐','🍭','🍰','☕','🎄','🎃','✨'].map(e=>`<span onclick="pickSidebarIcon('${e}')" style="cursor:pointer;font-size:13px;text-align:center;padding:3px;border-radius:6px" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">${e}</span>`).join('')}
       </div>
       <input type="text" id="sidebar-newcat-code" class="form-input" placeholder="代碼" maxlength="2" style="width:56px;flex-shrink:0;text-transform:uppercase;font-family:monospace;font-size:12px;padding:6px 4px">
     </div>
@@ -14058,7 +14052,7 @@ function openProductMergeVariantModal(sourceId,targetId){
   const options=document.getElementById('product-variant-merge-options');
   options.innerHTML=target.variants.map(v=>`
     <button type="button" data-merge-variant-id="${v.id}" onclick="selectProductMergeVariant('${v.id}')"
-      style="width:34px;height:34px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
+      style="width:34px;height:34px;border:1.5px solid ${guessed===String(v.label)?'var(--brown)':'var(--cream3)'};border-radius:14px;background:${guessed===String(v.label)?'var(--brown)':'var(--surface)'};color:${guessed===String(v.label)?'#fff':'var(--text2)'};font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:${guessed===String(v.label)?'0 4px 10px rgba(139,111,71,0.16)':'none'}">
       <span class="product-variant-merge-letter" style="display:inline-block;font-size:15px;line-height:1;transform:translateY(-1px)">
         ${String(v.label||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
       </span>
@@ -14597,9 +14591,10 @@ async function saveProduct(){const name=document.getElementById('p-name').value.
   if(saveBtn){saveBtn.dataset.saving='1';saveBtn.style.pointerEvents='none';saveBtn.style.opacity='.6';}
   try{
   const id=editingId||uid();let finalImg=pendingImg||null;if(finalImg&&finalImg.startsWith('data:')&&window.uploadImageIfNeeded){finalImg=await window.uploadImageIfNeeded(id,finalImg);}const existingIdx=editingId?DB.products.findIndex(x=>x.id===editingId):-1;const beforeSnapshot=existingIdx!==-1?JSON.parse(JSON.stringify(DB.products[existingIdx])):null;const createdAt=existingIdx!==-1?(DB.products[existingIdx].createdAt||DB.products[existingIdx].updatedAt||Date.now()):Date.now();const existingBase=existingIdx!==-1?DB.products[existingIdx]:{};
-  // 新增/編輯商品也在儲存前重新組 SKU，確保手動輸入一定會真正寫入。
-  updateProductSkuFromParts('p','p-type',editingId||'');
-  const enteredSku=document.getElementById('p-sku').value.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
+  // SKU 儲存只走最新唯一規則：直接讀畫面五格，由 composeProductSkuFromVisibleParts() 組合。
+  const directSku=composeProductSkuFromVisibleParts('p','p-type',editingId||'',true);
+  const hiddenSku=document.getElementById('p-sku');if(hiddenSku)hiddenSku.value=directSku;
+  const enteredSku=directSku.trim().toUpperCase();const safeSku=enteredSku||(editingId?String(existingBase.sku||'').trim().toUpperCase():'');const selectedType=document.getElementById('p-type').value||(editingId?existingBase.type:'PA');const p={...existingBase,id,name,sku:safeSku,type:selectedType,size:selectedType==='RB'?'0':document.getElementById('p-size').value,ribbonLength:selectedType==='RB'?(document.getElementById('p-ribbon-length')?.value.trim()||''):undefined,ringWidth:selectedType==='RB'?(document.getElementById('p-ring-width')?.value.trim()||''):undefined,totalLength:selectedType==='RB'?(document.getElementById('p-total-length')?.value.trim()||''):undefined,cost:parseFloat(document.getElementById('p-cost').value)||0,price:parseFloat(document.getElementById('p-price').value)||0,stock:parseInt(document.getElementById('p-stock').value)||0,minStock:parseInt(document.getElementById('p-min-stock').value)||5,note:document.getElementById('p-note').value.trim(),link:document.getElementById('p-link')?.value.trim()||(existingBase.link||''),status:document.getElementById('p-status').value,img:finalImg,typeSubcat:(document.getElementById('p-type-subcat')?.value||undefined),createdAt,updatedAt:Date.now()};if(editingId){if(existingIdx!==-1)DB.products[existingIdx]=p;}else DB.products.push(p);
   if(DB.stockLedgerSyncV1&&!(p.variants&&p.variants.length))setManualStockTarget(p,Math.max(0,parseInt(document.getElementById('p-stock').value,10)||0));
   // 不再刪除舊 color/style 欄位；既有資料先保留，避免 SKU 異常時連顏色資訊一起失去。
   if(beforeSnapshot&&beforeSnapshot.sku)rememberSkuSerialUsage(beforeSnapshot.sku);
@@ -15014,7 +15009,7 @@ function openStockModal(id){
           <div style="display:flex;gap:3px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjVariantStock('${id}','${v.id}',1)">+</button></div>
         </div>`).join('')}
       </div>`:`
-      <div style="margin:0 0 7px 106px;font-size:9.5px;color:var(--text3);line-height:1.45">庫存會依「已到貨 − 已售出/樣品」自動同步；這裡手動改數字會記為盤點調整。</div><div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
+      <div style="margin:0 0 7px 106px;font-size:9.5px;color:var(--text3);line-height:1.45">庫存會依「已到貨 − 已售出/樣品」自動同步；這裡手動改數字會記為盤點調整。</div><div class="stock-row ok-row" style="margin-left:106px;flex-wrap:wrap"><span class="stock-icon">⭐</span><span class="stock-label">正常可賣</span><input type="number" class="stock-count" id="sc-ok" value="${p.status==='ok'?p.stock:0}" min="0" onchange="setStockDirect('${id}',this.value)" style="font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;width:44px;text-align:center;background:var(--surface);border:1.5px solid var(--cream3);border-radius:8px;padding:2px 0"><div style="display:flex;gap:4px"><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',-1)">−</button><button class="adj-btn" data-fast-stock-adjust="1" onclick="adjStock('${id}','ok',1)">+</button></div>${(()=>{
         const sampleQty=getTotalSampleQty(p.id);
         const defectQty=p.defectStock||0;
         return `<div style="display:flex;flex-direction:column;gap:2px;font-size:11px;margin-left:20px">
@@ -15236,10 +15231,11 @@ async function saveFromStock(id){
   window._stockSnapshot=JSON.stringify(p); // save new snapshot
   const before=JSON.parse(JSON.stringify(p));
   p.name=document.getElementById('edit-name').value.trim()||p.name;
-  // 儲存前強制把畫面上手動輸入的 SKU 五段重新組一次，避免只改「06 / 子分類 / 顏色」後 hidden SKU 還停在舊值。
-  updateProductSkuFromParts('edit','edit-type',id);
-  const enteredSku=document.getElementById('edit-sku').value.trim().toUpperCase();
-  // 編輯既有商品時，畫面 SKU 若因子分類/規則變動暫時變空，保留原本 SKU。
+  // SKU 儲存只走最新唯一規則：直接讀畫面五格；例如顏色 0401 會直接寫入。
+  const directSku=composeProductSkuFromVisibleParts('edit','edit-type',id,true);
+  const hiddenSku=document.getElementById('edit-sku');if(hiddenSku)hiddenSku.value=directSku;
+  const enteredSku=directSku.trim().toUpperCase();
+  // 編輯既有商品時，只有真的無法組出有效 SKU 才保留原值。
   p.sku=enteredSku||String(before.sku||'').trim().toUpperCase();
   p.type=document.getElementById('edit-type').value||p.type;
   p.typeSubcat=document.getElementById('edit-type-subcat')?.value||undefined;
@@ -20219,7 +20215,7 @@ function renderSupplierProfileHistory(){
   const totalCny=orders.reduce((sum,o)=>sum+(Number(o.total)||0),0);
   const latest=orders[0]?.date||'—';
   const summary=document.getElementById('supplier-profile-summary');
-  if(summary)summary.innerHTML=`<div><span style="font-size:10px;color:var(--text3)">採購次數</span><div style="font-size:16px;font-weight:800">${orders.length}</div></div><div><span style="font-size:10px;color:var(--text3)">累積採購</span><div style="font-size:16px;font-weight:800;color:var(--brown)">$${totalUsd.toFixed(2)}</div></div><div><span style="font-size:10px;color:var(--text3)">最後採購</span><div style="font-size:13px;font-weight:700">${latest}</div></div>`;
+  if(summary)summary.innerHTML=`<div><span style="font-size:10px;color:var(--text3)">採購次數</span><div style="font-size:13px;font-weight:800">${orders.length}</div></div><div><span style="font-size:10px;color:var(--text3)">累積採購</span><div style="font-size:13px;font-weight:800;color:var(--brown)">$${totalUsd.toFixed(2)}</div></div><div><span style="font-size:10px;color:var(--text3)">最後採購</span><div style="font-size:13px;font-weight:700">${latest}</div></div>`;
   if(!orders.length){body.innerHTML='<div style="padding:18px;text-align:center;color:var(--text3)">還沒有採購紀錄</div>';return;}
   body.innerHTML=orders.map((o,i)=>{
     const usd=o.totalPaidUsdActual||o.totalUsd||((o.total||0)*(o.rateUsed||DB.rate));
@@ -27080,7 +27076,7 @@ body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
 body nav .nav-link,
 body nav .nav-link .ui-editable{
   font-family:inherit !important;
-  font-size:16px !important;
+  font-size:13px !important;
   font-weight:600 !important;
 }
 body nav .nav-link.active,
@@ -27097,7 +27093,7 @@ body nav .nav-link .ui-editable,
 body nav .nav-link.active,
 body nav .nav-link.active .ui-editable{
   font-family:inherit !important;
-  font-size:16px !important;
+  font-size:13px !important;
   font-weight:600 !important;
 }
 </style>
@@ -27163,7 +27159,7 @@ body nav .nav-link .ui-editable,
 body nav .nav-link.active,
 body nav .nav-link.active .ui-editable{
   font-family:inherit !important;
-  font-size:16px !important;
+  font-size:13px !important;
   font-weight:600 !important;
 }
 
@@ -27171,7 +27167,7 @@ body nav .nav-link.active .ui-editable{
 body #page-products #product-grid.view-grid .product-card .pc-cost{
   position:relative !important;
   top:0 !important;
-  transform:translateY(-3px) !important;
+  transform:translateY(-1px) !important;
 }
 </style>
 <script>window.__INVENTORY_BUILD__="20261004-manual-sku-sync-v126";</script>
