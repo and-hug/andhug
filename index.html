@@ -20840,7 +20840,7 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
-}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span class="sale-size-badge" style="font-size:10px;color:var(--text3);font-weight:700">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
@@ -27029,8 +27029,6 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   position:static !important;
   left:auto !important;
   border-radius:999px !important;
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
   font-family:inherit !important;
   font-size:10px !important;
   font-weight:700 !important;
@@ -27065,9 +27063,9 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 #page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
 
 #page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:static !important;
+  position:relative !important;
   top:auto !important;
-  right:auto !important;
+  right:4px !important;
   margin:0 !important;
   align-self:center !important;
   font-family:inherit !important;
