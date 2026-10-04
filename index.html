@@ -433,7 +433,12 @@ input.oi-qty-input,input.oi-cost-input,input.oi-origcost-input{-moz-appearance:t
 .sku-copy-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
 .sku-copy-btn:hover{border-color:var(--brown-light);color:var(--brown);background:var(--cream2)}
 .sku-copy-btn:focus-visible{outline:2px solid var(--brown-light);outline-offset:2px}
-@media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn{width:100%}}
+.sku-clear-btn{width:36px;height:auto;min-height:38px;align-self:stretch;border-radius:var(--radius-sm);border:1.5px solid var(--cream3);background:var(--surface);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s,background .15s}
+.sku-clear-btn:hover{border-color:#e7b3b3;color:#c86b6b;background:#fff7f7}
+.sku-clear-btn:focus-visible{outline:2px solid #e7b3b3;outline-offset:2px}
+.stock-searchlike-muted{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
+.stock-searchlike-placeholder::placeholder{color:var(--text3)!important;font-family:inherit!important;font-weight:500!important;opacity:1!important}
+@media(max-width:420px){.sku-builder{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sku-copy-btn,.sku-clear-btn{width:100%}}
 .order-card{background:var(--surface);border-radius:12px;border:1.5px solid var(--cream3);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
 .order-search-wrap{position:relative;width:230px;min-width:190px;height:34px;display:flex;align-items:center;}
 .order-search-wrap .order-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);pointer-events:none;}
@@ -7198,7 +7203,7 @@ body nav .nav-link.active .ui-editable{
       <button id="report-current-month-btn" class="btn btn-secondary btn-sm" onclick="jumpReportToCurrentMonth()" title="回到本月"><span class="report-flower-icon">🌸</span><span>本月</span></button>
       <div style="position:relative">
         <button id="report-month-btn" onclick="event.stopPropagation();toggleReportMonthPicker()" style="border:1.5px solid var(--cream3);border-radius:20px;padding:6px 14px;font-size:12px;font-family:inherit;font-weight:700;color:var(--brown);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:32px;box-sizing:border-box">📅 <span id="report-month-btn-label"></span> <span class="unified-top-dd-caret" aria-hidden="true"></span></button>
-        <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:280px;overflow-y:auto"></div>
+        <div id="report-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1.5px solid var(--cream3);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;z-index:50;min-width:140px;max-height:220px;overflow-y:auto;overscroll-behavior:contain"></div>
       </div>
     </div>
   </div>
@@ -7322,9 +7327,9 @@ body nav .nav-link.active .ui-editable{
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
             <div style="display:flex;align-items:center;gap:6px">
-              <button onclick="shiftSaleHistoryDate(-1)" title="前一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">◀</button>
+              <button onclick="shiftSaleHistoryDate(-1)" title="前一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">◀</button>
               <span id="sale-history-date-label" style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap"></span>
-              <button id="sale-history-next-btn" onclick="shiftSaleHistoryDate(1)" title="後一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">▶</button>
+              <button id="sale-history-next-btn" onclick="shiftSaleHistoryDate(1)" title="後一天" style="width:26px;height:26px;border-radius:8px;background:var(--surface);border:1.5px solid var(--cream3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0">▶</button>
             </div>
             <button onclick="openTrash()" title="已刪紀錄" style="font-size:12px;font-weight:700;color:var(--text3);background:none;border:1px solid var(--cream3);border-radius:8px;padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0">🗑 已刪紀錄</button>
           </div>
@@ -7348,6 +7353,7 @@ body nav .nav-link.active .ui-editable{
           <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="p-sku-colorpart" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="p-sku-serialpart" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('p','p-type','')"></div>
           <button type="button" class="sku-copy-btn" onclick="copyProductSku('p')" title="複製完整 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <button type="button" class="sku-clear-btn" onclick="clearProductSku('p','p-type','')" title="一鍵清除 SKU"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div></div>
       </div>
       <div class="form-row product-type-row">
@@ -9595,6 +9601,26 @@ function copyProductSku(prefix){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(ok).catch(()=>copyTextFallback(value,ok));}
   else copyTextFallback(value,ok);
 }
+function clearProductSku(prefix,typeFieldId,productId){
+  const typeInput=document.getElementById(typeFieldId);
+  const typeEl=document.getElementById(prefix+'-sku-typepart');
+  const catEl=document.getElementById(prefix+'-sku-catpart');
+  const detailEl=document.getElementById(prefix+'-sku-detailpart');
+  const colorEl=document.getElementById(prefix+'-sku-colorpart');
+  const serialEl=document.getElementById(prefix+'-sku-serialpart');
+  const hidden=document.getElementById(prefix+'-sku');
+  if(!(typeEl&&catEl&&detailEl&&colorEl&&serialEl&&hidden))return;
+  typeEl.value=String(typeInput?.value||'').toUpperCase().slice(0,2);
+  catEl.value='';
+  detailEl.value='';
+  colorEl.value='';
+  serialEl.value='';
+  hidden.value='';
+  updateProductSkuFromParts(prefix,typeFieldId,productId);
+  const focusTarget=catEl||detailEl||colorEl||serialEl;
+  if(focusTarget)requestAnimationFrame(()=>focusTarget.focus());
+  toast('🧹 SKU 已清除','success');
+}
 function copyTextFallback(value,onOk){
   const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
   try{document.execCommand('copy');if(onOk)onOk();}catch(e){toast('複製失敗','error');}
@@ -10460,9 +10486,9 @@ function renderSaleHistoryCalendar(){
   for(let i=usedCells;i<42;i++)cells+='<div style="width:32px;height:32px"></div>';
   cal.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative">
-      <button onclick="shiftSaleCalMonth(-1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">◀</button>
+      <button onclick="shiftSaleCalMonth(-1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:9px">◀</button>
       <button type="button" onclick="event.stopPropagation();toggleSaleCalJumpPicker()" style="border:0;outline:0;box-shadow:none;background:transparent;padding:3px 6px;border-radius:8px;font-size:13px;font-weight:700;color:var(--brown);letter-spacing:.2px;cursor:pointer;font-family:inherit">${y}年 ${monthNames[m]} <span style="display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--text3);margin-left:4px;vertical-align:2px"></span></button>
-      <button onclick="shiftSaleCalMonth(1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12px">▶</button>
+      <button onclick="shiftSaleCalMonth(1)" style="width:26px;height:26px;border-radius:8px;border:1.5px solid var(--cream3);background:var(--surface);color:var(--text2);cursor:pointer;font-size:9px">▶</button>
       <div id="sale-cal-jump-picker" class="hidden" onclick="event.stopPropagation()" style="position:absolute;top:34px;left:50%;transform:translateX(-50%);z-index:90;width:216px;background:#fffdf9;border:1px solid #eadfce;border-radius:16px;box-shadow:0 10px 24px rgba(99,76,50,.08);padding:8px;overflow:hidden">
         <div style="display:grid;grid-template-columns:64px 1fr;column-gap:8px;align-items:start;transform:translateX(3px)">
           <div id="sale-cal-year-list" style="background:#f7f0e7;border-radius:11px;padding:6px 5px 3px;display:flex;flex-direction:column;gap:2px;height:146px;overflow-y:auto;scrollbar-width:thin;box-sizing:border-box;transform:translateY(2px)">
@@ -15010,6 +15036,7 @@ function openStockModal(id){
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
           </div>
         </div>
@@ -15106,7 +15133,7 @@ function openStockModal(id){
     </div>
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">備註</div>
-      <input type="text" id="edit-note" value="${p.note||''}" class="form-input stock-note-input" style="font-size:13px" placeholder="其他備註...">
+      <input type="text" id="edit-note" value="${p.note||''}" class="form-input stock-note-input stock-searchlike-placeholder" style="font-size:13px" placeholder="其他備註...">
     </div>
     <div class="stock-advanced-toggle" onclick="toggleStockAdvanced('${id}')">📂 進階資訊（標籤、瑕疵庫存、商品連結...）<span id="stock-advanced-arrow-${id}">▾</span></div>
     <div class="stock-advanced-section" id="stock-advanced-${id}">
@@ -15130,7 +15157,7 @@ function openStockModal(id){
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">標籤</div>
         <div id="edit-tags-chips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span class="tag-chip" data-tag="${t.replace(/"/g,'&quot;')}" style="display:inline-flex;align-items:center;gap:4px;background:var(--cream2);color:var(--text2);border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${t}<span onclick="removeEditTag(this)" style="cursor:pointer;color:var(--text3);font-weight:700">×</span></span>`).join('')}</div>
         <div class="stock-detail-inline-row stock-tag-row" style="display:flex;gap:6px">
-          <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
+          <input type="text" id="edit-tag-input" placeholder="輸入標籤按 Enter 新增，例如：熱銷、季節限定" class="form-input stock-searchlike-placeholder" style="font-size:12px" onkeydown="if(event.key==='Enter'){event.preventDefault();addEditTag()}">
           <button type="button" class="btn btn-secondary btn-sm stock-detail-tag-btn" onclick="addEditTag()">+</button>
         </div>
       </div>
@@ -15139,10 +15166,10 @@ function openStockModal(id){
         <div style="display:flex;flex-wrap:wrap;gap:5px">
           ${(p.sourceAliases&&p.sourceAliases.length)
             ?p.sourceAliases.map(a=>`<span class="tag-chip" style="display:inline-flex;align-items:center;gap:4px;background:var(--lavender-light);color:#6b5aad;border-radius:12px;padding:3px 8px 3px 10px;font-size:11px">${a.replace(/</g,'&lt;')}<span onclick="removeProductAlias('${p.id}','${a.replace(/'/g,"\'").replace(/"/g,'&quot;')}')" style="cursor:pointer;color:#6b5aad;font-weight:700">×</span></span>`).join('')
-            :'<span style="font-size:11px;color:var(--text3)">目前沒有匯入別名</span>'}
+            :'<span class="stock-searchlike-muted" style="font-size:11px">目前沒有匯入別名</span>'}
         </div>
         <div class="manual-alias-add-row stock-detail-inline-row" style="display:flex;gap:6px;margin-top:7px">
-          <input id="manual-alias-input-${p.id}" class="form-input manual-alias-input" type="text"
+          <input id="manual-alias-input-${p.id}" class="form-input manual-alias-input stock-searchlike-placeholder" type="text"
             placeholder="輸入淘寶商品名稱..."
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addManualProductAlias('${p.id}');}">
@@ -15152,7 +15179,7 @@ function openStockModal(id){
       <div style="margin-bottom:10px">
         <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品連結</div>
         <div class="stock-detail-inline-row stock-link-row" style="display:flex;gap:6px">
-          <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" oninput="updateEditLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
+          <input type="text" id="edit-link" value="${(p.link||'').replace(/"/g,'&quot;')}" class="form-input stock-searchlike-placeholder" style="font-size:12px;font-family:monospace;min-width:0;flex:1" placeholder="https://item.taobao.com/..." inputmode="url" oninput="updateEditLinkOpenButton()" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true">
           <button type="button" id="edit-link-open-btn" onclick="openEditProductLink()" class="btn btn-sm stock-detail-side-btn stock-detail-icon-btn" aria-label="開啟商品連結" title="開啟商品連結" style="white-space:nowrap;flex-shrink:0;border:1.5px solid ${p.link?'var(--brown)':'var(--cream3)'};background:${p.link?'var(--brown)':'var(--cream2)'};color:${p.link?'#fff':'var(--text3)'};cursor:${p.link?'pointer':'default'}">🔗</button>
         </div>
       </div>
@@ -20813,7 +20840,7 @@ function renderSaleProducts(){const q=(document.getElementById('sale-search')?.v
     : currentSaleView==='large'
       ? ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:10px!important;object-fit:cover!important;"'
       : ' style="width:100%!important;height:100%!important;padding:0!important;background:#fff!important;border-radius:12px 0 0 12px!important;object-fit:cover!important;"'
-}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span class="sale-size-badge" style="font-size:10px;color:var(--text3);font-weight:700">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
+}>`:'<div class="no-img">📦</div>'}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-meta"><span style="display:flex;align-items:center;gap:4px">${p.size&&p.size!=='0'?`<span class="stock-badge sale-size-badge ${sc}">${SIZE_LABELS[p.size]||p.size}</span>`:''}<span class="stock-badge ${sc}">${stk}件</span></span><span class="price-tag">$${(p.price||0).toFixed(2)}</span></div></div></div>`;}).join('');}
 function mobileAddFeedback(){
   if(!window.matchMedia('(max-width:768px)').matches)return;
   const t=window.event&&window.event.target;
@@ -21243,12 +21270,12 @@ function renderCartSaleDatePicker(){
   for(let i=first+days;i<42;i++)cells+='<div style="width:28px;height:28px"></div>';
   picker.innerHTML=`<div style="position:relative">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-    <button type="button" onclick="shiftCartSaleDateMonth(-1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer">◀</button>
+    <button type="button" onclick="shiftCartSaleDateMonth(-1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer;font-size:9px">◀</button>
     <button type="button" onclick="toggleCartSaleDateJumpPicker()" style="border:0;background:transparent;padding:0;display:inline-flex;align-items:center;justify-content:center;color:var(--brown);font-size:13px;font-weight:700;font-family:inherit;line-height:1;letter-spacing:.2px;cursor:pointer">
       ${y}年 ${m+1}月
       <span style="display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--text3);margin-left:4px;vertical-align:2px"></span>
     </button>
-    <button type="button" onclick="shiftCartSaleDateMonth(1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer">▶</button>
+    <button type="button" onclick="shiftCartSaleDateMonth(1)" style="width:28px;height:28px;border:1.5px solid var(--cream3);border-radius:9px;background:var(--surface);color:var(--brown);cursor:pointer;font-size:9px">▶</button>
   </div>
   ${cartSaleDateJumpOpen?`<div id="cart-sale-date-jump-picker" onclick="event.stopPropagation()" style="position:absolute;top:34px;left:50%;transform:translateX(-50%);z-index:95;width:216px;background:#fffdf9;border:1px solid #eadfce;border-radius:16px;box-shadow:0 10px 24px rgba(99,76,50,.08);padding:8px;overflow:hidden">
     <div style="display:grid;grid-template-columns:64px 1fr;column-gap:8px;align-items:start;transform:translateX(3px)">
@@ -26535,108 +26562,8 @@ body #page-products #product-grid.view-grid .product-card .price-tag{
 </style>
 
 
-<style id="sales-card-position-restore-v99">
-/* 只恢復「開單 > 格狀商品卡」的位置排版成舊版：
-   商品名在上，尺寸 + 庫存在左下，售價在右下；全部同一基線。 */
-#page-sales #sale-product-grid.view-grid .product-card .product-info{
-  display:flex !important;
-  flex-direction:column !important;
-  flex:1 1 auto !important;
-  padding:6px 12px 12px !important;
-  background:var(--surface) !important;
-  box-sizing:border-box !important;
-}
-
-#page-sales #sale-product-grid.view-grid .product-card .product-name{
-  margin:0 0 3px !important;
-  padding:0 !important;
-  position:static !important;
-  left:auto !important;
-  top:auto !important;
-}
-
-#page-sales #sale-product-grid.view-grid .product-card .product-meta{
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  gap:8px !important;
-  width:100% !important;
-  margin-top:auto !important;
-  padding:0 !important;
-  position:static !important;
-  inset:auto !important;
-  transform:none !important;
-  white-space:nowrap !important;
-}
-
-/* 左邊：尺寸 + 庫存 */
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  display:inline-flex !important;
-  align-items:center !important;
-  gap:6px !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-
-/* 把之前後來加的 top / 負 margin 全部拿掉，回到舊版同一水平線 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
-  position:static !important;
-  top:auto !important;
-  left:auto !important;
-  margin:0 !important;
-  align-self:center !important;
-}
-
-#page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  position:static !important;
-  top:auto !important;
-  right:auto !important;
-  margin:0 !important;
-  align-self:center !important;
-}
-</style>
 
 
-<style id="sales-card-font-restore-v100">
-/* 只把「開單 > 格狀商品卡」字體恢復成舊版第二張的樣子；
-   不動 v99 已修好的位置與對齊。 */
-
-#page-sales #sale-product-grid.view-grid .product-card .product-name{
-  font-family:inherit !important;
-  font-size:12px !important;
-  font-weight:700 !important;
-  line-height:1.35 !important;
-  color:var(--text) !important;
-}
-
-/* 尺寸 S / M：小、淡 */
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > span:first-child{
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  color:var(--text3) !important;
-}
-
-/* 庫存膠囊：回到舊版小字 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  padding:3px 8px !important;
-}
-
-/* 售價：回到舊版比較小、比較柔和，不要 13px 粗大字 */
-#page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  font-family:inherit !important;
-  font-size:11px !important;
-  font-weight:600 !important;
-  line-height:1 !important;
-  color:var(--text3) !important;
-}
-</style>
 
 
 <style id="product-more-right-align-v101">
@@ -26720,26 +26647,6 @@ body #page-products #product-grid.view-large .product-card .product-sku-pending-
 </style>
 
 
-<style id="sales-list-size-badge-v103">
-/* 開單 > 列表：尺寸 M / S / XS 保持原本位置，只改成跟庫存一樣的圓角黃底小膠囊 */
-#page-sales #sale-product-grid.view-list .product-card .product-meta > span:first-child > span:first-child{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  min-width:24px !important;
-  height:24px !important;
-  padding:0 8px !important;
-  box-sizing:border-box !important;
-  border-radius:999px !important;
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-  margin:0 !important;
-}
-</style>
 
 
 <style id="product-grid-price-13px-v104">
@@ -26791,74 +26698,8 @@ body #page-products #product-grid.view-list .product-card .product-meta{
 </style>
 
 
-<style id="sales-size-badge-fix-v106">
-/* 開單：真正的尺寸 M/S/XS 才套黃底；庫存顏色不再被尺寸 CSS 誤傷 */
-
-/* 格狀 + 列表：尺寸膠囊高度跟「1件」一致 */
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
-#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:24px !important;
-  min-height:24px !important;
-  padding:0 8px !important;
-  margin:0 !important;
-  border-radius:999px !important;
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-  font-family:inherit !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-}
-
-/* v103 曾用 first-child 抓尺寸；現在明確把庫存恢復成自己的樣式 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge,
-#page-sales #sale-product-grid.view-list .product-card .stock-badge{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  box-sizing:border-box !important;
-  height:24px !important;
-  min-height:24px !important;
-  padding:3px 8px !important;
-  margin:0 !important;
-  border-radius:10px !important;
-  font-size:10px !important;
-  font-weight:700 !important;
-  line-height:1 !important;
-}
-
-/* 庫存顏色只由真正的 stock 狀態決定 */
-#page-sales #sale-product-grid .product-card .stock-badge.stock-ok{
-  background:var(--mint-light) !important;
-  color:#3d8a58 !important;
-}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-low{
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-out{
-  background:var(--red-light) !important;
-  color:var(--red) !important;
-}
-#page-sales #sale-product-grid .product-card .stock-badge.stock-pending{
-  background:var(--lavender-light) !important;
-  color:#6b5aad !important;
-}
-</style>
 
 
-<style id="sales-size-badge-inset-v107">
-/* 開單格狀 + 列表：尺寸 M/S/XS 再往裡面一點 */
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
-#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
-  position:relative !important;
-  left:2px !important;
-}
-</style>
 
 
 <style id="product-grid-price-14px-v108">
@@ -26895,99 +26736,12 @@ body #page-products #product-grid.view-list .product-card:not(.batch-selected):h
 </style>
 
 
-<style id="sales-grid-stock-size-swap-v111">
-/* 開單 > 格狀：
-   1) 1件 放最左，跟商品名稱左邊對齊
-   2) M/S/XS 放到 1件 的右邊
-   3) 沒尺寸商品的 1件 不再變淡 */
-
-#page-sales #sale-product-grid.view-grid .product-card .product-meta{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  width:100% !important;
-}
-
-/* 左邊這組固定貼齊 product-info 左側 */
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:6px !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-
-/* 交換順序：1件 在前，尺寸在後 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge{
-  order:1 !important;
-  margin:0 !important;
-}
-#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
-  order:2 !important;
-  margin:0 !important;
-}
-
-/* 開單格狀的低庫存 1件：統一同一個黃底 + 深字，不再出現淡字 */
-#page-sales #sale-product-grid.view-grid .product-card .stock-badge.stock-low{
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-  opacity:1 !important;
-}
-
-/* 避免沒有尺寸時第一個 span 被舊 first-child 規則淡化 */
-#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > .stock-badge{
-  color:#8a6a1a !important;
-  opacity:1 !important;
-  font-weight:700 !important;
-}
-</style>
 
 
-<style id="sales-grid-stock-size-swap-v112">
-/* 修正沒有尺寸的商品：1件 會變成第一個 span，
-   用更精準 selector 蓋掉舊的 first-child 尺寸樣式。 */
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > .stock-badge.stock-low{
-  background:var(--yellow-light) !important;
-  color:#8a6a1a !important;
-  opacity:1 !important;
-  font-weight:700 !important;
-}
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > .stock-badge.stock-ok{
-  background:var(--mint-light) !important;
-  color:#3d8a58 !important;
-  opacity:1 !important;
-  font-weight:700 !important;
-}
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > .stock-badge.stock-out{
-  background:var(--red-light) !important;
-  color:var(--red) !important;
-  opacity:1 !important;
-  font-weight:700 !important;
-}
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child > .stock-badge.stock-pending{
-  background:var(--lavender-light) !important;
-  color:#6b5aad !important;
-  opacity:1 !important;
-  font-weight:700 !important;
-}
-</style>
 
 
-<style id="sales-grid-price-plus1-v113">
-/* 只改開單「格狀」售價：再大 1px */
-body #page-sales #sale-product-grid.view-grid .product-card .price-tag{
-  font-size:12px !important;
-}
-</style>
 
 
-<style id="sales-grid-bottom-padding-v114">
-/* 開單 > 格狀：只把文字區底部留白縮小 2px，上方不動 */
-body #page-sales #sale-product-grid.view-grid .product-card .product-info{
-  padding-bottom:10px !important;
-}
-</style>
 
 
 <style id="product-stock-badge-left-v115">
@@ -27036,18 +26790,6 @@ body #page-products #product-grid.view-grid .product-card .product-meta{
 </style>
 
 
-<style id="sales-grid-stock-left-gap-tight-v118">
-/* 開單 > 格狀：
-   1件 再往左 1px；M / S / XS 與 1件 的間距再縮小。 */
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  gap:3px !important;
-}
-
-body #page-sales #sale-product-grid.view-grid .product-card .stock-badge{
-  position:relative !important;
-  left:-1px !important;
-}
-</style>
 
 
 <style id="nav-font-match-categories-v119">
@@ -27100,18 +26842,6 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   top:9px !important;
 }
 
-/* 4) 開單格狀：整組「1件 + M/S/XS」往左一點，
-      並把兩顆膠囊之間的視覺間距縮緊。 */
-body #page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
-  position:relative !important;
-  left:-2px !important;
-  gap:2px !important;
-}
-body #page-sales #sale-product-grid.view-grid .product-card .stock-badge,
-body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{
-  left:0 !important;
-}
-
 /* 5) 主導覽列：真的套到實際使用的 .nav-link，
       跟商品庫分類一樣 11px / 600 / inherit。 */
 body nav .nav-link,
@@ -27149,13 +26879,6 @@ body #page-products #product-grid.view-list .product-card .pc-missing-inline-lis
 </style>
 
 
-<style id="sales-size-text-match-stock-v116">
-/* 開單：M / S / L 等尺寸字母，文字顏色與「1件」低庫存膠囊一致 */
-body #page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
-body #page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
-  color:#8a6a1a !important;
-}
-</style>
 
 <style id="product-grid-missing-sku-overlay-cost-up-v123">
 /* 商品庫 > 格狀：
@@ -27221,6 +26944,138 @@ body #page-products #product-grid.view-grid .product-card .product-meta{
 body #page-products #product-grid.view-grid .product-card .pc-cost{
   top:0 !important;
   transform:translateY(2px) !important;
+}
+</style>
+
+<style id="cart-number-vertical-align-v129">
+/* 購物車：價錢與數量只微微往上 0.5px，視覺置中，不會太靠上；不動外框。 */
+#page-sales .cart-price-input{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+  transform:translateY(-.5px) !important;
+}
+#page-sales .cart-qty-spinner input{
+  transform:translateY(-.5px) !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+}
+</style>
+
+<style id="sale-product-card-canonical-v130">
+/* ===== 開單商品卡：唯一正式規則 =====
+   舊版多層覆蓋已移除。之後開單卡只維護這裡。 */
+
+/* 格狀卡：名稱在上；底排為 1件 + 尺寸，售價在右。 */
+#page-sales #sale-product-grid.view-grid .product-card .product-info{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  box-sizing:border-box !important;
+  padding:6px 12px 10px !important;
+  background:var(--surface) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-name{
+  margin:0 0 3px !important;
+  padding:0 !important;
+  position:static !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  color:var(--text) !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-meta{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  width:100% !important;
+  margin-top:auto !important;
+  padding:0 4px 0 0 !important;
+  box-sizing:border-box !important;
+  position:static !important;
+  inset:auto !important;
+  transform:none !important;
+  white-space:nowrap !important;
+}
+#page-sales #sale-product-grid.view-grid .product-card .product-meta > span:first-child{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:3px !important;
+  margin:0 !important;
+  padding:0 !important;
+  position:relative !important;
+  left:-2px !important;
+}
+
+/* 1件 在前，尺寸在後。 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge{order:1 !important;}
+#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge{order:2 !important;}
+
+/* 尺寸 M/S/L：固定和 1件 的黃色系一致，不再吃 inline 灰色。 */
+#page-sales #sale-product-grid.view-grid .product-card .sale-size-badge,
+#page-sales #sale-product-grid.view-list .product-card .sale-size-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  height:24px !important;
+  min-height:24px !important;
+  min-width:24px !important;
+  padding:0 8px !important;
+  margin:0 !important;
+  position:static !important;
+  left:auto !important;
+  border-radius:999px !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  opacity:1 !important;
+}
+
+/* 庫存膠囊基本尺寸。 */
+#page-sales #sale-product-grid.view-grid .product-card .stock-badge,
+#page-sales #sale-product-grid.view-list .product-card .stock-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  height:24px !important;
+  min-height:24px !important;
+  padding:3px 8px !important;
+  margin:0 !important;
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  border-radius:10px !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  opacity:1 !important;
+}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-ok{background:var(--mint-light) !important;color:#3d8a58 !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-low{background:var(--yellow-light) !important;color:#8a6a1a !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-out{background:var(--red-light) !important;color:var(--red) !important;}
+#page-sales #sale-product-grid .product-card .stock-badge.stock-pending{background:var(--lavender-light) !important;color:#6b5aad !important;}
+
+#page-sales #sale-product-grid.view-grid .product-card .price-tag{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  margin:0 !important;
+  flex:0 0 auto !important;
+  align-self:center !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+  color:var(--text3) !important;
 }
 </style>
 </body>
