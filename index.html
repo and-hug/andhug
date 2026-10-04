@@ -646,9 +646,13 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-items-header,.order-form-review-row{display:grid;grid-template-columns:40px 40px minmax(0,1fr) 86px 60px 36px;gap:8px;align-items:start}
 .order-items-header{margin-bottom:5px}
 .order-form-review-row{margin-bottom:10px}
-#modal-order .form-input:not(.oi-origcost-input){height:38px}
+#modal-order #o-supplier,
+#modal-order #o-date-btn,
+#modal-order #o-shipping,
+#modal-order #o-note{height:32px!important;box-sizing:border-box}
 
-.order-form-review-row .form-input:not(.oi-origcost-input){height:34px!important;box-sizing:border-box}
+#modal-order .order-form-review-name>.form-input,
+#modal-order .order-form-cost-main>.form-input{height:32px!important;box-sizing:border-box}
 .order-form-review-row>[id^="oi-img-slot-"]{width:44px!important;height:44px!important;margin-top:0;border-radius:10px!important}
 .order-form-review-row .remove-btn{width:30px;height:30px;margin-top:2px;border-radius:9px}
 .order-form-review-name{min-width:0}
@@ -670,8 +674,8 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-form-cost-main>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
 .order-form-cost-main>.form-input{padding-left:24px;text-align:left}
 .order-form-qty-cell{text-align:left;padding-left:17px!important;padding-right:20px!important}
-.order-form-qty-wrap{position:relative;width:100%;height:34px}
-.order-form-qty-wrap>.order-form-qty-cell{width:100%;height:34px!important;box-sizing:border-box}
+.order-form-qty-wrap{position:relative;width:100%;height:32px}
+.order-form-qty-wrap>.order-form-qty-cell{width:100%;height:32px!important;box-sizing:border-box}
 .order-form-qty-step{position:absolute;right:1px;top:1px;bottom:1px;width:18px;display:flex;flex-direction:column;border-left:1px solid var(--cream3);overflow:hidden;border-radius:0 9px 9px 0}
 .order-form-qty-step button{flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:8px;line-height:1;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;justify-content:center}
 .order-form-qty-step button:first-child{border-bottom:1px solid var(--cream3)}
@@ -8111,7 +8115,7 @@ body.theme-glass #modal-order.order-edit-footer-fixed .modal{
   flex-direction:column !important;
   gap:0 !important;
   margin:0 !important;
-  padding:0 34px 14px 44px !important;
+  padding:0 27px 44px 7px !important;
   background:var(--cream) !important;
   border-top:0 !important;
   z-index:50 !important;
@@ -9652,7 +9656,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
             <input type="number" id="o-total-paid-usd-actual" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
             <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
             <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
-              <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+              <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;height:34px;padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px">
                 <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
                 <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
               </div>
