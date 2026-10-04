@@ -194,7 +194,7 @@
 
 
 
-<meta name="andhug-build" content="product-list-missing-sku-align-v122">
+<meta name="andhug-build" content="stock-detail-sku-row-v123">
 
 
 <script>
@@ -17227,7 +17227,7 @@ function openStockModal(id){
       </div>
       <div style="flex:1;min-width:0">
         <div style="font-family:monospace;font-size:10px;color:var(--text3);margin-bottom:8px">${p.sku||'無SKU'}${p.size&&p.size!=='0'?' · '+p.size:''}</div>
-        <div class="form-row stock-edit-name-sku-row" style="gap:8px;margin-bottom:8px">
+        <div class="form-row stock-edit-name-sku-row" style="gap:8px;margin-bottom:8px;grid-template-columns:minmax(0,.82fr) minmax(390px,1.18fr)">
           <div>
             <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:4px">商品名稱</div>
             <input type="text" id="edit-name" value="${p.name||''}" class="form-input" style="font-size:13px" oninput="autoSkuFromProductName('edit',this.value,'edit-type','${id}')">
@@ -17237,14 +17237,14 @@ function openStockModal(id){
               <div style="font-size:11px;color:var(--text2);font-weight:700">SKU</div>
             </div>
             <input type="hidden" id="edit-sku" value="${p.sku||''}">
-            <div class="sku-builder">
+            <div class="sku-builder" style="grid-template-columns:44px 44px 44px 72px 50px 36px 36px">
               <div class="sku-builder-field"><span class="sku-builder-label">類型</span><input id="edit-sku-typepart" value="${skuParts.type||''}" class="form-input sku-part-input sku-auto" maxlength="2" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">分類</span><input id="edit-sku-catpart" value="${skuParts.cat||''}" class="form-input sku-part-input sku-auto" maxlength="2" placeholder="--" inputmode="numeric" autocomplete="off" onfocus="requestAnimationFrame(()=>this.select())" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">細類</span><input id="edit-sku-detailpart" value="${skuParts.detail||''}" class="form-input sku-part-input" maxlength="2" inputmode="numeric" placeholder="00" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">顏色</span><input id="edit-sku-colorpart" value="${skuParts.color||''}" class="form-input sku-part-input" maxlength="4" inputmode="numeric" placeholder="0000" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
               <div class="sku-builder-field"><span class="sku-builder-label">流水</span><input id="edit-sku-serialpart" value="${skuParts.serial||''}" class="form-input sku-part-input sku-auto" maxlength="3" inputmode="numeric" autocomplete="off" oninput="updateProductSkuFromParts('edit','edit-type','${id}')"></div>
-              <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="15" height="15"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
-              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button type="button" onclick="copyProductSku('edit')" title="複製完整 SKU" class="sku-copy-btn"><svg viewBox="0 0 24 24" width="17" height="17"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16,8 V6 a2,2 0 0 0 -2,-2 H6 a2,2 0 0 0 -2,2 v8 a2,2 0 0 0 2,2 h2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+              <button type="button" onclick="clearProductSku('edit','edit-type','${id}')" title="一鍵清除 SKU" class="sku-clear-btn" style="color:var(--text2)"><svg viewBox="0 0 24 24" width="17" height="17"><path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9 7V5.7c0-.9.7-1.7 1.7-1.7h2.6c1 0 1.7.8 1.7 1.7V7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M8 7l.7 10.1A2 2 0 0 0 10.7 19h2.6a2 2 0 0 0 2-1.9L16 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
           </div>
         </div>
@@ -27203,3 +27203,22 @@ setTimeout(function(){
 
 </body>
 </html>
+
+<style id="order-edit-footer-alignment-v20261004">
+/* 只調整「編輯採購單」底部按鈕列的位置；不影響其他頁面或其他 modal */
+#modal-order.order-edit-footer-fixed #order-edit-action-footer{
+  padding:0 44px 12px !important;
+}
+#modal-order.order-edit-footer-fixed .order-footer-add-row{
+  margin-left:0 !important;
+  margin-right:0 !important;
+  padding:10px 0 !important;
+  justify-content:flex-start !important;
+}
+#modal-order.order-edit-footer-fixed .order-footer-main-row{
+  margin-left:0 !important;
+  margin-right:0 !important;
+  padding:10px 0 0 !important;
+  justify-content:flex-end !important;
+}
+</style>
