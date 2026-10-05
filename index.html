@@ -9131,9 +9131,9 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 #modal-order .order-form-cost-main > .form-input,
 #modal-order .order-form-qty-wrap,
 #modal-order .order-form-qty-wrap > .order-form-qty-cell{
-  height:30px !important;
-  min-height:30px !important;
-  max-height:30px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
   box-sizing:border-box !important;
 }
 
@@ -9161,6 +9161,19 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
   min-height:22px !important;
   max-height:22px !important;
   box-sizing:border-box !important;
+}
+</style>
+
+
+<style id="order-edit-v12-compact-qty-lock">
+#modal-order .order-form-qty-step{
+  width:16px !important;
+}
+#modal-order .order-form-qty-step button{
+  font-size:6.5px !important;
+}
+#modal-order .order-form-review-row .lock-icon{
+  transform:translateX(1px) !important;
 }
 </style>
 
@@ -20044,7 +20057,7 @@ function stepOrderItemQty(id,delta){
 function orderItemQtyControlHtml(id,qty,readonly){
   const ro=readonly?'readonly style="height:32px;background:var(--cream2);font-size:12px"':'style="height:32px;font-size:12px"';
   const disabled=readonly?' disabled':'';
-  return `<div class="order-form-qty-wrap" style="height:30px"><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${ro}><div class="order-form-qty-step"><button type="button" onclick="stepOrderItemQty('${id}',1)"${disabled}>▲</button><button type="button" onclick="stepOrderItemQty('${id}',-1)"${disabled}>▼</button></div></div>`;
+  return `<div class="order-form-qty-wrap" style="height:28px"><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${ro}><div class="order-form-qty-step"><button type="button" onclick="stepOrderItemQty('${id}',1)"${disabled}>▲</button><button type="button" onclick="stepOrderItemQty('${id}',-1)"${disabled}>▼</button></div></div>`;
 }
 function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img,variantId,variantLabel){
   const id=uid();
