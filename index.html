@@ -648,7 +648,7 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-form-review-row{margin-bottom:10px}
 #modal-order .form-input:not(.oi-origcost-input){height:38px}
 
-.order-form-review-row .form-input:not(.oi-origcost-input){height:34px!important;box-sizing:border-box}
+#modal-order .order-form-review-row .form-input:not(.oi-origcost-input){height:32px!important;box-sizing:border-box}
 .order-form-review-row>[id^="oi-img-slot-"]{width:44px!important;height:44px!important;margin-top:0;border-radius:10px!important}
 .order-form-review-row .remove-btn{width:30px;height:30px;margin-top:2px;border-radius:9px}
 .order-form-review-name{min-width:0}
@@ -670,8 +670,8 @@ input.confirm-recv-qty,input.confirm-recv-defect,input.sibp-qty-input{-moz-appea
 .order-form-cost-main>span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
 .order-form-cost-main>.form-input{padding-left:24px;text-align:left}
 .order-form-qty-cell{text-align:left;padding-left:17px!important;padding-right:20px!important}
-.order-form-qty-wrap{position:relative;width:100%;height:34px}
-.order-form-qty-wrap>.order-form-qty-cell{width:100%;height:34px!important;box-sizing:border-box}
+.order-form-qty-wrap{position:relative;width:100%;height:32px}
+.order-form-qty-wrap>.order-form-qty-cell{width:100%;height:32px!important;box-sizing:border-box}
 .order-form-qty-step{position:absolute;right:1px;top:1px;bottom:1px;width:18px;display:flex;flex-direction:column;border-left:1px solid var(--cream3);overflow:hidden;border-radius:0 9px 9px 0}
 .order-form-qty-step button{flex:1;border:none;background:var(--cream2);color:var(--text3);font-size:8px;line-height:1;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;justify-content:center}
 .order-form-qty-step button:first-child{border-bottom:1px solid var(--cream3)}
@@ -9155,7 +9155,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 </style>
 
 
-<style id="order-edit-origcost-height-v7">
+<style id="order-edit-origcost-height-v8">
 #modal-order .oi-origcost-input{
   height:24px !important;
   min-height:24px !important;
@@ -9707,11 +9707,11 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
         <div>
           <div class="form-row">
-            <div class="form-group"><label class="form-label">店家名稱 ✦</label><input type="text" class="form-input" id="o-supplier" placeholder="淘寶店名..."></div>
+            <div class="form-group"><label class="form-label">店家名稱 ✦</label><input type="text" class="form-input" id="o-supplier" placeholder="淘寶店名..." style="height:32px;min-height:32px;max-height:32px;box-sizing:border-box"></div>
             <div class="form-group">
               <label class="form-label">訂單日期 ✦</label>
               <div style="position:relative" id="o-date-wrap">
-                <button type="button" onclick="toggleODateCal()" id="o-date-btn" class="form-input" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface)">
+                <button type="button" onclick="toggleODateCal()" id="o-date-btn" class="form-input" style="height:32px;min-height:32px;max-height:32px;box-sizing:border-box;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface)">
                   <span id="o-date-btn-label">選擇日期</span>
                   <span style="font-size:13px;color:var(--text3)">📅</span>
                 </button>
@@ -9721,19 +9721,19 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01"></div>
+            <div class="form-group"><label class="form-label">運費 (¥)</label><input type="number" class="form-input" id="o-shipping" placeholder="0.00" step="0.01" style="height:32px;min-height:32px;max-height:32px;box-sizing:border-box"></div>
             <input type="number" id="o-fee-usd" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
             <textarea id="o-raw-payment-text" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px"></textarea>
             <input type="number" id="o-total-paid-usd-actual" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
             <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
             <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
-              <div class="order-total-usd-box" style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+              <div class="order-total-usd-box" style="height:34px;min-height:34px;max-height:34px;box-sizing:border-box;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
                 <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
                 <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
               </div>
             </div>
           </div>
-          <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..."></div>
+          <div class="form-group"><label class="form-label">備註</label><input type="text" class="form-input" id="o-note" placeholder="訂單號..." style="height:32px;min-height:32px;max-height:32px;box-sizing:border-box"></div>
         </div>
         <div id="o-raw-payment-preview" style="background:var(--cream2);border-radius:10px;padding:12px 14px">
           <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">📋 已擷取的付款資訊</div>
@@ -20042,9 +20042,9 @@ function stepOrderItemQty(id,delta){
   input.dispatchEvent(new Event('input',{bubbles:true}));
 }
 function orderItemQtyControlHtml(id,qty,readonly){
-  const ro=readonly?'readonly style="background:var(--cream2);font-size:12px"':'style="font-size:12px"';
+  const ro=readonly?'readonly style="height:32px;background:var(--cream2);font-size:12px"':'style="height:32px;font-size:12px"';
   const disabled=readonly?' disabled':'';
-  return `<div class="order-form-qty-wrap"><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${ro}><div class="order-form-qty-step"><button type="button" onclick="stepOrderItemQty('${id}',1)"${disabled}>▲</button><button type="button" onclick="stepOrderItemQty('${id}',-1)"${disabled}>▼</button></div></div>`;
+  return `<div class="order-form-qty-wrap" style="height:32px"><input type="number" class="form-input oi-qty-input order-form-qty-cell" placeholder="數量" min="1" value="${qty||1}" ${ro}><div class="order-form-qty-step"><button type="button" onclick="stepOrderItemQty('${id}',1)"${disabled}>▲</button><button type="button" onclick="stepOrderItemQty('${id}',-1)"${disabled}>▼</button></div></div>`;
 }
 function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img,variantId,variantLabel){
   const id=uid();
@@ -20062,12 +20062,12 @@ function addOrderItemFilled(name,cost,qty,readonly,productId,originalCost,img,va
   if(variantId)div.dataset.variantId=variantId;
   if(variantLabel)div.dataset.variantLabel=variantLabel;
   if(readonly)div.dataset.original='1'; // 標記「這一列本來就是這張單既有的項目」，儲存時用這個判斷是否為新增，不要用名稱比對（同名也可能是想再新增一批）
-  const ro=readonly?'readonly style="background:var(--cream2);font-size:12px;padding-left:24px;text-align:left"':'style="font-size:12px;padding-left:24px;text-align:left"';
+  const ro=readonly?'readonly style="height:32px;background:var(--cream2);font-size:12px;padding-left:24px;text-align:left"':'style="height:32px;font-size:12px;padding-left:24px;text-align:left"';
   const linkedIdAttr=productId?` data-linked-id="${productId}"`:'';
   const nameInputHtml=readonly
-    ?`<input type="text" class="form-input oi-name-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="background:var(--cream2);font-size:12px">`
-    :`<input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
-  const origCostInlineHtml=`<div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" value="${originalCost?Number(originalCost).toFixed(2):''}" ${readonly?'readonly':''} style="width:58px;font-size:10px;padding:4px 8px;height:26px;text-align:left;${readonly?'background:var(--cream2);':''}"></div>`;
+    ?`<input type="text" class="form-input oi-name-input" placeholder="商品名稱" value="${(name||'').replace(/"/g,'&quot;')}" readonly style="height:32px;background:var(--cream2);font-size:12px">`
+    :`<input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" value="${(name||'').replace(/"/g,'&quot;')}" style="height:32px;font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"${linkedIdAttr}>`;
+  const origCostInlineHtml=`<div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" value="${originalCost?Number(originalCost).toFixed(2):''}" ${readonly?'readonly':''} style="width:58px;font-size:10px;padding:4px 8px;height:24px;text-align:left;${readonly?'background:var(--cream2);':''}"></div>`;
   div.innerHTML=`${orderRowGroupIconHtml(id)}${orderItemPhotoSlotHtml(id,effectiveImg)}<div class="oi-suggest-wrap order-form-review-name">${nameInputHtml}<div class="oi-linked-tag"></div></div><div class="order-form-cost-cell"><div class="order-form-cost-main"><span>¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" value="${cost?Number(cost).toFixed(2):''}" ${ro}></div>${origCostInlineHtml}</div>${orderItemQtyControlHtml(id,qty||1,readonly)}${readonly?'<span class="lock-icon" style="color:var(--text3);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8,11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span>':`<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`}`;
   list.appendChild(div);
   if(productId){
@@ -21068,7 +21068,7 @@ function regroupOrderItemRowsFromItems(items){
     groupDiv.insertBefore(orderGroupLabelBarEl(gid,label,grp.img),groupDiv.firstChild);
   });
 }
-function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row order-form-review-row';div.id='oi-'+id;div.innerHTML=`${orderRowGroupIconHtml(id)}${orderItemPhotoSlotHtml(id)}<div class="oi-suggest-wrap order-form-review-name"><input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div class="order-form-cost-cell"><div class="order-form-cost-main"><span>¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" style="font-size:12px"></div><div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" style="width:58px;font-size:10px;padding:4px 8px;height:26px;text-align:left"></div></div>${orderItemQtyControlHtml(id,1,false)}<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
+function addOrderItem(){const id=uid(),list=document.getElementById('order-items-list'),div=document.createElement('div');div.className='order-item-row order-form-review-row';div.id='oi-'+id;div.innerHTML=`${orderRowGroupIconHtml(id)}${orderItemPhotoSlotHtml(id)}<div class="oi-suggest-wrap order-form-review-name"><input type="text" class="form-input oi-name-input" placeholder="商品名稱(可打淘寶原名，自動搜尋庫存)" style="height:32px;font-size:12px" oninput="showOrderItemSuggestions(this)" onfocus="showOrderItemSuggestions(this)" onblur="hideOrderItemSuggestionsLater(this)"><div class="oi-linked-tag"></div></div><div class="order-form-cost-cell"><div class="order-form-cost-main"><span>¥</span><input type="number" class="form-input oi-cost-input" placeholder="單價" step="0.01" style="height:32px;font-size:12px"></div><div style="display:flex;align-items:center;gap:2px;flex-shrink:0"><span style="font-size:9px;color:var(--text3);white-space:nowrap">原價¥</span><input type="number" class="form-input oi-origcost-input" placeholder="—" step="0.01" style="width:58px;font-size:10px;padding:4px 8px;height:24px;text-align:left"></div></div>${orderItemQtyControlHtml(id,1,false)}<button class="remove-btn" onclick="removeOrderItemRow('${id}')">×</button>`;list.appendChild(div);
   pushUndo({label:'新增商品項目',undo:()=>{div.remove();updateOrderTotalPreview();},redo:()=>{list.appendChild(div);updateOrderTotalPreview();}});
   updateOrderTotalPreview();
 }
@@ -27361,6 +27361,33 @@ setTimeout(function(){
   if(typeof oldOpen==='function')window.openEditOrder=function(){const r=oldOpen.apply(this,arguments);schedule();return r;};
   const oldUnlock=window.unlockOrderItems;
   if(typeof oldUnlock==='function')window.unlockOrderItems=function(){const r=oldUnlock.apply(this,arguments);schedule();return r;};
+})();
+</script>
+
+
+<script id="order-edit-v9-divider-sync">
+(function(){
+  function syncEditOrderDivider(){
+    const overlay=document.getElementById('modal-order');
+    if(!overlay||!overlay.classList.contains('order-edit-footer-fixed'))return;
+    const addBtn=overlay.querySelector('.order-footer-add-row .order-add-item-btn');
+    const saveBtn=overlay.querySelector('#order-save-btn');
+    const mainRow=overlay.querySelector('.order-footer-main-row');
+    if(!addBtn||!saveBtn||!mainRow)return;
+    const mr=mainRow.getBoundingClientRect();
+    const ar=addBtn.getBoundingClientRect();
+    const sr=saveBtn.getBoundingClientRect();
+    mainRow.style.setProperty('--order-footer-divider-left', Math.max(0,ar.left-mr.left)+'px');
+    mainRow.style.setProperty('--order-footer-divider-right', Math.max(0,mr.right-sr.right)+'px');
+  }
+  window.syncEditOrderDivider=syncEditOrderDivider;
+  document.addEventListener('click',()=>requestAnimationFrame(syncEditOrderDivider),true);
+  window.addEventListener('resize',syncEditOrderDivider);
+  const mo=new MutationObserver(()=>requestAnimationFrame(syncEditOrderDivider));
+  document.addEventListener('DOMContentLoaded',()=>{
+    const target=document.getElementById('modal-order');
+    if(target)mo.observe(target,{attributes:true,subtree:true,childList:true});
+  });
 })();
 </script>
 
