@@ -9113,6 +9113,57 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
 }
 </style>
 
+
+<style id="order-edit-page-v6-heights">
+/* 只改「編輯採購單」視窗內，使用者圈出的輸入格高度。 */
+#modal-order #o-supplier,
+#modal-order #o-date-btn,
+#modal-order #o-shipping,
+#modal-order #o-note{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  box-sizing:border-box !important;
+}
+
+/* 商品名稱 / 商品金額 / 數量 = 32px */
+#modal-order .order-form-review-name > .form-input,
+#modal-order .order-form-cost-main > .form-input,
+#modal-order .order-form-qty-wrap,
+#modal-order .order-form-qty-wrap > .order-form-qty-cell{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  box-sizing:border-box !important;
+}
+
+/* 總額美金顯示框 = 34px */
+#modal-order .order-total-usd-box{
+  height:34px !important;
+  min-height:34px !important;
+  max-height:34px !important;
+  padding:0 14px !important;
+  box-sizing:border-box !important;
+  align-items:center !important;
+}
+
+/* Footer 分隔線：左右端點由 JS 對到「新增商品項目」左邊與「儲存修改」右邊。 */
+#modal-order.order-edit-footer-fixed .order-footer-main-row::before{
+  left:var(--order-footer-divider-left,0px) !important;
+  right:var(--order-footer-divider-right,0px) !important;
+}
+</style>
+
+
+<style id="order-edit-origcost-height-v7">
+#modal-order .oi-origcost-input{
+  height:24px !important;
+  min-height:24px !important;
+  max-height:24px !important;
+  box-sizing:border-box !important;
+}
+</style>
+
 </head>
 <body class="cloud-boot-pending">
 <div id="cloud-boot-shield"><div>☁️ 載入資料中…</div></div>
@@ -9676,7 +9727,7 @@ body #page-products #product-grid.view-grid .product-card .pc-cost{
             <input type="number" id="o-total-paid-usd-actual" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" step="0.01">
             <input type="date" id="o-expected-date" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px">
             <div class="form-group"><label class="form-label">總額美金 ($) · 自動計算</label>
-              <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+              <div class="order-total-usd-box" style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:10px;padding:11px 14px;display:flex;align-items:baseline;justify-content:space-between;gap:8px">
                 <span id="o-total-usd" style="font-family:'Nunito',sans-serif;font-weight:800;font-size:17px;color:var(--brown)">$0.00</span>
                 <span id="o-total-cny-hint" style="font-family:'Nunito',sans-serif;font-weight:600;font-size:12.5px;color:var(--text3);white-space:nowrap">¥0.00</span>
               </div>
@@ -27286,6 +27337,18 @@ setTimeout(function(){
     addRow.style.setProperty('padding-right',rightInset+'px','important');
     mainRow.style.setProperty('padding-left',leftInset+'px','important');
     mainRow.style.setProperty('padding-right',rightInset+'px','important');
+
+    const addBtn=addRow.querySelector('.order-add-item-btn');
+    const saveBtn=document.getElementById('order-save-btn');
+    if(addBtn&&saveBtn){
+      const mainRect=mainRow.getBoundingClientRect();
+      const addRect=addBtn.getBoundingClientRect();
+      const saveRect=saveBtn.getBoundingClientRect();
+      const dividerLeft=Math.max(0,Math.round(addRect.left-mainRect.left));
+      const dividerRight=Math.max(0,Math.round(mainRect.right-saveRect.right));
+      mainRow.style.setProperty('--order-footer-divider-left',dividerLeft+'px');
+      mainRow.style.setProperty('--order-footer-divider-right',dividerRight+'px');
+    }
   }
   window.syncEditOrderFooterEdges=syncEditOrderFooterEdges;
   function schedule(){requestAnimationFrame(()=>requestAnimationFrame(syncEditOrderFooterEdges));}
